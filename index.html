@@ -1480,203 +1480,207 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     </div>
 
-    <script>
-        // Selo verificado nativo estilizado via CSS com tamanho idêntico ao do Instagram
-        const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
+<script>
+    // Selo verificado nativo estilizado via CSS com tamanho idêntico ao do Instagram
+    const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
 
-        // CONFIGURAÇÃO DE ALTA PERFORMANCE - PRODUTOS (Tons de Preto e Cinza)
-        const produtos = [
-          {
-            nome: "GHK-Cu 100mg",
-            imagem: "images/ghk-cu100.png",
-            descricao: `
-                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                    Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
-                </div>
-            `
-          },
-          {
-            nome: "Glow 70mg",
-            imagem: "images/glow70.png",
-            descricao: `
-                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                    Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                    <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
-                </div>
-            `
-          },
-          {
-            nome: "GHK-Cu 50mg",
-            imagem: "images/ghk-cu50.png",
-            descricao: `
-                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                    Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
-                </div>
-            `
-          },
-          {
-            nome: "Klow 80mg",
-            imagem: "images/klow80.png",
-            descricao: `
-                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                    Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
-                </div>
-            `
-          },
-          {
-            nome: "Tesamorelin 10mg",
-            imagem: "images/tesamorelin10.png",
-            descricao: `
-                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                    Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tecido adiposo profundo.
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                    <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
-                    <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
-                </div>
-            `
-          }
-        ];
+    // CONFIGURAÇÃO DE ALTA PERFORMANCE - PRODUTOS (Tons de Preto e Cinza)
+    const produtos = [
+      {
+        nome: "GHK-Cu 100mg",
+        imagem: "images/ghk-cu100.png",
+        descricao: `
+            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
+            </div>
+        `
+      },
+      {
+        nome: "Glow 70mg",
+        imagem: "images/glow70.png",
+        descricao: `
+            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+            </div>
+        `
+      },
+      {
+        nome: "GHK-Cu 50mg",
+        imagem: "images/ghk-cu50.png",
+        descricao: `
+            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
+            </div>
+        `
+      },
+      {
+        nome: "Klow 80mg",
+        imagem: "images/klow80.png",
+        descricao: `
+            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
+            </div>
+        `
+      },
+      {
+        nome: "Tesamorelin 10mg",
+        imagem: "images/tesamorelin10.png",
+        descricao: `
+            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tissue adiposo profundo.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
+                <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
+            </div>
+        `
+      }
+    ];
 
-        // RENDERIZAÇÃO AUTOMÁTICA DOS CARDS
-        const productsContainer = document.getElementById('products-container');
+    // RENDERIZAÇÃO AUTOMÁTICA DOS CARDS
+    const productsContainer = document.getElementById('products-container');
+    
+    produtos.forEach((produto, index) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.setAttribute('data-index', index);
         
-        produtos.forEach((produto, index) => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.setAttribute('data-index', index);
-            
-            // Correção de corte de imagem injetada via inline-style (width: 100%, height: 100%, object-fit: contain)
-            card.innerHTML = `
-                <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #fcfcfc;">
-                    <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
-                </div>
-                <div class="product-info" style="padding: 15px 10px;">
-                    <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${produto.nome}${verificadoBadge}</h3>
-                </div>
-            `;
-            productsContainer.appendChild(card);
+        // CORREÇÃO: Fundo alterado de #fcfcfc para #ffffff (Branco Puro)
+        card.innerHTML = `
+            <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
+                <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
+            </div>
+            <div class="product-info" style="padding: 15px 10px;">
+                <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${produto.nome}${verificadoBadge}</h3>
+            </div>
+        `;
+        productsContainer.appendChild(card);
+    });
+
+    // MECANISMO DO MODAL PREMIUM
+    const modal = document.getElementById('product-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalImgContainer = document.getElementById('modal-img-container');
+    const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
+    const closeModalBtn = document.getElementById('close-modal');
+
+    productsContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        if (!card) return;
+
+        const index = card.getAttribute('data-index');
+        const prod = produtos[index];
+        
+        modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${prod.nome}${verificadoBadge}</span>`;
+        modalDesc.innerHTML = prod.descricao;
+        
+        // CORREÇÃO: Fundo forçado para #ffffff (Branco Puro), imagem em object-fit: contain e max-height limitado em 220px para não ficar gigante no mobile
+        modalImgContainer.innerHTML = `
+            <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 6px; box-sizing: border-box;">
+                <img src="${prod.imagem}" alt="${prod.nome}" style="width: 100%; max-height: 220px; object-fit: contain; display: block;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
+            </div>
+        `;
+        
+        const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + prod.nome);
+        modalWhatsappBtn.href = `https://wa.me/5511999999999?text=${mensagem}`;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+    });
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    // NAVBAR GLASSMORPHISM
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+    });
+
+    // MENU HAMBÚRGUER MOBILE
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-item a');
+
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
 
-        // MECANISMO DO MODAL PREMIUM
-        const modal = document.getElementById('product-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalDesc = document.getElementById('modal-desc');
-        const modalImgContainer = document.getElementById('modal-img-container');
-        const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
-        const closeModalBtn = document.getElementById('close-modal');
-
-        productsContainer.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
-            if (!card) return;
-
-            const index = card.getAttribute('data-index');
-            const prod = produtos[index];
-            
-            modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${prod.nome}${verificadoBadge}</span>`;
-            modalDesc.innerHTML = prod.descricao;
-            
-            // Correção aplicada também na imagem de dentro do modal para garantir consistência visual
-            modalImgContainer.innerHTML = `<img src="${prod.imagem}" alt="${prod.nome}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">`;
-            
-            const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + prod.nome);
-            modalWhatsappBtn.href = `https://wa.me/5511999999999?text=${mensagem}`;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; 
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
         });
+    }
 
-        const closeModal = () => {
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        closeModalBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        // NAVBAR GLASSMORPHISM
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (navbar) {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
+    // ANIMAÇÃO FADE-IN (Intersection Observer)
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
             }
         });
+    }, {
+        threshold: 0.15
+    });
 
-        // MENU HAMBÚRGUER MOBILE
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        const navLinks = document.querySelectorAll('.nav-item a');
-
-        if (menuToggle && navMenu) {
-            menuToggle.addEventListener('click', () => {
-                menuToggle.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    menuToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
-                });
-            });
-        }
-
-        // ANIMAÇÃO FADE-IN (Intersection Observer)
-        const revealElements = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, {
-            threshold: 0.15
-        });
-
-        revealElements.forEach(element => {
-            observer.observe(element);
-        });
-    </script>
+    revealElements.forEach(element => {
+        observer.observe(element);
+    });
+</script>
 </body>
 </html>
