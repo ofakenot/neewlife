@@ -1466,19 +1466,49 @@ document.addEventListener("DOMContentLoaded", () => {
 </footer>
 
 <div class="modal" id="product-modal">
-        <div class="modal-content" style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 20px 40px rgba(0,0,0,0.05); max-width: 550px;">
-            <button class="modal-close" id="close-modal" style="color: #111111; font-size: 28px;">&times;</button>
-            <div class="modal-img-box" id="modal-img-container">
-                </div>
-            <div class="modal-body" style="padding: 25px;">
-                <h2 id="modal-title" style="color: #111111; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 1.6em; margin-bottom: 15px;">Nome do Produto</h2>
-                <div id="modal-desc">Descrição completa do produto selecionado.</div>
-                <a href="#" id="modal-whatsapp-btn" target="_blank" class="btn-premium" style="background: #111111; color: #ffffff; border-radius: 6px; font-weight: 500; text-transform: uppercase; font-size: 0.9em; letter-spacing: 0.5px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 20px;">
-                    <i class="fab fa-whatsapp"></i> Solicitar Alocação de Lote
-                </a>
-            </div>
+    <style>
+        #product-modal .modal-content {
+            background: #ffffff; 
+            border-radius: 12px; 
+            border: 1px solid #e5e5e5; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+            max-width: 550px;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            #product-modal .modal-content {
+                max-height: 85vh !important;
+                max-width: 92% !important;
+                overflow-y: auto !important;
+                padding: 15px !important;
+                margin: auto !important;
+            }
+            #product-modal .modal-body {
+                padding: 15px 5px !important;
+            }
+            #product-modal .modal-body h2 {
+                font-size: 1.3em !important;
+            }
+        }
+    </style>
+
+    <div class="modal-content">
+        <button class="modal-close" id="close-modal" style="color: #111111; font-size: 28px; position: absolute; top: 15px; right: 15px; z-index: 10; background: none; border: none; cursor: pointer;">&times;</button>
+        
+        <div class="modal-img-box" id="modal-img-container" style="background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; width: 100%; border-radius: 12px 12px 0 0; overflow: hidden;">
+        </div>
+        
+        <div class="modal-body" style="padding: 25px;">
+            <h2 id="modal-title" style="color: #111111; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 1.6em; margin-bottom: 15px;">Nome do Produto</h2>
+            <div id="modal-desc">Descrição completa do produto selecionado.</div>
+            <a href="#" id="modal-whatsapp-btn" target="_blank" class="btn-premium" style="background: #111111; color: #ffffff; border-radius: 6px; font-weight: 500; text-transform: uppercase; font-size: 0.9em; letter-spacing: 0.5px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 20px;">
+                <i class="fab fa-whatsapp"></i> Solicitar Alocação de Lote
+            </a>
         </div>
     </div>
+</div>
 
 <script>
     // Selo verificado nativo estilizado via CSS com tamanho idêntico ao do Instagram
@@ -1573,7 +1603,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     ];
 
-    // RENDERIZAÇÃO AUTOMÁTICA DOS CARDS
+    // RENDERIZAÇÃO AUTOMÁTICA DOS CARDS NO GRID
     const productsContainer = document.getElementById('products-container');
     
     produtos.forEach((produto, index) => {
@@ -1581,7 +1611,6 @@ document.addEventListener("DOMContentLoaded", () => {
         card.className = 'product-card';
         card.setAttribute('data-index', index);
         
-        // CORREÇÃO: Fundo alterado de #fcfcfc para #ffffff (Branco Puro)
         card.innerHTML = `
             <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
                 <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
@@ -1593,7 +1622,7 @@ document.addEventListener("DOMContentLoaded", () => {
         productsContainer.appendChild(card);
     });
 
-    // MECANISMO DO MODAL PREMIUM
+    // MECANISMO AUTOMÁTICO E RESPONSIVO DO MODAL
     const modal = document.getElementById('product-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalDesc = document.getElementById('modal-desc');
@@ -1611,10 +1640,14 @@ document.addEventListener("DOMContentLoaded", () => {
         modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${prod.nome}${verificadoBadge}</span>`;
         modalDesc.innerHTML = prod.descricao;
         
-        // CORREÇÃO: Fundo forçado para #ffffff (Branco Puro), imagem em object-fit: contain e max-height limitado em 220px para não ficar gigante no mobile
+        // Define dinamicamente o teto da imagem para não empurrar o modal para baixo no mobile
+        const isMobile = window.innerWidth <= 768;
+        const imgMaxHeight = isMobile ? "140px" : "220px";
+
+        // Imagem injetada com fundo branco puro (#ffffff) e carregamento completo (object-fit: contain)
         modalImgContainer.innerHTML = `
-            <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 6px; box-sizing: border-box;">
-                <img src="${prod.imagem}" alt="${prod.nome}" style="width: 100%; max-height: 220px; object-fit: contain; display: block;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
+            <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 15px 10px 5px 10px; box-sizing: border-box;">
+                <img src="${prod.imagem}" alt="${prod.nome}" style="width: auto; max-width: 100%; height: ${imgMaxHeight}; object-fit: contain; display: block; margin: 0 auto;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
             </div>
         `;
         
