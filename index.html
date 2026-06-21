@@ -881,7 +881,7 @@
     </nav>
 
     <header id="inicio" class="hero">
-        <video autoplay loop muted playsinline class="hero-video-bg">
+        <video autoplay muted playsinline webkit-playsinline="true" loop style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; pointer-events: none;" class="hero-video-bg">
             <source src="images/molecule.mp4" type="video/mp4">
             Seu navegador não suporta vídeos em HTML5.
         </video>
@@ -958,7 +958,243 @@
         </div>
     </section>
 
-    <section id="contato" class="footer">
+    <section id="lote-verification" style="background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%); padding: 100px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        
+        <!-- Container Flexível -->
+        <div class="cards-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1040px; margin: 0 auto; align-items: stretch;">
+            
+            <!-- CARD 1: BUSCA DE LOTE -->
+            <div id="card-lote-busca" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 35px; width: 100%;">
+                        <img src="images/newlogo.png" alt="Logo" style="max-height: 40px; width: auto; object-fit: contain; display: block;" onerror="this.style.display='none';">
+                    </div>
+                    
+                    <h2 style="color: #1d1d1f; font-size: 1.15em; font-weight: 600; margin-bottom: 14px; letter-spacing: 1.5px; text-transform: uppercase;" data-i18n="batch_verify_title">Autenticidade de Compostos</h2>
+                    
+                    <p style="color: #515154; font-size: 0.88em; line-height: 1.6; margin-bottom: 40px; padding: 0 5px;" data-i18n="batch_verify_desc">Consulte o laudo analítico, certificação de pureza molecular (HPLC) e a rastreabilidade do seu lote diretamente em nossa base criptografada.</p>
+                </div>
+                
+                <div>
+                    <div style="display: flex; gap: 16px; flex-direction: column; align-items: stretch;">
+                        <div style="position: relative;">
+                            <input type="text" id="input-lote" placeholder="DIGITE O CÓDIGO DO LOTE" autocomplete="off" spellcheck="false" data-i18n-placeholder="input_lote_placeholder"
+                                style="width: 100%; box-sizing: border-box; padding: 18px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; font-size: 0.85em; font-family: monospace; text-transform: uppercase; text-align: center; color: #1d1d1f; background: rgba(255, 255, 255, 0.5); outline: none; letter-spacing: 2px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" />
+                        </div>
+                        
+                        <button id="btn-verificar-lote" 
+                            style="background: #1d1d1f; color: #ffffff; border: none; padding: 18px; border-radius: 12px; font-weight: 500; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; justify-content: center; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" data-i18n="batch_verify_btn">
+                            Verificar Rastreabilidade
+                        </button>
+                    </div>
+                    
+                    <div id="lote-error-msg" style="color: #ff3b30; font-size: 0.82em; margin-top: 20px; display: none; font-weight: 500; font-family: sans-serif; letter-spacing: 0.3px;">
+                        Código de lote não localizado ou inválido.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD DE SUCESSO -->
+            <div id="card-lote-sucesso" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: none;">
+                <div style="margin-bottom: 20px;">
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background-color: #1d1d1f; color: #ffffff; font-size: 16px; border-radius: 50%;">✓</span>
+                </div>
+
+                <h2 style="color: #1d1d1f; font-size: 1.2em; font-weight: 600; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;" data-i18n="batch_authenticated">Produto Autenticado</h2>
+                
+                <div id="success-lote-code" style="font-family: monospace; color: #515154; font-size: 0.82em; margin-bottom: 30px; letter-spacing: 1.5px;">
+                    LOTE: TIMED-OUT
+                </div>
+
+                <div style="width: 100%; height: 240px; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.3); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.4); margin-bottom: 30px; overflow: hidden;">
+                    <img id="success-produto-img" src="" alt="Produto Verificado" style="max-width: 90%; max-height: 90%; object-fit: contain; display: block;" />
+                </div>
+
+                <h3 id="success-produto-nome" style="color: #1d1d1f; font-size: 1.1em; font-weight: 600; margin-bottom: 35px; letter-spacing: 0.5px;">
+                    Nome do Composto
+                </h3>
+
+                <button id="btn-voltar-busca" 
+                    style="background: transparent; color: #515154; border: 1px solid rgba(0, 0, 0, 0.15); padding: 14px; width: 100%; border-radius: 12px; font-weight: 500; font-size: 0.82em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s ease;" data-i18n="batch_new_search">
+                    Nova Consulta
+                </button>
+            </div>
+
+            <!-- CARD 2: ENVIAR E-MAIL -->
+            <div id="card-lote-email" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 35px; width: 100%;">
+                        <div style="height: 40px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                    </div>
+                    
+                    <h2 style="color: #1d1d1f; font-size: 1.15em; font-weight: 600; margin-bottom: 14px; letter-spacing: 1.5px; text-transform: uppercase;" data-i18n="support_title">Suporte Institucional</h2>
+                    
+                    <p style="color: #515154; font-size: 0.88em; line-height: 1.6; margin-bottom: 40px; padding: 0 5px;" data-i18n="support_desc">Se o seu lote não foi localizado ou se você necessita de assistência direta com a documentação, contate nosso controle de qualidade.</p>
+                </div>
+                
+                <div style="display: flex; gap: 16px; flex-direction: column; align-items: stretch;">
+                    <div style="position: relative;">
+                        <input type="email" id="input-email-contato" placeholder="SEU E-MAIL DE CONTATO" autocomplete="off" data-i18n-placeholder="input_email_placeholder"
+                            style="width: 100%; box-sizing: border-box; padding: 18px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; font-size: 0.85em; text-align: center; color: #1d1d1f; background: rgba(255, 255, 255, 0.5); outline: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" />
+                    </div>
+                    
+                    <a id="btn-enviar-email" href="mailto:suporte@empresa.com?subject=Dúvida%20sobre%20Autenticidade%20de%20Lote"
+                        style="background: transparent; color: #1d1d1f; border: 1px solid #1d1d1f; padding: 18px; border-radius: 12px; font-weight: 500; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; justify-content: center; text-decoration: none;" data-i18n="send_message">
+                        Enviar Mensagem
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
+        const SUPABASE_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const cardBusca = document.getElementById('card-lote-busca');
+        const inputLote = document.getElementById('input-lote');
+        const btnVerificar = document.getElementById('btn-verificar-lote');
+        const errorMsg = document.getElementById('lote-error-msg');
+
+        const cardSucesso = document.getElementById('card-lote-sucesso');
+        const successLoteCode = document.getElementById('success-lote-code');
+        const successProdutoImg = document.getElementById('success-produto-img');
+        const successProdutoNome = document.getElementById('success-produto-nome');
+        const btnVoltarBusca = document.getElementById('btn-voltar-busca');
+
+        const cardEmail = document.getElementById('card-lote-email');
+        const inputEmail = document.getElementById('input-email-contato');
+        const btnEnviarEmail = document.getElementById('btn-enviar-email');
+
+        // Transições de Vidro iOS com Elevação Sutil
+        const configurarEfeitosCard = (card) => {
+            card.style.transform = "translateY(0)";
+            card.addEventListener('mouseenter', () => { 
+                card.style.background = 'rgba(255, 255, 255, 0.6)';
+                card.style.borderColor = 'rgba(255, 255, 255, 0.7)'; 
+                card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.5)';
+                card.style.transform = "translateY(-5px)";
+            });
+            card.addEventListener('mouseleave', () => { 
+                card.style.background = 'rgba(255, 255, 255, 0.45)';
+                card.style.borderColor = 'rgba(255, 255, 255, 0.5)'; 
+                card.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3)';
+                card.style.transform = "translateY(0)";
+            });
+        };
+        
+        configurarEfeitosCard(cardBusca);
+        configurarEfeitosCard(cardSucesso);
+        configurarEfeitosCard(cardEmail);
+
+        const configurarFocoInput = (input) => {
+            input.addEventListener('focus', () => {
+                input.style.borderColor = '#1d1d1f';
+                input.style.background = 'rgba(255, 255, 255, 0.9)';
+                input.style.boxShadow = '0 0 0 1px #1d1d1f';
+            });
+            input.addEventListener('blur', () => {
+                input.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                input.style.background = 'rgba(255, 255, 255, 0.5)';
+                input.style.boxShadow = 'none';
+            });
+        };
+
+        configurarFocoInput(inputLote);
+        configurarFocoInput(inputEmail);
+
+        // Hover iOS Dark Button Effect
+        btnEnviarEmail.addEventListener('mouseenter', () => {
+            btnEnviarEmail.style.background = '#1d1d1f';
+            btnEnviarEmail.style.color = '#ffffff';
+            btnEnviarEmail.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        });
+        btnEnviarEmail.addEventListener('mouseleave', () => {
+            btnEnviarEmail.style.background = 'transparent';
+            btnEnviarEmail.style.color = '#1d1d1f';
+            btnEnviarEmail.style.boxShadow = 'none';
+        });
+
+        btnEnviarEmail.addEventListener('click', function(e) {
+            const emailCliente = inputEmail.value.trim();
+            let mailtoUrl = "mailto:suporte@empresa.com?subject=Dúvida%20sobre%20Autenticidade%20de%20Lote";
+            if(emailCliente !== "") {
+                mailtoUrl += `&body=Email%20de%20contato%20do%20cliente:%20${encodeURIComponent(emailCliente)}`;
+            }
+            btnEnviarEmail.setAttribute('href', mailtoUrl);
+        });
+
+        async function handleLoteVerification() {
+            const codigo = inputLote.value.trim().toUpperCase();
+
+            if (codigo === '') {
+                errorMsg.textContent = 'Por favor, insira um lote para consulta.';
+                errorMsg.style.display = 'block';
+                inputLote.style.borderColor = '#ff3b30';
+                return;
+            }
+
+            try {
+                btnVerificar.disabled = true;
+                btnVerificar.textContent = 'Consultando...';
+                errorMsg.style.display = 'none';
+                inputLote.style.borderColor = '#1d1d1f';
+
+                const { data, error } = await _supabase
+                    .from('lotes')
+                    .select('codigo_lote, produto_nome, imagem_url')
+                    .eq('codigo_lote', codigo)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (!data) {
+                    errorMsg.textContent = 'Lote não localizado ou inválido para este composto.';
+                    errorMsg.style.display = 'block';
+                    inputLote.style.borderColor = '#ff3b30';
+                } else {
+                    successLoteCode.textContent = `LOTE: ${data.codigo_lote}`;
+                    successProdutoNome.textContent = data.produto_nome || "Composto de Alta Pureza";
+                    successProdutoImg.src = data.imagem_url || "images/placeholder.png";
+
+                    cardBusca.style.display = 'none';
+                    cardSucesso.style.display = 'flex';
+                    cardSucesso.style.flexDirection = 'column';
+                }
+
+            } catch (err) {
+                console.error(err);
+                errorMsg.textContent = 'Erro de comunicação. Tente novamente.';
+                errorMsg.style.display = 'block';
+            } finally {
+                btnVerificar.disabled = false;
+                btnVerificar.textContent = 'Verificar Rastreabilidade';
+            }
+        }
+
+        btnVoltarBusca.addEventListener('click', () => {
+            inputLote.value = '';
+            cardSucesso.style.display = 'none';
+            cardBusca.style.display = 'flex';
+        });
+
+        btnVerificar.addEventListener('click', handleLoteVerification);
+        inputLote.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleLoteVerification();
+        });
+        inputLote.addEventListener('input', function() {
+            errorMsg.style.display = 'none';
+            inputLote.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+        });
+    </script>
+
+
         <div class="container footer-grid" style="max-width: 1140px; margin: 0 auto; padding: 0 20px;">
             
             <div class="footer-brand">
@@ -1050,7 +1286,17 @@
                 product_glow70: 'Glow 70mg',
                 product_ghk50: 'GHK-Cu 50mg',
                 product_klow80: 'Klow 80mg',
-                product_tesam: 'Tesamorelin 10mg'
+                product_tesam: 'Tesamorelin 10mg',
+                batch_verify_title: 'Autenticidade de Compostos',
+                batch_verify_desc: 'Consulte o laudo analítico, certificação de pureza molecular (HPLC) e a rastreabilidade do seu lote diretamente em nossa base criptografada.',
+                batch_verify_btn: 'Verificar Rastreabilidade',
+                batch_authenticated: 'Produto Autenticado',
+                batch_new_search: 'Nova Consulta',
+                support_title: 'Suporte Institucional',
+                support_desc: 'Se o seu lote não foi localizado ou se você necessita de assistência direta com a documentação, contate nosso controle de qualidade.',
+                send_message: 'Enviar Mensagem',
+                input_lote_placeholder: 'DIGITE O CÓDIGO DO LOTE',
+                input_email_placeholder: 'SEU E-MAIL DE CONTATO'
             },
             en: {
                 nav_inicio: 'Home',
@@ -1081,7 +1327,17 @@
                 product_glow70: 'Glow 70mg',
                 product_ghk50: 'GHK-Cu 50mg',
                 product_klow80: 'Klow 80mg',
-                product_tesam: 'Tesamorelin 10mg'
+                product_tesam: 'Tesamorelin 10mg',
+                batch_verify_title: 'Compound Authenticity',
+                batch_verify_desc: 'Consult the analytical report, molecular purity certification (HPLC) and batch traceability directly in our encrypted database.',
+                batch_verify_btn: 'Verify Traceability',
+                batch_authenticated: 'Product Authenticated',
+                batch_new_search: 'New Search',
+                support_title: 'Institutional Support',
+                support_desc: 'If your batch was not found or if you need direct assistance with documentation, contact our quality control.',
+                send_message: 'Send Message',
+                input_lote_placeholder: 'ENTER BATCH CODE',
+                input_email_placeholder: 'YOUR CONTACT EMAIL'
             },
             es: {
                 nav_inicio: 'Inicio',
@@ -1112,7 +1368,17 @@
                 product_glow70: 'Glow 70mg',
                 product_ghk50: 'GHK-Cu 50mg',
                 product_klow80: 'Klow 80mg',
-                product_tesam: 'Tesamorelin 10mg'
+                product_tesam: 'Tesamorelin 10mg',
+                batch_verify_title: 'Autenticidad de Compuestos',
+                batch_verify_desc: 'Consulte el informe analítico, certificación de pureza molecular (HPLC) y trazabilidad del lote directamente en nuestra base de datos cifrada.',
+                batch_verify_btn: 'Verificar Trazabilidad',
+                batch_authenticated: 'Producto Autenticado',
+                batch_new_search: 'Nueva Búsqueda',
+                support_title: 'Soporte Institucional',
+                support_desc: 'Si su lote no fue encontrado o si necesita asistencia directa con la documentación, contacte a nuestro control de calidad.',
+                send_message: 'Enviar Mensaje',
+                input_lote_placeholder: 'INGRESE EL CÓDIGO DE LOTE',
+                input_email_placeholder: 'SU EMAIL DE CONTACTO'
             }
         };
 
@@ -1137,6 +1403,14 @@
                     } else {
                         element.textContent = i18n[lang][key];
                     }
+                }
+            });
+
+            // Atualizar placeholders dos inputs
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (i18n[lang][key]) {
+                    element.placeholder = i18n[lang][key];
                 }
             });
 
