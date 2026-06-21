@@ -116,7 +116,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
- /* --- NAVBAR TRANSPARENTE / GLASSMORPHISM --- */
+        /* --- NAVBAR TRANSPARENTE / GLASSMORPHISM --- */
         .navbar {
             position: fixed;
             top: 0;
@@ -144,7 +144,7 @@
         }
 
         .logo-box {
-            height: 35px; /* Aumentado em 3x (original era 40px) */
+            height: 35px;
             display: flex;
             align-items: center;
         }
@@ -155,7 +155,7 @@
         }
 
         .logo-fallback {
-            font-size: 3.6rem; /* Aumentado em 3x (original era 1.2rem) */
+            font-size: 3.6rem;
             font-weight: 900;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -165,6 +165,7 @@
             display: flex;
             gap: 40px;
             list-style: none;
+            align-items: center;
         }
 
         .nav-item a {
@@ -194,6 +195,57 @@
             width: 100%;
         }
 
+        /* --- LANGUAGE SELECTOR --- */
+        .language-selector {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: var(--secondary);
+            border-color: var(--primary);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary);
+        }
+
+        /* Desktop: mostrar seletor no navbar */
+        .nav-container .language-selector {
+            display: flex !important;
+        }
+
+        /* Mobile: esconder seletor do navbar, mostrar dentro do menu */
+        .nav-menu .language-selector {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container .language-selector {
+                display: none !important;
+            }
+
+            .nav-menu .language-selector {
+                display: flex !important;
+            }
+        }
+
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -211,369 +263,260 @@
             transition: all 0.3s ease;
         }
 
-/* ==========================================================================
-   1. HERO SECTION (BACKGROUND VIDEO + FADE OUT ULTRA-SUAVE)
-   ========================================================================== */
-.hero {
-    min-height: 90vh;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    background-color: #ffffff; /* Fundo branco de segurança */
-    overflow: hidden;
-    padding: 80px 20px;
-    box-sizing: border-box;
-}
+        /* ==========================================================================
+           1. HERO SECTION
+           ========================================================================== */
+        .hero {
+            min-height: 90vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: #ffffff;
+            overflow: hidden;
+            padding: 80px 20px;
+            box-sizing: border-box;
+        }
 
-/* Efeito de degradê ultra-baixo e suave no final do Hero */
-.hero::before {
-    content: '' !important;
-    position: absolute;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%;
-    /* O vídeo fica 100% visível até 93% da tela, suavizando para branco apenas nos 7% finais */
-    background: linear-gradient(
-        to bottom, 
-        rgba(255, 255, 255, 0) 93%, 
-        rgba(255, 255, 255, 0.5) 97%, 
-        rgba(255, 255, 255, 1) 100%
-    ) !important; 
-    z-index: 2; 
-    pointer-events: none;
-}
+        .hero::before {
+            content: '' !important;
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(
+                to bottom, 
+                rgba(255, 255, 255, 0) 93%, 
+                rgba(255, 255, 255, 0.5) 97%, 
+                rgba(255, 255, 255, 1) 100%
+            ) !important; 
+            z-index: 2; 
+            pointer-events: none;
+        }
 
-/* Vídeo em Background - Preenchimento Completo */
-.hero-video-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    z-index: 1;
-    pointer-events: none;
-}
+        .hero-video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-.hero-container {
-    position: relative;
-    z-index: 3; /* Acima do vídeo e do degradê */
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    justify-content: center;
-}
+        .hero-container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: center;
+        }
 
-.hero-content {
-    width: 100%;
-    max-width: 820px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fetchIn 1.4s var(--transition-smooth) forwards;
-}
+        .hero-content {
+            width: 100%;
+            max-width: 820px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fetchIn 1.4s var(--transition-smooth) forwards;
+        }
 
-/* ==========================================================================
-   2. CARDS DE DIFERENCIAIS (PUREZA & DISTRIBUIÇÃO)
-   ========================================================================== */
-.badge-grid-premium {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 40px;
-}
+        .badge-grid-premium {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 40px;
+        }
 
-.badge-card-minimal {
-    background: rgba(255, 255, 255, 0.85); /* Efeito sutil de vidro sobre o vídeo */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 16px 24px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex: 1;
-    max-width: 280px;
-    text-align: left;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
-}
+        .badge-card-minimal {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 16px 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            max-width: 280px;
+            text-align: left;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
+        }
 
-/* ==========================================================================
-   3. TIPOGRAFIA E ANIMAÇÃO DE PALAVRAS (WORD ROTATOR)
-   ========================================================================== */
-.hero-title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Arial', sans-serif;
-    font-size: 2.8rem; 
-    font-weight: 700;  
-    letter-spacing: 0.5px; 
-    line-height: 1.2;
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    color: #111111;
-}
+        .hero-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Arial', sans-serif;
+            font-size: 2.8rem; 
+            font-weight: 700;  
+            letter-spacing: 0.5px; 
+            line-height: 1.2;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            color: #111111;
+        }
 
-.word-rotator {
-    display: inline-block;
-    position: relative;
-    height: 1.2em; 
-    overflow: hidden;
-    color: #000000; 
-    font-weight: 800;
-}
+        .word-rotator {
+            display: inline-block;
+            position: relative;
+            height: 1.2em; 
+            overflow: hidden;
+            color: #000000; 
+            font-weight: 800;
+        }
 
-.word-wrapper {
-    display: block;
-    position: relative;
-}
+        .word-wrapper {
+            display: block;
+            position: relative;
+        }
 
-.word {
-    display: block;
-    opacity: 0;
-    transform: translateX(-50%) translateY(30px); 
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    white-space: nowrap;
-}
+        .word {
+            display: block;
+            opacity: 0;
+            transform: translateX(-50%) translateY(30px); 
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            white-space: nowrap;
+        }
 
-.word.active {
-    opacity: 1;
-    position: relative;
-    left: 0;
-    transform: translateX(0) translateY(0);
-}
+        .word.active {
+            opacity: 1;
+            position: relative;
+            left: 0;
+            transform: translateX(0) translateY(0);
+        }
 
-.word.exit {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-30px);
-}
+        .word.exit {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-30px);
+        }
 
-.hero-content p {
-    font-family: 'Arial', sans-serif;
-    font-size: 1.15rem; 
-    color: #333333;
-    margin-top: 0;
-    margin-bottom: 35px;
-    max-width: 600px;
-    font-weight: 400; 
-    line-height: 1.6;
-}
+        .hero-content p {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.15rem; 
+            color: #333333;
+            margin-top: 0;
+            margin-bottom: 35px;
+            max-width: 600px;
+            font-weight: 400; 
+            line-height: 1.6;
+        }
 
-/* ==========================================================================
-   4. ESTILO GERAL DE SEÇÕES & REMOÇÃO DO TRAÇO DIVISOR
-   ========================================================================== */
-.section-padding {
-    padding: 140px 0;
-}
+        /* --- SECTION STYLING --- */
+        .section-padding {
+            padding: 140px 0;
+        }
 
-.section-title {
-    font-size: 2.2rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 60px;
-    text-align: center;
-    position: relative;
-}
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
 
-/* Desativa completamente o traço preto debaixo dos h2 em todo o site */
-.section-title::after {
-    display: none !important;
-    content: none !important;
-}
+        .section-title::after {
+            display: none !important;
+            content: none !important;
+        }
 
-/* ==========================================================================
-   5. PRODUTOS SECTION (ESTILO PREMIUM & MINIMALISTA)
-   ========================================================================== */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px; 
-    width: 100%;
-    box-sizing: border-box;
-}
+        /* --- PRODUTOS SECTION --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px; 
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-.product-card {
-    background: #ffffff; 
-    border: 1px solid rgba(0, 0, 0, 0.08); 
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    border-radius: 8px; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                border-color 0.4s ease;
-}
+        .product-card {
+            background: #ffffff; 
+            border: 1px solid rgba(0, 0, 0, 0.08); 
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        border-color 0.4s ease;
+        }
 
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
-    border-color: #111111; 
-}
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            border-color: #111111; 
+        }
 
-.product-img-box {
-    height: 300px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    position: relative;
-    background-color: #f8f9fa; 
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .product-img-box {
+            height: 300px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: #f8f9fa; 
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.product-img-box img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-}
+        .product-img-box img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
 
-.product-card:hover .product-img-box img {
-    transform: scale(1.04); 
-}
+        .product-card:hover .product-img-box img {
+            transform: scale(1.04); 
+        }
 
-.product-info {
-    display: flex;
-    flex-direction: column;
-    text-align: left; 
-}
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left; 
+        }
 
-.product-info h3 {
-    font-family: 'Arial', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-top: 0;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    color: #111111;
-}
+        .product-info h3 {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            color: #111111;
+        }
 
-.product-info p {
-    font-family: 'Arial', sans-serif;
-    font-size: 0.88rem;
-    color: #555555;
-    font-weight: 400;
-    line-height: 1.5;
-    margin: 0;
-}
+        .product-info p {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.88rem;
+            color: #555555;
+            font-weight: 400;
+            line-height: 1.5;
+            margin: 0;
+        }
 
-/* ==========================================================================
-   6. COMPORTAMENTO RESPONSIVO COMPLETO (MOBILE / CELULAR)
-   ========================================================================== */
-@media (max-width: 992px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Hero Responsivo */
-    .hero {
-        min-height: auto;
-        padding: 100px 20px 60px 20px;
-    }
-    
-    .hero-title {
-        font-size: 2.1rem; 
-        line-height: 1.3;
-        margin-bottom: 15px;
-    }
-    
-    .hero-content p {
-        font-size: 1rem; 
-        margin-bottom: 25px;
-        padding: 0 10px; 
-    }
-
-    .badge-grid-premium {
-        flex-direction: column; 
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 35px;
-    }
-
-    .badge-card-minimal {
-        width: 100%;
-        max-width: 100%;
-        padding: 14px 20px;
-    }
-
-    .scroll-indicator {
-        display: none !important; 
-    }
-
-    /* Grid de Produtos Responsivo */
-    .products-grid {
-        grid-template-columns: 1fr; 
-        gap: 20px;
-        padding: 0 10px; 
-    }
-    
-    .product-card {
-        padding: 20px; 
-    }
-    
-    .product-img-box {
-        height: 260px; 
-    }
-}
-
-/* ==========================================================================
-   7. INDICADORES E ANIMAÇÕES GERAIS
-   ========================================================================== */
-@keyframes fetchIn {
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #444444;
-    text-decoration: none;
-}
-
-.scroll-indicator i {
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-8px); }
-    60% { transform: translateY(-4px); }
-}
         /* --- SOBRE SECTION --- */
         .about-section {
             background-color: var(--gray-100);
@@ -607,123 +550,79 @@
             margin-bottom: 30px;
         }
 
- /* --- FOOTER (ESTILO GLOBAIS / APPLE GLASSMISM) --- */
-.footer {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(30px) saturate(190%);
-    -webkit-backdrop-filter: blur(30px) saturate(190%);
-    color: #1d1d1f;
-    padding: 80px 0 40px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 -4px 30px rgba(0, 0, 0, 0.01);
-}
+        /* --- FOOTER --- */
+        .footer {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(30px) saturate(190%);
+            -webkit-backdrop-filter: blur(30px) saturate(190%);
+            color: #1d1d1f;
+            padding: 80px 0 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 -4px 30px rgba(0, 0, 0, 0.01);
+        }
 
-.footer-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 60px;
-    margin-bottom: 60px;
-}
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr; 
+            gap: 50px;
+            margin-bottom: 50px;
+        }
 
-.footer-logo-box {
-    height: 35px;
-    margin-bottom: 25px;
-}
+        .footer-logo-box {
+            height: 35px;
+            margin-bottom: 25px;
+        }
 
-.footer-logo-box img {
-    max-height: 100%;
-    width: auto;
-    /* Removido o filtro de inversão para a logo exibir na cor preta/original */
-    filter: none; 
-}
+        .footer-logo-box img {
+            max-height: 100%;
+            width: auto;
+            filter: none; 
+        }
 
-.footer-brand p {
-    font-size: 0.9rem;
-    color: #515154;
-    max-width: 350px;
-    font-weight: 400;
-    line-height: 1.6;
-}
+        .footer-brand p {
+            font-size: 0.9rem;
+            color: #515154;
+            max-width: 350px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
 
-.footer-contacts {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+        .footer-contacts {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    color: #515154;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #515154;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-.contact-item:hover {
-    color: #1d1d1f;
-}
+        .contact-item:hover {
+            color: #1d1d1f;
+        }
 
-.contact-item i {
-    font-size: 1.1rem;
-    color: #1d1d1f;
-    width: 20px;
-}
+        .contact-item i {
+            font-size: 1.1rem;
+            color: #1d1d1f;
+            width: 20px;
+        }
 
-.footer-bottom {
-    padding-top: 40px;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    text-align: center;
-    font-size: 0.8rem;
-    color: #86868b;
-    letter-spacing: 1px;
-}
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            text-align: center;
+            font-size: 0.8rem;
+            color: #86868b;
+            letter-spacing: 1px;
+        }
 
-/* CENTRALIZAÇÃO DO FOOTER NO MOBILE */
-@media (max-width: 768px) {
-    .footer {
-        text-align: center;
-    }
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    .footer-logo-box {
-        height: 35px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .footer-brand p {
-        margin: 0 auto;
-    }
-    .contact-item {
-        justify-content: center;
-    }
-}
-.footer-grid {
-    display: grid;
-    /* Divide em 3 colunas assimétricas e elegantes no desktop */
-    grid-template-columns: 2fr 1fr 1fr; 
-    gap: 50px;
-    margin-bottom: 50px;
-}
-
-@media (max-width: 768px) {
-    .footer-grid {
-        grid-template-columns: 1fr; /* 1 coluna no mobile */
-        gap: 40px;
-        text-align: center;
-    }
-    .footer-links {
-        align-items: center;
-    }
-    .footer-brand div {
-        margin: 0 auto 15px auto !important;
-    }
-}
         /* --- MODAL --- */
         .modal {
             position: fixed;
@@ -808,14 +707,43 @@
             font-weight: 300;
         }
 
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #444444;
+            text-decoration: none;
+        }
+
+        .scroll-indicator i {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+        @keyframes fetchIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* --- RESPONSIVIDADE --- */
-        @media (max-width: 1024px) {
+        @media (max-width: 992px) {
             .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 30px;
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 20px;
             }
-            .hero-content h1 { font-size: 4.2rem; }
-            .about-grid { gap: 40px; }
         }
 
         @media (max-width: 768px) {
@@ -825,6 +753,7 @@
             /* Navbar Mobile */
             .navbar { padding: 20px 0; }
             .menu-toggle { display: flex; }
+            
             .nav-menu {
                 position: fixed;
                 top: 0; right: -100%;
@@ -837,28 +766,81 @@
                 box-shadow: -10px 0 30px rgba(0,0,0,0.05);
                 transition: right 0.5s var(--transition-smooth);
             }
+
             .nav-menu.active { right: 0; }
             
             .menu-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
             .menu-toggle.active span:nth-child(2) { opacity: 0; }
             .menu-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-            /* Hero Mobile */
-            .hero { height: 100vh; }
-            .hero-content h1 { font-size: 3.2rem; }
-            .hero-content p { font-size: 1.1rem; }
-            .scroll-indicator { display: none; }
+            /* Language Selector Mobile */
+            .language-selector {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                gap: 8px;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 12px 16px;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                z-index: 999;
+                backdrop-filter: blur(10px);
+            }
 
-            /* Produtos Mobile */
-            .products-grid { grid-template-columns: 1fr; }
+            .nav-menu .language-selector {
+                position: static;
+                transform: none;
+                bottom: auto;
+                background: transparent;
+                border: none;
+                padding: 0;
+                backdrop-filter: none;
+            }
+
+            /* Hero Mobile */
+            .hero { min-height: auto; padding: 100px 20px 60px 20px; }
+            .hero-title { font-size: 2.1rem; line-height: 1.3; margin-bottom: 15px; }
+            .hero-content p { font-size: 1rem; margin-bottom: 25px; padding: 0 10px; }
+
+            .badge-grid-premium {
+                flex-direction: column; 
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 35px;
+            }
+
+            .badge-card-minimal {
+                width: 100%;
+                max-width: 100%;
+                padding: 14px 20px;
+            }
+
+            .scroll-indicator { display: none !important; }
+
+            /* Grid de Produtos Responsivo */
+            .products-grid {
+                grid-template-columns: 1fr; 
+                gap: 20px;
+                padding: 0 10px; 
+            }
+            
+            .product-card { padding: 20px; }
+            .product-img-box { height: 260px; }
 
             /* Sobre Mobile */
             .about-grid { grid-template-columns: 1fr; }
             .about-left { height: 350px; order: 2; }
             .about-right { order: 1; }
 
-            /* Footer & Modal Mobile */
+            /* Footer Mobile */
             .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .footer { text-align: center; }
+            .footer-logo-box { height: 35px; display: flex; justify-content: center; align-items: center; }
+            .footer-brand p { margin: 0 auto; }
+            .contact-item { justify-content: center; }
+
+            /* Modal Mobile */
             .modal-content { grid-template-columns: 1fr; }
             .modal-img-box { min-height: 250px; height: 250px; }
             .modal-body { padding: 30px; }
@@ -880,840 +862,712 @@
                 <span></span>
             </button>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="#inicio">Início</a></li>
-                <li class="nav-item"><a href="#produtos">Produtos</a></li>
-                <li class="nav-item"><a href="#sobre">Sobre</a></li>
-                <li class="nav-item"><a href="#contato">Contato</a></li>
+                <li class="nav-item"><a href="#inicio" data-i18n="nav_inicio">Início</a></li>
+                <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
+                <li class="nav-item"><a href="#sobre" data-i18n="nav_sobre">Sobre</a></li>
+                <li class="nav-item"><a href="#contato" data-i18n="nav_contato">Contato</a></li>
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="pt">PT</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="es">ES</button>
+                </div>
             </ul>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="pt">PT</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="es">ES</button>
+            </div>
         </div>
     </nav>
 
-<header id="inicio" class="hero">
-    <style>
-        @media (max-width: 768px) {
-            #inicio .hero-title {
-                font-size: 1.8rem !important; /* Tamanho reduzido para não quebrar palavras longas */
-            }
-            #inicio .badge-card-minimal h4 {
-                font-size: 0.85rem !important; /* Texto do card ligeiramente menor */
-            }
-            #inicio .badge-card-minimal p {
-                font-size: 0.75rem !important; /* Subtexto do card ajustado */
-            }
-            #inicio .hero-content p {
-                font-size: 0.95rem !important; /* Subtítulo principal mais confortável */
-            }
-        }
-    </style>
-
-    <video autoplay loop muted playsinline class="hero-video-bg">
-        <source src="images/molecule.mp4" type="video/mp4">
-        Seu navegador não suporta vídeos em HTML5.
-    </video>
-    
-    <div class="container hero-container">
-        <div class="hero-content" style="display: flex !important; flex-direction: column !important; align-items: center !important; text-align: center !important; width: 100%;">
-            
-            <span style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 15px; font-weight: 600; display: block; text-align: center;">
-                Padrão Internacional de Excelência
-            </span>
-
-            <h1 class="hero-title" style="color: #ffffff !important; text-align: center !important; display: flex !important; flex-direction: column !important; align-items: center !important;">
-                <span class="word-rotator" style="color: #ffffff !important; font-weight: 800; text-align: center !important;">
-                    <span class="word-wrapper">
-                        <span class="word active">peptídeos</span>
-                        <span class="word">formulação</span>
-                        <span class="word">síntese</span>
-                        <span class="word">evolução</span>
-                        <span class="word">bioativos</span>
-                    </span>
-                </span>
-            </h1>
-
-            <p style="color: rgba(255, 255, 255, 0.9) !important; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center !important;">
-                Desenvolvimento de alta performance com pureza rigorosamente certificada e logística internacional.
-            </p>
-
-            <div class="badge-grid-premium">
+    <header id="inicio" class="hero">
+        <video autoplay loop muted playsinline class="hero-video-bg">
+            <source src="images/molecule.mp4" type="video/mp4">
+            Seu navegador não suporta vídeos em HTML5.
+        </video>
+        
+        <div class="container hero-container">
+            <div class="hero-content" style="display: flex !important; flex-direction: column !important; align-items: center !important; text-align: center !important; width: 100%;">
                 
-                <div class="badge-card-minimal" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: none; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 14px; width: 100%; box-sizing: border-box;">
-                    <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px; margin: 0 auto;">
-                        <i class="fas fa-check-circle" style="font-size: 1.4rem; color: #ffffff !important; flex-shrink: 0;"></i>
-                        <div style="display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important;">
-                            <h4 style="margin: 0; font-size: 0.95rem; color: #ffffff !important; font-weight: 600; line-height: 1.2;">Pureza Autenticada</h4>
-                            <p style="margin: 3px 0 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7) !important; line-height: 1.2;">Garantia de laboratório</p>
+                <span style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 15px; font-weight: 600; display: block; text-align: center;" data-i18n="hero_badge">Padrão Internacional de Excelência</span>
+
+                <h1 class="hero-title" style="color: #ffffff !important; text-align: center !important; display: flex !important; flex-direction: column !important; align-items: center !important;">
+                    <span class="word-rotator" style="color: #ffffff !important; font-weight: 800; text-align: center !important;">
+                        <span class="word-wrapper">
+                            <span class="word active" data-word="pt">peptídeos</span>
+                            <span class="word" data-word="en">peptides</span>
+                            <span class="word" data-word="es">péptidos</span>
+                        </span>
+                    </span>
+                </h1>
+
+                <p style="color: rgba(255, 255, 255, 0.9) !important; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center !important;" data-i18n="hero_subtitle">Desenvolvimento de alta performance com pureza rigorosamente certificada e logística internacional.</p>
+
+                <div class="badge-grid-premium">
+                    
+                    <div class="badge-card-minimal" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: none; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 14px; width: 100%; box-sizing: border-box;">
+                        <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px; margin: 0 auto;">
+                            <i class="fas fa-check-circle" style="font-size: 1.4rem; color: #ffffff !important; flex-shrink: 0;"></i>
+                            <div style="display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important;">
+                                <h4 style="margin: 0; font-size: 0.95rem; color: #ffffff !important; font-weight: 600; line-height: 1.2;" data-i18n="badge_purity">Pureza Autenticada</h4>
+                                <p style="margin: 3px 0 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7) !important; line-height: 1.2;" data-i18n="badge_purity_sub">Garantia de laboratório</p>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="badge-card-minimal" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: none; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 14px; width: 100%; box-sizing: border-box;">
+                        <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px; margin: 0 auto;">
+                            <i class="fas fa-globe" style="font-size: 1.4rem; color: #ffffff !important; flex-shrink: 0;"></i>
+                            <div style="display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important;">
+                                <h4 style="margin: 0; font-size: 0.95rem; color: #ffffff !important; font-weight: 600; line-height: 1.2;" data-i18n="badge_distrib">Distribuição Global</h4>
+                                <p style="margin: 3px 0 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7) !important; line-height: 1.2;" data-i18n="badge_distrib_sub">Logística internacional</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
 
-                <div class="badge-card-minimal" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: none; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 14px; width: 100%; box-sizing: border-box;">
-                    <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px; margin: 0 auto;">
-                        <i class="fas fa-globe" style="font-size: 1.4rem; color: #ffffff !important; flex-shrink: 0;"></i>
-                        <div style="display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important;">
-                            <h4 style="margin: 0; font-size: 0.95rem; color: #ffffff !important; font-weight: 600; line-height: 1.2;">Distribuição Global</h4>
-                            <p style="margin: 3px 0 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7) !important; line-height: 1.2;">Logística internacional</p>
-                        </div>
-                    </div>
-                </div>
+                <a href="https://wa.me/595993493799" target="_blank" class="btn-premium" style="border-radius: 8px !important;">
+                    <i class="fab fa-whatsapp"></i> <span data-i18n="cta_whatsapp">Falar no WhatsApp</span>
+                </a>
                 
             </div>
-
-            <a href="https://wa.me/5511999999999" target="_blank" class="btn-premium" style="border-radius: 8px !important;">
-                <i class="fab fa-whatsapp"></i> Falar no WhatsApp
-            </a>
-            
         </div>
-    </div>
 
-    <a href="#produtos" class="scroll-indicator" style="color: #ffffff !important;">
-        <i class="fas fa-chevron-down"></i>
-    </a>
-</header>
+        <a href="#produtos" class="scroll-indicator" style="color: #ffffff !important;">
+            <i class="fas fa-chevron-down"></i>
+        </a>
+    </header>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const words = document.querySelectorAll(".word");
-    let currentIndex = 0;
-
-    setInterval(() => {
-        // 1. Identifica a palavra atual e adiciona classe de saída (sobe sumindo)
-        const currentWord = words[currentIndex];
-        currentWord.classList.remove("active");
-        currentWord.classList.add("exit");
-
-        // Remove a classe de saída após a animação acabar para limpar o elemento
-        setTimeout(() => {
-            currentWord.classList.remove("exit");
-        }, 600);
-
-        // 2. Avança para o próximo índice (retorna ao 0 se chegar no fim)
-        currentIndex = (currentIndex + 1) % words.length;
-
-        // 3. Ativa a próxima palavra (sobe aparecendo)
-        words[currentIndex].classList.add("active");
-
-    }, 3000); // 3000 milissegundos = 3 segundos
-});
-</script>
-
-  <section id="produtos" class="section-padding reveal">
-    <div class="container">
-        <h2 class="section-title">Nossos Produtos</h2>
-        <div class="products-grid" id="products-container">
+    <section id="produtos" class="section-padding reveal">
+        <div class="container">
+            <h2 class="section-title" data-i18n="section_products">Nossos Produtos</h2>
+            <div class="products-grid" id="products-container">
             </div>
-    </div>
-</section>
-
-<section id="sobre" class="section-padding about-section reveal" style="background: #ffffff; padding: 100px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-bottom: 1px solid #eaeaea;">
-    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-        <h2 class="section-title" style="color: #111111; font-size: 2em; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; text-align: center;">
-            Sobre a New Life Labs
-        </h2>
-        <div class="about-text" style="color: #4a4a4a; font-size: 1.05em; line-height: 1.8; text-align: center;">
-            <p style="margin-bottom: 25px; text-align: center;">
-                A <strong>New Life Labs</strong> posiciona-se de forma consolidada na vanguarda do desenvolvimento científico global, oferecendo soluções biotecnológicas premium desenvolvidas sob os mais severos e rígidos padrões internacionais de pureza, segurança e eficácia molecular. Fundamentada na intersecção entre a química fina avançada e a engenharia genética de alta precisão, nossa infraestrutura laboratoriais opera sob diretrizes rigorosas que garantem a integridade absoluta de cada composto sintetizado.
-            </p>
-            <p style="margin-bottom: 25px; text-align: center;">
-                Nossa missão institucional transcende o fornecimento de insumos; nós estruturamos um ecossistema de confiança analítica e transparência total. Atendemos a uma comunidade médica, de pesquisa e desenvolvimento altamente exigente, que demanda reprodutibilidade técnica e respostas biológicas previsíveis. Por meio de metodologias analíticas avançadas, mitigamos quaisquer variações teciduais, entregando compostos perfeitamente calibrados para suas respectivas finalidades biológicas.
-            </p>
-            <p style="margin-bottom: 0; font-weight: 500; color: #111111; text-align: center;">
-                Cada lote unitário passa por ensaios severos de espectrometria de massa e cromatografia líquida de alta eficiência (HPLC), chancelando o compromisso inegociável da New Life Labs com a soberania e a excelência científica.
-            </p>
-        </div>
-    </div>
-</section>
-
-    <!-- ========================================================= -->
-    <!-- SEÇÃO DE COMPROVAÇÃO DE PROCESSOS E PEPTÍDEOS              -->
-    <!-- ========================================================= -->
-    <section class="feature-section" style="background: #ffffff; color: #111111; padding: 80px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <div style="max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center;" class="feature-grid-responsive">
-            
-            <!-- LADO ESQUERDO: Card de Processos em Tempo Real -->
-            <div style="width: 100%; max-width: 384px; margin: 0 auto;">
-                <div class="premium-glass-card" style="background: rgba(250, 250, 250, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.02); overflow: hidden; transition: all 0.4s ease;">
-                    <div style="position: relative; height: 340px; overflow: hidden; padding: 0;">
-                        
-                        <!-- Lista Animada Controlada -->
-                        <div id="motion-list" class="animated-scroll-container" style="display: flex; flex-direction: column; gap: 10px; position: absolute; width: 100%; padding: 10px 0;">
-                            <!-- Injeção de dados via JS -->
-                        </div>
-
-                        <!-- Gradients de Ocultação Sofisticados -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(to bottom, #ffffff 10%, rgba(255,255,255,0.8) 50%, transparent); pointer-events: none; z-index: 2;"></div>
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(to top, #ffffff 10%, rgba(255,255,255,0.8) 50%, transparent); pointer-events: none; z-index: 2;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- LADO DIREITO: Texto de Engenharia Molecular e Badges (CENTRALIZADOS) -->
-            <div style="display: flex; flex-direction: column; gap: 28px; text-align: center; align-items: center;">
-                <div>
-                    <span style="background: #111111; color: #ffffff; padding: 6px 14px; border-radius: 4px; font-size: 0.78em; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">
-                        Padrão de Pureza Molecular
-                    </span>
-                </div>
-                
-                <h3 style="font-size: 1.6em; font-weight: 500; color: #111111; line-height: 1.5; margin: 0; letter-spacing: -0.3px; text-align: center;">
-                    Engenharia e bio-síntese avançada 
-                    <span style="color: #666666; display: block; font-size: 0.9em; margin-top: 12px; font-weight: 400; line-height: 1.7; letter-spacing: 0; text-align: center;">
-                        Asseguramos o controle rigoroso da cadeia estrutural de cada peptídeo liofilizado. Da calibração estequiométrica à vedação a vácuo das ampolas, mitigamos impurezas cruzadas para entregar compostos de alta afinidade dérmica e sistêmica com estabilidade analítica chancelada.
-                    </span>
-                </h3>
-
-                <!-- Tags do Laboratório Centralizadas -->
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%;">
-                    <span class="lab-badge" style="background: #f4f4f5; color: #111111; border: 1px solid #e4e4e7; padding: 8px 14px; border-radius: 6px; font-size: 0.82em; font-weight: 500; transition: all 0.2s;">HPLC &gt; 99% Pureza</span>
-                    <span class="lab-badge" style="background: #f4f4f5; color: #111111; border: 1px solid #e4e4e7; padding: 8px 14px; border-radius: 6px; font-size: 0.82em; font-weight: 500; transition: all 0.2s;">Liofilização Criogênica</span>
-                    <span class="lab-badge" style="background: #f4f4f5; color: #111111; border: 1px solid #e4e4e7; padding: 8px 14px; border-radius: 6px; font-size: 0.82em; font-weight: 500; transition: all 0.2s;">Isento de Pirogênios</span>
-                </div>
-            </div>
-
         </div>
     </section>
 
-    <!-- ESTILOS AVANÇADOS DE INTERAÇÃO -->
-    <style>
-        @media (min-width: 768px) {
-            .feature-grid-responsive {
-                grid-template-columns: 1fr 1fr !important;
-            }
-        }
-        @keyframes loopScroll {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-        .animated-scroll-container {
-            animation: loopScroll 18s linear infinite;
-        }
-        .premium-glass-card:hover {
-            border-color: rgba(0, 0, 0, 0.12) !important;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.04) !important;
-            transform: translateY(-2px);
-        }
-        .process-row {
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .process-row:hover {
-            background: rgba(255, 255, 255, 0.9) !important;
-            transform: scale(1.01);
-        }
-        .lab-badge:hover {
-            background: #111111 !important;
-            color: #ffffff !important;
-            border-color: #111111 !important;
-        }
-    </style>
-
-    <!-- JAVASCRIPT: DADOS CONTEXTUAIS CENTRALIZADOS COM SVGs BIOTÉCNICOS -->
-    <script>
-        const tasksData = [
-          {
-            title: "Verificação por HPLC",
-            subtitle: "Pureza cromatográfica acima de 99%",
-            // Gráfico Analítico de picos de pureza (HPLC)
-            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M3 18l4-2 3-8 4 9 3-12 4 5"/></svg>`
-          },
-          {
-            title: "Liofilização Protetiva",
-            subtitle: "Desidratação molecular estável a vácuo",
-            // Frasco/vial em processo de congelamento/sublimação
-            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v3c0 1-1 2-2 3v10c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V9c0-1-1-2-2-3V3"/><path d="M12 11v4M9 13h6"/></svg>`
-          },
-          {
-            title: "Vedação Hermética Âmbar",
-            subtitle: "Isolamento absoluto contra oxidação por luz",
-            // Ampola de vidro farmacêutica selada
-            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4b2 2 0 0 1 2 2v2b4 4 0 0 0 .5 2l1.5 2.5A3 3 0 0 1 21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a3 3 0 0 1 .8-2.1l1.7-2.4a4 4 0 0 0 .5-2V4a2 2 0 0 1 2-2h2"/></svg>`
-          },
-          {
-            title: "Controle de Isômeros",
-            subtitle: "Sequenciamento correto de aminoácidos",
-            // Estrutura molecular / ligações peptídicas
-            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="12" r="2.5"/><circle cx="12" cy="19" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/><line x1="7.5" y1="12" x2="16.5" y2="12"/></svg>`
-          },
-          {
-            title: "Cadeia de Frio Controlada",
-            subtitle: "Estabilidade térmica monitorada (2°C a 8°C)",
-            // Termômetro criogênico / preservação biológica
-            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/><path d="M12 9h2M12 6h2M12 12h2"/></svg>`
-          }
-        ];
-
-        const completeLoopData = [...tasksData, ...tasksData];
-        const motionListContainer = document.getElementById('motion-list');
-
-        completeLoopData.forEach((task) => {
-            const row = document.createElement('div');
-            row.className = "process-row";
-            row.style.cssText = "display: flex; align-items: center; justify-content: center; padding: 12px 20px; border-bottom: 1px solid rgba(0,0,0,0.04); min-height: 68px; box-sizing: border-box; background: transparent; border-radius: 8px; margin: 0 10px;";
-            
-            row.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; text-align: center;">
-                    <div style="flex-shrink: 0; display: flex; align-items: center; background: #ffffff; padding: 7px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.01);">
-                        ${task.icon}
-                    </div>
-                    <div style="text-align: center;">
-                        <p style="margin: 0; font-size: 0.85em; font-weight: 600; color: #111111; letter-spacing: -0.1px; text-align: center;">${task.title}</p>
-                        <p style="margin: 3px 0 0 0; font-size: 0.74em; color: #666666; line-height: 1.3; text-align: center;">${task.subtitle}</p>
-                    </div>
-                </div>
-            `;
-            motionListContainer.appendChild(row);
-        });
-    </script>
-
-<section id="lote-verification" style="background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%); padding: 100px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    
-    <!-- Container Flexível -->
-    <div class="cards-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1040px; margin: 0 auto; align-items: stretch;">
-        
-        <!-- CARD 1: BUSCA DE LOTE -->
-        <div id="card-lote-busca" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 35px; width: 100%;">
-                    <img src="images/newlogo.png" alt="Logo" style="max-height: 40px; width: auto; object-fit: contain; display: block;" onerror="this.style.display='none';">
-                </div>
-                
-                <h2 style="color: #1d1d1f; font-size: 1.15em; font-weight: 600; margin-bottom: 14px; letter-spacing: 1.5px; text-transform: uppercase;">
-                    Autenticidade de Compostos
-                </h2>
-                
-                <p style="color: #515154; font-size: 0.88em; line-height: 1.6; margin-bottom: 40px; padding: 0 5px;">
-                    Consulte o laudo analítico, certificação de pureza molecular (HPLC) e a rastreabilidade do seu lote diretamente em nossa base criptografada.
-                </p>
-            </div>
-            
-            <div>
-                <div style="display: flex; gap: 16px; flex-direction: column; align-items: stretch;">
-                    <div style="position: relative;">
-                        <input type="text" id="input-lote" placeholder="DIGITE O CÓDIGO DO LOTE" autocomplete="off" spellcheck="false"
-                            style="width: 100%; box-sizing: border-box; padding: 18px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; font-size: 0.85em; font-family: monospace; text-transform: uppercase; text-align: center; color: #1d1d1f; background: rgba(255, 255, 255, 0.5); outline: none; letter-spacing: 2px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" />
-                    </div>
-                    
-                    <button id="btn-verificar-lote" 
-                        style="background: #1d1d1f; color: #ffffff; border: none; padding: 18px; border-radius: 12px; font-weight: 500; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; justify-content: center; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                        Verificar Rastreabilidade
-                    </button>
-                </div>
-                
-                <div id="lote-error-msg" style="color: #ff3b30; font-size: 0.82em; margin-top: 20px; display: none; font-weight: 500; font-family: sans-serif; letter-spacing: 0.3px;">
-                    Código de lote não localizado ou inválido.
-                </div>
+    <section id="sobre" class="section-padding about-section reveal" style="background: #ffffff; padding: 100px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-bottom: 1px solid #eaeaea;">
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h2 class="section-title" style="color: #111111; font-size: 2em; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; text-align: center;" data-i18n="section_about">Sobre a New Life Labs</h2>
+            <div class="about-text" style="color: #4a4a4a; font-size: 1.05em; line-height: 1.8; text-align: center;">
+                <p style="margin-bottom: 25px; text-align: center;" data-i18n="about_p1">A <strong>New Life Labs</strong> posiciona-se de forma consolidada na vanguarda do desenvolvimento científico global, oferecendo soluções biotecnológicas premium desenvolvidas sob os mais severos e rígidos padrões internacionais de pureza, segurança e eficácia molecular.</p>
+                <p style="margin-bottom: 25px; text-align: center;" data-i18n="about_p2">Nossa missão institucional transcende o fornecimento de insumos; nós estruturamos um ecossistema de confiança analítica e transparência total. Atendemos a uma comunidade médica, de pesquisa e desenvolvimento altamente exigente, que demanda reprodutibilidade técnica e respostas biológicas previsíveis.</p>
+                <p style="margin-bottom: 0; font-weight: 500; color: #111111; text-align: center;" data-i18n="about_p3">Cada lote unitário passa por ensaios severos de espectrometria de massa e cromatografia líquida de alta eficiência (HPLC), chancelando o compromisso inegociável da New Life Labs com a soberania e a excelência científica.</p>
             </div>
         </div>
+    </section>
 
-        <!-- CARD DE SUCESSO -->
-        <div id="card-lote-sucesso" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: none;">
-            <div style="margin-bottom: 20px;">
-                <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background-color: #1d1d1f; color: #ffffff; font-size: 16px; border-radius: 50%;">✓</span>
-            </div>
-
-            <h2 style="color: #1d1d1f; font-size: 1.2em; font-weight: 600; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">
-                Produto Autenticado
-            </h2>
+    <section id="contato" class="footer">
+        <div class="container footer-grid" style="max-width: 1140px; margin: 0 auto; padding: 0 20px;">
             
-            <div id="success-lote-code" style="font-family: monospace; color: #515154; font-size: 0.82em; margin-bottom: 30px; letter-spacing: 1.5px;">
-                LOTE: TIMED-OUT
-            </div>
-
-            <div style="width: 100%; height: 240px; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.3); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.4); margin-bottom: 30px; overflow: hidden;">
-                <img id="success-produto-img" src="" alt="Produto Verificado" style="max-width: 90%; max-height: 90%; object-fit: contain; display: block;" />
-            </div>
-
-            <h3 id="success-produto-nome" style="color: #1d1d1f; font-size: 1.1em; font-weight: 600; margin-bottom: 35px; letter-spacing: 0.5px;">
-                Nome do Composto
-            </h3>
-
-            <button id="btn-voltar-busca" 
-                style="background: transparent; color: #515154; border: 1px solid rgba(0, 0, 0, 0.15); padding: 14px; width: 100%; border-radius: 12px; font-weight: 500; font-size: 0.82em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s ease;">
-                Nova Consulta
-            </button>
-        </div>
-
-        <!-- CARD 2: ENVIAR E-MAIL -->
-        <div id="card-lote-email" style="flex: 1; min-width: 320px; max-width: 460px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 50px 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 35px; width: 100%;">
-                    <div style="height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    </div>
+            <div class="footer-brand">
+                <div class="footer-logo-box">
+                    <img src="images/newlogo.png" alt="New Life Labs" style="max-height: 100%; width: auto; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="logo-fallback" style="display:none; font-weight: 700; font-size: 1.2rem; color: #1d1d1f; letter-spacing: 0.5px;">New Life Labs</span>
                 </div>
-                
-                <h2 style="color: #1d1d1f; font-size: 1.15em; font-weight: 600; margin-bottom: 14px; letter-spacing: 1.5px; text-transform: uppercase;">
-                    Suporte Institucional
-                </h2>
-                
-                <p style="color: #515154; font-size: 0.88em; line-height: 1.6; margin-bottom: 40px; padding: 0 5px;">
-                    Se o seu lote não foi localizado ou se você necessita de assistência direta com a documentação, contate nosso controle de qualidade.
-                </p>
+                <p style="margin-bottom: 20px;" data-i18n="footer_brand">Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.</p>
+            </div>
+
+            <div class="footer-links" style="display: flex; flex-direction: column; gap: 15px;">
+                <h4 style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1d1d1f; margin-bottom: 10px;" data-i18n="footer_compliance">Conformidade</h4>
+                <a href="#" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="footer_link1">Rastreabilidade de Lotes</a>
+                <a href="#" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="footer_link2">Termos de Uso Corporativo</a>
+                <a href="#" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="footer_link3">Política de Privacidade</a>
             </div>
             
-            <div style="display: flex; gap: 16px; flex-direction: column; align-items: stretch;">
-                <div style="position: relative;">
-                    <input type="email" id="input-email-contato" placeholder="SEU E-MAIL DE CONTATO" autocomplete="off"
-                        style="width: 100%; box-sizing: border-box; padding: 18px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; font-size: 0.85em; text-align: center; color: #1d1d1f; background: rgba(255, 255, 255, 0.5); outline: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" />
-                </div>
-                
-                <a id="btn-enviar-email" href="mailto:suporte@empresa.com?subject=Dúvida%20sobre%20Autenticidade%20de%20Lote"
-                    style="background: transparent; color: #1d1d1f; border: 1px solid #1d1d1f; padding: 18px; border-radius: 12px; font-weight: 500; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; justify-content: center; text-decoration: none;">
-                    Enviar Mensagem
+            <div class="footer-contacts">
+                <h4 style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1d1d1f; margin-bottom: 10px;" data-i18n="footer_contact">Canais Oficiais</h4>
+                <a href="mailto:contact@newlifelabs.com" class="contact-item">
+                    <i class="far fa-envelope"></i> contact@newlifelabs.com
+                </a>
+                <a href="https://instagram.com/newlifelabs.us" target="_blank" class="contact-item">
+                    <i class="fab fa-instagram"></i> @newlifelabs.us
+                </a>
+                <a href="https://wa.me/595993493799" target="_blank" class="contact-item">
+                    <i class="fab fa-whatsapp"></i> +595 993 493799
                 </a>
             </div>
         </div>
-
-    </div>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
-    const SUPABASE_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
-    
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const cardBusca = document.getElementById('card-lote-busca');
-    const inputLote = document.getElementById('input-lote');
-    const btnVerificar = document.getElementById('btn-verificar-lote');
-    const errorMsg = document.getElementById('lote-error-msg');
-
-    const cardSucesso = document.getElementById('card-lote-sucesso');
-    const successLoteCode = document.getElementById('success-lote-code');
-    const successProdutoImg = document.getElementById('success-produto-img');
-    const successProdutoNome = document.getElementById('success-produto-nome');
-    const btnVoltarBusca = document.getElementById('btn-voltar-busca');
-
-    const cardEmail = document.getElementById('card-lote-email');
-    const inputEmail = document.getElementById('input-email-contato');
-    const btnEnviarEmail = document.getElementById('btn-enviar-email');
-
-    // Transições de Vidro iOS com Elevação Sutil
-    const configurarEfeitosCard = (card) => {
-        card.style.transform = "translateY(0)";
-        card.addEventListener('mouseenter', () => { 
-            card.style.background = 'rgba(255, 255, 255, 0.6)';
-            card.style.borderColor = 'rgba(255, 255, 255, 0.7)'; 
-            card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.5)';
-            card.style.transform = "translateY(-5px)";
-        });
-        card.addEventListener('mouseleave', () => { 
-            card.style.background = 'rgba(255, 255, 255, 0.45)';
-            card.style.borderColor = 'rgba(255, 255, 255, 0.5)'; 
-            card.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.3)';
-            card.style.transform = "translateY(0)";
-        });
-    };
-    
-    configurarEfeitosCard(cardBusca);
-    configurarEfeitosCard(cardSucesso);
-    configurarEfeitosCard(cardEmail);
-
-    const configurarFocoInput = (input) => {
-        input.addEventListener('focus', () => {
-            input.style.borderColor = '#1d1d1f';
-            input.style.background = 'rgba(255, 255, 255, 0.9)';
-            input.style.boxShadow = '0 0 0 1px #1d1d1f';
-        });
-        input.addEventListener('blur', () => {
-            input.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-            input.style.background = 'rgba(255, 255, 255, 0.5)';
-            input.style.boxShadow = 'none';
-        });
-    };
-
-    configurarFocoInput(inputLote);
-    configurarFocoInput(inputEmail);
-
-    // Hover iOS Dark Button Effect
-    btnEnviarEmail.addEventListener('mouseenter', () => {
-        btnEnviarEmail.style.background = '#1d1d1f';
-        btnEnviarEmail.style.color = '#ffffff';
-        btnEnviarEmail.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-    });
-    btnEnviarEmail.addEventListener('mouseleave', () => {
-        btnEnviarEmail.style.background = 'transparent';
-        btnEnviarEmail.style.color = '#1d1d1f';
-        btnEnviarEmail.style.boxShadow = 'none';
-    });
-
-    btnEnviarEmail.addEventListener('click', function(e) {
-        const emailCliente = inputEmail.value.trim();
-        let mailtoUrl = "mailto:suporte@empresa.com?subject=Dúvida%20sobre%20Autenticidade%20de%20Lote";
-        if(emailCliente !== "") {
-            mailtoUrl += `&body=Email%20de%20contato%20do%20cliente:%20${encodeURIComponent(emailCliente)}`;
-        }
-        btnEnviarEmail.setAttribute('href', mailtoUrl);
-    });
-
-    async function handleLoteVerification() {
-        const codigo = inputLote.value.trim().toUpperCase();
-
-        if (codigo === '') {
-            errorMsg.textContent = 'Por favor, insira um lote para consulta.';
-            errorMsg.style.display = 'block';
-            inputLote.style.borderColor = '#ff3b30';
-            return;
-        }
-
-        try {
-            btnVerificar.disabled = true;
-            btnVerificar.textContent = 'Consultando...';
-            errorMsg.style.display = 'none';
-            inputLote.style.borderColor = '#1d1d1f';
-
-            const { data, error } = await _supabase
-                .from('lotes')
-                .select('codigo_lote, produto_nome, imagem_url')
-                .eq('codigo_lote', codigo)
-                .maybeSingle();
-
-            if (error) throw error;
-
-            if (!data) {
-                errorMsg.textContent = 'Lote não localizado ou inválido para este composto.';
-                errorMsg.style.display = 'block';
-                inputLote.style.borderColor = '#ff3b30';
-            } else {
-                successLoteCode.textContent = `LOTE: ${data.codigo_lote}`;
-                successProdutoNome.textContent = data.produto_nome || "Composto de Alta Pureza";
-                successProdutoImg.src = data.imagem_url || "images/placeholder.png";
-
-                cardBusca.style.display = 'none';
-                cardSucesso.style.display = 'flex';
-                cardSucesso.style.flexDirection = 'column';
-            }
-
-        } catch (err) {
-            console.error(err);
-            errorMsg.textContent = 'Erro de comunicação. Tente novamente.';
-            errorMsg.style.display = 'block';
-        } finally {
-            btnVerificar.disabled = false;
-            btnVerificar.textContent = 'Verificar Rastreabilidade';
-        }
-    }
-
-    btnVoltarBusca.addEventListener('click', () => {
-        inputLote.value = '';
-        cardSucesso.style.display = 'none';
-        cardBusca.style.display = 'flex';
-    });
-
-    btnVerificar.addEventListener('click', handleLoteVerification);
-    inputLote.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') handleLoteVerification();
-    });
-    inputLote.addEventListener('input', function() {
-        errorMsg.style.display = 'none';
-        inputLote.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-    });
-</script>
-
-<!-- RODAPÉ -->
-<footer id="contato" class="footer">
-    <div class="container footer-grid" style="max-width: 1140px; margin: 0 auto; padding: 0 20px;">
         
-        <!-- Coluna 1: Branding & Manifesto -->
-        <div class="footer-brand">
-            <div class="footer-logo-box">
-                <img src="images/newlogo.png" alt="New Life Labs" style="max-height: 100%; width: auto; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="logo-fallback" style="display:none; font-weight: 700; font-size: 1.2rem; color: #1d1d1f; letter-spacing: 0.5px;">New Life Labs</span>
+        <div class="container footer-bottom" style="max-width: 1140px; margin: 0 auto; padding: 40px 20px 0 20px;">
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <p style="font-size: 0.8rem; color: #1d1d1f; font-weight: 500; letter-spacing: 0.5px;" data-i18n="footer_copyright">&copy; 2026 New Life Labs. Todos os direitos reservados.</p>
             </div>
-            <p style="margin-bottom: 20px;">Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.</p>
+        </div>
+    </section>
+
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal" style="color: #111111; font-size: 28px; position: absolute; top: 15px; right: 15px; z-index: 10; background: none; border: none; cursor: pointer;">&times;</button>
             
-            <!-- Badge de Segurança/Criptografia Secundário -->
-            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.03); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.04);">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #1d1d1f;">Base de Dados Protegida</span>
+            <div class="modal-img-box" id="modal-img-container" style="background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; width: 100%; border-radius: 12px 12px 0 0; overflow: hidden;">
             </div>
-        </div>
-
-        <!-- Coluna 2: Links de Conformidade e Navegação -->
-        <div class="footer-links" style="display: flex; flex-direction: column; gap: 15px;">
-            <h4 style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1d1d1f; margin-bottom: 10px;">Conformidade</h4>
-            <a href="#lote-verification" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;">Rastreabilidade de Lotes</a>
-            <a href="#termos" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;">Termos de Uso Corporativo</a>
-            <a href="#privacidade" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;">Política de Privacidade</a>
-            <a href="#laudos" style="color: #515154; text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;">Certificações HPLC / Pureza</a>
-        </div>
-        
-        <!-- Coluna 3: Contatos Oficiais -->
-        <div class="footer-contacts">
-            <h4 style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1d1d1f; margin-bottom: 10px;">Canais Oficiais</h4>
-            <a href="mailto:contato@newlifelabs.com" class="contact-item">
-                <i class="far fa-envelope"></i> contato@newlifelabs.com
-            </a>
-            <a href="https://instagram.com/newlifelabs.us" target="_blank" class="contact-item">
-                <i class="fab fa-instagram"></i> @newlifelabs.us
-            </a>
-            <a href="https://wa.me/5511999999999" target="_blank" class="contact-item">
-                <i class="fab fa-whatsapp"></i> +55 11 99999-9999
-            </a>
+            
+            <div class="modal-body" style="padding: 25px;">
+                <h2 id="modal-title" style="color: #111111; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 1.6em; margin-bottom: 15px;">Nome do Produto</h2>
+                <div id="modal-desc">Descrição completa do produto selecionado.</div>
+                <a href="#" id="modal-whatsapp-btn" target="_blank" class="btn-premium" style="background: #111111; color: #ffffff; border-radius: 6px; font-weight: 500; text-transform: uppercase; font-size: 0.9em; letter-spacing: 0.5px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 20px;">
+                    <i class="fab fa-whatsapp"></i> <span data-i18n="modal_cta">Solicitar Alocação de Lote</span>
+                </a>
+            </div>
         </div>
     </div>
-    
-    <!-- Parte Inferior do Rodapé: Registros Corporativos -->
-    <div class="container footer-bottom" style="max-width: 1140px; margin: 0 auto; padding: 40px 20px 0 20px;">
-        <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
-            <p style="font-size: 0.78rem; color: #86868b; max-width: 700px; line-height: 1.5; margin-bottom: 15px;">
-                As consultas realizadas nesta plataforma retornam dados criptografados diretamente do nosso sistema de controle de qualidade laboratorial. Produtos destinados exclusivamente ao escopo regulamentado.
-            </p>
-            <p style="font-size: 0.8rem; color: #1d1d1f; font-weight: 500; letter-spacing: 0.5px;">
-                &copy; 2026 New Life Labs.Todos os direitos reservados.
-            </p>
-        </div>
-    </div>
-</footer>
 
-<div class="modal" id="product-modal">
-    <style>
-        #product-modal .modal-content {
-            background: #ffffff; 
-            border-radius: 12px; 
-            border: 1px solid #e5e5e5; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
-            max-width: 550px;
-            width: 100%;
-            box-sizing: border-box;
-            position: relative;
+    <!-- SISTEMA DE INTERNACIONALIZAÇÃO (i18n) -->
+    <script>
+        // =============================================
+        // CONFIGURAÇÃO I18N - TRADUÇÃO COMPLETA
+        // =============================================
+        
+        const i18n = {
+            pt: {
+                nav_inicio: 'Início',
+                nav_produtos: 'Produtos',
+                nav_sobre: 'Sobre',
+                nav_contato: 'Contato',
+                hero_badge: 'Padrão Internacional de Excelência',
+                hero_subtitle: 'Desenvolvimento de alta performance com pureza rigorosamente certificada e logística internacional.',
+                badge_purity: 'Pureza Autenticada',
+                badge_purity_sub: 'Garantia de laboratório',
+                badge_distrib: 'Distribuição Global',
+                badge_distrib_sub: 'Logística internacional',
+                cta_whatsapp: 'Falar no WhatsApp',
+                section_products: 'Nossos Produtos',
+                section_about: 'Sobre a New Life Labs',
+                about_p1: 'A <strong>New Life Labs</strong> posiciona-se de forma consolidada na vanguarda do desenvolvimento científico global, oferecendo soluções biotecnológicas premium desenvolvidas sob os mais severos e rígidos padrões internacionais de pureza, segurança e eficácia molecular.',
+                about_p2: 'Nossa missão institucional transcende o fornecimento de insumos; nós estruturamos um ecossistema de confiança analítica e transparência total. Atendemos a uma comunidade médica, de pesquisa e desenvolvimento altamente exigente, que demanda reprodutibilidade técnica e respostas biológicas previsíveis.',
+                about_p3: 'Cada lote unitário passa por ensaios severos de espectrometria de massa e cromatografia líquida de alta eficiência (HPLC), chancelando o compromisso inegociável da New Life Labs com a soberania e a excelência científica.',
+                footer_brand: 'Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.',
+                footer_compliance: 'Conformidade',
+                footer_link1: 'Rastreabilidade de Lotes',
+                footer_link2: 'Termos de Uso Corporativo',
+                footer_link3: 'Política de Privacidade',
+                footer_contact: 'Canais Oficiais',
+                footer_copyright: '© 2026 New Life Labs. Todos os direitos reservados.',
+                modal_cta: 'Solicitar Alocação de Lote',
+                product_ghk100: 'GHK-Cu 100mg',
+                product_glow70: 'Glow 70mg',
+                product_ghk50: 'GHK-Cu 50mg',
+                product_klow80: 'Klow 80mg',
+                product_tesam: 'Tesamorelin 10mg'
+            },
+            en: {
+                nav_inicio: 'Home',
+                nav_produtos: 'Products',
+                nav_sobre: 'About',
+                nav_contato: 'Contact',
+                hero_badge: 'International Excellence Standard',
+                hero_subtitle: 'High-performance development with rigorously certified purity and international logistics.',
+                badge_purity: 'Authenticated Purity',
+                badge_purity_sub: 'Laboratory guarantee',
+                badge_distrib: 'Global Distribution',
+                badge_distrib_sub: 'International logistics',
+                cta_whatsapp: 'Chat on WhatsApp',
+                section_products: 'Our Products',
+                section_about: 'About New Life Labs',
+                about_p1: '<strong>New Life Labs</strong> is firmly positioned at the forefront of global scientific development, offering premium biotechnological solutions developed under the most rigorous international standards for purity, safety and molecular efficacy.',
+                about_p2: 'Our institutional mission transcends the supply of inputs; we structure an ecosystem of analytical trust and complete transparency. We serve a highly demanding medical, research and development community that demands technical reproducibility and predictable biological responses.',
+                about_p3: 'Each unit batch undergoes rigorous mass spectrometry and high-performance liquid chromatography (HPLC) testing, affirming New Life Labs\' non-negotiable commitment to scientific excellence.',
+                footer_brand: 'Excellence, innovation and high performance in laboratory development and applied biotechnology.',
+                footer_compliance: 'Compliance',
+                footer_link1: 'Batch Traceability',
+                footer_link2: 'Corporate Terms of Use',
+                footer_link3: 'Privacy Policy',
+                footer_contact: 'Official Channels',
+                footer_copyright: '© 2026 New Life Labs. All rights reserved.',
+                modal_cta: 'Request Batch Allocation',
+                product_ghk100: 'GHK-Cu 100mg',
+                product_glow70: 'Glow 70mg',
+                product_ghk50: 'GHK-Cu 50mg',
+                product_klow80: 'Klow 80mg',
+                product_tesam: 'Tesamorelin 10mg'
+            },
+            es: {
+                nav_inicio: 'Inicio',
+                nav_productos: 'Productos',
+                nav_sobre: 'Acerca de',
+                nav_contato: 'Contacto',
+                hero_badge: 'Estándar Internacional de Excelencia',
+                hero_subtitle: 'Desarrollo de alto rendimiento con pureza rigurosamente certificada y logística internacional.',
+                badge_purity: 'Pureza Autenticada',
+                badge_purity_sub: 'Garantía de laboratorio',
+                badge_distrib: 'Distribución Global',
+                badge_distrib_sub: 'Logística internacional',
+                cta_whatsapp: 'Chatear en WhatsApp',
+                section_products: 'Nuestros Productos',
+                section_about: 'Acerca de New Life Labs',
+                about_p1: '<strong>New Life Labs</strong> se posiciona firmemente a la vanguardia del desarrollo científico global, ofreciendo soluciones biotecnológicas premium desarrolladas bajo los más rigurosos estándares internacionales de pureza, seguridad y eficacia molecular.',
+                about_p2: 'Nuestra misión institucional trasciende el suministro de insumos; estructuramos un ecosistema de confianza analítica y transparencia completa. Servimos a una comunidad médica, de investigación y desarrollo altamente exigente que demanda reproducibilidad técnica y respuestas biológicas predecibles.',
+                about_p3: 'Cada lote unitario se somete a pruebas rigurosas de espectrometría de masas y cromatografía líquida de alto rendimiento (HPLC), afirmando el compromiso innegociable de New Life Labs con la excelencia científica.',
+                footer_brand: 'Excelencia, innovación y alto rendimiento en desarrollo laboratorial y biotecnología aplicada.',
+                footer_compliance: 'Conformidad',
+                footer_link1: 'Trazabilidad de Lotes',
+                footer_link2: 'Términos de Uso Corporativos',
+                footer_link3: 'Política de Privacidad',
+                footer_contact: 'Canales Oficiales',
+                footer_copyright: '© 2026 New Life Labs. Todos los derechos reservados.',
+                modal_cta: 'Solicitar Asignación de Lote',
+                product_ghk100: 'GHK-Cu 100mg',
+                product_glow70: 'Glow 70mg',
+                product_ghk50: 'GHK-Cu 50mg',
+                product_klow80: 'Klow 80mg',
+                product_tesam: 'Tesamorelin 10mg'
+            }
+        };
+
+        // Estado de idioma atual
+        let currentLanguage = localStorage.getItem('newlifelabs-lang') || 'pt';
+
+        // Função para atualizar todos os elementos com data-i18n
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('newlifelabs-lang', lang);
+
+            // Atualizar atributo de idioma
+            document.documentElement.lang = lang === 'es' ? 'es' : lang === 'en' ? 'en' : 'pt-BR';
+
+            // Atualizar todos os elementos com data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    // Se tem HTML interno (como strong), preservar
+                    if (element.innerHTML.includes('<')) {
+                        element.innerHTML = i18n[lang][key];
+                    } else {
+                        element.textContent = i18n[lang][key];
+                    }
+                }
+            });
+
+            // Atualizar botões de idioma
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+
+            // Atualizar word rotator
+            updateWordRotator(lang);
         }
-        @media (max-width: 768px) {
-            #product-modal .modal-content {
-                max-height: 85vh !important;
-                max-width: 92% !important;
-                overflow-y: auto !important;
-                padding: 15px !important;
-                margin: auto !important;
-            }
-            #product-modal .modal-body {
-                padding: 15px 5px !important;
-            }
-            #product-modal .modal-body h2 {
-                font-size: 1.3em !important;
-            }
+
+        // Função para atualizar word rotator
+        function updateWordRotator(lang) {
+            const wordWrappers = document.querySelectorAll('.word-wrapper');
+            wordWrappers.forEach(wrapper => {
+                const words = wrapper.querySelectorAll('.word');
+                words.forEach(word => {
+                    const wordLang = word.getAttribute('data-word');
+                    if (wordLang === lang) {
+                        words.forEach(w => w.classList.remove('active'));
+                        word.classList.add('active');
+                    }
+                });
+            });
         }
-    </style>
 
-    <div class="modal-content">
-        <button class="modal-close" id="close-modal" style="color: #111111; font-size: 28px; position: absolute; top: 15px; right: 15px; z-index: 10; background: none; border: none; cursor: pointer;">&times;</button>
-        
-        <div class="modal-img-box" id="modal-img-container" style="background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; width: 100%; border-radius: 12px 12px 0 0; overflow: hidden;">
-        </div>
-        
-        <div class="modal-body" style="padding: 25px;">
-            <h2 id="modal-title" style="color: #111111; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 1.6em; margin-bottom: 15px;">Nome do Produto</h2>
-            <div id="modal-desc">Descrição completa do produto selecionado.</div>
-            <a href="#" id="modal-whatsapp-btn" target="_blank" class="btn-premium" style="background: #111111; color: #ffffff; border-radius: 6px; font-weight: 500; text-transform: uppercase; font-size: 0.9em; letter-spacing: 0.5px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 20px;">
-                <i class="fab fa-whatsapp"></i> Solicitar Alocação de Lote
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Selo verificado nativo estilizado via CSS com tamanho idêntico ao do Instagram
-    const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
-
-    // CONFIGURAÇÃO DE ALTA PERFORMANCE - PRODUTOS (Tons de Preto e Cinza)
-    const produtos = [
-      {
-        nome: "GHK-Cu 100mg",
-        imagem: "images/ghk-cu100.png",
-        descricao: `
-            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
-            </div>
-        `
-      },
-      {
-        nome: "Glow 70mg",
-        imagem: "images/glow70.png",
-        descricao: `
-            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
-            </div>
-        `
-      },
-      {
-        nome: "GHK-Cu 50mg",
-        imagem: "images/ghk-cu50.png",
-        descricao: `
-            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
-            </div>
-        `
-      },
-      {
-        nome: "Klow 80mg",
-        imagem: "images/klow80.png",
-        descricao: `
-            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
-            </div>
-        `
-      },
-      {
-        nome: "Tesamorelin 10mg",
-        imagem: "images/tesamorelin10.png",
-        descricao: `
-            <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tissue adiposo profundo.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
-                <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
-            </div>
-        `
-      }
-    ];
-
-    // RENDERIZAÇÃO AUTOMÁTICA DOS CARDS NO GRID
-    const productsContainer = document.getElementById('products-container');
-    
-    produtos.forEach((produto, index) => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.setAttribute('data-index', index);
-        
-        card.innerHTML = `
-            <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
-                <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
-            </div>
-            <div class="product-info" style="padding: 15px 10px;">
-                <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${produto.nome}${verificadoBadge}</h3>
-            </div>
-        `;
-        productsContainer.appendChild(card);
-    });
-
-    // MECANISMO AUTOMÁTICO E RESPONSIVO DO MODAL
-    const modal = document.getElementById('product-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDesc = document.getElementById('modal-desc');
-    const modalImgContainer = document.getElementById('modal-img-container');
-    const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
-    const closeModalBtn = document.getElementById('close-modal');
-
-    productsContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.product-card');
-        if (!card) return;
-
-        const index = card.getAttribute('data-index');
-        const prod = produtos[index];
-        
-        modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${prod.nome}${verificadoBadge}</span>`;
-        modalDesc.innerHTML = prod.descricao;
-        
-        // Define dinamicamente o teto da imagem para não empurrar o modal para baixo no mobile
-        const isMobile = window.innerWidth <= 768;
-        const imgMaxHeight = isMobile ? "140px" : "220px";
-
-        // Imagem injetada com fundo branco puro (#ffffff) e carregamento completo (object-fit: contain)
-        modalImgContainer.innerHTML = `
-            <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 15px 10px 5px 10px; box-sizing: border-box;">
-                <img src="${prod.imagem}" alt="${prod.nome}" style="width: auto; max-width: 100%; height: ${imgMaxHeight}; object-fit: contain; display: block; margin: 0 auto;" onerror="this.style.display='none'; this.parentElement.appendChild(document.createElement('div')).className='image-placeholder';">
-            </div>
-        `;
-        
-        const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + prod.nome);
-        modalWhatsappBtn.href = `https://wa.me/5511999999999?text=${mensagem}`;
-        
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden'; 
-    });
-
-    const closeModal = () => {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    };
-
-    closeModalBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-
-    // NAVBAR GLASSMORPHISM
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        }
-    });
-
-    // MENU HAMBÚRGUER MOBILE
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    const navLinks = document.querySelectorAll('.nav-item a');
-
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+        // Event listeners para os botões de idioma
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lang = btn.getAttribute('data-lang');
+                updateLanguage(lang);
+                
+                // Fechar menu mobile se estiver aberto
+                const navMenu = document.querySelector('.nav-menu');
+                const menuToggle = document.querySelector('.menu-toggle');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                }
             });
         });
-    }
 
-    // ANIMAÇÃO FADE-IN (Intersection Observer)
-    const revealElements = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
+        // Inicializar com idioma salvo
+        updateLanguage(currentLanguage);
+    </script>
+
+    <!-- SISTEMA DE PRODUTOS -->
+    <script>
+        const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
+
+        const produtos = [
+            {
+                nome_key: 'product_ghk100',
+                imagem: 'images/ghk-cu100.png',
+                descricao_pt: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
+                    </div>
+                `,
+                descricao_en: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Ultra-high concentration peptide biomodulator developed for deep tissue restructuring. Acts directly on fibroblast gene expression, reversing senescent stress and accelerating extracellular matrix remodeling with maximum collagen density.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>100 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SYNTHESIS</span><br><strong>Copper Peptide</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">TARGET PATHWAY</span><br><strong>Extracellular Matrix</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">STABILITY</span><br><strong>Thermosensitive</strong></div>
+                    </div>
+                `,
+                descricao_es: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Biomodulador peptídico de concentración ultra-alta desarrollado para reestructuración tisular profunda. Actúa directamente sobre la expresión génica de los fibroblastos, revirtiendo el estrés senescente y acelerando la remodelación de la matriz extracelular con densidad máxima de colágeno.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>100 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESIS ACTIVA</span><br><strong>Péptido de Cobre</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">VÍA OBJETIVO</span><br><strong>Matriz Extracelular</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDAD</span><br><strong>Termosensible</strong></div>
+                    </div>
+                `
+            },
+            {
+                nome_key: 'product_glow70',
+                imagem: 'images/glow70.png',
+                descricao_pt: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                    </div>
+                `,
+                descricao_en: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        High-performance molecular active complex focused on cellular homeostasis and biorevitalization. Its orthomolecular formula acts on the pathway of inhibiting excessive melanin synthesis, restoring the refractive index of skin light and promoting cellular uniformity and luminosity.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSITION</span><br><strong>70 mg Active Blend</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ISOTONIC pH</span><br><strong>7.2 (Balanced)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>Antioxidant Stress</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">BIOCHEMICAL TARGET</span><br><strong>Cellular Tyrosinase</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Certified Type I Glass</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                    </div>
+                `,
+                descricao_es: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Complejo activo de alto rendimiento molecular enfocado en la homeostasis celular y la biorevitalización. Su fórmula ortomolecular actúa en la vía de inhibición de la síntesis excesiva de melanina, restaurando el índice de refracción de la luz en la piel y promoviendo uniformidad y luminosidad celular.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSICIÓN</span><br><strong>70 mg Active Blend</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÓNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestrés Oxidativo</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">OBJETIVO BIOQUÍMICO</span><br><strong>Tirosinasa Celular</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Vidrio Tipo I Certificado</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                    </div>
+                `
+            },
+            {
+                nome_key: 'product_ghk50',
+                imagem: 'images/ghk-cu50.png',
+                descricao_pt: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
+                    </div>
+                `,
+                descricao_en: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Signaling peptide structured in precise dosage for maintenance and prevention of premature cellular aging. Stimulates endogenous synthesis of glycosaminoglycans, improving epidermal lipid barrier integrity and modulating inflammatory responses.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>50 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL GRADE</span><br><strong>Laboratory Standard</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">BASIC FUNCTION</span><br><strong>Epidermal Repair</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">AFFINITY</span><br><strong>High Biocompatibility</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILITY</span><br><strong>Absolute Hydrophilic</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROTECTION</span><br><strong>Photoprotected Bottle</strong></div>
+                    </div>
+                `,
+                descricao_es: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Péptido señalizador estructurado en dosis precisa para mantenimiento y prevención del envejecimiento celular prematuro. Estimula la síntesis endógena de glucosaminoglicanos, mejorando la integridad de la barrera lipídica epidérmica y modulando respuestas inflamatorias.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>50 mg / Vial</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">GRADO ANALÍTICO</span><br><strong>Estándar de Laboratorio</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">FUNCIÓN BÁSICA</span><br><strong>Reparación Epidérmica</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">AFINIDAD</span><br><strong>Alta Biocompatibilidad</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDAD</span><br><strong>Absolutamente Hidrófilo</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROTECCIÓN</span><br><strong>Frasco Fotoprotegido</strong></div>
+                    </div>
+                `
+            },
+            {
+                nome_key: 'product_klow80',
+                imagem: 'images/klow80.png',
+                descricao_pt: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
+                    </div>
+                `,
+                descricao_en: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Hyper-concentrated formula developed with bioavailable polymers for controlled kinetic release. Focused on intensive biostimulation of type I and III collagen, acting directly on mechanical tissue laxity vectors and loss of support matrix.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">NOMINAL DOSAGE</span><br><strong>80 mg</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">STRUCTURE</span><br><strong>Peptide Microparticles</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">THERAPEUTIC ACTION</span><br><strong>Volumization and Density</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE KINETICS</span><br><strong>Gradual Release</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">IN VITRO PURITY</span><br><strong>Pyrogen-Free</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESSING</span><br><strong>Isolated Sterile Synthesis</strong></div>
+                    </div>
+                `,
+                descricao_es: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Fórmula hiperconcentrada desarrollada con polímeros biodisponibles para liberación cinética controlada. Enfocada en la bioestimulación intensiva del colágeno tipo I y III, actuando directamente en los vectores de flacidez tisular mecánica y pérdida de matriz de soporte.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">DOSIS NOMINAL</span><br><strong>80 mg</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ESTRUCTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ACCIÓN TERAPÉUTICA</span><br><strong>Volumización y Densidad</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ACTIVA</span><br><strong>Liberación Gradual</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Libre de Pirógenos</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESAMIENTO</span><br><strong>Síntesis Estéril Aislada</strong></div>
+                    </div>
+                `
+            },
+            {
+                nome_key: 'product_tesam',
+                imagem: 'images/tesamorelin10.png',
+                descricao_pt: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tissue adiposo profundo.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
+                    </div>
+                `,
+                descricao_en: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Purified synthetic analog of Growth Hormone-Releasing Factor (GHRH), composed of a stabilized chain of 44 amino acids. Acts selectively on somatotrophic receptors in the anterior pituitary, triggering lipolysis of deep adipose tissue.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">MOLECULAR WEIGHT</span><br><strong>5135.16 Daltons</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">DOSED VOLUMETRY</span><br><strong>10 mg Single Dose</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">DYNAMICS</span><br><strong>Pituitary Signaling</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICATION</span><br><strong>&gt; 99.0% Sequencing</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SEQUENCE</span><br><strong>44 Linear Amino Acids</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROPERTY</span><br><strong>Metabolic Optimization</strong></div>
+                    </div>
+                `,
+                descricao_es: `
+                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                        Análogo sintético purificado del Factor de Liberación de la Hormona del Crecimiento (GHRH), compuesto por una cadena estabilizada de 44 aminoácidos. Actúa selectivamente en receptores somatotróficos en la hipófisis anterior, desencadenando la lipólisis del tejido adiposo profundo.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                        <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRÍA DOSIFICADA</span><br><strong>10 mg Monodosis</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">DINÁMICA</span><br><strong>Señalización Hipofisaria</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICACIÓN</span><br><strong>&gt; 99.0% Secuenciamiento</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">SECUENCIA ACTIVA</span><br><strong>44 Aminoácidos Lineales</strong></div>
+                        <div><span style="color: #8e8e93; font-weight: normal;">PROPIEDAD</span><br><strong>Optimización Metabólica</strong></div>
+                    </div>
+                `
+            }
+        ];
+
+        const productsContainer = document.getElementById('products-container');
+        
+        function renderProducts() {
+            productsContainer.innerHTML = '';
+            produtos.forEach((produto, index) => {
+                const nomeProduto = i18n[currentLanguage][produto.nome_key];
+                const descricaoKey = `descricao_${currentLanguage}`;
+                const descricao = produto[descricaoKey];
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-index', index);
+                
+                card.innerHTML = `
+                    <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
+                        <img src="${produto.imagem}" alt="${nomeProduto}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none';">
+                    </div>
+                    <div class="product-info" style="padding: 15px 10px;">
+                        <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${nomeProduto}${verificadoBadge}</h3>
+                    </div>
+                `;
+                productsContainer.appendChild(card);
+            });
+
+            // Re-adicionar event listeners
+            productsContainer.addEventListener('click', handleProductClick);
+        }
+
+        function handleProductClick(e) {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+
+            const index = card.getAttribute('data-index');
+            const prod = produtos[index];
+            const nomeProduto = i18n[currentLanguage][prod.nome_key];
+            const descricaoKey = `descricao_${currentLanguage}`;
+            const descricao = prod[descricaoKey];
+            
+            const modal = document.getElementById('product-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDesc = document.getElementById('modal-desc');
+            const modalImgContainer = document.getElementById('modal-img-container');
+            const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
+
+            modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${nomeProduto}${verificadoBadge}</span>`;
+            modalDesc.innerHTML = descricao;
+            
+            const isMobile = window.innerWidth <= 768;
+            const imgMaxHeight = isMobile ? "140px" : "220px";
+
+            modalImgContainer.innerHTML = `
+                <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 15px 10px 5px 10px; box-sizing: border-box;">
+                    <img src="${prod.imagem}" alt="${nomeProduto}" style="width: auto; max-width: 100%; height: ${imgMaxHeight}; object-fit: contain; display: block; margin: 0 auto;">
+                </div>
+            `;
+            
+            const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + nomeProduto);
+            modalWhatsappBtn.href = `https://wa.me/595993493799?text=${mensagem}`;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Renderizar produtos inicialmente
+        renderProducts();
+
+        // Observador para idioma
+        const languageObserver = setInterval(() => {
+            // Verificar se mudou o idioma
+            const storedLang = localStorage.getItem('newlifelabs-lang') || 'pt';
+            if (storedLang !== currentLanguage) {
+                currentLanguage = storedLang;
+                renderProducts();
+            }
+        }, 100);
+
+        // Modal close
+        const closeModalBtn = document.getElementById('close-modal');
+        const modal = document.getElementById('product-modal');
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
             }
         });
-    }, {
-        threshold: 0.15
-    });
+    </script>
 
-    revealElements.forEach(element => {
-        observer.observe(element);
-    });
-</script>
+    <!-- FUNCIONALIDADES GERAIS -->
+    <script>
+        // NAVBAR GLASSMORPHISM
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+
+        // MENU HAMBÚRGUER MOBILE
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-item a');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    menuToggle.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+        }
+
+        // ANIMAÇÃO FADE-IN
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.15
+        });
+
+        revealElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // WORD ROTATOR ANIMATION
+        document.addEventListener("DOMContentLoaded", () => {
+            const words = document.querySelectorAll(".word");
+            let currentIndex = 0;
+
+            setInterval(() => {
+                const currentWord = words[currentIndex];
+                currentWord.classList.remove("active");
+                currentWord.classList.add("exit");
+
+                setTimeout(() => {
+                    currentWord.classList.remove("exit");
+                }, 600);
+
+                currentIndex = (currentIndex + 1) % words.length;
+                words[currentIndex].classList.add("active");
+
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
