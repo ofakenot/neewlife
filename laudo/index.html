@@ -9,9 +9,6 @@
     <!-- Favicon & Font Awesome -->
     <link rel="icon" type="image/png" href="images/nrelogo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Gerador de PDF HTML2PDF (Carregamento com Fallback) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -374,8 +371,8 @@
         .btn-download-pdf {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
+            gap: 8px;
+            padding: 10px 16px;
             background: var(--accent-green);
             color: #ffffff;
             border: none;
@@ -384,17 +381,12 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            cursor: pointer;
+            text-decoration: none;
             transition: background 0.3s ease;
         }
 
         .btn-download-pdf:hover {
             background: #1f6b42;
-        }
-
-        .btn-download-pdf:disabled {
-            background: var(--gray-600);
-            cursor: not-allowed;
         }
 
         /* --- MODAL DE AUTENTICAÇÃO --- */
@@ -437,126 +429,6 @@
             border: none;
             cursor: pointer;
             color: var(--gray-600);
-        }
-
-        /* --- CORREÇÃO DO LAYOUT DE RENDERIZAÇÃO DO PDF --- */
-        #pdf-template-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -9999;
-            opacity: 0.01;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .test-report-page {
-            width: 700px;
-            background: #ffffff;
-            padding: 40px;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #222222;
-            box-sizing: border-box;
-            margin: 0 auto;
-        }
-
-        .tr-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 2px solid #2d965d;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-        }
-
-        .tr-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #2d965d;
-            letter-spacing: 1px;
-        }
-
-        .tr-brand {
-            text-align: right;
-            font-size: 11px;
-            color: #555555;
-        }
-
-        .tr-brand-name {
-            font-size: 18px;
-            font-weight: 900;
-            color: #000000;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .tr-top-bar {
-            background: #f4f6f5;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .tr-section-title {
-            color: #2d965d;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .tr-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .tr-grid td {
-            padding: 8px 12px;
-            font-size: 12px;
-            background: #f9faf9;
-            border-bottom: 2px solid #ffffff;
-        }
-
-        .tr-grid td.label {
-            width: 130px;
-            color: #2d965d;
-            font-weight: bold;
-        }
-
-        .tr-table-results {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #2d965d;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tr-table-results td {
-            padding: 10px 15px;
-            font-size: 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .tr-footer-key {
-            background: #f4f6f5;
-            padding: 12px;
-            text-align: center;
-            font-size: 11px;
-            margin-top: 25px;
-        }
-
-        .tr-key-code {
-            font-family: monospace;
-            font-size: 14px;
-            font-weight: bold;
-            color: #000000;
-            letter-spacing: 2px;
-            margin-top: 4px;
         }
 
         .footer {
@@ -639,7 +511,7 @@
                             <th>Chave Única</th>
                             <th>Pureza (HPLC)</th>
                             <th>Data Ensaio</th>
-                            <th>Laudo Oficial (COA)</th>
+                            <th>Laudo Oficial (COA PDF)</th>
                         </tr>
                     </thead>
                     <tbody id="qa-table-body">
@@ -667,106 +539,23 @@
         </div>
     </div>
 
-    <!-- TEMPLATE DO RELATÓRIO OCULTO PARA GERAÇÃO DO PDF -->
-    <div id="pdf-template-container">
-        <div class="test-report-page" id="pdf-report-element">
-            <div class="tr-header">
-                <div>
-                    <div class="tr-title">TEST REPORT</div>
-                </div>
-                <div class="tr-brand">
-                    <div class="tr-brand-name">NEW LIFE LABS</div>
-                    <div>E-mail: info@newlifelabs.com</div>
-                    <div>Web: www.newlifelabs.com</div>
-                </div>
-            </div>
-
-            <div class="tr-top-bar">
-                <div>Task Number &nbsp; <span id="pdf-task-num">#97889</span></div>
-                <div>Testing ordered &nbsp;&gt;&nbsp; <span id="pdf-order-date">25 DEC '25</span></div>
-                <div>Sample received &nbsp;&gt;&nbsp; <span id="pdf-received-date">08 JAN '26</span></div>
-            </div>
-
-            <table class="tr-grid">
-                <tr>
-                    <td class="label">Client</td>
-                    <td id="pdf-client">New Life Labs Global</td>
-                </tr>
-                <tr>
-                    <td class="label">Sample</td>
-                    <td id="pdf-sample-name">Tirzepatide 30mg</td>
-                </tr>
-                <tr>
-                    <td class="label">Manufacturer</td>
-                    <td id="pdf-manufacturer">New Life Labs</td>
-                </tr>
-                <tr>
-                    <td class="label">Batch</td>
-                    <td id="pdf-batch">New Life Labs 2026</td>
-                </tr>
-            </table>
-
-            <div class="tr-section-title">Sample description &gt;</div>
-            <div style="background: #f9faf9; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #444;">
-                See picture or pictures attached. Lyophilized peptide vial.
-            </div>
-
-            <div class="tr-section-title">Tests requested &gt;</div>
-            <div style="background: #f9faf9; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #444;">
-                Assessment of a peptide vial or vials. Quantitative analysis and HPLC Purity testing.
-            </div>
-
-            <div class="tr-section-title">Results &gt;</div>
-            <table class="tr-table-results">
-                <tr>
-                    <td id="pdf-res-compound" style="font-weight: bold;">Tirzepatide</td>
-                    <td id="pdf-res-quantity" style="text-align: right; font-weight: bold;">30.21 mg</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold;">Purity</td>
-                    <td id="pdf-res-purity" style="text-align: right; font-weight: bold; color: #2d965d;">99.776%</td>
-                </tr>
-            </table>
-
-            <div class="tr-section-title">Comments &gt;</div>
-            <div style="background: #f9faf9; padding: 12px; font-size: 12px; margin-bottom: 25px; color: #555;">
-                Sample conforms to purity specifications for laboratory reference material. No degradation detected.
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; border-top: 1px solid #eee; padding-top: 12px;">
-                <div style="font-size: 12px;">
-                    <span style="color: #2d965d; font-weight: bold;">Analysis conducted &gt;</span> <span id="pdf-analysis-date">12 JAN 2026</span>
-                </div>
-                <div style="text-align: right;">
-                    <span style="color: #2d965d; font-weight: bold; margin-right: 10px;">Signature &gt;</span>
-                    <span style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 22px; color: #111;">NewLife QA Lab</span>
-                </div>
-            </div>
-
-            <div class="tr-footer-key">
-                <div style="color: #2d965d; font-weight: bold;">Verify this test at www.newlifelabs.com/verify with the following unique key</div>
-                <div class="tr-key-code" id="pdf-unique-key">NL97889TIR60</div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Dados dos produtos com chaves únicas
+        // Mapeamento dos produtos contendo o link do PDF direto no campo `pdfUrl`
         const productsQA = [
-            { id: 1, targetId: "aod", product: "AOD-9604 20mg", image: "images/aod.png", category: "Research Peptide", reference: "aod-9604-20mg", key: "NL97889AOD20", purity: "99.67%", quantity: "20.14 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97889", batch: "NL-AOD-2026-07" },
-            { id: 2, targetId: "cjc", product: "CJC - 1295 + IPAMORELIN 20mg", image: "images/cjc.png", category: "gh-secretagogues", reference: "cjc-1295-ipamorelin-20mg", key: "NL97890CJC20", purity: "99.39%", quantity: "20.08 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97890", batch: "NL-CJC-2026-05" },
-            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", image: "images/ghk-cu100.png", category: "aesthetics-anti-aging", reference: "ghk-cu-100mg", key: "NL97891GHK100", purity: "99.62%", quantity: "100.45 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97891", batch: "NL-GHK-2026-05" },
-            { id: 4, targetId: "glow70", product: "GLOW 70mg", image: "images/glow70.png", category: "aesthetics-anti-aging", reference: "glow-70mg", key: "NL97892GLOW70", purity: "99.37%", quantity: "70.20 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97892", batch: "NL-GLW-2026-05" },
-            { id: 5, targetId: "klow80", product: "KLOW 80mg", image: "images/klow80.png", category: "aesthetics-anti-aging", reference: "klow-80mg", key: "NL97893KLOW80", purity: "99.70%", quantity: "80.32 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97893", batch: "NL-KLW-2026-05" },
-            { id: 6, targetId: "motsc", product: "MOTS-C 10mg", image: "images/motsc.png", category: "Research Peptide", reference: "mots-c", key: "NL97894MOTS10", purity: "99.40%", quantity: "10.15 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97894", batch: "NL-MTS-2026-07" },
-            { id: 7, targetId: "aod", product: "PT-141 10mg", image: "images/aod.png", category: "Research Peptide", reference: "pt-141", key: "NL97895PT141", purity: "99.68%", quantity: "10.05 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97895", batch: "NL-PT-2026-07" },
-            { id: 8, targetId: "retatrutide", product: "RETATRUTIDE 120mg", image: "images/retatrutide1.png", category: "weight-loss", reference: "retatrutide-120mg", key: "NL97896RETA120", purity: "99.25%", quantity: "120.50 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97896", batch: "NL-RET-2026-05" },
-            { id: 9, targetId: "retatrutide", product: "RETATRUTIDE 90mg", image: "images/retatrutide1.png", category: "weight-loss", reference: "retatrutide-90mg", key: "NL97897RETA90", purity: "99.25%", quantity: "90.28 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97897", batch: "NL-RET-2026-07" },
-            { id: 10, targetId: "selank", product: "SELANK 10mg", image: "images/selank1.png", category: "neuromodulation", reference: "selank-10mg", key: "NL97898SEL10", purity: "99.55%", quantity: "10.12 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97898", batch: "NL-SEL-2026-05" },
-            { id: 11, targetId: "ss31", product: "SS-31 50mg", image: "images/ss31.png", category: "recovery-regeneration", reference: "ss-31-50mg", key: "NL97899SS3150", purity: "99.37%", quantity: "50.18 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97899", batch: "NL-SS-2026-05" },
-            { id: 12, targetId: "ss31", product: "TB-500 20mg", image: "images/ss31.png", category: "recovery-regeneration", reference: "tb-500-20mg", key: "NL97900TB20", purity: "99.35%", quantity: "20.10 mg", date: "May 11, 2026", lab: "New Life QA", taskNum: "#97900", batch: "NL-TB-2026-05" },
-            { id: 13, targetId: "tesam", product: "TESAMORELIN 20mg", image: "images/tesamorelin10.png", category: "gh-secretagogues", reference: "tesamorelin-20mg", key: "NL97901TES20", purity: "99.76%", quantity: "20.22 mg", date: "May 11, 2026", lab: "New Life QA", taskNum: "#97901", batch: "NL-TES-2026-05" },
-            { id: 14, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", image: "images/terzepatida1.png", category: "weight-loss", reference: "tirzepatide-60mg", key: "NL97902TIR60", purity: "99.90%", quantity: "60.40 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97902", batch: "NL-TIR-2026-07" }
+            { id: 1, targetId: "aod", product: "AOD-9604 20mg", image: "images/aod.png", category: "Research Peptide", key: "NL97889AOD20", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "pdfs/AOD-9604-20mg.pdf" },
+            { id: 2, targetId: "cjc", product: "CJC - 1295 + IPAMORELIN 20mg", image: "images/cjc.png", category: "gh-secretagogues", key: "NL97890CJC20", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "pdfs/CJC-1295-IPAMORELIN-20mg.pdf" },
+            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", image: "images/ghk-cu100.png", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "pdfs/GHK-Cu-100mg.pdf" },
+            { id: 4, targetId: "glow70", product: "GLOW 70mg", image: "images/glow70.png", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "pdfs/GLOW-70mg.pdf" },
+            { id: 5, targetId: "klow80", product: "KLOW 80mg", image: "images/klow80.png", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "pdfs/KLOW-80mg.pdf" },
+            { id: 6, targetId: "motsc", product: "MOTS-C 10mg", image: "images/motsc.png", category: "Research Peptide", key: "NL97894MOTS10", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "pdfs/MOTS-C-10mg.pdf" },
+            { id: 7, targetId: "aod", product: "PT-141 10mg", image: "images/aod.png", category: "Research Peptide", key: "NL97895PT141", purity: "99.68%", date: "Jul 15, 2026", batch: "NL-PT-2026-07", pdfUrl: "pdfs/PT-141-10mg.pdf" },
+            { id: 8, targetId: "retatrutide", product: "RETATRUTIDE 120mg", image: "images/retatrutide1.png", category: "weight-loss", key: "NL97896RETA120", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "pdfs/RETATRUTIDE-120mg.pdf" },
+            { id: 9, targetId: "retatrutide", product: "RETATRUTIDE 90mg", image: "images/retatrutide1.png", category: "weight-loss", key: "NL97897RETA90", purity: "99.25%", date: "Jul 15, 2026", batch: "NL-RET-2026-07", pdfUrl: "pdfs/RETATRUTIDE-90mg.pdf" },
+            { id: 10, targetId: "selank", product: "SELANK 10mg", image: "images/selank1.png", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "pdfs/SELANK-10mg.pdf" },
+            { id: 11, targetId: "ss31", product: "SS-31 50mg", image: "images/ss31.png", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "pdfs/SS-31-50mg.pdf" },
+            { id: 12, targetId: "ss31", product: "TB-500 20mg", image: "images/ss31.png", category: "recovery-regeneration", key: "NL97900TB20", purity: "99.35%", date: "May 11, 2026", batch: "NL-TB-2026-05", pdfUrl: "pdfs/TB-500-20mg.pdf" },
+            { id: 13, targetId: "tesam", product: "TESAMORELIN 20mg", image: "images/tesamorelin10.png", category: "gh-secretagogues", key: "NL97901TES20", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "pdfs/TESAMORELIN-20mg.pdf" },
+            { id: 14, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", image: "images/terzepatida1.png", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "pdfs/TIRZEPATIDE-60mg.pdf" }
         ];
 
         let selectedCategory = "all";
@@ -806,63 +595,13 @@
                     <td><span class="purity-badge"><i class="fas fa-check-circle"></i> ${item.purity}</span></td>
                     <td style="font-family: monospace; font-size: 0.85rem;">${item.date}</td>
                     <td>
-                        <button class="btn-download-pdf" onclick="generatePDF(${item.id}, this)">
+                        <a href="${item.pdfUrl}" target="_blank" download class="btn-download-pdf">
                             <i class="fas fa-file-pdf"></i> Baixar COA PDF
-                        </button>
+                        </a>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        // Função Assíncrona e Segura para Gerar PDF
-        async function generatePDF(productId, btnElement) {
-            const item = productsQA.find(p => p.id === productId);
-            if (!item) return;
-
-            if (typeof html2pdf === 'undefined') {
-                alert("A biblioteca de PDF ainda está carregando. Por favor, aguarde alguns segundos e tente novamente.");
-                return;
-            }
-
-            let originalText = "";
-            if (btnElement) {
-                originalText = btnElement.innerHTML;
-                btnElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gerando...`;
-                btnElement.disabled = true;
-            }
-
-            try {
-                // Preenche o template no DOM
-                document.getElementById("pdf-task-num").textContent = item.taskNum;
-                document.getElementById("pdf-sample-name").textContent = item.product;
-                document.getElementById("pdf-res-compound").textContent = item.product.split(' ')[0];
-                document.getElementById("pdf-res-quantity").textContent = item.quantity;
-                document.getElementById("pdf-res-purity").textContent = item.purity;
-                document.getElementById("pdf-unique-key").textContent = item.key;
-                document.getElementById("pdf-batch").textContent = item.batch;
-                document.getElementById("pdf-analysis-date").textContent = item.date;
-
-                const element = document.getElementById("pdf-report-element");
-                
-                const opt = {
-                    margin:       10,
-                    filename:     `TestReport_NewLife_${item.reference}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
-                    jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
-                };
-
-                await html2pdf().set(opt).from(element).save();
-            } catch (err) {
-                console.error("Erro ao gerar PDF:", err);
-                alert("Ocorreu um erro ao gerar o PDF. Verifique sua conexão ou tente novamente.");
-            } finally {
-                if (btnElement) {
-                    btnElement.innerHTML = originalText;
-                    btnElement.disabled = false;
-                }
-            }
         }
 
         // Validação da Chave Única no Modal
@@ -883,9 +622,9 @@
                         <div><strong>Pureza (HPLC):</strong> <span style="color: var(--accent-green); font-weight: bold;">${found.purity}</span></div>
                         <div><strong>Lote:</strong> ${found.batch}</div>
                     </div>
-                    <button onclick="generatePDF(${found.id}, this)" class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px;">
+                    <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; text-decoration: none;">
                         <i class="fas fa-file-pdf"></i> Baixar Relatório do Teste (PDF)
-                    </button>
+                    </a>
                 `;
             } else {
                 body.innerHTML = `
