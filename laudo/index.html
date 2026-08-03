@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laudos & Controle de Qualidade (COA) | New Life Labs</title>
+    <meta name="description" content="Central de Rastreabilidade, Autenticação de Lotes e Certificados de Análise (HPLC) da New Life Labs.">
+    
+    <!-- Favicon & Font Awesome -->
+    <link rel="icon" type="image/png" href="images/nrelogo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Gerador de PDF HTML2PDF (Carregamento com Fallback) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-800: #212529;
+            --accent-green: #2d965d;
+            --accent-green-bg: #e8f5e9;
+            --badge-blue: #0066cc;
+            --transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            color: var(--primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 18px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+
+        .logo-box img {
+            height: 32px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back-btn:hover {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+
+        /* --- HERO BANNER --- */
+        .qa-hero {
+            background: #ffffff;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 50px 0 35px 0;
+            text-align: center;
+        }
+
+        .qa-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        .qa-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .qa-hero p {
+            color: var(--gray-600);
+            max-width: 680px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
+
+        /* --- SISTEMA DE AUTENTICAÇÃO DIRETA --- */
+        .verify-box-card {
+            background: #ffffff;
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px auto 10px auto;
+            max-width: 650px;
+            box-shadow: 0 4px 15px rgba(45, 150, 93, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .verify-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+        }
+
+        .verify-input-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 550px;
+            margin-top: 12px;
+        }
+
+        .verify-input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            text-align: center;
+            outline: none;
+        }
+
+        .verify-input-group button {
+            background: var(--accent-green);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .verify-input-group button:hover {
+            background: #23784a;
+        }
+
+        /* --- FILTROS & BUSCA --- */
+        .controls-section {
+            padding: 20px 0 10px 0;
+        }
+
+        .controls-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-600);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            max-width: 100%;
+        }
+
+        .filter-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: var(--secondary);
+            border-color: var(--primary);
+        }
+
+        /* --- TABELA DE LAUDOS --- */
+        .table-section {
+            padding: 20px 0 80px 0;
+            flex: 1;
+        }
+
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .qa-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .qa-table thead {
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-300);
+        }
+
+        .qa-table th {
+            padding: 16px 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--gray-800);
+        }
+
+        .qa-table tbody tr {
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .qa-table tbody tr:hover {
+            background: rgba(0, 0, 0, 0.015);
+        }
+
+        .qa-table td {
+            padding: 14px 20px;
+            vertical-align: middle;
+        }
+
+        .product-name-cell {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-code {
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--accent-green);
+            background: var(--accent-green-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(45, 150, 93, 0.3);
+        }
+
+        .purity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .product-thumb {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+            background: #ffffff;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            padding: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-photo-link:hover .product-thumb {
+            transform: scale(1.1);
+            border-color: var(--primary);
+        }
+
+        .btn-download-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--accent-green);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-download-pdf:hover {
+            background: #1f6b42;
+        }
+
+        .btn-download-pdf:disabled {
+            background: var(--gray-600);
+            cursor: not-allowed;
+        }
+
+        /* --- MODAL DE AUTENTICAÇÃO --- */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+
+        /* --- CORREÇÃO DO LAYOUT DE RENDERIZAÇÃO DO PDF --- */
+        #pdf-template-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -9999;
+            opacity: 0.01;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .test-report-page {
+            width: 700px;
+            background: #ffffff;
+            padding: 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #222222;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .tr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #2d965d;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tr-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2d965d;
+            letter-spacing: 1px;
+        }
+
+        .tr-brand {
+            text-align: right;
+            font-size: 11px;
+            color: #555555;
+        }
+
+        .tr-brand-name {
+            font-size: 18px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .tr-top-bar {
+            background: #f4f6f5;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .tr-section-title {
+            color: #2d965d;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .tr-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .tr-grid td {
+            padding: 8px 12px;
+            font-size: 12px;
+            background: #f9faf9;
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .tr-grid td.label {
+            width: 130px;
+            color: #2d965d;
+            font-weight: bold;
+        }
+
+        .tr-table-results {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #2d965d;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tr-table-results td {
+            padding: 10px 15px;
+            font-size: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tr-footer-key {
+            background: #f4f6f5;
+            padding: 12px;
+            text-align: center;
+            font-size: 11px;
+            margin-top: 25px;
+        }
+
+        .tr-key-code {
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid var(--gray-200);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo-box">
+                <img src="images/newlogo.png" alt="New Life Labs" onerror="this.style.display='none';">
+                <span class="logo-text">New Life Labs</span>
+            </a>
+            <a href="index.html" class="nav-back-btn">
+                <i class="fas fa-arrow-left"></i> Voltar ao Site
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO CENTRAL DE LAUDOS -->
+    <section class="qa-hero">
+        <div class="container">
+            <div class="qa-badge">
+                <i class="fas fa-microscope"></i> New Life QA Analytical Services
+            </div>
+            <h1>Rastreabilidade & Autenticação de Lotes</h1>
+            <p>Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC.</p>
+            
+            <!-- CAIXA DE VALIDAÇÃO POR CÓDIGO -->
+            <div class="verify-box-card">
+                <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green);"></i> Validar Produto por Chave Única</div>
+                <p style="font-size: 0.88rem; color: var(--gray-600);">Digite o código impresso em seu produto para confirmar a validação e laudo do laboratório:</p>
+                <div class="verify-input-group">
+                    <input type="text" id="verify-key-input" placeholder="EX: NL97889AOD20">
+                    <button id="btn-verify-code"><i class="fas fa-search"></i> Validar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAINEL DE BUSCA E FILTROS -->
+    <section class="controls-section">
+        <div class="container">
+            <div class="controls-grid">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por produto, chave única ou pureza (ex: NL97889, Tirzepatide, 99.9%)...">
+                </div>
+                <div class="category-filter" id="category-filter">
+                    <button class="filter-btn active" data-cat="all">Todos</button>
+                    <button class="filter-btn" data-cat="Research Peptide">Research Peptide</button>
+                    <button class="filter-btn" data-cat="gh-secretagogues">GH Secretagogues</button>
+                    <button class="filter-btn" data-cat="aesthetics-anti-aging">Aesthetics & Anti-Aging</button>
+                    <button class="filter-btn" data-cat="weight-loss">Weight Loss</button>
+                    <button class="filter-btn" data-cat="neuromodulation">Neuromodulation</button>
+                    <button class="filter-btn" data-cat="recovery-regeneration">Recovery & Regeneration</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TABELA DE LAUDOS -->
+    <section class="table-section">
+        <div class="container">
+            <div class="table-card">
+                <table class="qa-table">
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Produto</th>
+                            <th>Chave Única</th>
+                            <th>Pureza (HPLC)</th>
+                            <th>Data Ensaio</th>
+                            <th>Laudo Oficial (COA)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="qa-table-body">
+                        <!-- Renderizado via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 New Life Labs | Quality Assurance Systems. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE VALIDAÇÃO -->
+    <div class="modal" id="verify-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div id="modal-content-body">
+                <!-- Conteúdo do resultado da validação -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TEMPLATE DO RELATÓRIO OCULTO PARA GERAÇÃO DO PDF -->
+    <div id="pdf-template-container">
+        <div class="test-report-page" id="pdf-report-element">
+            <div class="tr-header">
+                <div>
+                    <div class="tr-title">TEST REPORT</div>
+                </div>
+                <div class="tr-brand">
+                    <div class="tr-brand-name">NEW LIFE LABS</div>
+                    <div>E-mail: info@newlifelabs.com</div>
+                    <div>Web: www.newlifelabs.com</div>
+                </div>
+            </div>
+
+            <div class="tr-top-bar">
+                <div>Task Number &nbsp; <span id="pdf-task-num">#97889</span></div>
+                <div>Testing ordered &nbsp;&gt;&nbsp; <span id="pdf-order-date">25 DEC '25</span></div>
+                <div>Sample received &nbsp;&gt;&nbsp; <span id="pdf-received-date">08 JAN '26</span></div>
+            </div>
+
+            <table class="tr-grid">
+                <tr>
+                    <td class="label">Client</td>
+                    <td id="pdf-client">New Life Labs Global</td>
+                </tr>
+                <tr>
+                    <td class="label">Sample</td>
+                    <td id="pdf-sample-name">Tirzepatide 30mg</td>
+                </tr>
+                <tr>
+                    <td class="label">Manufacturer</td>
+                    <td id="pdf-manufacturer">New Life Labs</td>
+                </tr>
+                <tr>
+                    <td class="label">Batch</td>
+                    <td id="pdf-batch">New Life Labs 2026</td>
+                </tr>
+            </table>
+
+            <div class="tr-section-title">Sample description &gt;</div>
+            <div style="background: #f9faf9; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #444;">
+                See picture or pictures attached. Lyophilized peptide vial.
+            </div>
+
+            <div class="tr-section-title">Tests requested &gt;</div>
+            <div style="background: #f9faf9; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #444;">
+                Assessment of a peptide vial or vials. Quantitative analysis and HPLC Purity testing.
+            </div>
+
+            <div class="tr-section-title">Results &gt;</div>
+            <table class="tr-table-results">
+                <tr>
+                    <td id="pdf-res-compound" style="font-weight: bold;">Tirzepatide</td>
+                    <td id="pdf-res-quantity" style="text-align: right; font-weight: bold;">30.21 mg</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Purity</td>
+                    <td id="pdf-res-purity" style="text-align: right; font-weight: bold; color: #2d965d;">99.776%</td>
+                </tr>
+            </table>
+
+            <div class="tr-section-title">Comments &gt;</div>
+            <div style="background: #f9faf9; padding: 12px; font-size: 12px; margin-bottom: 25px; color: #555;">
+                Sample conforms to purity specifications for laboratory reference material. No degradation detected.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; border-top: 1px solid #eee; padding-top: 12px;">
+                <div style="font-size: 12px;">
+                    <span style="color: #2d965d; font-weight: bold;">Analysis conducted &gt;</span> <span id="pdf-analysis-date">12 JAN 2026</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="color: #2d965d; font-weight: bold; margin-right: 10px;">Signature &gt;</span>
+                    <span style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 22px; color: #111;">NewLife QA Lab</span>
+                </div>
+            </div>
+
+            <div class="tr-footer-key">
+                <div style="color: #2d965d; font-weight: bold;">Verify this test at www.newlifelabs.com/verify with the following unique key</div>
+                <div class="tr-key-code" id="pdf-unique-key">NL97889TIR60</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos produtos com chaves únicas
+        const productsQA = [
+            { id: 1, targetId: "aod", product: "AOD-9604 20mg", image: "images/aod.png", category: "Research Peptide", reference: "aod-9604-20mg", key: "NL97889AOD20", purity: "99.67%", quantity: "20.14 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97889", batch: "NL-AOD-2026-07" },
+            { id: 2, targetId: "cjc", product: "CJC - 1295 + IPAMORELIN 20mg", image: "images/cjc.png", category: "gh-secretagogues", reference: "cjc-1295-ipamorelin-20mg", key: "NL97890CJC20", purity: "99.39%", quantity: "20.08 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97890", batch: "NL-CJC-2026-05" },
+            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", image: "images/ghk-cu100.png", category: "aesthetics-anti-aging", reference: "ghk-cu-100mg", key: "NL97891GHK100", purity: "99.62%", quantity: "100.45 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97891", batch: "NL-GHK-2026-05" },
+            { id: 4, targetId: "glow70", product: "GLOW 70mg", image: "images/glow70.png", category: "aesthetics-anti-aging", reference: "glow-70mg", key: "NL97892GLOW70", purity: "99.37%", quantity: "70.20 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97892", batch: "NL-GLW-2026-05" },
+            { id: 5, targetId: "klow80", product: "KLOW 80mg", image: "images/klow80.png", category: "aesthetics-anti-aging", reference: "klow-80mg", key: "NL97893KLOW80", purity: "99.70%", quantity: "80.32 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97893", batch: "NL-KLW-2026-05" },
+            { id: 6, targetId: "motsc", product: "MOTS-C 10mg", image: "images/motsc.png", category: "Research Peptide", reference: "mots-c", key: "NL97894MOTS10", purity: "99.40%", quantity: "10.15 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97894", batch: "NL-MTS-2026-07" },
+            { id: 7, targetId: "aod", product: "PT-141 10mg", image: "images/aod.png", category: "Research Peptide", reference: "pt-141", key: "NL97895PT141", purity: "99.68%", quantity: "10.05 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97895", batch: "NL-PT-2026-07" },
+            { id: 8, targetId: "retatrutide", product: "RETATRUTIDE 120mg", image: "images/retatrutide1.png", category: "weight-loss", reference: "retatrutide-120mg", key: "NL97896RETA120", purity: "99.25%", quantity: "120.50 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97896", batch: "NL-RET-2026-05" },
+            { id: 9, targetId: "retatrutide", product: "RETATRUTIDE 90mg", image: "images/retatrutide1.png", category: "weight-loss", reference: "retatrutide-90mg", key: "NL97897RETA90", purity: "99.25%", quantity: "90.28 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97897", batch: "NL-RET-2026-07" },
+            { id: 10, targetId: "selank", product: "SELANK 10mg", image: "images/selank1.png", category: "neuromodulation", reference: "selank-10mg", key: "NL97898SEL10", purity: "99.55%", quantity: "10.12 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97898", batch: "NL-SEL-2026-05" },
+            { id: 11, targetId: "ss31", product: "SS-31 50mg", image: "images/ss31.png", category: "recovery-regeneration", reference: "ss-31-50mg", key: "NL97899SS3150", purity: "99.37%", quantity: "50.18 mg", date: "May 14, 2026", lab: "New Life QA", taskNum: "#97899", batch: "NL-SS-2026-05" },
+            { id: 12, targetId: "ss31", product: "TB-500 20mg", image: "images/ss31.png", category: "recovery-regeneration", reference: "tb-500-20mg", key: "NL97900TB20", purity: "99.35%", quantity: "20.10 mg", date: "May 11, 2026", lab: "New Life QA", taskNum: "#97900", batch: "NL-TB-2026-05" },
+            { id: 13, targetId: "tesam", product: "TESAMORELIN 20mg", image: "images/tesamorelin10.png", category: "gh-secretagogues", reference: "tesamorelin-20mg", key: "NL97901TES20", purity: "99.76%", quantity: "20.22 mg", date: "May 11, 2026", lab: "New Life QA", taskNum: "#97901", batch: "NL-TES-2026-05" },
+            { id: 14, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", image: "images/terzepatida1.png", category: "weight-loss", reference: "tirzepatide-60mg", key: "NL97902TIR60", purity: "99.90%", quantity: "60.40 mg", date: "Jul 15, 2026", lab: "New Life QA", taskNum: "#97902", batch: "NL-TIR-2026-07" }
+        ];
+
+        let selectedCategory = "all";
+        let searchQuery = "";
+
+        // Renderiza a Tabela
+        function renderTable() {
+            const tbody = document.getElementById("qa-table-body");
+            tbody.innerHTML = "";
+
+            const filtered = productsQA.filter(item => {
+                const matchesCat = selectedCategory === "all" || item.category.toLowerCase() === selectedCategory.toLowerCase();
+                const matchesSearch = item.product.toLowerCase().includes(searchQuery) ||
+                                      item.key.toLowerCase().includes(searchQuery) ||
+                                      item.purity.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-600);">Nenhum laudo encontrado.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <a href="index.html?product=${item.targetId}#produtos" class="product-photo-link" title="Ver no site">
+                            <img src="${item.image}" alt="${item.product}" class="product-thumb" onerror="this.src='images/newlogo.png'">
+                        </a>
+                    </td>
+                    <td>
+                        <div class="product-name-cell">${item.product}</div>
+                        <div style="font-size: 0.78rem; color: var(--gray-600);">${item.category}</div>
+                    </td>
+                    <td><span class="key-code">${item.key}</span></td>
+                    <td><span class="purity-badge"><i class="fas fa-check-circle"></i> ${item.purity}</span></td>
+                    <td style="font-family: monospace; font-size: 0.85rem;">${item.date}</td>
+                    <td>
+                        <button class="btn-download-pdf" onclick="generatePDF(${item.id}, this)">
+                            <i class="fas fa-file-pdf"></i> Baixar COA PDF
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função Assíncrona e Segura para Gerar PDF
+        async function generatePDF(productId, btnElement) {
+            const item = productsQA.find(p => p.id === productId);
+            if (!item) return;
+
+            if (typeof html2pdf === 'undefined') {
+                alert("A biblioteca de PDF ainda está carregando. Por favor, aguarde alguns segundos e tente novamente.");
+                return;
+            }
+
+            let originalText = "";
+            if (btnElement) {
+                originalText = btnElement.innerHTML;
+                btnElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gerando...`;
+                btnElement.disabled = true;
+            }
+
+            try {
+                // Preenche o template no DOM
+                document.getElementById("pdf-task-num").textContent = item.taskNum;
+                document.getElementById("pdf-sample-name").textContent = item.product;
+                document.getElementById("pdf-res-compound").textContent = item.product.split(' ')[0];
+                document.getElementById("pdf-res-quantity").textContent = item.quantity;
+                document.getElementById("pdf-res-purity").textContent = item.purity;
+                document.getElementById("pdf-unique-key").textContent = item.key;
+                document.getElementById("pdf-batch").textContent = item.batch;
+                document.getElementById("pdf-analysis-date").textContent = item.date;
+
+                const element = document.getElementById("pdf-report-element");
+                
+                const opt = {
+                    margin:       10,
+                    filename:     `TestReport_NewLife_${item.reference}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
+                    jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+                };
+
+                await html2pdf().set(opt).from(element).save();
+            } catch (err) {
+                console.error("Erro ao gerar PDF:", err);
+                alert("Ocorreu um erro ao gerar o PDF. Verifique sua conexão ou tente novamente.");
+            } finally {
+                if (btnElement) {
+                    btnElement.innerHTML = originalText;
+                    btnElement.disabled = false;
+                }
+            }
+        }
+
+        // Validação da Chave Única no Modal
+        function verifyCode(code) {
+            const cleanCode = code.trim().toUpperCase();
+            const found = productsQA.find(p => p.key.toUpperCase() === cleanCode);
+            const modal = document.getElementById("verify-modal");
+            const body = document.getElementById("modal-content-body");
+
+            if (found) {
+                body.innerHTML = `
+                    <div style="font-size: 3rem; color: var(--accent-green); margin-bottom: 10px;"><i class="fas fa-check-circle"></i></div>
+                    <h2 style="color: var(--accent-green); text-transform: uppercase; font-size: 1.4rem; margin-bottom: 10px;">Produto Autêntico & Validado</h2>
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin-bottom: 20px;">O código inserido corresponde a um lote autêntico testado pela <strong>New Life Labs</strong>.</p>
+                    <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; text-align: left; font-size: 0.88rem; margin-bottom: 20px;">
+                        <div><strong>Produto:</strong> ${found.product}</div>
+                        <div><strong>Chave Única:</strong> <span class="key-code">${found.key}</span></div>
+                        <div><strong>Pureza (HPLC):</strong> <span style="color: var(--accent-green); font-weight: bold;">${found.purity}</span></div>
+                        <div><strong>Lote:</strong> ${found.batch}</div>
+                    </div>
+                    <button onclick="generatePDF(${found.id}, this)" class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px;">
+                        <i class="fas fa-file-pdf"></i> Baixar Relatório do Teste (PDF)
+                    </button>
+                `;
+            } else {
+                body.innerHTML = `
+                    <div style="font-size: 3rem; color: #dc3545; margin-bottom: 10px;"><i class="fas fa-times-circle"></i></div>
+                    <h2 style="color: #dc3545; text-transform: uppercase; font-size: 1.3rem; margin-bottom: 10px;">Código Não Localizado</h2>
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin-bottom: 20px;">A chave inserida (<strong>${cleanCode}</strong>) não foi localizada em nossa base de dados ou é inválida.</p>
+                    <button onclick="document.getElementById('verify-modal').classList.remove('active')" style="padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer;">Tentar Novamente</button>
+                `;
+            }
+
+            modal.classList.add("active");
+        }
+
+        // Eventos
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTable();
+
+            document.getElementById("search-input").addEventListener("input", (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                renderTable();
+            });
+
+            document.getElementById("category-filter").addEventListener("click", (e) => {
+                if (e.target.classList.contains("filter-btn")) {
+                    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+                    e.target.classList.add("active");
+                    selectedCategory = e.target.getAttribute("data-cat");
+                    renderTable();
+                }
+            });
+
+            document.getElementById("btn-verify-code").addEventListener("click", () => {
+                const code = document.getElementById("verify-key-input").value;
+                if (code) verifyCode(code);
+            });
+
+            document.getElementById("modal-close-btn").addEventListener("click", () => {
+                document.getElementById("verify-modal").classList.remove("active");
+            });
+        });
+    </script>
+</body>
+</html>
