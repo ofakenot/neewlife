@@ -483,7 +483,6 @@
                 gap: 12px;
             }
 
-            /* TRANSFORMAÇÃO DA TABELA EM CARDS INDIVIDUAIS NO MOBILE */
             .table-card {
                 background: transparent;
                 border: none;
@@ -819,22 +818,22 @@
 
         let currentLang = "pt";
 
-        // LISTA DE PRODUTOS E CAMINHOS PARA OS PDFs
+        // LISTA DE PRODUTOS E CAMINHOS ABSOLUTOS PARA OS PDFs
         const productsQA = [
-            { id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf" },
-            { id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf" },
-            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf" },
-            { id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf" },
-            { id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf" },
-            { id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", pdfUrl: "pdfs/SEMAX 10mg - Test Report New Life Labs.pdf" },
-            { id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "pdfs/SELANK 10mg - Test Report New Life Labs.pdf" },
-            { id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", pdfUrl: "pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf" },
-            { id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "pdfs/SS-31 50mg - Test Report New Life Labs.pdf" },
-            { id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf" },
-            { id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", pdfUrl: "pdfs/NAD+ 500mg - Test Report New Life Labs.pdf" },
-            { id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "pdfs/GLOW 70mg - Test Report New Life Labs.pdf" },
-            { id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "pdfs/AOD 5mg - Test Report New Life Labs.pdf" },
-            { id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "pdfs/KLOW 80mg - Test Report New Life Labs.pdf" }
+            { id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf" },
+            { id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf" },
+            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf" },
+            { id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf" },
+            { id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf" },
+            { id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf" },
+            { id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf" },
+            { id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf" },
+            { id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf" },
+            { id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf" },
+            { id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf" },
+            { id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf" },
+            { id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf" },
+            { id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf" }
         ];
 
         let selectedCategory = "all";
