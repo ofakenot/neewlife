@@ -345,12 +345,28 @@
             border-radius: 8px; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s var(--transition-smooth), border-color 0.4s ease;
+            position: relative;
         }
 
         .product-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             border-color: #111111; 
+        }
+
+        .product-purity-tag {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
+            font-size: 0.7rem;
+            font-weight: 800;
+            font-family: monospace;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-green);
+            z-index: 2;
         }
 
         .product-img-box {
@@ -376,7 +392,7 @@
             transform: scale(1.05); 
         }
 
-        /* --- SEÇÃO DE ARTIGOS CIENTÍFICOS (SEM FOTO) --- */
+        /* --- SEÇÃO DE ARTIGOS CIENTÍFICOS --- */
         .articles-section {
             background-color: var(--gray-100);
             border-top: 1px solid var(--gray-200);
@@ -791,8 +807,36 @@
             .articles-grid { grid-template-columns: 1fr; gap: 16px; }
             .product-card { padding: 16px; }
             .product-img-box { height: 220px; }
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
             
+            /* FOOTER CENTRALIZADO NO MOBILE */
+            .footer-grid { 
+                grid-template-columns: 1fr; 
+                gap: 35px; 
+                text-align: center;
+            }
+
+            .footer-brand {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-logo-box {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+
+            .footer-contacts {
+                align-items: center;
+            }
+
+            .contact-item {
+                justify-content: center;
+                width: 100%;
+            }
+
             .modal { padding: 12px; }
 
             .modal-content {
@@ -1133,7 +1177,7 @@
 
         const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
 
-        // LISTA DE PRODUTOS CORRIGIDA E REVISADA
+        // LISTA DE PRODUTOS
         const produtos = [
             {
                 targetId: 'ghk100',
@@ -1141,7 +1185,7 @@
                 purity: '99.62%',
                 nome_key: 'product_ghk100',
                 imagem: 'images/ghk-cu100.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 100 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>SÍNTESE:</strong> Copper Peptide</div><div><strong>VIA ALVO:</strong> Matriz Extracelular</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 100 mg / Vial</div><div><strong>PUREZA:</strong> 99.62% (HPLC)</div><div><strong>SÍNTESE:</strong> Copper Peptide</div><div><strong>VIA ALVO:</strong> Matriz Extracelular</div></div>`
             },
             {
                 targetId: 'glow70',
@@ -1149,7 +1193,7 @@
                 purity: '99.37%',
                 nome_key: 'product_glow70',
                 imagem: 'images/glow70.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>COMPOSIÇÃO:</strong> 70 mg Active Blend</div><div><strong>PH ISOTÔNICO:</strong> 7.2</div><div><strong>ALVO:</strong> Tirosinasa Celular</div><div><strong>EMBALAGEM:</strong> Vidro Tipo I</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>COMPOSIÇÃO:</strong> 70 mg Active Blend</div><div><strong>PUREZA:</strong> 99.37% (HPLC)</div><div><strong>ALVO:</strong> Tirosinasa Celular</div><div><strong>EMBALAGEM:</strong> Vidro Tipo I</div></div>`
             },
             {
                 targetId: 'ghk50',
@@ -1157,7 +1201,7 @@
                 purity: '99.50%',
                 nome_key: 'product_ghk50',
                 imagem: 'images/ghk-cu50.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo sinalizador estruturado em dosagem precisa para manutenção do envelhecimento celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 50 mg / Vial</div><div><strong>PADRÃO:</strong> Grau Laboratorial</div><div><strong>FUNÇÃO:</strong> Reparação Epidérmica</div><div><strong>SOLUBILIDADE:</strong> Hidrofílico</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo sinalizador estruturado em dosagem precisa para manutenção do envelhecimento celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 50 mg / Vial</div><div><strong>PUREZA:</strong> 99.50% (HPLC)</div><div><strong>FUNÇÃO:</strong> Reparação Epidérmica</div><div><strong>SOLUBILIDADE:</strong> Hidrofílico</div></div>`
             },
             {
                 targetId: 'klow80',
@@ -1165,7 +1209,7 @@
                 purity: '99.70%',
                 nome_key: 'product_klow80',
                 imagem: 'images/klow80.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis para bioestimulação.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 80 mg</div><div><strong>ESTRUTURA:</strong> Micropartículas</div><div><strong>AÇÃO:</strong> Volumização</div><div><strong>LIBERAÇÃO:</strong> Gradual Cinética</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis para bioestimulação.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 80 mg</div><div><strong>PUREZA:</strong> 99.70% (HPLC)</div><div><strong>AÇÃO:</strong> Volumização</div><div><strong>LIBERAÇÃO:</strong> Gradual Cinética</div></div>`
             },
             {
                 targetId: 'tesam',
@@ -1173,7 +1217,7 @@
                 purity: '99.76%',
                 nome_key: 'product_tesam',
                 imagem: 'images/tesamorelin10.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg Monodose</div><div><strong>SEQUÊNCIA:</strong> 44 Aminoácidos</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>VIA ALVO:</strong> Sinalização Hipofisária</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg Monodose</div><div><strong>SEQUÊNCIA:</strong> 44 Aminoácidos</div><div><strong>PUREZA:</strong> 99.76% (HPLC)</div><div><strong>VIA ALVO:</strong> Sinalização Hipofisária</div></div>`
             },
             {
                 targetId: 'aod',
@@ -1181,7 +1225,7 @@
                 purity: '99.67%',
                 nome_key: 'product_aod',
                 imagem: 'images/aod.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fragmento peptídico C-terminal modificado do hormônio do crescimento humano (hGH 177-191).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>SEQUÊNCIA:</strong> hGH Fragment 177-191</div><div><strong>ALVO:</strong> Tecido Adiposo</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fragmento peptídico C-terminal modificado do hormônio do crescimento humano (hGH 177-191).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> 99.67% (HPLC)</div><div><strong>SEQUÊNCIA:</strong> hGH Fragment 177-191</div><div><strong>ALVO:</strong> Tecido Adiposo</div></div>`
             },
             {
                 targetId: 'cjc',
@@ -1189,7 +1233,7 @@
                 purity: '99.39%',
                 nome_key: 'product_cjc',
                 imagem: 'images/cjc.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fórmula combinada de análogo de GHRH e secretagogo de alta sinergia.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>CATEGORIA:</strong> Blend GH Secretagogue</div><div><strong>RECEPTOR:</strong> GHRH-R Hipofisário</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Fórmula combinada de análogo de GHRH e secretagogo de alta sinergia.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> 99.39% (HPLC)</div><div><strong>CATEGORIA:</strong> Blend GH Secretagogue</div><div><strong>RECEPTOR:</strong> GHRH-R Hipofisário</div></div>`
             },
             {
                 targetId: 'epithalon',
@@ -1197,7 +1241,7 @@
                 purity: '99.72%',
                 nome_key: 'product_epithalon',
                 imagem: 'images/epithalon1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Tetrapeptídeo sintético bioregulador indutor da enzima telomerase. Preserva o comprimento telomérico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 50 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.3% (HPLC)</div><div><strong>MECANISMO:</strong> Ativação Telomerase</div><div><strong>ALVO:</strong> Núcleo Celular</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Tetrapeptídeo sintético bioregulador indutor da enzima telomerase. Preserva o comprimento telomérico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 50 mg / Vial</div><div><strong>PUREZA:</strong> 99.72% (HPLC)</div><div><strong>MECANISMO:</strong> Ativação Telomerase</div><div><strong>ALVO:</strong> Núcleo Celular</div></div>`
             },
             {
                 targetId: 'motsc',
@@ -1205,7 +1249,7 @@
                 purity: '99.40%',
                 nome_key: 'product_motsc',
                 imagem: 'images/motsc.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo codificado pelo genoma mitocondrial. Ativa centralmente a via AMPK.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 40 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 98.8% (HPLC)</div><div><strong>ORIGEM:</strong> Mitocondrial (MDP)</div><div><strong>VIA:</strong> Ativação AMPK</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo codificado pelo genoma mitocondrial. Ativa centralmente a via AMPK.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 40 mg / Vial</div><div><strong>PUREZA:</strong> 99.40% (HPLC)</div><div><strong>ORIGEM:</strong> Mitocondrial (MDP)</div><div><strong>VIA:</strong> Ativação AMPK</div></div>`
             },
             {
                 targetId: 'nad',
@@ -1213,7 +1257,7 @@
                 purity: '99.85%',
                 nome_key: 'product_nad',
                 imagem: 'images/nad+.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Coenzima fundamental de transferência de elétrons essencial para o metabolismo energético mitocondrial.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 500 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (Enzimático)</div><div><strong>CLASSE:</strong> Coenzima Nicotinamídica</div><div><strong>ALVO:</strong> Sirtuínas</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Coenzima fundamental de transferência de elétrons essencial para o metabolismo energético mitocondrial.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 500 mg / Vial</div><div><strong>PUREZA:</strong> 99.85% (Enzimático)</div><div><strong>CLASSE:</strong> Coenzima Nicotinamídica</div><div><strong>ALVO:</strong> Sirtuínas</div></div>`
             },
             {
                 targetId: 'retatrutide',
@@ -1221,7 +1265,7 @@
                 purity: '99.25%',
                 nome_key: 'product_retatrutide',
                 imagem: 'images/retatrutide1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Co-agonista triplo dos receptores GIP, GLP-1 e Glucagon desenvolvido para reprogramação metabólica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 60 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>MECANISMO:</strong> Agonista Triplo</div><div><strong>RECEPTORES:</strong> GIP/GLP-1/Glucagon</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Co-agonista triplo dos receptores GIP, GLP-1 e Glucagon desenvolvido para reprogramação metabólica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 60 mg / Vial</div><div><strong>PUREZA:</strong> 99.25% (HPLC)</div><div><strong>MECANISMO:</strong> Agonista Triplo</div><div><strong>RECEPTORES:</strong> GIP/GLP-1/Glucagon</div></div>`
             },
             {
                 targetId: 'selank',
@@ -1229,7 +1273,7 @@
                 purity: '99.55%',
                 nome_key: 'product_selank',
                 imagem: 'images/selank1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo regulador neurotrópico sintético derivado da tuftsina. Modula a neurotransmissão GABAérgica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>ESTRUTURA:</strong> Análogo Tuftsina</div><div><strong>SISTEMA:</strong> Nervoso Central</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Peptídeo regulador neurotrópico sintético derivado da tuftsina. Modula a neurotransmissão GABAérgica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> 99.55% (HPLC)</div><div><strong>ESTRUTURA:</strong> Análogo Tuftsina</div><div><strong>SISTEMA:</strong> Nervoso Central</div></div>`
             },
             {
                 targetId: 'semax',
@@ -1237,7 +1281,7 @@
                 purity: '99.60%',
                 nome_key: 'product_semax',
                 imagem: 'images/semax1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Heptapeptídeo nootrópico e neuroprotetor derivado do fragmento N-terminal do ACTH (4-10).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>ESTÍMULO:</strong> Fatores BDNF / NGF</div><div><strong>ALVO:</strong> Córtex</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Heptapeptídeo nootrópico e neuroprotetor derivado do fragmento N-terminal do ACTH (4-10).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> 99.60% (HPLC)</div><div><strong>ESTÍMULO:</strong> Fatores BDNF / NGF</div><div><strong>ALVO:</strong> Córtex</div></div>`
             },
             {
                 targetId: 'ss31',
@@ -1245,7 +1289,7 @@
                 purity: '99.37%',
                 nome_key: 'product_ss31',
                 imagem: 'images/ss31.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Tetrapeptídeo antioxidante mitocôndria-alvo que se liga seletivamente à cardiolipina.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 50 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>LIGANTE:</strong> Cardiolipina</div><div><strong>EFETIVIDADE:</strong> Inibição de ROS</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Tetrapeptídeo antioxidante mitocôndria-alvo que se liga seletivamente à cardiolipina.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 50 mg / Vial</div><div><strong>PUREZA:</strong> 99.37% (HPLC)</div><div><strong>LIGANTE:</strong> Cardiolipina</div><div><strong>EFETIVIDADE:</strong> Inibição de ROS</div></div>`
             },
             {
                 targetId: 'terzepatida',
@@ -1253,11 +1297,11 @@
                 purity: '99.90%',
                 nome_key: 'product_terzepatida',
                 imagem: 'images/terzepatida1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Agonista duplo dos receptores GIP e GLP-1. Atua na regulação glicêmica e na supressão central do apetite.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 60 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.4% (HPLC)</div><div><strong>MECANISMO:</strong> GIP / GLP-1 Dual</div><div><strong>SISTEMA:</strong> Metabólico</div></div>`
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.9em; line-height: 1.5; margin-bottom: 12px;">Agonista duplo dos receptores GIP e GLP-1. Atua na regulação glicêmica e na supressão central do apetite.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75em; background: #f8f9fa; padding: 10px; border-radius: 6px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 60 mg / Vial</div><div><strong>PUREZA:</strong> 99.90% (HPLC)</div><div><strong>MECANISMO:</strong> GIP / GLP-1 Dual</div><div><strong>SISTEMA:</strong> Metabólico</div></div>`
             }
         ];
 
-        // BASE DE DADOS MULTILÍNGUE DOS ARTIGOS CIENTÍFICOS COM DOSAGENS CORRIGIDAS
+        // BASE DE DADOS MULTILÍNGUE AMPLIADA E DETALHADA DOS ARTIGOS CIENTÍFICOS
         const artigos = [
             {
                 id: 'ghk100',
@@ -1272,42 +1316,59 @@
                 resumo_es: 'Revisión completa sobre la actividad bioactiva del tripéptido de cobre a 100mg, centrándose en la modulación de metaloproteinasas y reparación tisular.',
                 texto_pt: `
                     <h4>1. Estrutura Química e Bioatividade Integrada</h4>
-                    <p>O GHK-Cu (Glicil-L-histidil-L-lisina Cu2+) é um tripeptídeo endógeno complexado com íons de cobre bivalente. A dosagem de 100mg por vial estabelece um padrão de alta pureza para ensaios de reestruturação matricial. O tripeptídeo apresenta alta afinidade ao cobre, garantindo a estabilidade em meios biológicos.</p>
+                    <p>O GHK-Cu (Glicil-L-histidil-L-lisina Cu2+) é um tripeptídeo endógeno naturalmente presente no plasma humano, complexado com íons de cobre bivalente. A dosagem ultra-concentrada de 100mg por vial estabelece o padrão de referência para ensaios analíticos de reestruturação matricial avançada. O tripeptídeo apresenta constante de afinidade extremamente alta ao cobre (Log Ka ~ 16.4), permitindo a mediação eficiente do transporte iônico para o meio intracelular sem induzir estresse oxidativo livre.</p>
+                    
                     <h4>2. Mecanismo Celular e Regulação Epigenética</h4>
-                    <p>Estudos transcriptômicos demonstram que o GHK-Cu modula a expressão de mais de 4.000 genes humanos. Suas principais vias de atuação incluem:</p>
+                    <p>Estudos transcriptômicos demonstram que o GHK-Cu modula a expressão de mais de 4.000 genes humanos, redefinindo o perfil genético para um estado jovem. Suas vias de ação celular incluem:</p>
                     <ul>
-                        <li><strong>Inibição de Metaloproteinases (MMP-2 e MMP-9):</strong> Bloqueia a degradação da matriz extracelular (MEC).</li>
-                        <li><strong>Estimulação do Colágeno Tipo I e III:</strong> Aumenta a secreção proteica nos fibroblastos.</li>
-                        <li><strong>Síntese de Decorina e Glicosaminoglicanos:</strong> Melhora a firmeza e retenção hídrica profunda.</li>
+                        <li><strong>Inibição Controlada de Metaloproteinases (MMP-2 e MMP-9):</strong> Bloqueia a degradação acelerada do arcabouço de colágeno e elastina.</li>
+                        <li><strong>Estímulo da Neocolagênese (Tipos I, III e V):</strong> Promove o recrutamento de fibroblastos e aumenta a taxa de síntese proteica na matriz extracelular (MEC).</li>
+                        <li><strong>Expressão de Decorina e Glicosaminoglicanos:</strong> Garante a organização tensional das fibras e a retenção hídrica profunda.</li>
+                        <li><strong>Modulação de Citocinas Inflamatórias:</strong> Reduz a liberação de TNF-alfa e IL-6, atenuando microinflamações teciduais.</li>
                     </ul>
-                    <h4>3. Perfil de Pureza Analítica (HPLC)</h4>
-                    <p>Purificado por Cromatografia Líquida de Alta Eficiência em Fase Reversa (RP-HPLC). O pico espectral confirma pureza de 99.62%.</p>
+
+                    <h4>3. Regeneração e Reparo Tecidual Profundo</h4>
+                    <p>O composto atua diretamente no recrutamento de células progenitoras e macrófagos do tipo M2 (anti-inflamatórios), acelerando a reepitelização e a formação de novos vasos sanguíneos (angiogênese fisiológica). Isso resulta em uma densidade dermocutânea otimizada e regeneração acelerada de tecidos atróficos.</p>
+
+                    <h4>4. Perfil de Pureza Analítica por Cromatografia (HPLC)</h4>
+                    <p>Submetido a rigorosos testes de Cromatografia Líquida de Alta Eficiência em Fase Reversa (RP-HPLC) e Espectrometria de Massa por Eletrospray (ESI-MS). O lote NL97891GHK100 confirma pureza exata de <strong>99.62%</strong>, garantindo ausência de peptídeos truncados e contaminantes metálicos.</p>
                 `,
                 texto_en: `
                     <h4>1. Chemical Structure and Integrated Bioactivity</h4>
-                    <p>GHK-Cu (Glycyl-L-histidyl-L-lysine Cu2+) is an endogenous tripeptide complexed with bivalent copper ions. The 100mg vial dosage establishes a high-purity standard for matrix restructuring assays, showing high copper affinity and stability in biological media.</p>
+                    <p>GHK-Cu (Glycyl-L-histidyl-L-lysine Cu2+) is a naturally occurring plasma tripeptide complexed with bivalent copper ions. The 100mg dosage per vial sets a benchmark for advanced extracellular matrix restructuring assays. Possessing a high affinity constant (Log Ka ~ 16.4), it mediates cellular copper delivery without free oxidative toxicity.</p>
+                    
                     <h4>2. Cellular Mechanism and Epigenetic Regulation</h4>
-                    <p>Transcriptomic studies show that GHK-Cu modulates over 4,000 human genes. Key pathways include:</p>
+                    <p>Transcriptomic profiling reveals GHK-Cu resets the expression of over 4,000 human genes to a healthier, youthful state. Key mechanisms include:</p>
                     <ul>
-                        <li><strong>Metalloproteinase Inhibition (MMP-2 and MMP-9):</strong> Blocks extracellular matrix breakdown.</li>
-                        <li><strong>Type I & III Collagen Stimulation:</strong> Boosts protein synthesis in fibroblasts.</li>
-                        <li><strong>Decorin & GAG Synthesis:</strong> Enhances tissue firmness and deep hydration.</li>
+                        <li><strong>MMP-2 and MMP-9 Regulation:</strong> Prevents excessive breakdown of structural dermal matrix.</li>
+                        <li><strong>Neocollagenesis Stimulation:</strong> Accelerates Types I, III, and V collagen production in human fibroblasts.</li>
+                        <li><strong>Decorin and GAG Synthesis:</strong> Improves fiber alignment and deep osmotic hydration.</li>
+                        <li><strong>Inflammatory Cytokine Downregulation:</strong> Suppresses TNF-alpha and IL-6 levels.</li>
                     </ul>
-                    <h4>3. Analytical Purity Profile (HPLC)</h4>
-                    <p>Purified by Reverse-Phase High-Performance Liquid Chromatography (RP-HPLC), with spectral purity verified at 99.62%.</p>
+
+                    <h4>3. Deep Tissue Repair Pathways</h4>
+                    <p>Promotes M2 macrophage polarization and endothelial cell migration, facilitating physiological angiogenesis and rapid re-epithelialization across damaged matrices.</p>
+
+                    <h4>4. Analytical HPLC Purity Profile</h4>
+                    <p>Validated via Reverse-Phase High-Performance Liquid Chromatography (RP-HPLC) and ESI-MS. Batch NL97891GHK100 yields an absolute purity of <strong>99.62%</strong>.</p>
                 `,
                 texto_es: `
                     <h4>1. Estructura Química y Bioactividad Integrada</h4>
-                    <p>El GHK-Cu (Glicil-L-histidil-L-lisina Cu2+) es un tripéptido endógeno complexado con cobre bivalente. La dosis de 100mg por vial establece un estándar de alta pureza para la reestructuración matricial.</p>
-                    <h4>2. Mecanismo Celular y Regulación Epigenética</h4>
-                    <p>Modula la expresión de más de 4.000 genes humanos. Sus vías clave incluyen:</p>
+                    <p>El GHK-Cu (Glicil-L-histidil-L-lisina Cu2+) es un tripéptido endógeno unido a cobre bivalente. La formulación concentrada de 100mg establece el estándar de laboratorio para la regeneración matricial profunda.</p>
+                    
+                    <h4>2. Mecanismo Celular y Regulación Genómica</h4>
+                    <p>Regula más de 4.000 genes humanos hacia patrones juveniles. Sus vías clave son:</p>
                     <ul>
-                        <li><strong>Inhibición de Metaloproteinasas (MMP-2 y MMP-9):</strong> Bloquea la degradación de la matriz.</li>
-                        <li><strong>Estimulación de Colágeno Tipo I y III:</strong> Incrementa la síntesis en fibroblastos.</li>
-                        <li><strong>Síntesis de Decorina y Glicosaminoglicanos:</strong> Aumenta la firmeza e hidratación.</li>
+                        <li><strong>Inhibición de Metaloproteinasas (MMP-2/MMP-9):</strong> Protege la matriz extracelular.</li>
+                        <li><strong>Estimulación de Colágeno I, III y V:</strong> Incrementa la síntesis fibroblástica.</li>
+                        <li><strong>Síntesis de Decorina y Glicosaminoglicanos:</strong> Mejora la elasticidad e hidratación.</li>
                     </ul>
-                    <h4>3. Pureza Analítica (HPLC)</h4>
-                    <p>Purificado mediante Cromatografía Líquida de Alta Eficiencia, confirmando un 99.62% de pureza.</p>
+
+                    <h4>3. Reparación Tisular Avanzada</h4>
+                    <p>Facilita la polarización de macrófagos M2 y promueve la angiogénesis fisiológica y la regeneración tisular.</p>
+
+                    <h4>4. Pureza Analítica (HPLC)</h4>
+                    <p>Verificado por Cromatografía Líquida HPLC y Espectrometría de Masas, confirmando una pureza exacta de <strong>99.62%</strong>.</p>
                 `
             },
             {
@@ -1322,34 +1383,54 @@
                 resumo_en: 'In-depth study on Glow 70mg active complex in tyrosinase regulation, redox homeostasis, and cellular skin radiance.',
                 resumo_es: 'Estudio detallado del complejo Glow 70mg en la regulación de la tirosinasa, homeostasis redox y revitalización celular.',
                 texto_pt: `
-                    <h4>1. Composição e Biorrevitalização</h4>
-                    <p>O Glow 70mg é formulado como uma matriz peptídica de alta estabilidade focada na revitalização celular. Atua sobre queratinócitos e melanócitos, promovendo tom uniforme.</p>
-                    <h4>2. Vias de Ação</h4>
+                    <h4>1. Composição Molecular e Sinergia Ativa</h4>
+                    <p>O Glow 70mg é desenvolvido como uma matriz peptídica de bioestimulação sinérgica projetada para otimizar o microambiente celular. Combinando oligopeptídeos biomiméticos e cofatores estabilizados, o composto atua diretamente nos queratinócitos e melanócitos para uniformizar o tom e restaurar o brilho natural.</p>
+
+                    <h4>2. Modulação Enzimática da Tirosinasa</h4>
+                    <p>A formulação atua inibindo competitivamente a enzima tirosinasa e bloqueando a transferência de melanosomas para as camadas superficiais da epiderme:</p>
                     <ul>
-                        <li><strong>Inibição da Tirosinasa:</strong> Previne o acúmulo focal de pigmento.</li>
-                        <li><strong>Estímulo ao ATP Mitocondrial:</strong> Eleva o rendimento energético celular.</li>
-                        <li><strong>Neutralização de ROS:</strong> Protege a membrana contra fotoenvelhecimento.</li>
+                        <li><strong>Supressão da Melanogênese Focal:</strong> Reduz a hiperativação induzida por radiação UV e estresse oxidativo.</li>
+                        <li><strong>Aumento da Produção de ATP Mitocondrial:</strong> Otimiza a bioenergética celular para acelerar a renovação epidérmica.</li>
+                        <li><strong>Inativação de Radicais Livres (ROS):</strong> Protege os lipídios de membrana contra a peroxidação.</li>
                     </ul>
+
+                    <h4>3. Biorrevitalização e Homogeneidade Cutânea</h4>
+                    <p>Através do estímulo da microcirculação local e do aumento na produção de matriz glicoproteica, o Glow 70mg melhora a reflexão da luz na superfície dermocutânea, garantindo viço e textura aveludada.</p>
+
+                    <h4>4. Garantia de Pureza Analítica</h4>
+                    <p>Analisado via cromatografia RP-HPLC com detecção UV espectral. O lote NL97892GLOW70 apresenta pureza homologada de <strong>99.37%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Composition and Biorevitalizing</h4>
-                    <p>Glow 70mg is a highly stable peptide matrix designed for cellular revitalization, acting on keratinocytes and melanocytes to balance skin tone.</p>
-                    <h4>2. Action Pathways</h4>
+                    <h4>1. Molecular Formulation and Active Synergy</h4>
+                    <p>Glow 70mg represents a biomimetic peptide matrix formulated to revitalize the cellular microenvironment. It targets keratinocytes and melanocytes to restore natural radiance and epidermal tone uniformity.</p>
+
+                    <h4>2. Tyrosinase Modulation Pathways</h4>
+                    <p>Acts through competitive tyrosinase inhibition and blocks melanosome transfer:</p>
                     <ul>
-                        <li><strong>Tyrosinase Inhibition:</strong> Prevents focal pigment accumulation.</li>
-                        <li><strong>Mitochondrial ATP Boost:</strong> Elevates cellular energy yield.</li>
-                        <li><strong>ROS Scavenging:</strong> Protects membranes against photoaging.</li>
+                        <li><strong>Melanogenesis Suppression:</strong> Attenuates UV-induced focal hyperpigmentation.</li>
+                        <li><strong>Mitochondrial ATP Elevation:</strong> Boosts turnover speed in basal epidermal layers.</li>
+                        <li><strong>ROS Neutralization:</strong> Shields membrane phospholipids from oxidative breakdown.</li>
                     </ul>
+
+                    <h4>3. Skin Refinement and Radiance</h4>
+                    <p>Enhances dermal microvascular perfusion and glycoprotein synthesis, noticeably improving skin light refraction and smoothness.</p>
+
+                    <h4>4. Analytical Quality Assurance</h4>
+                    <p>RP-HPLC testing confirms lot NL97892GLOW70 achieves a certified purity of <strong>99.37%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Composición y Biorrevitalización</h4>
-                    <p>Glow 70mg es una matriz péptida formulada para la revitalización celular, actuando sobre queratinocitos y melanocitos para un tono uniforme.</p>
-                    <h4>2. Vías de Acción</h4>
+                    <h4>1. Composición y Sinergia Molecular</h4>
+                    <p>Glow 70mg es un complejo péptido diseñado para revitalizar la matriz epidérmica, unificando el tono y mejorando la luminosidad natural.</p>
+
+                    <h4>2. Modulación de la Tirosinasa</h4>
                     <ul>
-                        <li><strong>Inhibición de la Tirosinasa:</strong> Previene manchas de pigmentación.</li>
-                        <li><strong>Estimulación del ATP Mitocondrial:</strong> Mejora la energía celular.</li>
-                        <li><strong>Protección Antioxidante:</strong> Previene el fotoenvejecimiento.</li>
+                        <li><strong>Inhibición de la Melanogénesis:</strong> Controla la acumulación de pigmento induzida por radiación UV.</li>
+                        <li><strong>Aumento de ATP Mitocondrial:</strong> Optimiza la renovación celular.</li>
+                        <li><strong>Protección Antioxidante:</strong> Neutraliza las especies reactivas de oxígeno (ROS).</li>
                     </ul>
+
+                    <h4>3. Pureza Certificada</h4>
+                    <p>El análisis por cromatografía RP-HPLC confirma una pureza de <strong>99.37%</strong>.</p>
                 `
             },
             {
@@ -1364,22 +1445,46 @@
                 resumo_en: 'Monograph on GHK-Cu 50mg for preventive tissue maintenance and gradual skin matrix regeneration.',
                 resumo_es: 'Monografía sobre GHK-Cu 50mg en protocolos de mantenimiento tisular preventivo y regeneración gradual.',
                 texto_pt: `
-                    <h4>1. Sinalização Contínua</h4>
-                    <p>Concebido para titulação em protocolos de manutenção preventiva. Mantém a pureza do concentrado com dosagem moderada de 50mg.</p>
-                    <h4>2. Atividade em Fibroblastos</h4>
-                    <p>Estimula a diferenciação de queratinócitos e fortalece a junção dermoepidérmica aumentando laminina e integrinas.</p>
+                    <h4>1. Protocolo Tegumentar de Manutenção Preventiva</h4>
+                    <p>A apresentação em dosagem de 50mg do GHK-Cu foi desenvolvida especialmente para regimes de titulação contínua e manutenção de longo prazo. Ela oferece bioatividade sinalizadora constante sem saturação prévia dos receptores de membrana.</p>
+
+                    <h4>2. Sinalização Celular e Preservação de Telômeros</h4>
+                    <p>O peptídeo atua na regulação dos genes de estresse celular e enzimas antioxidantes (Superóxido Dismutase - SOD1):</p>
+                    <ul>
+                        <li><strong>Fortalecimento da Junção Dermoepidérmica (JDE):</strong> Estimula a síntese de integrinas e laminina-5.</li>
+                        <li><strong>Inibição da Senescência de Fibroblastos:</strong> Mantém a capacidade replicativa celular.</li>
+                        <li><strong>Aumento de Proteoglicanos:</strong> Melhora a elasticidade e densidade dermocutânea.</li>
+                    </ul>
+
+                    <h4>3. Validação Cromatográfica HPLC</h4>
+                    <p>Testado via RP-HPLC sob condições padrão farmacêuticas. O lote atesta pureza de <strong>99.50%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Continuous Signaling</h4>
-                    <p>Designed for preventive maintenance protocols at 50mg, delivering consistent bioactivity without receptor oversaturation.</p>
-                    <h4>2. Fibroblast Activity</h4>
-                    <p>Promotes keratinocyte differentiation and strengthens the dermo-epidermal junction through laminin and integrin synthesis.</p>
+                    <h4>1. Preventive Dermal Maintenance Protocol</h4>
+                    <p>The 50mg GHK-Cu formulation provides calibrated signaling for long-term maintenance regimes, delivering sustained bioactive cues without cell receptor downregulation.</p>
+
+                    <h4>2. Cellular Protection & SOD Activation</h4>
+                    <ul>
+                        <li><strong>Dermo-Epidermal Junction Support:</strong> Stimulates laminin-5 and integrin synthesis.</li>
+                        <li><strong>Fibroblast Replicative Health:</strong> Delays cellular senescence entry.</li>
+                        <li><strong>Proteoglycan Stimulation:</strong> Enhances tissue firmness and resilience.</li>
+                    </ul>
+
+                    <h4>3. HPLC Analytical Certification</h4>
+                    <p>Evaluated through RP-HPLC methodology, confirming a purity of <strong>99.50%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Señalización Continua</h4>
-                    <p>Diseñado para mantenimiento preventivo constante en dosis de 50mg, aportando bioactividad equilibrada.</p>
-                    <h4>2. Actividad Celular</h4>
-                    <p>Fortalece la unión dermoepidérmica estimulando la producción de laminina e integrinas.</p>
+                    <h4>1. Protocolo de Mantenimiento Preventivo</h4>
+                    <p>Formulación de 50mg ideal para dosificación continua y preservación de la firmeza tisular.</p>
+
+                    <h4>2. Mecanismos de Protección</h4>
+                    <ul>
+                        <li><strong>Refuerzo de la Unión Dermoepidérmica:</strong> Estimula laminina y proteoglicanos.</li>
+                        <li><strong>Atención a la Senescencia:</strong> Preserva la salud replicativa de los fibroblastos.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Análisis HPLC confirma un nivel de pureza de <strong>99.50%</strong>.</p>
                 `
             },
             {
@@ -1394,16 +1499,46 @@
                 resumo_en: 'Study on Klow 80mg for structured collagen stimulation, matrix density enhancement, and tissue rebuilding.',
                 resumo_es: 'Estudio de Klow 80mg en la estimulación de colágeno, aumento de densidad matricial y reestructuración tisular.',
                 texto_pt: `
-                    <h4>1. Sustentação e Densidade</h4>
-                    <p>A estrutura de Klow 80mg atua estimulando o fator TGF-β, promovendo densidade dérmica e elastina em tecidos com perda de volume.</p>
+                    <h4>1. Bioestimulação e Polímeros Biodisponíveis</h4>
+                    <p>O Klow 80mg é formulado com uma arquitetura de polímeros peptídicos bioabsorvíveis que atuam como suporte estrutural temporário. Sua liberação gradual promove uma resposta biológica sustentada para regeneração tecidual profunda.</p>
+
+                    <h4>2. Ativação da Via TGF-β e Neocolagênese</h4>
+                    <p>O composto ativa seletivamente o Fator de Crescimento Transformante Beta (TGF-beta), induzindo:</p>
+                    <ul>
+                        <li><strong>Síntese de Colágeno de Alta Densidade:</strong> Restaura o volume dérmico e a espessura da matriz.</li>
+                        <li><strong>Proliferação Organizada de Elastina:</strong> Melhora a elasticidade tensional dos tecidos atróficos.</li>
+                        <li><strong>Volumização e Remodelação:</strong> Preenche espaços extracelulares com matriz proteica autóloga.</li>
+                    </ul>
+
+                    <h4>3. Certificação Analítica HPLC</h4>
+                    <p>O ensaio de cromatografia de fase reversa do lote NL97893KLOW80 demonstra pureza de <strong>99.70%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Structural Support</h4>
-                    <p>Klow 80mg polymer sequence stimulates TGF-β pathways, enhancing dermal density and elastin framework in volume-depleted tissues.</p>
+                    <h4>1. Biostimulation via Bioavailable Polymers</h4>
+                    <p>Klow 80mg features a specialized peptide polymer matrix that creates an internal micro-scaffold, releasing active signaling sequences to stimulate tissue rebuilding over extended durations.</p>
+
+                    <h4>2. TGF-β Pathway & Neocollagenesis</h4>
+                    <ul>
+                        <li><strong>High-Density Collagen Network:</strong> Restores dermal volume and extracellular thickness.</li>
+                        <li><strong>Elastin Fiber Alignment:</strong> Restores mechanical flexibility to volume-depleted sites.</li>
+                        <li><strong>Autologous Matrix Volumization:</strong> Stimulates native matrix deposition.</li>
+                    </ul>
+
+                    <h4>3. HPLC Quality Assurance</h4>
+                    <p>Tested by RP-HPLC, confirming a high purity index of <strong>99.70%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Soporte Estructural</h4>
-                    <p>Estimula la vía TGF-β, promoviendo el espesor dérmico y la elasticidad en tejidos atróficos.</p>
+                    <h4>1. Polímeros de Bioestimulación</h4>
+                    <p>Klow 80mg utiliza una estructura polimérica peptídica de liberación cinética gradual para reconstrucción tisular.</p>
+
+                    <h4>2. Activación de Neocolagénesis</h4>
+                    <ul>
+                        <li><strong>Inducción de Colágeno Denso:</strong> Recupera espesor y volumen dérmico.</li>
+                        <li><strong>Formación de Elastina:</strong> Mejora la flexibilidad y resistencia mecánica.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>La pureza analítica homologada por HPLC es de <strong>99.70%</strong>.</p>
                 `
             },
             {
@@ -1418,16 +1553,46 @@
                 resumo_en: 'Detailed analysis of the 44-amino acid GHRH analog in pulsatile GH release and selective visceral lipolysis.',
                 resumo_es: 'Análisis del análogo de GHRH de 44 aminoácidos en la liberación de GH y lipólisis visceral selectiva.',
                 texto_pt: `
-                    <h4>1. Mecanismo de Ação</h4>
-                    <p>Induz a secreção de GH pulsátil pela hipófise, estimulando a lipólise visceral sem comprometer a glicemia.</p>
+                    <h4>1. Arquitetura Molecular do Análogo GHRH</h4>
+                    <p>O Tesamorelin é um análogo sintético do Fator Liberador de Hormônio do Crescimento (GHRH) constituído por 44 aminoácidos acoplados a um grupo de ácido trans-hexenoico. Essa modificação no N-terminal confere resistência estendida à degradação pela enzima dipeptidil peptidase-4 (DPP-4), prolongando a meia-vida plasmática.</p>
+
+                    <h4>2. Sinalização Hipofisária e Lipólise Visceral</h4>
+                    <p>Ao ligar-se aos receptores GHRH somatotróficos na adenohipófise, induz a secreção pulsátil do hormônio do crescimento (GH) endógeno:</p>
+                    <ul>
+                        <li><strong>Mobilização de Adipócitos Viscerais:</strong> Ativa os receptores beta-3 adrenérgicos no tecido adiposo profundo.</li>
+                        <li><strong>Preservação do Perfil Glicêmico:</strong> Não gera picos descontrolados de insulina ou alteração deletéria de glicose.</li>
+                        <li><strong>Aumento do IGF-1 Hepático:</strong> Promove síntese proteica e recuperação tecidual acelerada.</li>
+                    </ul>
+
+                    <h4>3. Validação HPLC e Espectrometria</h4>
+                    <p>O laudo analítico por RP-HPLC confirma pureza de <strong>99.76%</strong>, garantindo máxima estabilidade da cadeia peptídica.</p>
                 `,
                 texto_en: `
-                    <h4>1. Mechanism of Action</h4>
-                    <p>Induces pulsatile pituitary GH release, selectively activating visceral adipocyte lipolysis while preserving glycemic control.</p>
+                    <h4>1. Molecular Architecture of GHRH Analog</h4>
+                    <p>Tesamorelin is a 44-amino acid synthetic GHRH derivative attached to a trans-hexenoic acid group. This N-terminal stabilization resists DPP-4 enzymatic degradation, prolonging plasma bioactivity.</p>
+
+                    <h4>2. Pituitary Axis & Visceral Fat Depletion</h4>
+                    <ul>
+                        <li><strong>Pulsatile GH Secretion:</strong> Binds somatotroph GHRH receptors without receptor desensitization.</li>
+                        <li><strong>Selective Visceral Lipolysis:</strong> Activates beta-3 adrenergic lipolytic pathways in deep abdominal fat stores.</li>
+                        <li><strong>Preserved Insulin Sensitivity:</strong> Maintains stable glucose parameters.</li>
+                    </ul>
+
+                    <h4>3. HPLC Analytical Verification</h4>
+                    <p>RP-HPLC analysis verifies lot NL97901TES10 at a certified purity of <strong>99.76%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Mecanismo de Acción</h4>
-                    <p>Induce la liberación pulsátil de GH en la hipófisis, estimulando la lipólisis visceral sin alterar la glucemia.</p>
+                    <h4>1. Arquitectura Molecular</h4>
+                    <p>Tesamorelin es un análogo de GHRH de 44 aminoácidos resistente a la degradación enzimática por DPP-4.</p>
+
+                    <h4>2. Liberación de GH y Lipólisis Visceral</h4>
+                    <ul>
+                        <li><strong>Secreción Pulsátil de GH:</strong> Estimula los somatotropos hipofisarios de forma fisiológica.</li>
+                        <li><strong>Reducción de Grasa Visceral:</strong> Activa la lipólisis en el tejido adiposo profundo.</li>
+                    </ul>
+
+                    <h4>3. Pureza Analítica</h4>
+                    <p>Certificação HPLC confirma pureza exata de <strong>99.76%</strong>.</p>
                 `
             },
             {
@@ -1442,16 +1607,46 @@
                 resumo_en: 'Technical review on the modified 5mg lipolytic fragment that stimulates fat breakdown without diabetogenic side effects.',
                 resumo_es: 'Revisión técnica sobre el fragmento lipolítico modificado de 5mg que estimula la pérdida de grasa sin alterar el azúcar en sangre.',
                 texto_pt: `
-                    <h4>1. Lipólise Específica</h4>
-                    <p>Atua diretamente nos adipócitos promovendo quebra de gordura e inibindo a lipogênese sem afetar IGF-1 ou insulina.</p>
+                    <h4>1. Isolamento do Fragmento hGH 177-191</h4>
+                    <p>O AOD-9604 é um peptídeo derivado da região C-terminal do hormônio do crescimento humano ( aminoácidos 177-191 ), modificado com a adição de uma tirosina no N-terminal para aumentar a estabilidade estrutural. Este fragmento retém exclusivamente as propriedades lipolíticas do hGH sem a porção estimuladora de crescimento celular ou efeitos diabetogênicos.</p>
+
+                    <h4>2. Mecanismo Lipolítico Sem Ação Diabetogênica</h4>
+                    <p>O composto atua por vias metabólicas diretas nos adipócitos:</p>
+                    <ul>
+                        <li><strong>Estimulação da Lipólise:</strong> Acelera a quebra de triglicerídeos acumulados em ácidos graxos livres.</li>
+                        <li><strong>Inibição da Lipogênese De Novo:</strong> Impede a re-esterificação de gordura no tecido adiposo.</li>
+                        <li><strong>Zero Interferência na Insulina e IGF-1:</strong> Não afeta a glicemia sanguínea nem causa resistência à insulina.</li>
+                    </ul>
+
+                    <h4>3. Parâmetros Analíticos HPLC</h4>
+                    <p>O relatório cromatográfico de fase reversa valida uma pureza de <strong>99.67%</strong> no lote NL97889AOD5.</p>
                 `,
                 texto_en: `
-                    <h4>1. Specific Lipolysis</h4>
-                    <p>Acts directly on fat cells to stimulate lipolysis and inhibit lipogenesis without elevating IGF-1 or blood glucose.</p>
+                    <h4>1. hGH 177-191 C-Terminal Fragment Synthesis</h4>
+                    <p>AOD-9604 is a synthetic derivative of the C-terminal region of human growth hormone (177-191) with an N-terminal tyrosine residue. It isolates fat-reducing actions without affecting IGF-1 levels or cellular proliferation.</p>
+
+                    <h4>2. Non-Diabetogenic Lipolytic Pathway</h4>
+                    <ul>
+                        <li><strong>Enhanced Lipolysis:</strong> Stimulates triglyceride breakdown in fat cells.</li>
+                        <li><strong>Anti-Lipogenic Action:</strong> Inhibits lipogenesis and lipid storage.</li>
+                        <li><strong>Zero Glycemic Impact:</strong> Leaves blood sugar and insulin sensitivity completely untouched.</li>
+                    </ul>
+
+                    <h4>3. Analytical HPLC Verification</h4>
+                    <p>Reverse-phase HPLC confirms batch NL97889AOD5 achieves <strong>99.67%</strong> purity.</p>
                 `,
                 texto_es: `
-                    <h4>1. Lipólisis Específica</h4>
-                    <p>Estimula la descomposición de grasa e inhibe la lipogénesis sin alterar el IGF-1 ni la insulina.</p>
+                    <h4>1. Fragmento hGH 177-191 Modificado</h4>
+                    <p>Derivado de la región C-terminal de la hormona de crecimiento que aísla la acción lipolítica sin efectos diabetogénicos.</p>
+
+                    <h4>2. Vías de Reducción Adiposa</h4>
+                    <ul>
+                        <li><strong>Estimulación Lipolítica:</strong> Aumenta la descomposición de triglicéridos.</li>
+                        <li><strong>Inhibición de Lipogénesis:</strong> Evita el almacenamiento de nueva grasa.</li>
+                    </ul>
+
+                    <h4>3. Pureza HPLC</h4>
+                    <p>Certificado con <strong>99.67%</strong> de pureza analítica.</p>
                 `
             },
             {
@@ -1466,16 +1661,45 @@
                 resumo_en: 'Study on the bioactive blend of CJC-1295 and Ipamorelin (10mg) in maximizing endogenous GH pulses and tissue repair.',
                 resumo_es: 'Estudio de la mezcla bioactiva de CJC-1295 e Ipamorelin (10mg) en la maximización del pulso endógeno de GH.',
                 texto_pt: `
-                    <h4>1. Sinalização Dupla do GH</h4>
-                    <p>A combinação de CJC-1295 com Ipamorelin na dosagem de 10mg atua sinergicamente estimulando tanto os receptores de GHRH quanto os de secretagogos de GH (GHS-R), promovendo elevações fisiológicas sustentadas de GH e IGF-1 sem sobreelevar o cortisol ou a prolactina.</p>
+                    <h4>1. Sinergia Dual de Receptores (GHRH + GHS-R)</h4>
+                    <p>A combinação de CJC-1295 com Ipamorelin (10mg total) une dois mecanismos complementares de liberação de hormônio do crescimento. Enquanto o CJC-1295 se liga aos receptores GHRH aumentando o número e amplitude dos impulsos, o Ipamorelin atua como um agonista seletivo do receptor de ghrelina (GHS-R), liberando o GH em pulsos naturais sincronizados.</p>
+
+                    <h4>2. Vias de Reparo e Amplificação Fisiológica</h4>
+                    <ul>
+                        <li><strong>Elevação Sustentada de IGF-1:</strong> Maximiza a regeneração tecidual, muscular e ligamentar.</li>
+                        <li><strong>Sem Picos de Cortisol ou Prolactina:</strong> Diferente de outros secretagogos antigos, o Ipamorelin é altamente seletivo.</li>
+                        <li><strong>Melhora do Sono Profundo (Estágio Delta):</strong> Favorece o descanso restaurador e o anabolismo celular.</li>
+                    </ul>
+
+                    <h4>3. Controle Analítico e Pureza (HPLC)</h4>
+                    <p>Ambos os compostos passam por purificação cromatográfica dupla. O produto final entrega pureza de <strong>99.39%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Dual GH Signaling</h4>
-                    <p>Combining CJC-1295 with Ipamorelin at 10mg synergistically binds GHRH and GHS receptors, promoting sustained physiological increases in GH and IGF-1 without elevating cortisol or prolactin.</p>
+                    <h4>1. Dual Receptor Synergy (GHRH + GHS-R)</h4>
+                    <p>Combining CJC-1295 and Ipamorelin (10mg total) creates a dual-action secretagogue complex. CJC-1295 binds pituitary GHRH receptors while Ipamorelin targets the ghrelin receptor (GHS-R), triggering additive, physiological GH release pulses.</p>
+
+                    <h4>2. Regenerative Pathways & Selectivity</h4>
+                    <ul>
+                        <li><strong>Elevated Systemic IGF-1:</strong> Accelerates soft tissue and muscular recovery.</li>
+                        <li><strong>High Receptor Selectivity:</strong> Zero elevation of plasma cortisol or prolactin levels.</li>
+                        <li><strong>Enhanced Slow-Wave Sleep:</strong> Optimizes nocturnal anabolic signaling.</li>
+                    </ul>
+
+                    <h4>3. Dual-Purification HPLC Protocol</h4>
+                    <p>Verified through HPLC chromatography, reaching an overall blend purity of <strong>99.39%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Señalización Doble de GH</h4>
-                    <p>La combinación de CJC-1295 con Ipamorelin a 10mg actúa sinérgicamente en los receptores de GHRH y GHS-R, aumentando los niveles de GH e IGF-1 sin elevação de cortisol o prolactina.</p>
+                    <h4>1. Sinergia Dual GHRH + Ghrelina</h4>
+                    <p>Combinación bioactiva de CJC-1295 e Ipamorelin a 10mg para la liberación de GH en pulsos naturales amplificados.</p>
+
+                    <h4>2. Beneficios de Reparo y Selecitividad</h4>
+                    <ul>
+                        <li><strong>Aumento de IGF-1:</strong> Favorece la recuperación muscular y tisular.</li>
+                        <li><strong>Sin Aumento de Cortisol/Prolactina:</strong> Alta precisión molecular.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Verificado por HPLC con una pureza analítica de <strong>99.39%</strong>.</p>
                 `
             },
             {
@@ -1490,16 +1714,46 @@
                 resumo_en: 'Monograph on the 50mg synthetic tetrapeptide in telomere preservation, pineal regulation, and cellular longevity.',
                 resumo_es: 'Monografía del tetrapéptido de 50mg en la preservación telomérica, regulación de la epífisis y modulación de la senescencia.',
                 texto_pt: `
-                    <h4>1. Ação Telomérica e Longevidade</h4>
-                    <p>Na dosagem de 50mg por vial, o Epithalon ativa ativamente a subunidade catalítica hTERT da enzima telomerase, restaurando a extensão telomérica e otimizando os ritmos circadianos pineais.</p>
+                    <h4>1. Arquitetura do Tetrapeptídeo Biorregulador</h4>
+                    <p>O Epithalon (Ala-Glu-Asp-Gly) é um tetrapeptídeo sintético concebido com base no extrato epifisário humano. A dosagem de 50mg atua no núcleo celular como um bioregulador genético de alta especificidade, interagindo diretamente com cromatinas para modular a senescência celular.</p>
+
+                    <h4>2. Ativação Catalítica da Telomerase (hTERT)</h4>
+                    <p>O mecanismo principal envolve a indução da subunidade catalítica hTERT da enzima telomerase:</p>
+                    <ul>
+                        <li><strong>Preservação e Alongamento do Telômero:</strong> Evita o limite de Hayflick e estende a viabilidade de divisão da célula.</li>
+                        <li><strong>Restauração do Ritmo Circadiano Pineal:</strong> Normaliza a produção fisiológica endógena de melatonina.</li>
+                        <li><strong>Redução da Mutagênese no ADN:</strong> Diminui a acúmulo de quebras na fita dupla do DNA durante o envelhecimento.</li>
+                    </ul>
+
+                    <h4>3. Homologação HPLC de Alta Pureza</h4>
+                    <p>O teste cromatográfico do lote NL97904EPI50 confirma o grau analítico de <strong>99.72%</strong> de pureza.</p>
                 `,
                 texto_en: `
-                    <h4>1. Telomeric Action and Longevity</h4>
-                    <p>At 50mg per vial, Epithalon actively induces the hTERT catalytic subunit of telomerase enzyme, extending telomere length and optimizing circadian rhythms.</p>
+                    <h4>1. Synthetic Pineal Tetrapeptide Structure</h4>
+                    <p>Epithalon (Ala-Glu-Asp-Gly) is a biomimetic pineal peptide derivative. At 50mg, it functions as a chromatin-binding genetic bioregulator that delays cellular aging processes.</p>
+
+                    <h4>2. hTERT Telomerase Enzyme Induction</h4>
+                    <ul>
+                        <li><strong>Telomere Length Maintenance:</strong> Re-activates telomerase to overcome the Hayflick limit.</li>
+                        <li><strong>Pineal Circadian Normalization:</strong> Restores nocturnal endogenous melatonin secretion.</li>
+                        <li><strong>DNA Double-Strand Protection:</strong> Reduces age-related mutational burden.</li>
+                    </ul>
+
+                    <h4>3. Certified HPLC Purity</h4>
+                    <p>Laboratory RP-HPLC analysis validates batch NL97904EPI50 at <strong>99.72%</strong> purity.</p>
                 `,
                 texto_es: `
-                    <h4>1. Acción Telomérica y Longevidad</h4>
-                    <p>A dosis de 50mg por vial, el Epithalon activa la enzima telomerasa (hTERT), restaurando la longitud de los telómeros y optimizando la secreción circadiana.</p>
+                    <h4>1. Estrutura del Tetrapéptido Ala-Glu-Asp-Gly</h4>
+                    <p>Epithalon a 50mg actúa como un biorregulador epigenético del núcleo celular para combatir el envejecimiento.</p>
+
+                    <h4>2. Activación de la Telomerasa</h4>
+                    <ul>
+                        <li><strong>Mantenimiento Telomérito:</strong> Extiende el límite replicativo celular.</li>
+                        <li><strong>Regulación Circadiana:</strong> Normaliza la melatonina pineal endógena.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Análisis HPLC confirma un nivel de <strong>99.72%</strong> de pureza.</p>
                 `
             },
             {
@@ -1514,16 +1768,46 @@
                 resumo_en: 'Study on mitochondrial-derived peptide MOTS-c 40mg in enhancing insulin sensitivity and metabolic energy balance.',
                 resumo_es: 'Estudio del péptido mitocondrial MOTS-c 40mg en la mejora de la sensibilidad a la insulina y homeostasis energética.',
                 texto_pt: `
-                    <h4>1. Sinalização Mitocondrial em 40mg</h4>
-                    <p>Codificado pelo DNA mitocondrial, a dosagem de 40mg ativa fortemente a via AMPK, estimulando a captação de glicose nos miócitos e aumentando a oxidação lipídica.</p>
+                    <h4>1. Origem no Genoma Mitocondrial (MDP)</h4>
+                    <p>O MOTS-c é um peptídeo de 16 aminoácidos codificado pelo genoma mitocondrial (12S rRNA). Como peptídeo derivado da mitocôndria (MDP), atua como sinalizador metabólico que se desloca ao núcleo celular em resposta ao estresse energético.</p>
+
+                    <h4>2. Ativação Central da Via AMPK e Flexibilidade Metabólica</h4>
+                    <p>A dosagem concentrada de 40mg promove estímulo direto na Proteína Quinase Ativada por AMP (AMPK):</p>
+                    <ul>
+                        <li><strong>Captação de Glicose Muscular Sem Dependência de Insulina:</strong> Aumenta a translocação do transportador GLUT4.</li>
+                        <li><strong>Beta-Oxidação Mitocondrial:</strong> Acelera a queima de ácidos graxos no tecido muscular estriado.</li>
+                        <li><strong>Prevenção da Resistência à Insulina:</strong> Restaura a homeostase metabólica sistêmica.</li>
+                    </ul>
+
+                    <h4>3. Ensaio de Cromatografia Analítica HPLC</h4>
+                    <p>Purity test via RP-HPLC garante a estabilidade de <strong>99.40%</strong> da molécula no lote NL97894MOTS40.</p>
                 `,
                 texto_en: `
-                    <h4>1. Mitochondrial Signaling at 40mg</h4>
-                    <p>Encoded within mitochondrial DNA, the 40mg dosage strongly activates the AMPK pathway, stimulating muscle glucose uptake and fatty acid oxidation.</p>
+                    <h4>1. Mitochondrial Genome Derived Peptide (MDP)</h4>
+                    <p>MOTS-c is a 16-amino acid peptide encoded within the mitochondrial 12S rRNA region. As a hormone-like MDP, it translocates to the nucleus under metabolic challenge to orchestrate cellular stress responses.</p>
+
+                    <h4>2. AMPK Activation & Metabolic Flexibility</h4>
+                    <ul>
+                        <li><strong>GLUT4 Translocation:</strong> Enhances skeletal muscle glucose uptake independently of insulin.</li>
+                        <li><strong>Mitochondrial Beta-Oxidation:</strong> Promotes fatty acid oxidation in metabolic tissue.</li>
+                        <li><strong>Insulin Sensitivity Restoration:</strong> Counteracts metabolic inflexibility.</li>
+                    </ul>
+
+                    <h4>3. Analytical Quality Certificate</h4>
+                    <p>RP-HPLC analysis confirms a certified purity level of <strong>99.40%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Señalización Mitocondrial a 40mg</h4>
-                    <p>Codificado en el ADN mitocondrial, la dosis de 40mg activa la vía AMPK, estimulando la captación de glucosa y la oxidación de ácidos grasos.</p>
+                    <h4>1. Péptido Derivado de la Mitocondria (MDP)</h4>
+                    <p>MOTS-c (40mg) es un péptido de 16 aminoácidos codificado en el ADN mitocondrial para regulación energética.</p>
+
+                    <h4>2. Activación de la Vía AMPK</h4>
+                    <ul>
+                        <li><strong>Captación de Glucosa:</strong> Promueve la translocación de GLUT4 en el músculo.</li>
+                        <li><strong>Oxidación de Grasa:</strong> Incrementa la beta-oxidación mitocondrial.</li>
+                    </ul>
+
+                    <h4>3. Pureza HPLC</h4>
+                    <p>Garantizada en <strong>99.40%</strong> mediante ensayos analíticos.</p>
                 `
             },
             {
@@ -1538,16 +1822,45 @@
                 resumo_en: 'Deep review on Nicotinamide Adenine Dinucleotide (NAD+ 500mg) in Krebs cycle, PARP DNA repair, and sirtuin activation.',
                 resumo_es: 'Revisión del NAD+ 500mg en el ciclo de Krebs, reparación de ADN por PARP y renovación mitocondrial.',
                 texto_pt: `
-                    <h4>1. Cofator Celular Vital em 500mg</h4>
-                    <p>Indispensável para o ciclo de Krebs e como substrato para sirtuínas (SIRT1/3) e enzimas PARP de reparo de fita de DNA.</p>
+                    <h4>1. Papel da Coenzima na Cadeia Respiratória Mitocondrial</h4>
+                    <p>O Nicotinamida Adenina Dinucleotídeo (NAD+) é um cofator vital presente em todas as células vivas. Na dosagem elevada de 500mg por vial, atua como o principal aceitador de elétrons na glicólise e no ciclo de Krebs, sendo essencial para a síntese de ATP na fosforilação oxidativa.</p>
+
+                    <h4>2. Ativação de Sirtuínas e Reparo Genômico por PARPs</h4>
+                    <ul>
+                        <li><strong>Ativação das Sirtuínas (SIRT1 e SIRT3):</strong> Desacetila proteínas promovendo biogênese mitocondrial e longevidade.</li>
+                        <li><strong>Substrato para Enzimas PARP1:</strong> Permite o reparo de quebras na fita simples e dupla de DNA induzidas por estresse oxidativo.</li>
+                        <li><strong>Restauração da Razão NAD+/NADH:</strong> Rejuvenesce o perfil bioenergético de tecidos metabolicamente ativos.</li>
+                    </ul>
+
+                    <h4>3. Homologação e Pureza Enzimática</h4>
+                    <p>Purificado com grau farmacêutico de alta estabilidade. O ensaio analítico confirma pureza de <strong>99.85%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Vital Cellular Cofactor at 500mg</h4>
-                    <p>Essential for oxidative phosphorylation, acting as a mandatory substrate for longevity sirtuins and DNA repair enzymes.</p>
+                    <h4>1. Essential Role in Mitochondrial Bioenergetics</h4>
+                    <p>Nicotinamide Adenine Dinucleotide (NAD+) is a fundamental coenzyme present in all living cells. The 500mg formulation serves as the primary electron carrier during glycolysis and the citric acid cycle, driving ATP synthesis.</p>
+
+                    <h4>2. Sirtuin Activation & PARP DNA Repair</h4>
+                    <ul>
+                        <li><strong>SIRT1 and SIRT3 Activation:</strong> Drives mitochondrial biogenesis and deacetylates longevity factors.</li>
+                        <li><strong>PARP1 Enzyme Substrate:</strong> Essential for repairing single/double-strand DNA lesions.</li>
+                        <li><strong>NAD+/NADH Ratio Restoration:</strong> Rejuvenates cellular metabolic capacity.</li>
+                    </ul>
+
+                    <h4>3. Analytical HPLC Purity Standard</h4>
+                    <p>Laboratory testing certifies batch NL97905NAD500 at an extraordinary purity of <strong>99.85%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Cofactor Celular Esencial a 500mg</h4>
-                    <p>Indispensable para la respiración celular y como sustrato para sirtuínas y enzimas de reparación del ADN.</p>
+                    <h4>1. Cofactor Energético Vital a 500mg</h4>
+                    <p>El NAD+ es indispensable para la producción de ATP y la respiración celular en la mitocondria.</p>
+
+                    <h4>2. Activación de Sirtuínas y Reparación de ADN</h4>
+                    <ul>
+                        <li><strong>Activación de SIRT1 y SIRT3:</strong> Estimula la biogénesis mitocondrial.</li>
+                        <li><strong>Sustrato para PARP1:</strong> Facilita la reparación de daños en el ADN.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Atestada en <strong>99.85%</strong> por HPLC enzimático.</p>
                 `
             },
             {
@@ -1562,16 +1875,45 @@
                 resumo_en: 'Scientific review on Retatrutide 60mg in advanced metabolic reprogramming and resting thermogenic expenditure.',
                 resumo_es: 'Revisión científica sobre el Retatrutide 60mg en la reprogramación metabólica y gasto energético elevado.',
                 texto_pt: `
-                    <h4>1. Agonismo Triplo</h4>
-                    <p>Ativa GIP, GLP-1 e Glucagon simultaneamente, unindo o controle glicêmico ao aumento da taxa metabólica basal.</p>
+                    <h4>1. Engenharia do Agonista Triplo Incretínico</h4>
+                    <p>O Retatrutide (60mg por vial) representa o estado da arte na endocrinologia metabólica. Tratando-se de um peptídeo único modificado, atua simultaneamente sobre três receptores metabólicos distintos: Polipeptídeo Inibitório Gástrico (GIP), Peptídeo Semelhante ao Glucagon-1 (GLP-1) e Receptor de Glucagon (GCGR).</p>
+
+                    <h4>2. Reprogramação Metabólica e Termogênese Acelerada</h4>
+                    <ul>
+                        <li><strong>Ação no Receptor GIP:</strong> Melhora a sensibilidade à insulina e potencializa a liberação hormonal fisiológica.</li>
+                        <li><strong>Sinalização GLP-1:</strong> Promove lentificação do esvaziamento gástrico e supressão central da fome no hipotálamo.</li>
+                        <li><strong>Ativação do Receptor de Glucagon:</strong> Aumenta o gasto energético de repouso (taxa metabólica basal) e induz a termogênese no tecido adiposo castanho.</li>
+                    </ul>
+
+                    <h4>3. Controle de Qualidade HPLC</h4>
+                    <p>Testado rigorosamente por RP-HPLC com espectrometria ESI-MS, comprovando pureza analítica de <strong>99.25%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. Triple Agonism</h4>
-                    <p>Simultaneously targets GIP, GLP-1, and Glucagon receptors, combining appetite control with elevated resting metabolic rate.</p>
+                    <h4>1. Triple-Incretin Receptor Co-Agonism</h4>
+                    <p>Retatrutide (60mg) represents the pinnacle of metabolic peptide engineering. It simultaneously activates three key metabolic receptors: Glucose-dependent Insulinotropic Polypeptide (GIP), Glucagon-like Peptide-1 (GLP-1), and the Glucagon Receptor (GCGR).</p>
+
+                    <h4>2. Thermogenic Expenditure & Hypothalamic Satiety</h4>
+                    <ul>
+                        <li><strong>GIP Agonism:</strong> Restores beta-cell sensitivity and lipid handling.</li>
+                        <li><strong>GLP-1 Pathway:</strong> Delays gastric emptying and induces potent central satiety.</li>
+                        <li><strong>Glucagon Activation:</strong> Elevates basal energy expenditure via brown adipose tissue thermogenesis.</li>
+                    </ul>
+
+                    <h4>3. Certified HPLC Analytical Standard</h4>
+                    <p>Chromatographic verification confirms batch NL97896RETA60 reaches <strong>99.25%</strong> purity.</p>
                 `,
                 texto_es: `
-                    <h4>1. Agonismo Triple</h4>
-                    <p>Activa GIP, GLP-1 y Glucagón simultáneamente, combinando saciedad con mayor gasto calórico.</p>
+                    <h4>1. Co-Agonismo Triple Incretínico</h4>
+                    <p>Retatrutide a 60mg activa los receptores GIP, GLP-1 y Glucagón de forma simultánea.</p>
+
+                    <h4>2. Reprogramación Metabólica</h4>
+                    <ul>
+                        <li><strong>Acción GIP y GLP-1:</strong> Saciedad central y control de insulina.</li>
+                        <li><strong>Activación de Glucagón:</strong> Aumenta el gasto calórico de reposo.</li>
+                    </ul>
+
+                    <h4>3. Pureza HPLC</h4>
+                    <p>Pureza analítica verificada en <strong>99.25%</strong>.</p>
                 `
             },
             {
@@ -1586,16 +1928,45 @@
                 resumo_en: 'Monograph on Selank 10mg (synthetic tuftsin analog) for CNS stabilization, neural plasticity, and stress resilience.',
                 resumo_es: 'Monografía del Selank 10mg en la estabilización del SNC, plasticidad neuronal y modulación del estrés.',
                 texto_pt: `
-                    <h4>1. Modulação do SNC em 10mg</h4>
-                    <p>Na dosagem de 10mg, o Selank melhora a transmissão GABAérgica sem induzir sedação, aumentando os níveis do fator neurotrófico BDNF no hipocampo.</p>
+                    <h4>1. Análogo Neurotrópico Derivado da Tuftsina</h4>
+                    <p>O Selank é um hepta peptídeo sintético (Thr-Lys-Pro-Arg-Pro-Gly-Pro) desenvolvido a partir do peptídeo imunomodulador endógeno Tuftsina. A versão de 10mg oferece excelente estabilidade enzimática no sistema nervoso central.</p>
+
+                    <h4>2. Modulação GABAérgica e Expressão de BDNF</h4>
+                    <ul>
+                        <li><strong>Ação Ansiolítica Sem Sedação:</strong> Modula alostericamente os receptores GABA-A sem causar dependência ou sonolência.</li>
+                        <li><strong>Estímulo ao BDNF Hipocampal:</strong> Aumenta a expressão do Fator Neurotrófico Derivado do Cérebro, promovendo neuroplasticidade.</li>
+                        <li><strong>Estabilização do Metabolismo da Serotonina:</strong> Auxilia no controle do estresse agudo e na clareza mental.</li>
+                    </ul>
+
+                    <h4>3. Laudo HPLC de Pureza</h4>
+                    <p>O controle cromatográfico do lote NL97898SEL10 atesta pureza de <strong>99.55%</strong>.</p>
                 `,
                 texto_en: `
-                    <h4>1. CNS Modulation at 10mg</h4>
-                    <p>At 10mg dosage, Selank enhances GABA transmission without sedation, increasing hippocampal BDNF for cognitive performance and focus.</p>
+                    <h4>1. Tuftsin-Derived Synthetic Neurotropic Peptides</h4>
+                    <p>Selank is a synthetic heptapeptide (Thr-Lys-Pro-Arg-Pro-Gly-Pro) derived from the immunomodulatory peptide tuftsin, engineered for prolonged CNS metabolic stability.</p>
+
+                    <h4>2. GABAergic Modulation & BDNF Upregulation</h4>
+                    <ul>
+                        <li><strong>Non-Sedative Anxiolysis:</strong> Modulates GABA-A receptors without causing sedation or memory impairment.</li>
+                        <li><strong>Hippocampal BDNF Elevation:</strong> Promotes synaptic plasticity and cognitive adaptability.</li>
+                        <li><strong>Enkephalin Degradation Inhibition:</strong> Extends natural endogenous stress-mitigating pathways.</li>
+                    </ul>
+
+                    <h4>3. HPLC Analytical Quality</h4>
+                    <p>RP-HPLC testing verifies a high purity level of <strong>99.55%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Modulación del SNC a 10mg</h4>
-                    <p>En dosis de 10mg, potencia la transmisión GABAérgica sin causar sedación, incrementando el BDNF en el hipocampo.</p>
+                    <h4>1. Análogo Neurotrópico de Tuftsina</h4>
+                    <p>Selank 10mg es un péptido diseñado para la modulación del sistema nervioso central y la resiliencia al estrés.</p>
+
+                    <h4>2. Mecanismos de Acción</h4>
+                    <ul>
+                        <li><strong>Acción Ansiolítica Sin Sedación:</strong> Modula receptores GABA-A de forma equilibrada.</li>
+                        <li><strong>Estímulo de BDNF:</strong> Aumenta la plasticidad neuronal en el hipocampo.</li>
+                    </ul>
+
+                    <h4>3. Pureza HPLC</h4>
+                    <p>Certificada en <strong>99.55%</strong>.</p>
                 `
             },
             {
@@ -1610,16 +1981,45 @@
                 resumo_en: 'Study on Semax 10mg (ACTH 4-10 derivative) in neuroplasticity, working memory, and ischemic neuroprotection.',
                 resumo_es: 'Estudio de Semax 10mg en la neuroplasticidad, memoria de trabajo y protección neuronal.',
                 texto_pt: `
-                    <h4>1. Estímulo Neurotrófico em 10mg</h4>
-                    <p>Eleva rapidamente a expressão cerebral dos fatores BDNF e NGF, aumentando a atenção executiva, a plasticidade sináptica e a resistência neuronal.</p>
+                    <h4>1. Heptapeptídeo Derivado do Fragmento ACTH (4-10)</h4>
+                    <p>O Semax (Met-Glu-His-Phe-Pro-Gly-Pro) é um análogo sintético do fragmento N-terminal do hormônio adrenocorticotrópico (ACTH 4-10), completamente desprovido de atividade hormonal corticotrófica. A dosagem de 10mg garante bioatividade nootrópica prolongada.</p>
+
+                    <h4>2. Estímulo aos Fatores Neurotróficos (BDNF / NGF)</h4>
+                    <ul>
+                        <li><strong>Aumento Expressivo de BDNF e NGF:</strong> Estimula a sobrevivência e diferenciação de neurônios colinérgicos.</li>
+                        <li><strong>Otimização da Memória de Trabalho:</strong> Melhora a velocidade de processamento cognitivo e a atenção executiva.</li>
+                        <li><strong>Neuroproteção contra Hipóxia:</strong> Preserva tecidos cerebrais sob condições de estresse isquêmico ou estresse oxidativo.</li>
+                    </ul>
+
+                    <h4>3. Certificação HPLC de Pureza</h4>
+                    <p>Avaliado por cromatografia RP-HPLC, o lote NL97903SEM10 apresenta <strong>99.60%</strong> de pureza garantida.</p>
                 `,
                 texto_en: `
-                    <h4>1. Neurotrophic Boosting at 10mg</h4>
-                    <p>Rapidly raises brain BDNF and NGF expression, optimizing attention span, neuroplasticity, and executive function.</p>
+                    <h4>1. Synthetic ACTH (4-10) Fragment Derivative</h4>
+                    <p>Semax is a heptapeptide (Met-Glu-His-Phe-Pro-Gly-Pro) derived from the ACTH 4-10 sequence, completely devoid of hormonal adrenal stimulation.</p>
+
+                    <h4>2. Neurotrophic Signaling (BDNF / NGF)</h4>
+                    <ul>
+                        <li><strong>Rapid BDNF & NGF Upregulation:</strong> Protects cholinergic and dopaminergic neurons.</li>
+                        <li><strong>Executive Cognitive Support:</strong> Enhances processing speed, focus, and memory consolidation.</li>
+                        <li><strong>Ischemic Neuroprotection:</strong> Reduces oxidative damage under hypoxic conditions.</li>
+                    </ul>
+
+                    <h4>3. RP-HPLC Analytical Result</h4>
+                    <p>Batch NL97903SEM10 achieves a verified purity rating of <strong>99.60%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Estimulación Neurotrófica a 10mg</h4>
-                    <p>Aumenta rápidamente la expresión de BDNF y NGF en el cerebro, mejorando la atención y la memoria de trabajo.</p>
+                    <h4>1. Derivado del Fragmento ACTH (4-10)</h4>
+                    <p>Semax a 10mg es un nootrópico que estimula la cognición sin actividad hormonal corticotrópica.</p>
+
+                    <h4>2. Estímulo Neurotrófico</h4>
+                    <ul>
+                        <li><strong>Incremento de BDNF y NGF:</strong> Promueve la neuroplasticidad y memoria.</li>
+                        <li><strong>Neuroprotección Hipóxica:</strong> Protege el tejido cerebral contra el estrés oxidativo.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Certificada por HPLC en <strong>99.60%</strong>.</p>
                 `
             },
             {
@@ -1634,16 +2034,45 @@
                 resumo_en: 'Scientific review on Szeto-Schiller peptide (SS-31 50mg) targeting inner mitochondrial membrane and cardiolipin preservation.',
                 resumo_es: 'Revisión científica del péptido SS-31 50mg centrado en la protección de la cardiolipina y membrana mitocondrial.',
                 texto_pt: `
-                    <h4>1. Alvo na Cardiolipina em 50mg</h4>
-                    <p>A dosagem de 50mg se liga seletivamente à cardiolipina na membrana interna mitocondrial, prevenindo a perda de elétrons, reduzindo radicais livres e restaurando a síntese de ATP.</p>
+                    <h4>1. Estrutura Szeto-Schiller e Alvo Mitocondrial</h4>
+                    <p>O SS-31 (Elamipretide) é um tetrapeptídeo sintético hidrossolúvel com carga positiva contendo resíduos alternados de aminoácidos aromáticos e básicos. A dosagem de 50mg penetra espontaneamente na membrana celular e se acumula na membrana mitocondrial interna.</p>
+
+                    <h4>2. Ligação Específica à Cardiolipina e Supressão de ROS</h4>
+                    <ul>
+                        <li><strong>Associação Seletiva com a Cardiolipina:</strong> Estabiliza a estrutura das cristas mitocôndrias.</li>
+                        <li><strong>Otimização do Transporte de Elétrons:</strong> Restaura o fluxo na cadeia respiratória e previne a perda de elétrons no Complexo I e III.</li>
+                        <li><strong>Inibição Eficiente de Radicais Libres (ROS):</strong> Reduz o estresse oxidativo diretamente na fonte de produção.</li>
+                    </ul>
+
+                    <h4>3. Controle Analítico HPLC</h4>
+                    <p>Atestado via cromatografia RP-HPLC com pureza confirmada de <strong>99.37%</strong> no lote NL97899SS3150.</p>
                 `,
                 texto_en: `
-                    <h4>1. Cardiolipin Targeting at 50mg</h4>
-                    <p>The 50mg dosage selectively binds cardiolipin on the inner membrane, suppressing electron leak, reducing ROS, and restoring ATP production.</p>
+                    <h4>1. Szeto-Schiller Tetrapeptide Design</h4>
+                    <p>SS-31 (Elamipretide) is a cell-permeable aromatic-cationic tetrapeptide designed to selectively target the inner mitochondrial membrane (IMM).</p>
+
+                    <h4>2. Cardiolipin Binding & ROS Inhibition</h4>
+                    <ul>
+                        <li><strong>Selective Cardiolipin Association:</strong> Restores cristae microarchitecture.</li>
+                        <li><strong>Electron Transport Chain Optimization:</strong> Prevents electron leak at Complexes I and III, raising ATP production.</li>
+                        <li><strong>Targeted ROS Scavenging:</strong> Neutralizes reactive oxygen species directly at the production source.</li>
+                    </ul>
+
+                    <h4>3. Certified HPLC Purity Profile</h4>
+                    <p>RP-HPLC chromatography confirms lot NL97899SS3150 achieves <strong>99.37%</strong> purity.</p>
                 `,
                 texto_es: `
-                    <h4>1. Unión a Cardiolipina a 50mg</h4>
-                    <p>A dosis de 50mg, se une a la cardiolipina en la membrana interna, reduciendo el estrés oxidativo y optimizando la síntesis de ATP.</p>
+                    <h4>1. Tetrapéptido Szeto-Schiller a 50mg</h4>
+                    <p>SS-31 se acumula selectivamente en la membrana mitocondrial interna para protección bioenergética.</p>
+
+                    <h4>2. Unión a Cardiolipina</h4>
+                    <ul>
+                        <li><strong>Estabilización de Cristas Mitocondriales:</strong> Optimiza el flujo de electrones.</li>
+                        <li><strong>Inhibición de ROS:</strong> Reduce los radicales libres en la fuente celular.</li>
+                    </ul>
+
+                    <h4>3. Pureza de Laboratorio</h4>
+                    <p>Certificada por HPLC en <strong>99.37%</strong>.</p>
                 `
             },
             {
@@ -1658,16 +2087,45 @@
                 resumo_en: 'Complete technical monograph on Tirzepatide 60mg, combining GIP and GLP-1 incretin pathways for endocrine remodeling.',
                 resumo_es: 'Monografía técnica de la Tirzepatida 60mg, combinando la acción del GIP y GLP-1 para el equilibrio metabólico.',
                 texto_pt: `
-                    <h4>1. Ação Dupla de Incretinas</h4>
-                    <p>Sinergia entre GIP e GLP-1 na dosagem de 60mg para secreção de insulina dependente de glicose, melhora da sensibilidade à insulina e controle central do apetite.</p>
+                    <h4>1. Co-Agonismo Dual de Incretinas</h4>
+                    <p>A Tirzepatida (60mg por vial) é um peptídeo sintético composto por 39 aminoácidos acoplados a um diácido graxo C20. A molécula atua simultaneamente como agonista do receptor do Polipeptídeo Inibitório Gástrico (GIP) e do receptor do Peptídeo Semelhante ao Glucagon-1 (GLP-1).</p>
+
+                    <h4>2. Sinergia Metabólica e Controle Hipotalâmico</h4>
+                    <ul>
+                        <li><strong>Sinergia Potencializada no Receptor GIP:</strong> Melhora acentuada na secreção de insulina dependente de glicose.</li>
+                        <li><strong>Efeito GLP-1 Sustentado:</strong> Retarda a taxa de esvaziamento gástrico e atua no hipotálamo suprimindo a saciedade central.</li>
+                        <li><strong>Sensibilidade Tecidual à Insulina:</strong> Aumenta a captação de glicose nos tecidos periféricos e reduz o acúmulo de gordura ectópica no fígado.</li>
+                    </ul>
+
+                    <h4>3. Padrão Ouro Analítico HPLC</h4>
+                    <p>Submetido a testes de cromatografia RP-HPLC e espectrometria de massa ESI-MS. O lote NL97902TIR60 atesta o padrão ouro de <strong>99.90%</strong> de pureza absoluta.</p>
                 `,
                 texto_en: `
-                    <h4>1. Dual Incretin Action</h4>
-                    <p>Synergy between GIP and GLP-1 receptors at 60mg enhances glucose-dependent insulin secretion and hypothalamic appetite suppression.</p>
+                    <h4>1. Dual Incretin Co-Agonist Engineering</h4>
+                    <p>Tirzepatide (60mg) is a 39-amino acid linear peptide conjugated to a C20 fatty diacid chain. It activates both GIP and GLP-1 receptors to achieve unmatched metabolic regulation.</p>
+
+                    <h4>2. Hypothalamic & Peripheral Metabolic Synergy</h4>
+                    <ul>
+                        <li><strong>GIP Receptor Activation:</strong> Drives glucose-dependent insulin release and lipid clearance.</li>
+                        <li><strong>GLP-1 Signaling:</strong> Prolongs gastric digestion and activates satiety neurons in the central nervous system.</li>
+                        <li><strong>Ectopic Fat Depletion:</strong> Significantly enhances peripheral insulin sensitivity.</li>
+                    </ul>
+
+                    <h4>3. Gold Standard HPLC Purity Certification</h4>
+                    <p>Analyzed via RP-HPLC and ESI-MS. Lot NL97902TIR60 achieves a gold-standard absolute purity of <strong>99.90%</strong>.</p>
                 `,
                 texto_es: `
-                    <h4>1. Acción Doble de Incretinas</h4>
-                    <p>Sinergia entre GIP y GLP-1 a 60mg para la secreción de insulina según glucemia y supresión del apetito.</p>
+                    <h4>1. Co-Agonismo Dual GIP / GLP-1</h4>
+                    <p>Tirzepatida a 60mg combina 39 aminoácidos con una cadena lipídica para la activación dual de incretinas.</p>
+
+                    <h4>2. Sinergia Endocrina</h4>
+                    <ul>
+                        <li><strong>Estimulación GIP:</strong> Secreción de insulina dependiente de glucosa.</li>
+                        <li><strong>Acción GLP-1:</strong> Supresión del apetito a nivel hipotalámico.</li>
+                    </ul>
+
+                    <h4>3. Estándar de Oro de Pureza</h4>
+                    <p>Certificada por HPLC con un <strong>99.90%</strong> de pureza absoluta.</p>
                 `
             }
         ];
@@ -1716,11 +2174,13 @@
 
             produtos.forEach((produto, index) => {
                 const nomeProduto = (i18n[currentLanguage] && i18n[currentLanguage][produto.nome_key]) ? i18n[currentLanguage][produto.nome_key] : 'Composto';
+                const purityLabel = i18n[currentLanguage].purity_label || 'Pureza';
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
+                    <span class="product-purity-tag">${purityLabel} ${produto.purity}</span>
                     <div class="product-img-box">
                         <img src="${produto.imagem}" alt="${nomeProduto}" loading="lazy" onerror="this.src='images/newlogo.png';">
                     </div>
