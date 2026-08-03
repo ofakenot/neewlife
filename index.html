@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>New Life Labs</title>
     <meta name="description" content="Produtos de alta qualidade da New Life Labs">
     
@@ -44,8 +44,9 @@
         body {
             background-color: var(--secondary);
             color: var(--primary);
-            overflow-x: hidden;
+            overflow-x: clip; /* Substituído hidden por clip para evitar travar o IntersectionObserver no Android */
             line-height: 1.6;
+            width: 100%;
         }
 
         img {
@@ -55,11 +56,7 @@
             display: block;
         }
 
-        img:not([src]), img[src=""] {
-            display: none;
-        }
-
-        /* --- UTILITIES & ANIMATIONS --- */
+        /* --- UTILITIES & ANIMATIONS CORRIGIDAS PARA MOBILE --- */
         .container {
             width: 100%;
             max-width: 1300px;
@@ -69,13 +66,14 @@
 
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s var(--transition-smooth), transform 1s var(--transition-smooth);
+            transform: translateY(20px);
+            transition: opacity 0.6s var(--transition-smooth), transform 0.6s var(--transition-smooth);
+            will-change: opacity, transform;
         }
 
         .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
 
         .btn-premium {
@@ -116,7 +114,7 @@
 
         .navbar.scrolled {
             padding: 15px 0;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -232,7 +230,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background-color: #ffffff;
+            background-color: #000000;
             overflow: hidden;
             padding: 120px 20px 80px 20px;
             box-sizing: border-box;
@@ -250,6 +248,7 @@
             object-fit: cover;
             z-index: 1;
             pointer-events: none;
+            opacity: 0.7;
         }
 
         .hero-container {
@@ -304,7 +303,7 @@
         }
 
         .section-padding {
-            padding: 100px 0;
+            padding: 80px 0;
         }
 
         .section-title {
@@ -312,7 +311,7 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
             text-align: center;
         }
 
@@ -323,6 +322,7 @@
             gap: 30px; 
             width: 100%;
             box-sizing: border-box;
+            min-height: 200px;
         }
 
         .product-card {
@@ -333,7 +333,7 @@
             flex-direction: column;
             cursor: pointer;
             border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s var(--transition-smooth), border-color 0.4s ease;
         }
 
@@ -344,7 +344,7 @@
         }
 
         .product-img-box {
-            height: 280px;
+            height: 260px;
             overflow: hidden;
             margin-bottom: 15px;
             position: relative;
@@ -368,7 +368,7 @@
 
         /* --- FOOTER --- */
         .footer {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             color: #1d1d1f;
             padding: 80px 0 40px 0;
             border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -407,7 +407,7 @@
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             z-index: 2000;
             display: flex;
@@ -543,15 +543,17 @@
             color: #ffffff;
         }
 
-        /* --- RESPONSIVIDADE --- */
+        /* --- RESPONSIVIDADE CORRIGIDA PARA ANDROID & IOS --- */
         @media (max-width: 992px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
         }
 
         @media (max-width: 768px) {
-            .container { padding: 0 20px; }
+            .container { padding: 0 16px; }
             .menu-toggle { display: flex; }
             
+            .navbar { padding: 15px 0; background: rgba(255, 255, 255, 0.95); }
+
             .nav-menu {
                 position: fixed;
                 top: 0; right: -100%;
@@ -562,18 +564,21 @@
                 align-items: center;
                 gap: 30px;
                 box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-                transition: right 0.5s var(--transition-smooth);
+                transition: right 0.4s var(--transition-smooth);
             }
 
             .nav-menu.active { right: 0; }
-            .hero-title { font-size: 2rem; }
-            .products-grid { grid-template-columns: 1fr; }
+            .hero { min-height: auto; padding: 100px 16px 60px 16px; }
+            .hero-title { font-size: 1.8rem; }
+            .products-grid { grid-template-columns: 1fr; gap: 16px; }
+            .product-card { padding: 16px; }
+            .product-img-box { height: 220px; }
             .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-            .modal-content { grid-template-columns: 1fr; }
+            .modal-content { grid-template-columns: 1fr; max-height: 90vh; overflow-y: auto; }
             .modal-auth-card { flex-direction: column; gap: 8px; text-align: center; }
             .modal-auth-key { text-align: center; }
             .modal-actions { flex-direction: column; }
-            .badge-grid-premium { flex-direction: column; align-items: center; }
+            .badge-grid-premium { flex-direction: column; align-items: center; margin-bottom: 25px; }
             .badge-card-minimal { max-width: 100%; width: 100%; }
         }
     </style>
@@ -610,7 +615,6 @@
     <header id="inicio" class="hero">
         <video autoplay muted playsinline loop class="hero-video-bg">
             <source src="https://www.image2url.com/r2/default/videos/1782082569835-e5d0a1c9-e4a6-47ee-b8b4-5debcbb1cf74.mp4" type="video/mp4">
-            Seu navegador não suporta vídeos em HTML5.
         </video>
         
         <div class="container hero-container">
@@ -621,7 +625,7 @@
                     <span id="hero-word">PEPTÍDEOS</span>
                 </h1>
 
-                <p style="color: rgba(255, 255, 255, 0.9); max-width: 600px; margin-bottom: 35px;" data-i18n="hero_subtitle">Desenvolvimento de alta performance com pureza rigorosamente certificada e logística internacional.</p>
+                <p style="color: rgba(255, 255, 255, 0.9); max-width: 600px; margin-bottom: 35px; font-size: 0.95rem;" data-i18n="hero_subtitle">Desenvolvimento de alta performance com pureza rigorosamente certificada e logística internacional.</p>
 
                 <div class="badge-grid-premium">
                     <div class="badge-card-minimal">
@@ -648,14 +652,15 @@
         </div>
     </header>
 
-    <section id="produtos" class="section-padding reveal">
+    <!-- SEÇÃO DE PRODUTOS (COM CLASSE REVEAL E GARANTIA DE EXIBIÇÃO) -->
+    <section id="produtos" class="section-padding reveal active">
         <div class="container">
             <h2 class="section-title" data-i18n="section_products">Nossos Produtos</h2>
             <div class="products-grid" id="products-container"></div>
         </div>
     </section>
 
-    <section id="sobre" class="section-padding reveal" style="background: #ffffff; border-bottom: 1px solid #eaeaea;">
+    <section id="sobre" class="section-padding reveal active" style="background: #ffffff; border-bottom: 1px solid #eaeaea;">
         <div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 0 20px;">
             <h2 class="section-title" style="color: #111111; margin-bottom: 30px;" data-i18n="section_about">Sobre a New Life Labs</h2>
             <div style="color: #4a4a4a; font-size: 1.05em; line-height: 1.8;">
@@ -697,7 +702,7 @@
         </div>
     </footer>
 
-    <!-- MODAL DE PRODUTO COM CARD DE PUREZA E BOTÃO LAUDO -->
+    <!-- MODAL DE PRODUTO -->
     <div class="modal" id="product-modal">
         <div class="modal-content">
             <button class="modal-close" id="close-modal">&times;</button>
@@ -705,7 +710,7 @@
             <div class="modal-body" style="padding: 30px;">
                 <h2 id="modal-title" style="color: #111111; font-weight: 600; font-size: 1.5em; margin-bottom: 10px;">Nome do Produto</h2>
                 
-                <!-- CARD DE DESTAQUE ANALÍTICO (PUREZA + CHAVE ÚNICA) -->
+                <!-- CARD DE PUREZA + CHAVE ÚNICA -->
                 <div class="modal-auth-card">
                     <div class="modal-auth-purity">
                         <span class="modal-auth-purity-label" data-i18n="modal_purity_label">Pureza Testada (HPLC)</span>
@@ -732,17 +737,8 @@
         </div>
     </div>
 
-    <!-- SUPABASE & SISTEMA PRINCIPAL -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SCRIPT PRINCIPAL E SISTEMA DE IDIOMAS -->
     <script>
-        // Supabase Client
-        const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
-        const SUPABASE_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
-        let _supabase = null;
-        if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'SUA_SUPABASE_URL_AQUI') {
-            _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        }
-
         // Dicionário i18n
         const i18n = {
             pt: {
@@ -754,8 +750,8 @@
                 badge_distrib: 'Distribuição Global', badge_distrib_sub: 'Logística internacional',
                 cta_whatsapp: 'Falar no WhatsApp', section_products: 'Nossos Produtos', section_about: 'Sobre a New Life Labs',
                 about_p1: 'A <strong>New Life Labs</strong> posiciona-se de forma consolidada na vanguarda do desenvolvimento científico global, oferecendo soluções biotecnológicas premium desenvolvidas sob os mais severos e rígidos padrões internacionais de pureza, segurança e eficácia molecular.',
-                about_p2: 'Nossa missão institucional transcende o fornecimento de insumos; nós estruturamos um ecossistema de confiança analítica e transparência total. Atendemos a uma comunidade médica, de pesquisa e desenvolvimento altamente exigente, que demanda reprodutibilidade técnica e respostas biológicas previsíveis.',
-                about_p3: 'Cada lote unitário passa por ensaios severos de espectrometria de massa e cromatografia líquida de alta eficiência (HPLC), chancelando o compromisso inegociável da New Life Labs com a soberania e a excelência científica.',
+                about_p2: 'Nossa missão institucional transcende o fornecimento de insumos; nós estruturamos um ecossistema de confiança analítica e transparência total.',
+                about_p3: 'Cada lote unitário passa por ensaios severos de espectrometria de massa e cromatografia líquida de alta eficiência (HPLC), chancelando o compromisso inegociável da New Life Labs.',
                 footer_brand: 'Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.',
                 footer_compliance: 'Conformidade', footer_link1: 'Rastreabilidade de Lotes', footer_link2: 'Termos de Uso Corporativo', footer_link3: 'Política de Privacidade',
                 footer_contact: 'Canais Oficiais', footer_copyright: '© 2026 New Life Labs. Todos os direitos reservados.',
@@ -774,7 +770,7 @@
                 badge_purity: 'Authenticated Purity', badge_purity_sub: 'Laboratory guarantee',
                 badge_distrib: 'Global Distribution', badge_distrib_sub: 'International logistics',
                 cta_whatsapp: 'Chat on WhatsApp', section_products: 'Our Products', section_about: 'About New Life Labs',
-                about_p1: '<strong>New Life Labs</strong> is firmly positioned at the forefront of global scientific development, offering premium biotechnological solutions developed under the most rigorous international standards.',
+                about_p1: '<strong>New Life Labs</strong> is firmly positioned at the forefront of global scientific development.',
                 about_p2: 'Our institutional mission transcends the supply of inputs; we structure an ecosystem of analytical trust and complete transparency.',
                 about_p3: 'Each unit batch undergoes rigorous mass spectrometry and high-performance liquid chromatography (HPLC) testing.',
                 footer_brand: 'Excellence, innovation and high performance in laboratory development and applied biotechnology.',
@@ -812,6 +808,131 @@
 
         let currentLanguage = localStorage.getItem('newlifelabs-lang') || 'pt';
 
+        const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
+
+        const produtos = [
+            {
+                targetId: 'ghk100',
+                key: 'NL97891GHK100',
+                purity: '99.62%',
+                nome_key: 'product_ghk100',
+                imagem: 'images/ghk-cu100.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 100 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>SÍNTESE:</strong> Copper Peptide</div><div><strong>VIA ALVO:</strong> Matriz Extracelular</div></div>`
+            },
+            {
+                targetId: 'glow70',
+                key: 'NL97892GLOW70',
+                purity: '99.37%',
+                nome_key: 'product_glow70',
+                imagem: 'images/glow70.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>COMPOSIÇÃO:</strong> 70 mg Active Blend</div><div><strong>PH ISOTÔNICO:</strong> 7.2</div><div><strong>ALVO:</strong> Tirosinasa Celular</div><div><strong>EMBALAGEM:</strong> Vidro Tipo I</div></div>`
+            },
+            {
+                targetId: 'ghk50',
+                key: 'NL97891GHK100',
+                purity: '99.50%',
+                nome_key: 'product_ghk50',
+                imagem: 'images/ghk-cu50.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo sinalizador estruturado em dosagem precisa para manutenção do envelhecimento celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 50 mg / Vial</div><div><strong>PADRÃO:</strong> Grau Laboratorial</div><div><strong>FUNÇÃO:</strong> Reparação Epidérmica</div><div><strong>SOLUBILIDADE:</strong> Hidrofílico</div></div>`
+            },
+            {
+                targetId: 'klow80',
+                key: 'NL97893KLOW80',
+                purity: '99.70%',
+                nome_key: 'product_klow80',
+                imagem: 'images/klow80.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis para bioestimulação.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 80 mg</div><div><strong>ESTRUTURA:</strong> Micropartículas</div><div><strong>AÇÃO:</strong> Volumização</div><div><strong>LIBERAÇÃO:</strong> Gradual Cinética</div></div>`
+            },
+            {
+                targetId: 'tesam',
+                key: 'NL97901TES10',
+                purity: '99.76%',
+                nome_key: 'product_tesam',
+                imagem: 'images/tesamorelin10.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg Monodose</div><div><strong>SEQUÊNCIA:</strong> 44 Aminoácidos</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>VIA ALVO:</strong> Sinalização Hipofisária</div></div>`
+            },
+            {
+                targetId: 'aod',
+                key: 'NL97889AOD5',
+                purity: '99.67%',
+                nome_key: 'product_aod',
+                imagem: 'images/aod.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fragmento peptídico C-terminal modificado do hormônio do crescimento humano (hGH 177-191).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>SEQUÊNCIA:</strong> hGH Fragment 177-191</div><div><strong>ALVO:</strong> Tecido Adiposo</div></div>`
+            },
+            {
+                targetId: 'cjc',
+                key: 'NL97890CJC10',
+                purity: '99.39%',
+                nome_key: 'product_cjc',
+                imagem: 'images/cjc.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético do hormônio liberador de GH de segunda geração.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>CATEGORIA:</strong> Secretagogo GHRH</div><div><strong>RECEPTOR:</strong> GHRH-R Hipofisário</div></div>`
+            },
+            {
+                targetId: 'epithalon',
+                key: 'NL97904EPI50',
+                purity: '99.72%',
+                nome_key: 'product_epithalon',
+                imagem: 'images/epithalon1.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapeptídeo sintético bioregulador indutor da enzima telomerase. Preserva o comprimento telomérico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.3% (HPLC)</div><div><strong>MECANISMO:</strong> Ativação Telomerase</div><div><strong>ALVO:</strong> Núcleo Celular</div></div>`
+            },
+            {
+                targetId: 'motsc',
+                key: 'NL97894MOTS40',
+                purity: '99.40%',
+                nome_key: 'product_motsc',
+                imagem: 'images/motsc.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo codificado pelo genoma mitocondrial. Ativa centralmente a via AMPK.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 98.8% (HPLC)</div><div><strong>ORIGEM:</strong> Mitocondrial (MDP)</div><div><strong>VIA:</strong> Ativação AMPK</div></div>`
+            },
+            {
+                targetId: 'nad',
+                key: 'NL97905NAD500',
+                purity: '99.85%',
+                nome_key: 'product_nad',
+                imagem: 'images/nad+.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Coenzima fundamental de transferência de elétrons essencial para o metabolismo energético mitocondrial.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 500 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (Enzimático)</div><div><strong>CLASSE:</strong> Coenzima Nicotinamídica</div><div><strong>ALVO:</strong> Sirtuínas</div></div>`
+            },
+            {
+                targetId: 'retatrutide',
+                key: 'NL97896RETA60',
+                purity: '99.25%',
+                nome_key: 'product_retatrutide',
+                imagem: 'images/retatrutide1.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Co-agonista triplo dos receptores GIP, GLP-1 e Glucagon desenvolvido para reprogramação metabólica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>MECANISMO:</strong> Agonista Triplo</div><div><strong>RECEPTORES:</strong> GIP/GLP-1/Glucagon</div></div>`
+            },
+            {
+                targetId: 'selank',
+                key: 'NL97898SEL10',
+                purity: '99.55%',
+                nome_key: 'product_selank',
+                imagem: 'images/selank1.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo regulador neurotrópico sintético derivado da tuftsina. Modula a neurotransmissão GABAérgica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>ESTRUTURA:</strong> Análogo Tuftsina</div><div><strong>SISTEMA:</strong> Nervoso Central</div></div>`
+            },
+            {
+                targetId: 'semax',
+                key: 'NL97903SEM10',
+                purity: '99.60%',
+                nome_key: 'product_semax',
+                imagem: 'images/semax1.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Heptapeptídeo nootrópico e neuroprotetor derivado do fragmento N-terminal do ACTH (4-10).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>ESTÍMULO:</strong> Fatores BDNF / NGF</div><div><strong>ALVO:</strong> Córtex</div></div>`
+            },
+            {
+                targetId: 'ss31',
+                key: 'NL97899SS3150',
+                purity: '99.37%',
+                nome_key: 'product_ss31',
+                imagem: 'images/ss31.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapeptídeo antioxidante mitocôndria-alvo que se liga seletivamente à cardiolipina.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>LIGANTE:</strong> Cardiolipina</div><div><strong>EFETIVIDADE:</strong> Inibição de ROS</div></div>`
+            },
+            {
+                targetId: 'terzepatida',
+                key: 'NL97902TIR60',
+                purity: '99.90%',
+                nome_key: 'product_terzepatida',
+                imagem: 'images/terzepatida1.png',
+                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Agonista duplo dos receptores GIP e GLP-1. Atua na regulação glicêmica e na supressão central do apetite.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.4% (HPLC)</div><div><strong>MECANISMO:</strong> GIP / GLP-1 Dual</div><div><strong>SISTEMA:</strong> Metabólico</div></div>`
+            }
+        ];
+
         function updateLanguage(lang) {
             currentLanguage = lang;
             localStorage.setItem('newlifelabs-lang', lang);
@@ -840,163 +961,7 @@
             renderProducts();
         }
 
-        // Catálogo dos Produtos com IDs, PUREZA e CHAVE ÚNICA para autenticidade total
-        const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
-
-        const produtos = [
-            {
-                targetId: 'ghk100',
-                key: 'NL97891GHK100',
-                purity: '99.62%',
-                nome_key: 'product_ghk100',
-                imagem: 'images/ghk-cu100.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua na expressão gênica dos fibroblastos e na matriz extracelular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 100 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>SÍNTESE:</strong> Copper Peptide</div><div><strong>VIA ALVO:</strong> Matriz Extracelular</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Ultra-high concentration peptide biomodulator developed for deep tissue restructuring.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 100 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.2% (HPLC)</div><div><strong>SYNTHESIS:</strong> Copper Peptide</div><div><strong>TARGET:</strong> Extracellular Matrix</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Biomodulador peptídico de ultra-alta concentración para reestructuración tisular profunda.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACÍON:</strong> 100 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>SÍNTESIS:</strong> Péptido de Cobre</div><div><strong>VÍA OBJETIVO:</strong> Matriz Extracelular</div></div>`
-            },
-            {
-                targetId: 'glow70',
-                key: 'NL97892GLOW70',
-                purity: '99.37%',
-                nome_key: 'product_glow70',
-                imagem: 'images/glow70.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Restaura o brilho e a luminosidade da pele.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>COMPOSIÇÃO:</strong> 70 mg Active Blend</div><div><strong>PH ISOTÔNICO:</strong> 7.2 (Equilibrado)</div><div><strong>ALVO:</strong> Tirosinasa Celular</div><div><strong>EMBALAGEM:</strong> Vidro Tipo I</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">High-performance molecular active complex focused on cellular biorevitalization.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>COMPOSITION:</strong> 70 mg Active Blend</div><div><strong>ISOTONIC PH:</strong> 7.2</div><div><strong>TARGET:</strong> Cellular Tyrosinase</div><div><strong>PACKAGING:</strong> Type I Glass</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Complejo activo de alto rendimiento molecular para biorrevitalización celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>COMPOSICIÓN:</strong> 70 mg Active Blend</div><div><strong>PH ISOTÓNICO:</strong> 7.2</div><div><strong>OBJETIVO:</strong> Tirosinasa Celular</div><div><strong>EMBALAJE:</strong> Vidrio Tipo I</div></div>`
-            },
-            {
-                targetId: 'ghk50',
-                key: 'NL97891GHK100',
-                purity: '99.50%',
-                nome_key: 'product_ghk50',
-                imagem: 'images/ghk-cu50.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 50 mg / Vial</div><div><strong>PADRÃO:</strong> Grau Laboratorial</div><div><strong>FUNÇÃO:</strong> Reparação Epidérmica</div><div><strong>SOLUBILIDADE:</strong> Hidrofílico</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Signaling peptide structured in precise dosage for prevention of cellular aging.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 50 mg / Vial</div><div><strong>GRADE:</strong> Lab Standard</div><div><strong>FUNCTION:</strong> Epidermal Repair</div><div><strong>SOLUBILITY:</strong> Hydrophilic</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Péptido señalizador para mantenimiento y prevención del envejecimiento celular.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 50 mg / Vial</div><div><strong>GRADO:</strong> Estándar Lab</div><div><strong>FUNCIÓN:</strong> Reparación Epidérmica</div><div><strong>SOLUBILIDAD:</strong> Hidrófilo</div></div>`
-            },
-            {
-                targetId: 'klow80',
-                key: 'NL97893KLOW80',
-                purity: '99.70%',
-                nome_key: 'product_klow80',
-                imagem: 'images/klow80.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis para bioestimulação intensiva de colágenos do tipo I e III.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 80 mg</div><div><strong>ESTRUTURA:</strong> Micropartículas</div><div><strong>AÇÃO:</strong> Volumização/Densidade</div><div><strong>LIBERAÇÃO:</strong> Gradual Cinética</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Hyper-concentrated formula developed for intensive collagen biostimulation.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGE:</strong> 80 mg</div><div><strong>STRUCTURE:</strong> Microparticles</div><div><strong>ACTION:</strong> Volumization</div><div><strong>RELEASE:</strong> Gradual</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fórmula hiperconcentrada para bioestimulación intensiva de colágeno tipo I y III.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSIS:</strong> 80 mg</div><div><strong>ESTRUCTURA:</strong> Micropartículas</div><div><strong>ACCIÓN:</strong> Volumización</div><div><strong>LIBERACIÓN:</strong> Gradual</div></div>`
-            },
-            {
-                targetId: 'tesam',
-                key: 'NL97901TES10',
-                purity: '99.76%',
-                nome_key: 'product_tesam',
-                imagem: 'images/tesamorelin10.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH). Estimula a lipólise do tecido adiposo visceral.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg Monodose</div><div><strong>SEQUÊNCIA:</strong> 44 Aminoácidos</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>VIA ALVO:</strong> Sinalização Hipofisária</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Purified synthetic analog of Growth Hormone-Releasing Factor (GHRH).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGE:</strong> 10 mg Single Dose</div><div><strong>SEQUENCE:</strong> 44 Amino Acids</div><div><strong>PURITY:</strong> &gt; 99.0%</div><div><strong>TARGET:</strong> Pituitary</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético purificado del Factor de Liberación de Hormona de Crecimiento.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSIS:</strong> 10 mg Monodosis</div><div><strong>SECUENCIA:</strong> 44 Aminoácidos</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>OBJETIVO:</strong> Hipófisis</div></div>`
-            },
-            {
-                targetId: 'aod',
-                key: 'NL97889AOD5',
-                purity: '99.67%',
-                nome_key: 'product_aod',
-                imagem: 'images/aod.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fragmento peptídico C-terminal modificado do hormônio do crescimento humano (hGH 177-191) focado em direcionamento lipolítico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>SEQUÊNCIA:</strong> hGH Fragment 177-191</div><div><strong>ALVO:</strong> Tecido Adiposo</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Modified C-terminal peptide fragment of human growth hormone (hGH 177-191).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 5 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.0%</div><div><strong>SEQUENCE:</strong> hGH 177-191</div><div><strong>TARGET:</strong> Adipose Tissue</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Fragmento peptídico C-terminal modificado del hormônio de crecimiento hGH 177-191.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>SECUENCIA:</strong> hGH 177-191</div><div><strong>OBJETIVO:</strong> Tejido Adiposo</div></div>`
-            },
-            {
-                targetId: 'cjc',
-                key: 'NL97890CJC10',
-                purity: '99.39%',
-                nome_key: 'product_cjc',
-                imagem: 'images/cjc.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético do hormônio liberador de GH de segunda geração. Estimula a secreção pulsátil fisiológica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>CATEGORIA:</strong> Secretagogo GHRH</div><div><strong>RECEPTOR:</strong> GHRH-R Hipofisário</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Second-generation synthetic analog of Growth Hormone-Releasing Hormone.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 5 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.1%</div><div><strong>CATEGORY:</strong> GHRH Secretagogue</div><div><strong>RECEPTOR:</strong> Pituitary GHRH-R</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Análogo sintético de segunda generación de la Hormona Liberadora de GH.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1%</div><div><strong>CATEGORÍA:</strong> Secretagogo GHRH</div><div><strong>RECEPTOR:</strong> GHRH-R Hipofisario</div></div>`
-            },
-            {
-                targetId: 'epithalon',
-                key: 'NL97904EPI50',
-                purity: '99.72%',
-                nome_key: 'product_epithalon',
-                imagem: 'images/epithalon1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapeptídeo sintético bioregulador indutor da enzima telomerase. Preserva e prolonga o comprimento telomérico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.3% (HPLC)</div><div><strong>MECANISMO:</strong> Ativação Telomerase</div><div><strong>ALVO:</strong> Núcleo Celular / DNA</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Synthetic tetrapeptide bioregulator and telomerase enzyme inducer.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGE:</strong> 10 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.3%</div><div><strong>MECHANISM:</strong> Telomerase Activation</div><div><strong>TARGET:</strong> Cell Nucleus</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapéptido sintético biorregulador inductor de la enzima telomerasa.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSIS:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.3%</div><div><strong>MECANISMO:</strong> Activación Telomerasa</div><div><strong>OBJETIVO:</strong> Núcleo Celular</div></div>`
-            },
-            {
-                targetId: 'motsc',
-                key: 'NL97894MOTS40',
-                purity: '99.40%',
-                nome_key: 'product_motsc',
-                imagem: 'images/motsc.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo codificado pelo genoma mitocondrial. Ativa centralmente a via AMPK, otimizando o metabolismo sistêmico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 98.8% (HPLC)</div><div><strong>ORIGEM:</strong> Mitocondrial (MDP)</div><div><strong>VIA:</strong> Ativação AMPK</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Mitochondrial-derived peptide encoded for systemic metabolic control.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 10 mg / Vial</div><div><strong>PURITY:</strong> &gt; 98.8%</div><div><strong>ORIGIN:</strong> Mitochondrial</div><div><strong>PATHWAY:</strong> AMPK Activation</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Péptido codificado por el genoma mitocondrial para control metabólico sistémico.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 98.8%</div><div><strong>ORIGEN:</strong> Mitocondrial</div><div><strong>VÍA:</strong> Activación AMPK</div></div>`
-            },
-            {
-                targetId: 'nad',
-                key: 'NL97905NAD500',
-                purity: '99.85%',
-                nome_key: 'product_nad',
-                imagem: 'images/nad+.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Coenzima fundamental de transferência de elétrons essencial para o metabolismo energético mitocondrial e ativação das sirtuínas.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 500 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (Enzimático)</div><div><strong>CLASSE:</strong> Coenzima Nicotinamídica</div><div><strong>ALVO:</strong> Sirtuínas/Cadeia Resp.</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Essential electron-transfer coenzyme crucial for mitochondrial energy metabolism.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGE:</strong> 500 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.0%</div><div><strong>CLASS:</strong> Coenzyme</div><div><strong>TARGET:</strong> Sirtuins</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Coenzima fundamental para el metabolismo energético mitocondrial y activación de sirtuinas.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSIS:</strong> 500 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>CLASE:</strong> Coenzima</div><div><strong>OBJETIVO:</strong> Sirtuinas</div></div>`
-            },
-            {
-                targetId: 'retatrutide',
-                key: 'NL97896RETA60',
-                purity: '99.25%',
-                nome_key: 'product_retatrutide',
-                imagem: 'images/retatrutide1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Co-agonista triplo dos receptores GIP, GLP-1 e Glucagon desenvolvido para reprogramação metabólica profunda.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2% (HPLC)</div><div><strong>MECANISMO:</strong> Agonista Triplo</div><div><strong>RECEPTORES:</strong> GIP/GLP-1/Glucagon</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Triple co-agonist targeting GIP, GLP-1, and Glucagon receptors for deep metabolic programming.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 10 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.2%</div><div><strong>MECHANISM:</strong> Triple Agonist</div><div><strong>RECEPTORS:</strong> GIP/GLP-1/Glucagon</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Co-agonista triple de receptores GIP, GLP-1 y Glucagón para reprogramación metabólica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.2%</div><div><strong>MECANISMO:</strong> Agonista Triple</div><div><strong>RECEPTORES:</strong> GIP/GLP-1/Glucagón</div></div>`
-            },
-            {
-                targetId: 'selank',
-                key: 'NL97898SEL10',
-                purity: '99.55%',
-                nome_key: 'product_selank',
-                imagem: 'images/selank1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Peptídeo regulador neurotrópico sintético derivado da tuftsina. Modula a neurotransmissão GABAérgica e eleva o BDNF.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>ESTRUTURA:</strong> Análogo Tuftsina</div><div><strong>SISTEMA:</strong> Nervoso Central / GABA</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Synthetic neurotropic regulatory peptide derived from tuftsin. Modulates GABAergic system.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 5 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.0%</div><div><strong>STRUCTURE:</strong> Tuftsin Analog</div><div><strong>SYSTEM:</strong> Central Nervous/GABA</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Péptido regulador neurotrópico derivado de la tuftsina. Modula neurotransmisión GABAérgica.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>ESTRUCTURA:</strong> Análogo Tuftsina</div><div><strong>SISTEMA:</strong> Nervioso Central/GABA</div></div>`
-            },
-            {
-                targetId: 'semax',
-                key: 'NL97903SEM10',
-                purity: '99.60%',
-                nome_key: 'product_semax',
-                imagem: 'images/semax1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Heptapeptídeo nootrópico e neuroprotetor derivado do fragmento N-terminal do ACTH (4-10). Induz BDNF e NGF.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1% (HPLC)</div><div><strong>ESTÍMULO:</strong> Fatores BDNF / NGF</div><div><strong>ALVO:</strong> Córtex e Hipocampo</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Nootropic and neuroprotective heptapeptide derived from ACTH (4-10).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 5 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.1%</div><div><strong>STIMULUS:</strong> BDNF / NGF Factors</div><div><strong>TARGET:</strong> Cortex & Hippocampus</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Heptapéptido nootrópico y neuroprotector derivado del fragmento ACTH (4-10).</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 5 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.1%</div><div><strong>ESTÍMULO:</strong> Factores BDNF / NGF</div><div><strong>OBJETIVO:</strong> Córtex e Hipocampo</div></div>`
-            },
-            {
-                targetId: 'ss31',
-                key: 'NL97899SS3150',
-                purity: '99.37%',
-                nome_key: 'product_ss31',
-                imagem: 'images/ss31.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapeptídeo antioxidante mitocôndria-alvo que se liga seletivamente à cardiolipina. Otimiza a síntese de ATP.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGEM:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0% (HPLC)</div><div><strong>LIGANTE:</strong> Cardiolipina</div><div><strong>EFETIVIDADE:</strong> Inibição de ROS</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Mitochondria-targeted antioxidant tetrapeptide that selectively binds to cardiolipin.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSAGE:</strong> 10 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.0%</div><div><strong>BINDER:</strong> Cardiolipin</div><div><strong>EFFECTIVENESS:</strong> ROS Inhibition</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Tetrapéptido antioxidante mitocondrial que se une a la cardiolipina.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>DOSIS:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.0%</div><div><strong>ENLACE:</strong> Cardiolipina</div><div><strong>EFECTIVIDAD:</strong> Inhibición de EROs</div></div>`
-            },
-            {
-                targetId: 'terzepatida',
-                key: 'NL97902TIR60',
-                purity: '99.90%',
-                nome_key: 'product_terzepatida',
-                imagem: 'images/terzepatida1.png',
-                desc_pt: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Agonista duplo dos receptores GIP e GLP-1. Atua na regulação glicêmica e na supressão central do apetite.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRAÇÃO:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.4% (HPLC)</div><div><strong>MECANISMO:</strong> GIP / GLP-1 Dual</div><div><strong>SISTEMA:</strong> Metabólico/Endócrino</div></div>`,
-                desc_en: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Dual receptor agonist for glucose-dependent insulinotropic polypeptide (GIP) and GLP-1.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRATION:</strong> 10 mg / Vial</div><div><strong>PURITY:</strong> &gt; 99.4%</div><div><strong>MECHANISM:</strong> Dual GIP/GLP-1</div><div><strong>SYSTEM:</strong> Metabolic/Endocrine</div></div>`,
-                desc_es: `<div style="color: #4a4a4a; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">Agonista dual de receptores GIP y GLP-1 para regulación glucémica y control de apetito.</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8em; background: #f8f9fa; padding: 12px; border-radius: 8px; font-family: monospace;"><div><strong>CONCENTRACIÓN:</strong> 10 mg / Vial</div><div><strong>PUREZA:</strong> &gt; 99.4%</div><div><strong>MECANISMO:</strong> Dual GIP/GLP-1</div><div><strong>SISTEMA:</strong> Metabólico/Endocrino</div></div>`
-            }
-        ];
-
-        // Função de Renderização dos Produtos Resiliente
+        // Renderização Direta dos Produtos
         function renderProducts() {
             const container = document.getElementById('products-container');
             if (!container) return;
@@ -1004,29 +969,37 @@
             container.innerHTML = '';
 
             produtos.forEach((produto, index) => {
-                const nomeProduto = i18n[currentLanguage][produto.nome_key] || 'Composto';
+                const nomeProduto = (i18n[currentLanguage] && i18n[currentLanguage][produto.nome_key]) ? i18n[currentLanguage][produto.nome_key] : 'Composto';
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
                     <div class="product-img-box">
-                        <img src="${produto.imagem}" alt="${nomeProduto}" onerror="this.style.display='none';">
+                        <img src="${produto.imagem}" alt="${nomeProduto}" loading="lazy" onerror="this.src='images/newlogo.png';">
                     </div>
                     <div class="product-info">
-                        <h3 style="display: flex; align-items: center; justify-content: center; font-size: 1em; font-weight: 600;">${nomeProduto}${verificadoBadge}</h3>
+                        <h3 style="display: flex; align-items: center; justify-content: center; font-size: 0.95em; font-weight: 600; text-align: center;">${nomeProduto}${verificadoBadge}</h3>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // Inicialização dos Eventos do DOM
+        // DOMContentLoaded com duplo mecanismo de revelação
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('products-container');
             const modal = document.getElementById('product-modal');
 
-            // Click nos Cards de Produtos
+            // 1. RENDERIZA OS PRODUTOS IMEDIATAMENTE
+            updateLanguage(currentLanguage);
+
+            // 2. FORÇA REVELAÇÃO CASO O OBSERVER FALHE NO ANDROID
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }, 300);
+
+            // Click nos Cards
             if (container) {
                 container.addEventListener('click', (e) => {
                     const card = e.target.closest('.product-card');
@@ -1034,23 +1007,18 @@
 
                     const index = card.getAttribute('data-index');
                     const prod = produtos[index];
-                    const nomeProduto = i18n[currentLanguage][prod.nome_key];
+                    const nomeProduto = (i18n[currentLanguage] && i18n[currentLanguage][prod.nome_key]) ? i18n[currentLanguage][prod.nome_key] : 'Composto';
                     const desc = prod[`desc_${currentLanguage}`] || prod.desc_pt;
 
                     document.getElementById('modal-title').innerHTML = `${nomeProduto}${verificadoBadge}`;
-                    
-                    // PREENCHE A PUREZA E A CHAVE ÚNICA DE FORMA DESTACADA
                     document.getElementById('modal-purity-val').textContent = prod.purity || '99.90%';
                     document.getElementById('modal-key-val').textContent = prod.key || 'NL97902TIR60';
 
                     document.getElementById('modal-desc').innerHTML = desc;
-                    document.getElementById('modal-img-container').innerHTML = `<img src="${prod.imagem}" alt="${nomeProduto}" style="max-height: 220px; object-fit: contain;">`;
+                    document.getElementById('modal-img-container').innerHTML = `<img src="${prod.imagem}" alt="${nomeProduto}" style="max-height: 200px; object-fit: contain;" onerror="this.src='images/newlogo.png';">`;
                     
-                    // LINK DO BOTÃO LAUDO DIRETO PARA A CENTRAL
                     const coaBtn = document.getElementById('modal-coa-btn');
-                    if (coaBtn) {
-                        coaBtn.href = `https://newlifelabs.us/laudo?product=${prod.targetId}`;
-                    }
+                    if (coaBtn) coaBtn.href = `https://newlifelabs.us/laudo?product=${prod.targetId}`;
 
                     document.getElementById('modal-whatsapp-btn').href = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${encodeURIComponent("Olá, solicito verificação para o composto: " + nomeProduto)}`;
 
@@ -1095,27 +1063,14 @@
                 });
             }
 
-            // Scroll da Navbar Glassmorphism
+            // Scroll Navbar
             window.addEventListener('scroll', () => {
                 const navbar = document.querySelector('.navbar');
                 if (navbar) {
-                    if (window.scrollY > 50) navbar.classList.add('scrolled');
+                    if (window.scrollY > 30) navbar.classList.add('scrolled');
                     else navbar.classList.remove('scrolled');
                 }
             });
-
-            // Animação de Entrada Reveal
-            const revealElements = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { threshold: 0.15 });
-
-            revealElements.forEach(el => observer.observe(el));
-
-            // Executar inicialização do idioma e catálogo
-            updateLanguage(currentLanguage);
         });
     </script>
 </body>
