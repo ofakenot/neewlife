@@ -1466,320 +1466,750 @@
         updateLanguage(currentLanguage);
     </script>
 
-    <!-- SISTEMA DE PRODUTOS -->
-    <script>
-        const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
+<!-- SISTEMA DE PRODUTOS -->
+<script>
+    const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0095f6; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle; font-family: sans-serif;" title="Verificado">&#10003;</span>`;
 
-        const produtos = [
-            {
-                nome_key: 'product_ghk100',
-                imagem: 'images/ghk-cu100.png',
-                descricao_pt: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
-                    </div>
-                `,
-                descricao_en: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Ultra-high concentration peptide biomodulator developed for deep tissue restructuring. Acts directly on fibroblast gene expression, reversing senescent stress and accelerating extracellular matrix remodeling with maximum collagen density.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>100 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SYNTHESIS</span><br><strong>Copper Peptide</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">TARGET PATHWAY</span><br><strong>Extracellular Matrix</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">STABILITY</span><br><strong>Thermosensitive</strong></div>
-                    </div>
-                `,
-                descricao_es: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Biomodulador peptídico de concentración ultra-alta desarrollado para reestructuración tisular profunda. Actúa directamente sobre la expresión génica de los fibroblastos, revirtiendo el estrés senescente y acelerando la remodelación de la matriz extracelular con densidad máxima de colágeno.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>100 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESIS ACTIVA</span><br><strong>Péptido de Cobre</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">VÍA OBJETIVO</span><br><strong>Matriz Extracelular</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDAD</span><br><strong>Termosensible</strong></div>
-                    </div>
-                `
-            },
-            {
-                nome_key: 'product_glow70',
-                imagem: 'images/glow70.png',
-                descricao_pt: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
-                    </div>
-                `,
-                descricao_en: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        High-performance molecular active complex focused on cellular homeostasis and biorevitalization. Its orthomolecular formula acts on the pathway of inhibiting excessive melanin synthesis, restoring the refractive index of skin light and promoting cellular uniformity and luminosity.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSITION</span><br><strong>70 mg Active Blend</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ISOTONIC pH</span><br><strong>7.2 (Balanced)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>Antioxidant Stress</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">BIOCHEMICAL TARGET</span><br><strong>Cellular Tyrosinase</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Certified Type I Glass</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
-                    </div>
-                `,
-                descricao_es: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Complejo activo de alto rendimiento molecular enfocado en la homeostasis celular y la biorevitalización. Su fórmula ortomolecular actúa en la vía de inhibición de la síntesis excesiva de melanina, restaurando el índice de refracción de la luz en la piel y promoviendo uniformidad y luminosidad celular.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">COMPOSICIÓN</span><br><strong>70 mg Active Blend</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÓNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestrés Oxidativo</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">OBJETIVO BIOQUÍMICO</span><br><strong>Tirosinasa Celular</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Vidrio Tipo I Certificado</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
-                    </div>
-                `
-            },
-            {
-                nome_key: 'product_ghk50',
-                imagem: 'images/ghk-cu50.png',
-                descricao_pt: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
-                    </div>
-                `,
-                descricao_en: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Signaling peptide structured in precise dosage for maintenance and prevention of premature cellular aging. Stimulates endogenous synthesis of glycosaminoglycans, improving epidermal lipid barrier integrity and modulating inflammatory responses.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>50 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL GRADE</span><br><strong>Laboratory Standard</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">BASIC FUNCTION</span><br><strong>Epidermal Repair</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">AFFINITY</span><br><strong>High Biocompatibility</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILITY</span><br><strong>Absolute Hydrophilic</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROTECTION</span><br><strong>Photoprotected Bottle</strong></div>
-                    </div>
-                `,
-                descricao_es: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Péptido señalizador estructurado en dosis precisa para mantenimiento y prevención del envejecimiento celular prematuro. Estimula la síntesis endógena de glucosaminoglicanos, mejorando la integridad de la barrera lipídica epidérmica y modulando respuestas inflamatorias.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>50 mg / Vial</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">GRADO ANALÍTICO</span><br><strong>Estándar de Laboratorio</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">FUNCIÓN BÁSICA</span><br><strong>Reparación Epidérmica</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">AFINIDAD</span><br><strong>Alta Biocompatibilidad</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDAD</span><br><strong>Absolutamente Hidrófilo</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROTECCIÓN</span><br><strong>Frasco Fotoprotegido</strong></div>
-                    </div>
-                `
-            },
-            {
-                nome_key: 'product_klow80',
-                imagem: 'images/klow80.png',
-                descricao_pt: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
-                    </div>
-                `,
-                descricao_en: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Hyper-concentrated formula developed with bioavailable polymers for controlled kinetic release. Focused on intensive biostimulation of type I and III collagen, acting directly on mechanical tissue laxity vectors and loss of support matrix.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">NOMINAL DOSAGE</span><br><strong>80 mg</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">STRUCTURE</span><br><strong>Peptide Microparticles</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">THERAPEUTIC ACTION</span><br><strong>Volumization and Density</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE KINETICS</span><br><strong>Gradual Release</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">IN VITRO PURITY</span><br><strong>Pyrogen-Free</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESSING</span><br><strong>Isolated Sterile Synthesis</strong></div>
-                    </div>
-                `,
-                descricao_es: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Fórmula hiperconcentrada desarrollada con polímeros biodisponibles para liberación cinética controlada. Enfocada en la bioestimulación intensiva del colágeno tipo I y III, actuando directamente en los vectores de flacidez tisular mecánica y pérdida de matriz de soporte.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">DOSIS NOMINAL</span><br><strong>80 mg</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ESTRUCTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ACCIÓN TERAPÉUTICA</span><br><strong>Volumización y Densidad</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ACTIVA</span><br><strong>Liberación Gradual</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Libre de Pirógenos</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROCESAMIENTO</span><br><strong>Síntesis Estéril Aislada</strong></div>
-                    </div>
-                `
-            },
-            {
-                nome_key: 'product_tesam',
-                imagem: 'images/tesamorelin10.png',
-                descricao_pt: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tissue adiposo profundo.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
-                    </div>
-                `,
-                descricao_en: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Purified synthetic analog of Growth Hormone-Releasing Factor (GHRH), composed of a stabilized chain of 44 amino acids. Acts selectively on somatotrophic receptors in the anterior pituitary, triggering lipolysis of deep adipose tissue.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">MOLECULAR WEIGHT</span><br><strong>5135.16 Daltons</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">DOSED VOLUMETRY</span><br><strong>10 mg Single Dose</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">DYNAMICS</span><br><strong>Pituitary Signaling</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICATION</span><br><strong>&gt; 99.0% Sequencing</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SEQUENCE</span><br><strong>44 Linear Amino Acids</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROPERTY</span><br><strong>Metabolic Optimization</strong></div>
-                    </div>
-                `,
-                descricao_es: `
-                    <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
-                        Análogo sintético purificado del Factor de Liberación de la Hormona del Crecimiento (GHRH), compuesto por una cadena estabilizada de 44 aminoácidos. Actúa selectivamente en receptores somatotróficos en la hipófisis anterior, desencadenando la lipólisis del tejido adiposo profundo.
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
-                        <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRÍA DOSIFICADA</span><br><strong>10 mg Monodosis</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">DINÁMICA</span><br><strong>Señalización Hipofisaria</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICACIÓN</span><br><strong>&gt; 99.0% Secuenciamiento</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">SECUENCIA ACTIVA</span><br><strong>44 Aminoácidos Lineales</strong></div>
-                        <div><span style="color: #8e8e93; font-weight: normal;">PROPIEDAD</span><br><strong>Optimización Metabólica</strong></div>
-                    </div>
-                `
-            }
-        ];
-
-        const productsContainer = document.getElementById('products-container');
-        
-        function renderProducts() {
-            productsContainer.innerHTML = '';
-            produtos.forEach((produto, index) => {
-                const nomeProduto = i18n[currentLanguage][produto.nome_key];
-                const descricaoKey = `descricao_${currentLanguage}`;
-                const descricao = produto[descricaoKey];
-
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.setAttribute('data-index', index);
-                
-                card.innerHTML = `
-                    <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
-                        <img src="${produto.imagem}" alt="${nomeProduto}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none';">
-                    </div>
-                    <div class="product-info" style="padding: 15px 10px;">
-                        <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${nomeProduto}${verificadoBadge}</h3>
-                    </div>
-                `;
-                productsContainer.appendChild(card);
-            });
-
-            // Re-adicionar event listeners
-            productsContainer.addEventListener('click', handleProductClick);
+    const produtos = [
+        {
+            nome_key: 'product_ghk100',
+            imagem: 'images/ghk-cu100.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Biomodulador peptídico de ultra-alta concentração desenvolvido para reestruturação tecidual profunda. Atua diretamente na expressão gênica dos fibroblastos, revertendo o estresse senescente e acelerando a remodelação da matriz extracelular com máxima densidade de colágeno.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>100 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE ATIVA</span><br><strong>Copper Peptide</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Matriz Extracelular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Ultra-high concentration peptide biomodulator developed for deep tissue restructuring. Acts directly on fibroblast gene expression, reversing senescent stress and accelerating extracellular matrix remodeling with maximum collagen density.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>100 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SYNTHESIS</span><br><strong>Copper Peptide</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET PATHWAY</span><br><strong>Extracellular Matrix</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STABILITY</span><br><strong>Thermosensitive</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Biomodulador peptídico de concentración ultra-alta desarrollado para reestructuración tisular profunda. Actúa directamente sobre la expresión génica de los fibroblastos, revirtiendo el estrés senescente y acelerando la remodelación de la matriz extracelular con densidad máxima de colágeno.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>100 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESIS ACTIVA</span><br><strong>Péptido de Cobre</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VÍA OBJETIVO</span><br><strong>Matriz Extracelular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDAD</span><br><strong>Termosensible</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_glow70',
+            imagem: 'images/glow70.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Complexo ativo de alta performance molecular focado na homeostase e biorrevitalização celular. Sua fórmula ortomolecular atua na via de inibição da síntese exacerbada de melanina, restaurando o índice de refração da luz cutânea e promovendo uniformidade e brilho celular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">COMPOSIÇÃO</span><br><strong>70 mg Active Blend</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÔNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestresse Oxidativo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Tirosinase Celular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Vidro Tipo I Certificado</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    High-performance molecular active complex focused on cellular homeostasis and biorevitalization. Its orthomolecular formula acts on the pathway of inhibiting excessive melanin synthesis, restoring the refractive index of skin light and promoting cellular uniformity and luminosity.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">COMPOSITION</span><br><strong>70 mg Active Blend</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ISOTONIC pH</span><br><strong>7.2 (Balanced)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>Antioxidant Stress</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">BIOCHEMICAL TARGET</span><br><strong>Cellular Tyrosinase</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Certified Type I Glass</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Complejo activo de alto rendimiento molecular enfocado en la homeostasis celular y la biorevitalización. Su fórmula ortomolecular actúa en la vía de inhibición de la síntesis excesiva de melanina, restaurando el índice de refracción de la luz en la piel y promoviendo uniformidad y luminosidad celular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">COMPOSICIÓN</span><br><strong>70 mg Active Blend</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PH ISOTÓNICO</span><br><strong>7.2 (Equilibrado)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Antiestrés Oxidativo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">OBJETIVO BIOQUÍMICO</span><br><strong>Tirosinasa Celular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Vidrio Tipo I Certificado</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_ghk50',
+            imagem: 'images/ghk-cu50.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Peptídeo sinalizador estruturado em dosagem precisa para manutenção e prevenção do envelhecimento celular precoce. Estimula a síntese endógena de glicosaminoglicanos, melhorando a integridade da barreira lipídica epidérmica e modulando respostas inflamatórias.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>50 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>Padrão Laboratorial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">FUNÇÃO BÁSICA</span><br><strong>Reparação Epidérmica</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">AFINIDADE</span><br><strong>Alta Biocompatibilidade</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDADE</span><br><strong>Hidrofílico Absoluto</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROTEÇÃO</span><br><strong>Frasco Fotoprotegido</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Signaling peptide structured in precise dosage for maintenance and prevention of premature cellular aging. Stimulates endogenous synthesis of glycosaminoglycans, improving epidermal lipid barrier integrity and modulating inflammatory responses.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>50 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL GRADE</span><br><strong>Laboratory Standard</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">BASIC FUNCTION</span><br><strong>Epidermal Repair</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">AFFINITY</span><br><strong>High Biocompatibility</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILITY</span><br><strong>Absolute Hydrophilic</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROTECTION</span><br><strong>Photoprotected Bottle</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Péptido señalizador estructurado en dosis precisa para mantenimiento y prevención del envejecimiento celular prematuro. Estimula la síntesis endógena de glucosaminoglicanos, mejorando la integridad de la barrera lipídica epidérmica y modulando respuestas inflamatorias.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>50 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO ANALÍTICO</span><br><strong>Estándar de Laboratorio</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">FUNCIÓN BÁSICA</span><br><strong>Reparación Epidérmica</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">AFINIDAD</span><br><strong>Alta Biocompatibilidad</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SOLUBILIDAD</span><br><strong>Absolutamente Hidrófilo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROTECCIÓN</span><br><strong>Frasco Fotoprotegido</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_klow80',
+            imagem: 'images/klow80.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Fórmula hiperconcentrada desenvolvida com polímeros biodisponíveis de liberação cinética controlada. Focado na bioestimulação intensiva de colágenos do tipo I e III, agindo diretamente nos vetores de flacidez tecidual mecânica e perda de matriz de sustentação.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>80 mg</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">AÇÃO TERAPÊUTICA</span><br><strong>Volumização e Densidade</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ATIVA</span><br><strong>Liberação Gradual</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Isento de Pirogênios</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROCESSAMENTO</span><br><strong>Síntese Estéril Isolada</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Hyper-concentrated formula developed with bioavailable polymers for controlled kinetic release. Focused on intensive biostimulation of type I and III collagen, acting directly on mechanical tissue laxity vectors and loss of support matrix.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">NOMINAL DOSAGE</span><br><strong>80 mg</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STRUCTURE</span><br><strong>Peptide Microparticles</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">THERAPEUTIC ACTION</span><br><strong>Volumization and Density</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE KINETICS</span><br><strong>Gradual Release</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">IN VITRO PURITY</span><br><strong>Pyrogen-Free</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROCESSING</span><br><strong>Isolated Sterile Synthesis</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Fórmula hiperconcentrada desarrollada con polímeros biodisponibles para liberación cinética controlada. Enfocada en la bioestimulación intensiva del colágeno tipo I y III, actuando directamente en los vectores de flacidez tisular mecánica y pérdida de matriz de soporte.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSIS NOMINAL</span><br><strong>80 mg</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTRUCTURA</span><br><strong>Micropartículas Peptídicas</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ACCIÓN TERAPÉUTICA</span><br><strong>Volumización y Densidad</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CINÉTICA ACTIVA</span><br><strong>Liberación Gradual</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA IN VITRO</span><br><strong>Libre de Pirógenos</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROCESAMIENTO</span><br><strong>Síntesis Estéril Aislada</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_tesamorelin',
+            imagem: 'images/tesamorelin10.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Análogo sintético purificado do Fator de Liberação do Hormônio do Crescimento (GHRH), composto por uma cadeia estabilizada de 44 aminoácidos. Atua com seletividade em receptores somatotróficos na hipófise anterior, desencadeando a lipólise do tecido adiposo profundo.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRIA DOSADA</span><br><strong>10 mg Monodose</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DINÂMICA</span><br><strong>Sinalização Hipofisária</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICAÇÃO</span><br><strong>&gt; 99.0% Sequenciamento</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA ATIVA</span><br><strong>44 Aminoácidos Linear</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROPRIEDADE</span><br><strong>Otimização Metabólica</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Purified synthetic analog of Growth Hormone-Releasing Factor (GHRH), composed of a stabilized chain of 44 amino acids. Acts selectively on somatotrophic receptors in the anterior pituitary, triggering lipolysis of deep adipose tissue.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">MOLECULAR WEIGHT</span><br><strong>5135.16 Daltons</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSED VOLUMETRY</span><br><strong>10 mg Single Dose</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DYNAMICS</span><br><strong>Pituitary Signaling</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICATION</span><br><strong>&gt; 99.0% Sequencing</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ACTIVE SEQUENCE</span><br><strong>44 Linear Amino Acids</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROPERTY</span><br><strong>Metabolic Optimization</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Análogo sintético purificado del Factor de Liberación de la Hormona del Crecimiento (GHRH), compuesto por una cadena estabilizada de 44 aminoácidos. Actúa selectivamente en receptores somatotróficos en la hipófisis anterior, desencadenando la lipólisis del tejido adiposo profundo.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">PESO MOLECULAR</span><br><strong>5135.16 Daltons</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VOLUMETRÍA DOSIFICADA</span><br><strong>10 mg Monodosis</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DINÁMICA</span><br><strong>Señalización Hipofisaria</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFICACIÓN</span><br><strong>&gt; 99.0% Secuenciamiento</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SECUENCIA ACTIVA</span><br><strong>44 Aminoácidos Lineales</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PROPIEDAD</span><br><strong>Optimización Metabólica</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_AOD 9604',
+            imagem: 'images/aod.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Fragmento peptídico C-terminal modificado do hormônio do crescimento humano (hGH 177-191). Projetado especificamente para direcionamento lipolítico avançado, estimula a quebra de lipídios e inibe a lipogênese sem afetar a glicemia ou os níveis de IGF-1.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SEQUÊNCIA</span><br><strong>hGH Fragment 177-191</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VIA ALVO</span><br><strong>Tecido Adiposo Visceral</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Modified C-terminal peptide fragment of human growth hormone (hGH 177-191). Specifically engineered for advanced lipolytic targeting, it stimulates lipid breakdown and inhibits lipogenesis without altering blood glucose or IGF-1 levels.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SEQUENCE</span><br><strong>hGH Fragment 177-191</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET PATHWAY</span><br><strong>Visceral Adipose Tissue</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Fragmento peptídico C-terminal modificado de la hormona del crecimiento humano (hGH 177-191). Diseñado específicamente para direccionamiento lipolítico avanzado, estimula la descomposición de lípidos e inhibe la lipogénesis sin alterar la glucemia ni el IGF-1.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SECUENCIA</span><br><strong>hGH Fragment 177-191</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VÍA OBJETIVO</span><br><strong>Tejido Adiposo Visceral</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_CJC 1295 + IPAMORELIN',
+            imagem: 'images/cjc.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Análogo sintético do hormônio liberador de hormônio do crescimento (GHRH) de segunda geração. Estimula a secreção pulsátil endógena do GH de forma fisiológica, promovendo o anabolismo proteico, reparo celular acelerado e recuperação tecidual otimizada.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CATEGORIA</span><br><strong>Secretagogo GHRH</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">RECEPTOR ALVO</span><br><strong>GHRH-R Hipofisário</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESE</span><br><strong>Fase Sólida Estéril</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDADE</span><br><strong>Termossensível</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Second-generation synthetic analog of Growth Hormone-Releasing Hormone (GHRH). Physiological stimulator of endogenous GH pulsatile secretion, promoting protein anabolism, accelerated cellular repair, and optimized tissue recovery.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CATEGORY</span><br><strong>GHRH Secretagogue</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET RECEPTOR</span><br><strong>Pituitary GHRH-R</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SYNTHESIS</span><br><strong>Sterile Solid Phase</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STABILITY</span><br><strong>Thermosensitive</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Análogo sintético de segunda generación de la Hormona Liberadora de Hormona del Crecimiento (GHRH). Estimula la secreción pulsátil endógena de GH de forma fisiológica, promoviendo el anabolismo proteico, reparación celular acelerada y recuperación tisular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CATEGORÍA</span><br><strong>Secretagogo GHRH</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">RECEPTOR OBJETIVO</span><br><strong>GHRH-R Hipofisario</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SÍNTESIS</span><br><strong>Fase Sólida Estéril</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTABILIDAD</span><br><strong>Termosensible</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_Epithalon',
+            imagem: 'images/epithalon1.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Tetrapeptídeo sintético bioregulador indutor da enzima telomerase. Atua diretamente na preservação e no alongamento dos telômeros celulares, regulando a atividade pineal, o ritmo circadiano e retardando o processo de senescência celular profunda.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>&gt; 99.3% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Ativação de Telomerase</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALVO MOLECULAR</span><br><strong>DNA / Núcleo Celular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ARMAZENAMENTO</span><br><strong>Protegido de Luz (2°C - 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Synthetic tetrapeptide bioregulator and telomerase enzyme inducer. Acts directly on preserving and elongating cellular telomeres, regulating pineal gland function, circadian rhythms, and delaying the deep cellular senescence process.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGE</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL GRADE</span><br><strong>&gt; 99.3% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>Telomerase Activation</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MOLECULAR TARGET</span><br><strong>DNA / Cell Nucleus</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Light Protected (2°C - 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Tetrapéptido sintético biorregulador e inductor de la enzima telomerasa. Actúa directamente en la preservación y elongación de los telómeros celulares, regulando la función pineal, el ritmo circadiano y retrasando la senescencia celular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSIFICACIÓN</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO ANALÍTICO</span><br><strong>&gt; 99.3% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Activación de Telomerasa</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">OBJETIVO MOLECULAR</span><br><strong>ADN / Núcleo Celular</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Protegido de Luz (2°C - 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_MOTS-C',
+            imagem: 'images/motsc.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Peptídeo codificado pelo genoma mitocondrial envolvido no controle do metabolismo sistêmico. Ativa centralmente a via da proteína quinase AMPK, otimizando a sensibilidade à insulina, o consumo de glicose e a biogênese mitocondrial no tecido muscular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA CERTIFICADA</span><br><strong>&gt; 98.8% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ORIGEM</span><br><strong>Peptídeo Mitocondrial (MDP)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VIA BIOQUÍMICA</span><br><strong>Ativação AMPK</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Estéril</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Mitochondrial-derived peptide encoded by the mitochondrial genome involved in systemic metabolic control. Centrally activates the AMPK pathway, enhancing insulin sensitivity, glucose uptake, and mitochondrial biogenesis in skeletal muscle.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFIED PURITY</span><br><strong>&gt; 98.8% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ORIGIN</span><br><strong>Mitochondrial Peptide (MDP)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">BIOCHEMICAL PATHWAY</span><br><strong>AMPK Activation</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Sterile Lyophilized</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Péptido codificado por el genoma mitocondrial involucrado en el control del metabolismo sistémico. Activa centralmente la vía AMPK, optimizando la sensibilidad a la insulina, el consumo de glucosa y la biogénesis mitocondrial en el músculo esquelético.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA CERTIFICADA</span><br><strong>&gt; 98.8% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ORIGEN</span><br><strong>Péptido Mitocondrial (MDP)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VÍA BIOQUÍMICA</span><br><strong>Activación AMPK</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Estéril</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_NAD+',
+            imagem: 'images/nad+.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Coenzima fundamental de transferência de elétrons essencial para o metabolismo energético mitocondrial e ativação das enzimas sirtuínas (SIRT1-7). Restaura o potencial bioenergético celular, a reparação do DNA via PARP e combate a senescência vascular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM NOMINAL</span><br><strong>500 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.0% (Enzimático)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CLASSE</span><br><strong>Coenzima Nicotinamídica</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALVO BIOQUÍMICO</span><br><strong>Sirtuínas e Cadeia Respiratória</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Frasco Âmbar Fotoprotegido</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Essential electron-transfer coenzyme crucial for mitochondrial energy metabolism and activation of sirtuin enzymes (SIRT1-7). Restores cellular bioenergetic potential, DNA repair via PARP pathways, and combats vascular senescence.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">NOMINAL DOSAGE</span><br><strong>500 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.0% (Enzymatic)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CLASS</span><br><strong>Nicotinamide Coenzyme</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">BIOCHEMICAL TARGET</span><br><strong>Sirtuins & Respiratory Chain</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Photoprotected Amber Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Coenzima fundamental de transferencia de electrones esencial para el metabolismo energético mitocondrial y activación de sirtuinas (SIRT1-7). Restaura el potencial bioenergético celular, la reparación de ADN y combate la senescencia vascular.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSIS NOMINAL</span><br><strong>500 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.0% (Enzimático)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CLASE</span><br><strong>Coenzima Nicotinamídica</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">OBJETIVO BIOQUÍMICO</span><br><strong>Sirtuinas y Cadena Respiratoria</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Frasco Ámbar Fotoprotegido</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_Retatrutide',
+            imagem: 'images/retatrutide1.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Co-agonista triplo dos receptores GIP, GLP-1 e Glucagon. Desenvolvido para reprogramação metabólica profunda, atua de forma sinérgica no aumento do gasto energético basal, otimização da homeostase glicêmica e lipólise acentuada do tecido adiposo visceral.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA ANALÍTICA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Agonista Triplo R</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VIA RECEPTORA</span><br><strong>GIP / GLP-1 / Glucagon</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Triple co-agonist targeting GIP, GLP-1, and Glucagon receptors. Engineered for deep metabolic reprogramming, acting synergistically to increase basal energy expenditure, optimize glycemic homeostasis, and accelerate visceral lipid breakdown.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL PURITY</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>Triple Agonist R</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">RECEPTOR PATHWAY</span><br><strong>GIP / GLP-1 / Glucagon</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Co-agonista triple de receptores GIP, GLP-1 y Glucagón. Desarrollado para una reprogramación metabólica profunda, actúa de forma sinérgica en el aumento del gasto energético basal, optimización de la glucemia y lipólisis visceral.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA ANALÍTICA</span><br><strong>&gt; 99.2% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Agonista Triple R</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">VÍA RECEPTORA</span><br><strong>GIP / GLP-1 / Glucagón</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_Selank',
+            imagem: 'images/selank1.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Peptídeo regulador neurotrópico sintético derivado do tetrapeptídeo endógeno tuftsina. Modula a neurotransmissão GABAérgica e estimula a expressão de BDNF no hipocampo, promovendo redução do estresse anxiogênico e modulação imune sem efeito sedativo.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTRUTURA</span><br><strong>Análogo da Tuftsina</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA ALVO</span><br><strong>Nervoso Central / GABA</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Termossensível</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Synthetic neurotropic regulatory peptide derived from endogenous tetrapeptide tuftsin. Modulates GABAergic neurotransmission and stimulates hippocampal BDNF expression, promoting anxiety reduction and immune modulation without sedation.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STRUCTURE</span><br><strong>Tuftsin Analog</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET SYSTEM</span><br><strong>Central Nervous / GABA</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Thermosensitive</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Péptido regulador neurotrópico sintético derivado de la tuftsina endógena. Modula la neurotransmisión GABAérgica y estimula la expresión de BDNF hipocampal, promoviendo reducción de ansiedad y modulación inmune sin sedación.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ESTRUCTURA</span><br><strong>Análogo de Tuftsina</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA OBJETIVO</span><br><strong>Nervioso Central / GABA</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Termosensible</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_Semax',
+            imagem: 'images/semax1.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Heptapeptídeo nootrópico e neuroprotetor derivado do fragmento N-terminal do ACTH (4-10). Induz a elevação dos fatores neurotróficos BDNF e NGF, aumentando a plasticidade sináptica, a atenção executiva e a resistência neural à hipóxia.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU ANALÍTICO</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Estímulo BDNF / NGF</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA ALVO</span><br><strong>Córtex e Hipocampo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Termossensível</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Nootropic and neuroprotective heptapeptide derived from the ACTH (4-10) N-terminal fragment. Induces elevation of neurotrophic factors BDNF and NGF, enhancing synaptic plasticity, executive focus, and neural resistance to hypoxia.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ANALYTICAL GRADE</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECHANISM</span><br><strong>BDNF / NGF Stimulation</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET SYSTEM</span><br><strong>Cortex & Hippocampus</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Thermosensitive</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Heptapéptido nootrópico y neuroprotector derivado del fragmento ACTH (4-10). Induce la elevación de los factores neurotróficos BDNF y NGF, aumentando la plasticidad sináptica, la atención ejecutiva y la resistencia neuronal a la hipoxia.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>5 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO ANALÍTICO</span><br><strong>&gt; 99.1% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">MECANISMO</span><br><strong>Estímulo BDNF / NGF</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA OBJETIVO</span><br><strong>Córtex e Hipocampo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Termosensible</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_SS-31',
+            imagem: 'images/ss31.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Tetrapeptídeo antioxidante mitocôndria-alvo que se liga seletivamente à cardiolipina na membrana mitocondrial interna. Restaura a bioenergética celular, otimiza a produção de ATP e reduz drasticamente o estresse oxidativo por EROs.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGEM</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRAU DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">LIGANTE ALVO</span><br><strong>Cardiolipina Mitocondrial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EFETIVIDADE</span><br><strong>Inibição de EROs / ROS</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">APRESENTAÇÃO</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Mitochondria-targeted antioxidant tetrapeptide that selectively binds to cardiolipin in the inner mitochondrial membrane. Restores cellular bioenergetics, optimizes ATP synthesis, and drastically reduces ROS-induced oxidative stress.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSAGE</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PURITY GRADE</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET BINDER</span><br><strong>Mitochondrial Cardiolipin</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EFFECTIVENESS</span><br><strong>ROS / Oxidative Inhibition</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTATION</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Tetrapéptido antioxidante mitocondrial que se une selectivamente a la cardiolipina en la membrana mitocondrial interna. Restaura la bioenergética celular, optimiza la producción de ATP y reduce drásticamente el estrés oxidativo.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOSIFICACIÓN</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">GRADO DE PUREZA</span><br><strong>&gt; 99.0% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ENLACE OBJETIVO</span><br><strong>Cardiolipina Mitocondrial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EFECTIVIDAD</span><br><strong>Inhibición de EROs / ROS</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PRESENTACIÓN</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
+        },
+        {
+            nome_key: 'product_Terzepatida',
+            imagem: 'images/terzepatida1.png',
+            descricao_pt: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Agonista duplo dos receptores do polipetídeo insulinotrópico dependente de glicose (GIP) e do peptídeo semelhante ao glucagon-1 (GLP-1). Atua na regulação glicêmica, desaceleração do esvaziamento gástrico e na supressão central do apetite.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRAÇÃO</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA CERTIFICADA</span><br><strong>&gt; 99.4% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DUPLO AGONISMO</span><br><strong>GIP / GLP-1 Dual</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA ALVO</span><br><strong>Metabólico / Neuroendócrino</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAGEM</span><br><strong>Liofilizado Vácuo</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONSERVAÇÃO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `,
+            descricao_en: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Dual receptor agonist for glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). Regulates glycemic control, delays gastric emptying, and centrally modulates appetite signaling pathways.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRATION</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">CERTIFIED PURITY</span><br><strong>&gt; 99.4% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DUAL AGONISM</span><br><strong>GIP / GLP-1 Dual</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">TARGET SYSTEM</span><br><strong>Metabolic / Neuroendocrine</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PACKAGING</span><br><strong>Lyophilized Vacuum</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">STORAGE</span><br><strong>Refrigerated (2°C to 8°C)</strong></div>
+                </div>
+            `,
+            descricao_es: `
+                <div style="color: #4a4a4a; font-family: -apple-system, system-ui, sans-serif; font-size: 0.95em; line-height: 1.6; margin-bottom: 20px;">
+                    Agonista dual de los receptores del polipéptido insulinotrópico dependiente de glucosa (GIP) y del péptido similar al glucagón-1 (GLP-1). Actúa en la regulación glucémica, vaciado gástrico y supresión central del apetito.
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.82em; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; color: #1a1a1a; font-family: monospace;">
+                    <div><span style="color: #8e8e93; font-weight: normal;">CONCENTRACIÓN</span><br><strong>10 mg / Vial</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">PUREZA CERTIFICADA</span><br><strong>&gt; 99.4% (HPLC)</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">DOBLE AGONISMO</span><br><strong>GIP / GLP-1 Dual</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">SISTEMA OBJETIVO</span><br><strong>Metabólico / Neuroendocrino</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">EMBALAJE</span><br><strong>Liofilizado Vacío</strong></div>
+                    <div><span style="color: #8e8e93; font-weight: normal;">ALMACENAMIENTO</span><br><strong>Refrigerado (2°C a 8°C)</strong></div>
+                </div>
+            `
         }
+    ];
 
-        function handleProductClick(e) {
-            const card = e.target.closest('.product-card');
-            if (!card) return;
-
-            const index = card.getAttribute('data-index');
-            const prod = produtos[index];
-            const nomeProduto = i18n[currentLanguage][prod.nome_key];
+    const productsContainer = document.getElementById('products-container');
+    
+    function renderProducts() {
+        productsContainer.innerHTML = '';
+        produtos.forEach((produto, index) => {
+            const nomeProduto = i18n[currentLanguage][produto.nome_key];
             const descricaoKey = `descricao_${currentLanguage}`;
-            const descricao = prod[descricaoKey];
-            
-            const modal = document.getElementById('product-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalDesc = document.getElementById('modal-desc');
-            const modalImgContainer = document.getElementById('modal-img-container');
-            const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
+            const descricao = produto[descricaoKey];
 
-            modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${nomeProduto}${verificadoBadge}</span>`;
-            modalDesc.innerHTML = descricao;
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.setAttribute('data-index', index);
             
-            const isMobile = window.innerWidth <= 768;
-            const imgMaxHeight = isMobile ? "140px" : "220px";
-
-            modalImgContainer.innerHTML = `
-                <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 15px 10px 5px 10px; box-sizing: border-box;">
-                    <img src="${prod.imagem}" alt="${nomeProduto}" style="width: auto; max-width: 100%; height: ${imgMaxHeight}; object-fit: contain; display: block; margin: 0 auto;">
+            card.innerHTML = `
+                <div class="product-img-box" style="display: flex; align-items: center; justify-content: center; background-color: #ffffff !important;">
+                    <img src="${produto.imagem}" alt="${nomeProduto}" style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;" onerror="this.style.display='none';">
+                </div>
+                <div class="product-info" style="padding: 15px 10px;">
+                    <h3 style="display: flex; align-items: center; justify-content: center; color: #111111; font-size: 1.05em; font-weight: 500; font-family: -apple-system, system-ui, sans-serif; margin: 0;">${nomeProduto}${verificadoBadge}</h3>
                 </div>
             `;
-            
-            const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + nomeProduto);
-            modalWhatsappBtn.href = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${mensagem}`;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+            productsContainer.appendChild(card);
+        });
 
-        // Renderizar produtos inicialmente
-        renderProducts();
+        // Re-adicionar event listeners
+        productsContainer.addEventListener('click', handleProductClick);
+    }
 
-        // Observador para idioma
-        const languageObserver = setInterval(() => {
-            // Verificar se mudou o idioma
-            const storedLang = localStorage.getItem('newlifelabs-lang') || 'pt';
-            if (storedLang !== currentLanguage) {
-                currentLanguage = storedLang;
-                renderProducts();
-            }
-        }, 100);
+    function handleProductClick(e) {
+        const card = e.target.closest('.product-card');
+        if (!card) return;
 
-        // Modal close
-        const closeModalBtn = document.getElementById('close-modal');
+        const index = card.getAttribute('data-index');
+        const prod = produtos[index];
+        const nomeProduto = i18n[currentLanguage][prod.nome_key];
+        const descricaoKey = `descricao_${currentLanguage}`;
+        const descricao = prod[descricaoKey];
+        
         const modal = document.getElementById('product-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalImgContainer = document.getElementById('modal-img-container');
+        const modalWhatsappBtn = document.getElementById('modal-whatsapp-btn');
 
-        closeModalBtn.addEventListener('click', () => {
+        modalTitle.innerHTML = `<span style="display: inline-flex; align-items: center; justify-content: center; font-family: -apple-system, system-ui, sans-serif;">${nomeProduto}${verificadoBadge}</span>`;
+        modalDesc.innerHTML = descricao;
+        
+        const isMobile = window.innerWidth <= 768;
+        const imgMaxHeight = isMobile ? "140px" : "220px";
+
+        modalImgContainer.innerHTML = `
+            <div style="width: 100%; background-color: #ffffff !important; display: flex; align-items: center; justify-content: center; padding: 15px 10px 5px 10px; box-sizing: border-box;">
+                <img src="${prod.imagem}" alt="${nomeProduto}" style="width: auto; max-width: 100%; height: ${imgMaxHeight}; object-fit: contain; display: block; margin: 0 auto;">
+            </div>
+        `;
+        
+        const mensagem = encodeURIComponent("Olá, solicito verificação de disponibilidade para o composto de alta pureza: " + nomeProduto);
+        modalWhatsappBtn.href = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${mensagem}`;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Renderizar produtos inicialmente
+    renderProducts();
+
+    // Observador para idioma
+    const languageObserver = setInterval(() => {
+        // Verificar se mudou o idioma
+        const storedLang = localStorage.getItem('newlifelabs-lang') || 'pt';
+        if (storedLang !== currentLanguage) {
+            currentLanguage = storedLang;
+            renderProducts();
+        }
+    }, 100);
+
+    // Modal close
+    const closeModalBtn = document.getElementById('close-modal');
+    const modal = document.getElementById('product-modal');
+
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-    </script>
+        }
+    });
+</script>
 
     <!-- FUNCIONALIDADES GERAIS -->
     <script>
