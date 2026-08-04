@@ -386,25 +386,56 @@
             white-space: nowrap;
         }
 
+        /* GRUPO DE BOTÕES DE DOWNLOAD */
+        .actions-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .btn-download-pdf {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
+            gap: 6px;
+            padding: 7px 12px;
             background: var(--accent-green);
             color: #ffffff;
             border: none;
             border-radius: 6px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             text-decoration: none;
             white-space: nowrap;
+            transition: background 0.2s ease;
         }
 
         .btn-download-pdf:hover {
             background: #1f6b42;
+        }
+
+        .btn-download-manual {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background 0.2s ease;
+        }
+
+        .btn-download-manual:hover {
+            background: #333333;
         }
 
         .mobile-label {
@@ -529,6 +560,20 @@
                 padding-bottom: 0;
                 padding-top: 12px;
                 margin-top: 4px;
+                display: block;
+            }
+
+            .actions-group {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+
+            .btn-download-pdf, .btn-download-manual {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+                font-size: 0.8rem;
             }
 
             .mobile-label {
@@ -537,13 +582,6 @@
                 font-weight: 700;
                 color: var(--gray-600);
                 text-transform: uppercase;
-            }
-
-            .btn-download-pdf {
-                width: 100%;
-                justify-content: center;
-                padding: 12px;
-                font-size: 0.85rem;
             }
 
             .table-section {
@@ -631,7 +669,7 @@
                 <i class="fas fa-microscope"></i> <span data-i18n="heroBadge">New Life QA Analytical Services</span>
             </div>
             <h1 data-i18n="heroTitle">Rastreabilidade & Autenticação de Lotes</h1>
-            <p data-i18n="heroSubtitle">Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC.</p>
+            <p data-i18n="heroSubtitle">Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.</p>
             
             <!-- CAIXA DE VALIDAÇÃO -->
             <div class="verify-box-card">
@@ -666,7 +704,7 @@
         </div>
     </section>
 
-    <!-- TABELA DE LAUDOS (CARDS NO MOBILE) -->
+    <!-- TABELA DE LAUDOS E MANUAIS -->
     <section class="table-section">
         <div class="container">
             <div class="table-card">
@@ -677,7 +715,7 @@
                             <th data-i18n="thKey">Chave Única</th>
                             <th data-i18n="thPurity">Pureza (HPLC)</th>
                             <th data-i18n="thDate">Data Ensaio</th>
-                            <th data-i18n="thPdf">Laudo Oficial (COA PDF)</th>
+                            <th data-i18n="thPdf">Documentos (COA & Manual)</th>
                         </tr>
                     </thead>
                     <tbody id="qa-table-body">
@@ -695,7 +733,7 @@
         </div>
     </footer>
 
-    <!-- MODAL -->
+    <!-- MODAL DE VALIDAÇÃO -->
     <div class="modal" id="verify-modal">
         <div class="modal-card">
             <button class="modal-close" id="modal-close-btn">&times;</button>
@@ -710,7 +748,7 @@
                 navBack: "Voltar ao Site",
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Rastreabilidade & Autenticação de Lotes",
-                heroSubtitle: "Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC.",
+                heroSubtitle: "Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.",
                 verifyTitle: "Validar Produto por Chave Única",
                 verifyDesc: "Digite o código impresso em seu produto para confirmar a validação do laboratório:",
                 verifyPlaceholder: "EX: NL97902TIR60",
@@ -727,16 +765,18 @@
                 thKey: "Chave Única",
                 thPurity: "Pureza (HPLC)",
                 thDate: "Data Ensaio",
-                thPdf: "Laudo Oficial (COA PDF)",
+                thPdf: "Documentos (COA & Manual)",
                 noResults: "Nenhum laudo encontrado.",
                 btnDownload: "Baixar COA PDF",
+                btnManual: "Manual de Uso",
                 modalValidTitle: "Produto Autêntico & Validado",
                 modalValidDesc: "O código inserido corresponde a um lote autêntico da <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Produto:",
                 modalLabelKey: "Chave Única:",
                 modalLabelPurity: "Pureza (HPLC):",
                 modalLabelBatch: "Lote:",
-                modalDownloadPdf: "Baixar Relatório do Teste (PDF)",
+                modalDownloadPdf: "Baixar Relatório (COA PDF)",
+                modalDownloadManual: "Baixar Manual de Uso (PDF)",
                 modalInvalidTitle: "Código Não Localizado",
                 modalInvalidDesc: "A chave inserida (<strong>{code}</strong>) não foi localizada em nossa base de dados.",
                 modalTryAgain: "Tentar Novamente",
@@ -746,7 +786,7 @@
                 navBack: "Back to Site",
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Traceability & Batch Authentication",
-                heroSubtitle: "Check the authenticity of your compounds and download the official HPLC purity Test Report.",
+                heroSubtitle: "Check the authenticity of your compounds and download the official HPLC purity Test Report and User Manual.",
                 verifyTitle: "Validate Product by Unique Key",
                 verifyDesc: "Enter the code printed on your product to confirm laboratory validation:",
                 verifyPlaceholder: "EX: NL97902TIR60",
@@ -763,16 +803,18 @@
                 thKey: "Unique Key",
                 thPurity: "Purity (HPLC)",
                 thDate: "Test Date",
-                thPdf: "Official Report (COA PDF)",
+                thPdf: "Documents (COA & Manual)",
                 noResults: "No report found.",
                 btnDownload: "Download COA PDF",
+                btnManual: "User Manual",
                 modalValidTitle: "Authentic & Validated Product",
                 modalValidDesc: "The code entered corresponds to an authentic batch tested by <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Product:",
                 modalLabelKey: "Unique Key:",
                 modalLabelPurity: "Purity (HPLC):",
                 modalLabelBatch: "Batch:",
-                modalDownloadPdf: "Download Test Report (PDF)",
+                modalDownloadPdf: "Download COA Report (PDF)",
+                modalDownloadManual: "Download User Manual (PDF)",
                 modalInvalidTitle: "Code Not Found",
                 modalInvalidDesc: "The entered key (<strong>{code}</strong>) was not found in our database.",
                 modalTryAgain: "Try Again",
@@ -782,7 +824,7 @@
                 navBack: "Volver al Sitio",
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Trazabilidad y Autenticación de Lotes",
-                heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Reporte de Análisis (Test Report) oficial de pureza por HPLC.",
+                heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Reporte de Análisis (Test Report) oficial de pureza por HPLC y el Manual de Uso.",
                 verifyTitle: "Validar Producto por Clave Única",
                 verifyDesc: "Ingrese el código impreso en su producto para confirmar la validación del laboratorio:",
                 verifyPlaceholder: "EJ: NL97902TIR60",
@@ -799,16 +841,18 @@
                 thKey: "Clave Única",
                 thPurity: "Pureza (HPLC)",
                 thDate: "Fecha de Ensayo",
-                thPdf: "Reporte Oficial (COA PDF)",
+                thPdf: "Documentos (COA y Manual)",
                 noResults: "No se encontró ningún reporte.",
                 btnDownload: "Descargar COA PDF",
+                btnManual: "Manual de Uso",
                 modalValidTitle: "Producto Auténtico y Validado",
                 modalValidDesc: "El código ingresado corresponde a un lote auténtico de <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Producto:",
                 modalLabelKey: "Clave Única:",
                 modalLabelPurity: "Pureza (HPLC):",
                 modalLabelBatch: "Lote:",
-                modalDownloadPdf: "Descargar Reporte del Test (PDF)",
+                modalDownloadPdf: "Descargar COA (PDF)",
+                modalDownloadManual: "Descargar Manual de Uso (PDF)",
                 modalInvalidTitle: "Código No Encontrado",
                 modalInvalidDesc: "La clave ingresada (<strong>{code}</strong>) no se encontró en nuestra base de datos.",
                 modalTryAgain: "Intentar de Nuevo",
@@ -818,22 +862,78 @@
 
         let currentLang = "pt";
 
-        // LISTA DE PRODUTOS E CAMINHOS ABSOLUTOS PARA OS PDFs
+        // LISTA DE PRODUTOS E CAMINHOS PARA OS PDFs (COA E MANUAL)
         const productsQA = [
-            { id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf" },
-            { id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf" },
-            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf" },
-            { id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf" },
-            { id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf" },
-            { id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf" },
-            { id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf" },
-            { id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf" },
-            { id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf" },
-            { id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf" },
-            { id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf" },
-            { id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf" },
-            { id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf" },
-            { id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf" }
+            { 
+                id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", 
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-Cu 100 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 10 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC-1295 + IPAMORELIN 10 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", 
+                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - EPITHALON 50 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SS-31 50 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", 
+                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
+                pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - NAD+ 500 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW Blend 70 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
+                pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - AOD-9604 5 mg - New Life Labs.pdf"
+            },
+            { 
+                id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", 
+                pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW Blend 80 mg - New Life Labs.pdf"
+            }
         ];
 
         let selectedCategory = "all";
@@ -903,9 +1003,14 @@
                         <span style="font-family: monospace; font-size: 0.85rem;">${item.date}</span>
                     </td>
                     <td class="col-pdf">
-                        <a href="${item.pdfUrl}" target="_blank" download class="btn-download-pdf">
-                            <i class="fas fa-file-pdf"></i> ${t.btnDownload}
-                        </a>
+                        <div class="actions-group">
+                            <a href="${item.pdfUrl}" target="_blank" download class="btn-download-pdf">
+                                <i class="fas fa-file-pdf"></i> ${t.btnDownload}
+                            </a>
+                            <a href="${item.manualUrl}" target="_blank" download class="btn-download-manual">
+                                <i class="fas fa-book-medical"></i> ${t.btnManual}
+                            </a>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -930,9 +1035,14 @@
                         <div style="margin-top: 4px;"><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: bold;">${found.purity}</span></div>
                         <div style="margin-top: 4px;"><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
                     </div>
-                    <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px;">
-                        <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
-                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 11px;">
+                            <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
+                        </a>
+                        <a href="${found.manualUrl}" target="_blank" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 11px;">
+                            <i class="fas fa-book-medical"></i> ${t.modalDownloadManual}
+                        </a>
+                    </div>
                 `;
             } else {
                 body.innerHTML = `
