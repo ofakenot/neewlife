@@ -2,57 +2,82 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Laudos & Controle de Qualidade (COA) | New Life Labs</title>
     <meta name="description" content="Central de Rastreabilidade, Autenticação de Lotes e Certificados de Análise (HPLC) da New Life Labs.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/nrelogo.png">
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* --- VARIÁVEIS E ESTILO DO SITE PRINCIPAL --- */
         :root {
-            --primary: #000000;
-            --secondary: #ffffff;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
-            --gray-600: #6c757d;
-            --gray-800: #212529;
+            --primary: #0071e3;
+            --primary-hover: #005bb5;
+            --dark: #1d1d1f;
+            --gray-50: #fbfbfd;
+            --gray-100: #f5f5f7;
+            --gray-200: #e8e8ed;
+            --gray-300: #d2d2d7;
+            --gray-600: #86868b;
+            --gray-800: #1d1d1f;
             --accent-green: #2d965d;
-            --accent-green-bg: #e8f5e9;
+            --accent-green-bg: rgba(45, 150, 93, 0.08);
+            --accent-green-hover: #23784a;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-border-subtle: rgba(226, 232, 240, 0.7);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+            --glass-blur: blur(20px) saturate(180%);
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--gray-100);
-            color: var(--primary);
+            background-color: #fbfbfd;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(0, 113, 227, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(45, 150, 93, 0.03) 0%, transparent 50%);
+            color: var(--dark);
             line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            letter-spacing: -0.022em;
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 32px;
         }
 
-        /* --- NAVBAR --- */
+        /* --- NAVBAR GLASSMORPHISM --- */
         .navbar {
-            background: #ffffff;
-            border-bottom: 1px solid var(--gray-200);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border-subtle);
             position: sticky;
             top: 0;
             z-index: 1000;
-            padding: 14px 0;
+            padding: 16px 0;
+            transition: var(--transition);
         }
 
         .nav-container {
@@ -61,52 +86,53 @@
             align-items: center;
         }
 
+        /* SOMENTE A LOGO (SEM TEXTO) */
         .logo-box {
             display: flex;
             align-items: center;
-            gap: 10px;
             text-decoration: none;
-            color: var(--primary);
+            height: 38px;
         }
 
-        .logo-text {
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+        .logo-box img {
+            max-height: 38px;
+            width: auto;
+            object-fit: contain;
         }
 
         .nav-right-group {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
-        /* BANDEIRAS / SELETOR DE IDIOMA (i18n) */
+        /* SELETOR DE IDIOMAS */
         .lang-switch {
             display: flex;
-            gap: 3px;
-            background: var(--gray-100);
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.04);
             padding: 3px;
-            border-radius: 6px;
-            border: 1px solid var(--gray-300);
+            border-radius: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .lang-btn {
-            background: none;
+            background: transparent;
             border: none;
-            padding: 6px 10px;
+            padding: 5px 12px;
             font-size: 0.75rem;
             font-weight: 700;
-            border-radius: 4px;
+            border-radius: 20px;
             cursor: pointer;
             color: var(--gray-600);
-            transition: all 0.2s ease;
+            transition: var(--transition);
+            text-transform: uppercase;
         }
 
-        .lang-btn.active, .lang-btn:hover {
-            background: var(--primary);
-            color: var(--secondary);
+        .lang-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .nav-back-btn {
@@ -114,161 +140,188 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--primary);
+            color: var(--dark);
             font-size: 0.82rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            padding: 8px 14px;
-            border: 1px solid var(--gray-300);
-            border-radius: 6px;
-            transition: background 0.2s ease;
-            white-space: nowrap;
+            padding: 8px 18px;
+            border-radius: 30px;
+            transition: var(--transition);
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-200);
         }
 
         .nav-back-btn:hover {
             background-color: var(--primary);
-            color: var(--secondary);
+            color: #ffffff;
+            border-color: var(--primary);
         }
 
         /* --- HERO BANNER --- */
         .qa-hero {
-            background: #ffffff;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 35px 0 25px 0;
+            padding: 60px 0 35px 0;
             text-align: center;
         }
 
         .qa-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-300);
-            padding: 6px 14px;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            padding: 8px 18px;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: var(--gray-600);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .qa-hero h1 {
-            font-size: 2rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 10px;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
             text-transform: uppercase;
+            color: var(--dark);
         }
 
         .qa-hero p {
             color: var(--gray-600);
-            max-width: 650px;
+            max-width: 680px;
             margin: 0 auto;
-            font-size: 0.92rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
-        /* --- SISTEMA DE AUTENTICAÇÃO --- */
+        /* --- CAIXA DE VALIDAÇÃO ELEVADA --- */
         .verify-box-card {
-            background: #ffffff;
-            border: 2px solid var(--accent-green);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 25px auto 10px auto;
-            max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 24px;
+            padding: 32px;
+            margin: 35px auto 10px auto;
+            max-width: 640px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--glass-border);
+            border-top: 4px solid var(--accent-green);
         }
 
         .verify-title {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            color: var(--gray-800);
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            color: var(--dark);
         }
 
         .verify-input-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            max-width: 500px;
-            margin-top: 12px;
+            max-width: 520px;
+            margin-top: 18px;
         }
 
         .verify-input-group input {
             flex: 1;
-            padding: 12px;
+            padding: 14px 20px;
             border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.95rem;
+            background: #ffffff;
+            border-radius: 30px;
+            font-family: SF Mono, Menlo, monospace;
+            font-size: 1rem;
             text-transform: uppercase;
             text-align: center;
             outline: none;
-            width: 100%;
+            transition: var(--transition);
+        }
+        
+        .verify-input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
         }
 
         .verify-input-group button {
             background: var(--accent-green);
             color: #ffffff;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 0 28px;
+            border-radius: 30px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
             white-space: nowrap;
+            transition: var(--transition);
+            font-size: 0.8rem;
         }
 
         .verify-input-group button:hover {
-            background: #23784a;
+            background: var(--accent-green-hover);
+            transform: translateY(-1px);
         }
 
         /* --- FILTROS & BUSCA --- */
         .controls-section {
-            padding: 20px 0 10px 0;
+            padding: 25px 0 15px 0;
         }
 
         .controls-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 20px;
             justify-content: space-between;
             align-items: center;
-            background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--gray-200);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 20px 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border-subtle);
+            box-shadow: var(--glass-shadow);
         }
 
         .search-box {
             position: relative;
             flex: 1;
-            min-width: 240px;
-            width: 100%;
+            min-width: 280px;
         }
 
         .search-box i {
             position: absolute;
-            left: 14px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray-600);
+            font-size: 1rem;
         }
 
         .search-box input {
             width: 100%;
-            padding: 10px 14px 10px 40px;
+            padding: 12px 18px 12px 48px;
             border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 0.9rem;
+            background: #ffffff;
+            border-radius: 30px;
+            font-size: 0.92rem;
             outline: none;
+            transition: var(--transition);
+        }
+        
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 113, 227, 0.1);
         }
 
         .category-filter {
@@ -280,93 +333,101 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        .category-filter::-webkit-scrollbar { display: none; }
+
         .filter-btn {
             background: var(--gray-100);
-            border: 1px solid var(--gray-300);
-            padding: 8px 14px;
-            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            padding: 9px 18px;
+            border-radius: 20px;
             font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
+            color: var(--dark);
+            transition: var(--transition);
         }
 
         .filter-btn.active, .filter-btn:hover {
             background: var(--primary);
-            color: var(--secondary);
+            color: #ffffff;
             border-color: var(--primary);
         }
 
-        /* --- TABELA DESKTOP --- */
+        /* --- TABELA DESKTOP CLEAN --- */
         .table-section {
-            padding: 20px 0 60px 0;
+            padding: 25px 0 70px 0;
             flex: 1;
         }
 
         .table-card {
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid var(--gray-200);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 20px;
             overflow: hidden;
+            border: 1px solid var(--glass-border-subtle);
+            box-shadow: var(--glass-shadow);
         }
 
         .qa-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
         }
 
         .qa-table thead {
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-300);
+            background: rgba(245, 245, 247, 0.8);
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .qa-table th {
-            padding: 14px 18px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            padding: 18px 22px;
+            font-size: 0.72rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--gray-800);
+            letter-spacing: 1.5px;
+            color: var(--dark);
         }
 
         .qa-table tbody tr {
             border-bottom: 1px solid var(--gray-200);
+            transition: var(--transition);
         }
 
         .qa-table tbody tr:hover {
-            background: rgba(0, 0, 0, 0.01);
+            background: rgba(0, 113, 227, 0.02);
         }
 
         .qa-table td {
-            padding: 14px 18px;
+            padding: 18px 22px;
             vertical-align: middle;
         }
 
         .product-name-cell {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--primary);
+            font-weight: 800;
+            color: var(--dark);
+            font-size: 0.98rem;
         }
 
         .product-link {
-            color: var(--primary);
+            color: var(--dark);
             text-decoration: none;
-            transition: color 0.2s;
+            transition: var(--transition);
         }
 
         .product-link:hover {
-            text-decoration: underline;
+            color: var(--primary);
         }
 
         .key-code {
-            font-family: monospace;
-            font-weight: bold;
+            font-family: SF Mono, Menlo, monospace;
+            font-weight: 700;
             color: var(--accent-green);
             background: var(--accent-green-bg);
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 8px;
             font-size: 0.8rem;
             border: 1px solid rgba(45, 150, 93, 0.3);
             display: inline-block;
@@ -375,279 +436,305 @@
         .purity-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             background: var(--accent-green-bg);
             color: var(--accent-green);
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 30px;
             font-weight: 700;
             font-size: 0.85rem;
-            font-family: monospace;
+            font-family: SF Mono, Menlo, monospace;
             white-space: nowrap;
         }
 
-        /* GRUPO DE BOTÕES DE DOWNLOAD */
+        /* BOTÕES DE DOWNLOAD DA TABELA */
         .actions-group {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
 
-        .btn-download-pdf {
+        .btn-download-pdf, .btn-download-manual {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 7px 12px;
-            background: var(--accent-green);
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 10px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-decoration: none;
             white-space: nowrap;
-            transition: background 0.2s ease;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-download-pdf {
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
+            border: 1px solid rgba(45, 150, 93, 0.4);
         }
 
         .btn-download-pdf:hover {
-            background: #1f6b42;
+            background: var(--accent-green);
+            color: #ffffff;
+            transform: translateY(-1px);
         }
 
         .btn-download-manual {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 12px;
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
-            white-space: nowrap;
-            transition: background 0.2s ease;
+            background: var(--gray-100);
+            color: var(--dark);
+            border: 1px solid var(--gray-300);
         }
 
         .btn-download-manual:hover {
-            background: #333333;
+            background: var(--gray-200);
+            transform: translateY(-1px);
         }
 
-        .mobile-label {
-            display: none;
+        .mobile-label { display: none; }
+
+        /* --- RODAPÉ OFICIAL DO SITE PRINCIPAL --- */
+        .footer-white {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            color: var(--dark);
+            padding: 80px 0 35px 0;
+            border-top: 1px solid var(--glass-border-subtle);
+            margin-top: auto;
         }
 
-        /* --- LAYOUT MOBILE (CARDS EMPILHADOS) --- */
+        .footer-main-grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr 1fr 1.3fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand-col {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .footer-logo-link {
+            display: inline-block;
+            height: 42px;
+        }
+
+        .footer-logo-link img {
+            max-height: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-brand-desc {
+            color: var(--gray-600);
+            font-size: 0.92rem;
+            line-height: 1.65;
+            max-width: 360px;
+        }
+
+        .footer-address-box {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            background: rgba(245, 245, 247, 0.8);
+            border: 1px solid var(--gray-200);
+            padding: 16px 20px;
+            border-radius: 16px;
+            color: var(--dark);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 6px;
+        }
+
+        .footer-col-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .footer-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-nav-list a {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .footer-nav-list a:hover {
+            color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .footer-contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .footer-contact-item:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom-bar {
+            border-top: 1px solid var(--gray-200);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* --- RESPONSIVIDADE MOBILE --- */
+        @media (max-width: 1024px) {
+            .footer-main-grid { grid-template-columns: 1fr 1fr; gap: 35px; }
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 0 14px;
-            }
+            .container { padding: 0 20px; }
 
-            .navbar {
-                padding: 10px 0;
-            }
+            .navbar { padding: 12px 0; }
+            .nav-back-btn span { display: none; }
+            .nav-back-btn { padding: 8px 12px; }
 
-            .nav-container {
-                flex-direction: column;
-                gap: 10px;
-                align-items: stretch;
-            }
+            .qa-hero { padding: 35px 0 25px 0; }
+            .qa-hero h1 { font-size: 2rem; }
+            .qa-hero p { font-size: 0.9rem; }
 
-            .logo-box {
-                justify-content: center;
-            }
+            .verify-box-card { padding: 25px 18px; }
+            .verify-input-group { flex-direction: column; gap: 10px; }
+            .verify-input-group button { width: 100%; padding: 14px; }
+            
+            .controls-grid { padding: 15px; }
 
-            .nav-right-group {
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .lang-btn {
-                padding: 5px 8px;
-                font-size: 0.7rem;
-            }
-
-            .nav-back-btn {
-                font-size: 0.75rem;
-                padding: 6px 12px;
-            }
-
-            .qa-hero {
-                padding: 25px 0 20px 0;
-            }
-
-            .qa-hero h1 {
-                font-size: 1.4rem;
-            }
-
-            .qa-hero p {
-                font-size: 0.85rem;
-            }
-
-            .verify-box-card {
-                padding: 16px 14px;
-                margin: 18px auto 5px auto;
-            }
-
-            .verify-title {
-                font-size: 0.95rem;
-            }
-
-            .verify-input-group {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .verify-input-group button {
-                width: 100%;
-                padding: 12px;
-            }
-
-            .controls-grid {
-                flex-direction: column;
-                padding: 12px;
-                gap: 12px;
-            }
-
-            .table-card {
-                background: transparent;
-                border: none;
-                border-radius: 0;
-                overflow: visible;
-            }
-
-            .qa-table, .qa-table tbody, .qa-table tr, .qa-table td {
-                display: block;
-                width: 100%;
-            }
-
-            .qa-table thead {
-                display: none;
-            }
-
+            /* Tabela em formato Card */
+            .qa-table thead { display: none; }
             .qa-table tbody tr {
-                background: #ffffff;
-                border: 1px solid var(--gray-200);
-                border-radius: 12px;
-                padding: 16px;
-                margin-bottom: 14px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+                display: block;
+                background: var(--glass-bg);
+                backdrop-filter: var(--glass-blur);
+                border-radius: 18px;
+                padding: 18px;
+                margin-bottom: 16px;
+                border: 1px solid var(--glass-border-subtle);
+                box-shadow: var(--glass-shadow);
             }
-
             .qa-table td {
-                padding: 8px 0;
-                border-bottom: 1px solid var(--gray-100);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                padding: 10px 0;
+                border-bottom: 1px solid var(--gray-200);
             }
-
             .qa-table td.col-product {
                 display: block;
                 padding-top: 0;
-                padding-bottom: 10px;
-                border-bottom: 1px solid var(--gray-200);
-                margin-bottom: 6px;
+                border-bottom: 2px solid var(--gray-200);
+                margin-bottom: 8px;
             }
+            .qa-table td.col-pdf { border-bottom: none; padding-bottom: 0; display: block; }
+            .actions-group { flex-direction: column; width: 100%; gap: 8px; margin-top: 6px; }
+            .btn-download-pdf, .btn-download-manual { width: 100%; justify-content: center; }
+            .mobile-label { display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; }
 
-            .qa-table td.col-pdf {
-                border-bottom: none;
-                padding-bottom: 0;
-                padding-top: 12px;
-                margin-top: 4px;
-                display: block;
-            }
-
-            .actions-group {
-                flex-direction: column;
-                width: 100%;
-                gap: 8px;
-            }
-
-            .btn-download-pdf, .btn-download-manual {
-                width: 100%;
-                justify-content: center;
-                padding: 10px;
-                font-size: 0.8rem;
-            }
-
-            .mobile-label {
-                display: inline-block;
-                font-size: 0.78rem;
-                font-weight: 700;
-                color: var(--gray-600);
-                text-transform: uppercase;
-            }
-
-            .table-section {
-                padding: 15px 0 40px 0;
-            }
+            .footer-main-grid { grid-template-columns: 1fr; text-align: center; gap: 35px; }
+            .footer-brand-col { align-items: center; }
+            .footer-address-box { text-align: left; }
+            .footer-contact-item { justify-content: center; }
+            .footer-bottom-bar { justify-content: center; text-align: center; }
         }
 
-        /* --- MODAL --- */
+        /* --- MODAL ESTILO APPLE GLASS --- */
         .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 3000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 2000; display: none; align-items: center;
+            justify-content: center; padding: 20px;
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 480px;
-            border-radius: 12px;
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px) saturate(180%);
+            width: 100%; max-width: 500px;
+            border-radius: 24px; padding: 32px 26px;
+            text-align: center; position: relative;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(15px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .modal-close {
-            position: absolute;
-            top: 12px; right: 16px;
-            font-size: 1.5rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--gray-600);
+            position: absolute; top: 14px; right: 18px; font-size: 1.8rem;
+            background: transparent; border: none; cursor: pointer; color: var(--gray-600);
+            z-index: 10; width: 32px; height: 32px; display: flex; align-items: center;
+            justify-content: center; transition: color 0.2s ease;
         }
-
-        .footer {
-            background: #ffffff;
-            border-top: 1px solid var(--gray-200);
-            padding: 25px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            margin-top: auto;
-        }
+        .modal-close:hover { color: var(--dark); }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR Glassmorphism (SOMENTE COM A LOGO) -->
     <nav class="navbar">
         <div class="container nav-container">
             <a href="https://newlifelabs.us/" class="logo-box">
-                <i class="fas fa-flask" style="font-size: 1.3rem; color: var(--primary);"></i>
-                <span class="logo-text">New Life Labs</span>
+                <img src="images/newlogo.png" alt="New Life Labs">
             </a>
             
             <div class="nav-right-group">
-                <!-- SELETOR DE IDIOMAS (i18n) -->
+                <!-- SELETOR DE IDIOMAS (PT / EN / ES) -->
                 <div class="lang-switch">
                     <button class="lang-btn active" onclick="setLanguage('pt')">PT</button>
                     <button class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -666,18 +753,18 @@
     <section class="qa-hero">
         <div class="container">
             <div class="qa-badge">
-                <i class="fas fa-microscope"></i> <span data-i18n="heroBadge">New Life QA Analytical Services</span>
+                <i class="fas fa-microscope" style="color: var(--accent-green);"></i> <span data-i18n="heroBadge">New Life QA Analytical Services</span>
             </div>
             <h1 data-i18n="heroTitle">Rastreabilidade & Autenticação de Lotes</h1>
             <p data-i18n="heroSubtitle">Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.</p>
             
             <!-- CAIXA DE VALIDAÇÃO -->
             <div class="verify-box-card">
-                <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green);"></i> <span data-i18n="verifyTitle">Validar Produto por Chave Única</span></div>
-                <p style="font-size: 0.85rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite o código impresso em seu produto para confirmar a validação do laboratório:</p>
+                <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green); margin-right: 8px;"></i> <span data-i18n="verifyTitle">Validar Produto por Chave Única</span></div>
+                <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite o código impresso em seu produto para confirmar a validação do laboratório:</p>
                 <div class="verify-input-group">
                     <input type="text" id="verify-key-input" placeholder="EX: NL97902TIR60" data-i18n-ph="verifyPlaceholder">
-                    <button id="btn-verify-code"><i class="fas fa-search"></i> <span data-i18n="verifyBtn">Validar</span></button>
+                    <button id="btn-verify-code"><i class="fas fa-search" style="margin-right: 8px;"></i> <span data-i18n="verifyBtn">Validar</span></button>
                 </div>
             </div>
         </div>
@@ -689,7 +776,7 @@
             <div class="controls-grid">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="search-input" placeholder="Buscar por produto, chave única ou pureza (ex: NL97902, Tirzepatide, 99.9%)..." data-i18n-ph="searchPlaceholder">
+                    <input type="text" id="search-input" placeholder="Buscar por produto, chave ou pureza..." data-i18n-ph="searchPlaceholder">
                 </div>
                 <div class="category-filter" id="category-filter">
                     <button class="filter-btn active" data-cat="all" data-i18n="catAll">Todos</button>
@@ -698,7 +785,6 @@
                     <button class="filter-btn" data-cat="aesthetics-anti-aging" data-i18n="catAesthetics">Aesthetics & Anti-Aging</button>
                     <button class="filter-btn" data-cat="weight-loss" data-i18n="catWeight">Weight Loss</button>
                     <button class="filter-btn" data-cat="neuromodulation" data-i18n="catNeuro">Neuromodulation</button>
-                    <button class="filter-btn" data-cat="recovery-regeneration" data-i18n="catRecovery">Recovery & Regeneration</button>
                 </div>
             </div>
         </div>
@@ -726,14 +812,76 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
+    <!-- RODAPÉ OFICIAL DO SITE PRINCIPAL -->
+    <footer id="contato" class="footer-white">
         <div class="container">
-            <p>&copy; 2026 New Life Labs | Quality Assurance Systems. <span data-i18n="footerRights">Todos os direitos reservados.</span></p>
+            <div class="footer-main-grid">
+                <div class="footer-brand-col">
+                    <a href="https://newlifelabs.us/" class="footer-logo-link">
+                        <img src="images/newlogo.png" alt="New Life Labs">
+                    </a>
+                    <p class="footer-brand-desc" data-i18n="footer_brand">
+                        Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.
+                    </p>
+                    <div class="footer-address-box">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 1.15rem; margin-top: 2px;"></i>
+                        <div>
+                            <strong style="color: var(--dark); display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;" data-i18n="footer_address_title">Sede Operacional</strong>
+                            111 Cooperative Way<br>Georgetown, TX 78626, USA
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title" data-i18n="footer_nav_title">Navegação</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="https://newlifelabs.us/#inicio" data-i18n="nav_inicio">Início</a></li>
+                        <li><a href="https://newlifelabs.us/#produtos" data-i18n="nav_produtos">Produtos</a></li>
+                        <li><a href="https://newlifelabs.us/#artigos" data-i18n="nav_artigos">Artigos Científicos</a></li>
+                        <li><a href="https://newlifelabs.us/laudo" data-i18n="nav_laudo">Validação de Laudo</a></li>
+                        <li><a href="https://newlifelabs.us/#sobre" data-i18n="nav_sobre">Sobre Nós</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title" data-i18n="footer_compliance">Conformidade</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="https://newlifelabs.us/laudo" data-i18n="footer_link1">Rastreabilidade de Lotes</a></li>
+                        <li><a href="#" data-i18n="footer_link2">Termos de Uso Corporativo</a></li>
+                        <li><a href="#" data-i18n="footer_link3">Política de Privacidade</a></li>
+                        <li><a href="#" data-i18n="footer_link4">Certificações HPLC</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title" data-i18n="footer_contact">Canais Oficiais</h4>
+                    <div class="footer-contacts-list">
+                        <a href="https://instagram.com/newlifelab.us" target="_blank" class="footer-contact-item">
+                            <div class="footer-contact-icon"><i class="fab fa-instagram"></i></div>
+                            <span>@newlifelab.us</span>
+                        </a>
+                        <a href="mailto:contact@newlifelabs.com" class="footer-contact-item">
+                            <div class="footer-contact-icon"><i class="far fa-envelope"></i></div>
+                            <span>contact@newlifelabs.com</span>
+                        </a>
+                        <a href="https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR" target="_blank" class="footer-contact-item">
+                            <div class="footer-contact-icon" style="color: #25d366;"><i class="fab fa-whatsapp"></i></div>
+                            <span>Atendimento WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom-bar">
+                <p data-i18n="footer_copyright">&copy; 2026 New Life Labs. Todos os direitos reservados.</p>
+                <div style="display: flex; gap: 20px;">
+                    <span style="color: var(--accent-green); font-family: monospace; font-weight: 700;"><i class="fas fa-shield-alt"></i> ISO 9001 / HPLC CERTIFIED</span>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- MODAL DE VALIDAÇÃO -->
+    <!-- MODAL DE VALIDAÇÃO ESTILO APPLE -->
     <div class="modal" id="verify-modal">
         <div class="modal-card">
             <button class="modal-close" id="modal-close-btn">&times;</button>
@@ -741,8 +889,8 @@
         </div>
     </div>
 
+    <!-- SCRIPT PRINCIPAL & TRADUÇÃO COMPLETA -->
     <script>
-        // DICIONÁRIO MULTI-IDIOMAS (i18n)
         const translations = {
             pt: {
                 navBack: "Voltar ao Site",
@@ -753,7 +901,7 @@
                 verifyDesc: "Digite o código impresso em seu produto para confirmar a validação do laboratório:",
                 verifyPlaceholder: "EX: NL97902TIR60",
                 verifyBtn: "Validar",
-                searchPlaceholder: "Buscar por produto, chave única ou pureza (ex: NL97902, Tirzepatide, 99.9%)...",
+                searchPlaceholder: "Buscar por produto, chave ou pureza...",
                 catAll: "Todos",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -780,7 +928,14 @@
                 modalInvalidTitle: "Código Não Localizado",
                 modalInvalidDesc: "A chave inserida (<strong>{code}</strong>) não foi localizada em nossa base de dados.",
                 modalTryAgain: "Tentar Novamente",
-                footerRights: "Todos os direitos reservados."
+                footer_brand: "Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.",
+                footer_address_title: "Sede Operacional",
+                footer_nav_title: "Navegação",
+                nav_inicio: "Início", nav_produtos: "Produtos", nav_artigos: "Artigos Científicos", nav_laudo: "Validação de Laudo", nav_sobre: "Sobre Nós",
+                footer_compliance: "Conformidade",
+                footer_link1: "Rastreabilidade de Lotes", footer_link2: "Termos de Uso Corporativo", footer_link3: "Política de Privacidade", footer_link4: "Certificações HPLC",
+                footer_contact: "Canais Oficiais",
+                footer_copyright: "© 2026 New Life Labs. Todos os direitos reservados."
             },
             en: {
                 navBack: "Back to Site",
@@ -791,7 +946,7 @@
                 verifyDesc: "Enter the code printed on your product to confirm laboratory validation:",
                 verifyPlaceholder: "EX: NL97902TIR60",
                 verifyBtn: "Validate",
-                searchPlaceholder: "Search by product, unique key, or purity (ex: NL97902, Tirzepatide, 99.9%)...",
+                searchPlaceholder: "Search product, key or purity...",
                 catAll: "All",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -816,20 +971,27 @@
                 modalDownloadPdf: "Download COA Report (PDF)",
                 modalDownloadManual: "Download User Manual (PDF)",
                 modalInvalidTitle: "Code Not Found",
-                modalInvalidDesc: "The entered key (<strong>{code}</strong>) was not found in our database.",
+                modalInvalidDesc: "The key entered (<strong>{code}</strong>) was not found in our database.",
                 modalTryAgain: "Try Again",
-                footerRights: "All rights reserved."
+                footer_brand: "Excellence, innovation and high performance in laboratory development and applied biotechnology.",
+                footer_address_title: "Operational HQ",
+                footer_nav_title: "Navigation",
+                nav_inicio: "Home", nav_produtos: "Products", nav_artigos: "Scientific Articles", nav_laudo: "Report Validation", nav_sobre: "About Us",
+                footer_compliance: "Compliance",
+                footer_link1: "Batch Traceability", footer_link2: "Corporate Terms of Use", footer_link3: "Privacy Policy", footer_link4: "HPLC Certifications",
+                footer_contact: "Official Channels",
+                footer_copyright: "© 2026 New Life Labs. All rights reserved."
             },
             es: {
                 navBack: "Volver al Sitio",
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Trazabilidad y Autenticación de Lotes",
-                heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Reporte de Análisis (Test Report) oficial de pureza por HPLC y el Manual de Uso.",
+                heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Test Report oficial de pureza por HPLC y el Manual de Uso.",
                 verifyTitle: "Validar Producto por Clave Única",
                 verifyDesc: "Ingrese el código impreso en su producto para confirmar la validación del laboratorio:",
                 verifyPlaceholder: "EJ: NL97902TIR60",
                 verifyBtn: "Validar",
-                searchPlaceholder: "Buscar por producto, clave única o pureza (ej: NL97902, Tirzepatide, 99.9%)...",
+                searchPlaceholder: "Buscar producto, clave o pureza...",
                 catAll: "Todos",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -840,7 +1002,7 @@
                 thProduct: "Producto",
                 thKey: "Clave Única",
                 thPurity: "Pureza (HPLC)",
-                thDate: "Fecha de Ensayo",
+                thDate: "Fecha Ensayo",
                 thPdf: "Documentos (COA y Manual)",
                 noResults: "No se encontró ningún reporte.",
                 btnDownload: "Descargar COA PDF",
@@ -856,101 +1018,64 @@
                 modalInvalidTitle: "Código No Encontrado",
                 modalInvalidDesc: "La clave ingresada (<strong>{code}</strong>) no se encontró en nuestra base de datos.",
                 modalTryAgain: "Intentar de Nuevo",
-                footerRights: "Todos los derechos reservados."
+                footer_brand: "Excelencia, innovación y alto rendimiento en desarrollo laboratorial.",
+                footer_address_title: "Sede Operativa",
+                footer_nav_title: "Navegación",
+                nav_inicio: "Inicio", nav_produtos: "Productos", nav_artigos: "Artículos Científicos", nav_laudo: "Validación de Laudo", nav_sobre: "Acerca de",
+                footer_compliance: "Conformidad",
+                footer_link1: "Trazabilidad de Lotes", footer_link2: "Términos de Uso Corporativos", footer_link3: "Política de Privacidad", footer_link4: "Certificaciones HPLC",
+                footer_contact: "Canales Oficiales",
+                footer_copyright: "© 2026 New Life Labs. Todos los derechos reservados."
             }
         };
 
-        let currentLang = "pt";
+        let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // LISTA DE PRODUTOS E CAMINHOS PARA OS PDFs (COA E MANUAL)
+        // FUNÇÃO DE DOWNLOAD AUTOMÁTICO
+        function forceDownload(event, url, filename) {
+            event.preventDefault();
+            event.stopPropagation();
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || 'documento.pdf';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         const productsQA = [
-            { 
-                id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-Cu 100 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 10 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC-1295 + IPAMORELIN 10 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - EPITHALON 50 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SS-31 50 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - NAD+ 500 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW Blend 70 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - AOD-9604 5 mg - New Life Labs.pdf"
-            },
-            { 
-                id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW Blend 80 mg - New Life Labs.pdf"
-            }
+            { id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60 mg - New Life Labs.pdf" },
+            { id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60 mg - New Life Labs.pdf" },
+            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-Cu 100 mg - New Life Labs.pdf" },
+            { id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 10 mg - New Life Labs.pdf" },
+            { id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC-1295 + IPAMORELIN 10 mg - New Life Labs.pdf" },
+            { id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10 mg - New Life Labs.pdf" },
+            { id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10 mg - New Life Labs.pdf" },
+            { id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - EPITHALON 50 mg - New Life Labs.pdf" },
+            { id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SS-31 50 mg - New Life Labs.pdf" },
+            { id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40 mg - New Life Labs.pdf" },
+            { id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - NAD+ 500 mg - New Life Labs.pdf" },
+            { id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW Blend 70 mg - New Life Labs.pdf" },
+            { id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - AOD-9604 5 mg - New Life Labs.pdf" },
+            { id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW Blend 80 mg - New Life Labs.pdf" }
         ];
 
         let selectedCategory = "all";
         let searchQuery = "";
 
-        // FUNÇÃO DE ALTERAÇÃO DE IDIOMA
         function setLanguage(lang) {
             currentLang = lang;
+            localStorage.setItem('newlifelabs-lang', lang);
             const t = translations[lang];
 
             document.querySelectorAll(".lang-btn").forEach(btn => {
-                btn.classList.toggle("active", btn.textContent.toLowerCase() === lang);
+                btn.classList.toggle("active", btn.getAttribute('onclick').includes(`'${lang}'`));
             });
 
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
-                if (t[key]) el.textContent = t[key];
+                if (t[key]) el.innerHTML = t[key];
             });
 
             document.querySelectorAll("[data-i18n-ph]").forEach(el => {
@@ -967,15 +1092,15 @@
             const t = translations[currentLang];
 
             const filtered = productsQA.filter(item => {
-                const matchesCat = selectedCategory === "all" || item.category.toLowerCase() === selectedCategory.toLowerCase();
-                const matchesSearch = item.product.toLowerCase().includes(searchQuery) ||
-                                      item.key.toLowerCase().includes(searchQuery) ||
-                                      item.purity.toLowerCase().includes(searchQuery);
+                const matchesCat = selectedCategory === "all" || item.category === selectedCategory;
+                const matchesSearch = searchQuery === "" || 
+                                     item.product.toLowerCase().includes(searchQuery) ||
+                                     item.key.toLowerCase().includes(searchQuery);
                 return matchesCat && matchesSearch;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--gray-600);">${t.noResults}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--gray-600);">${t.noResults}</td></tr>`;
                 return;
             }
 
@@ -984,11 +1109,9 @@
                 tr.innerHTML = `
                     <td class="col-product">
                         <div class="product-name-cell">
-                            <a href="https://newlifelabs.us/?product=${item.targetId}#produtos" class="product-link" title="Ver no site">
-                                ${item.product}
-                            </a>
+                            <a href="https://newlifelabs.us/?product=${item.targetId}#produtos" class="product-link" target="_blank">${item.product}</a>
                         </div>
-                        <div style="font-size: 0.78rem; color: var(--gray-600); margin-top: 2px;">${item.category}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 4px;">${item.category}</div>
                     </td>
                     <td class="col-key">
                         <span class="mobile-label">${t.thKey}</span>
@@ -1000,15 +1123,15 @@
                     </td>
                     <td class="col-date">
                         <span class="mobile-label">${t.thDate}</span>
-                        <span style="font-family: monospace; font-size: 0.85rem;">${item.date}</span>
+                        <span style="font-family: SF Mono, monospace; font-size: 0.85rem; color: var(--gray-800);">${item.date}</span>
                     </td>
                     <td class="col-pdf">
                         <div class="actions-group">
-                            <a href="${item.pdfUrl}" target="_blank" download class="btn-download-pdf">
+                            <a href="${item.pdfUrl}" download class="btn-download-pdf" onclick="forceDownload(event, '${item.pdfUrl}', '${item.product} - Laudo.pdf')">
                                 <i class="fas fa-file-pdf"></i> ${t.btnDownload}
                             </a>
-                            <a href="${item.manualUrl}" target="_blank" download class="btn-download-manual">
-                                <i class="fas fa-book-medical"></i> ${t.btnManual}
+                            <a href="${item.manualUrl}" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', '${item.product} - Manual.pdf')">
+                                <i class="fas fa-book-open"></i> ${t.btnManual}
                             </a>
                         </div>
                     </td>
@@ -1019,45 +1142,46 @@
 
         function verifyCode(code) {
             const cleanCode = code.trim().toUpperCase();
-            const found = productsQA.find(p => p.key.toUpperCase() === cleanCode);
+            const found = productsQA.find(p => p.key === cleanCode);
             const modal = document.getElementById("verify-modal");
             const body = document.getElementById("modal-content-body");
             const t = translations[currentLang];
 
             if (found) {
                 body.innerHTML = `
-                    <div style="font-size: 2.8rem; color: var(--accent-green); margin-bottom: 10px;"><i class="fas fa-check-circle"></i></div>
-                    <h2 style="color: var(--accent-green); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 10px;">${t.modalValidTitle}</h2>
-                    <p style="font-size: 0.88rem; color: var(--gray-600); margin-bottom: 15px;">${t.modalValidDesc}</p>
-                    <div style="background: var(--gray-100); padding: 12px; border-radius: 8px; text-align: left; font-size: 0.85rem; margin-bottom: 15px;">
-                        <div><strong>${t.modalLabelProduct}</strong> ${found.product}</div>
-                        <div style="margin-top: 4px;"><strong>${t.modalLabelKey}</strong> <span class="key-code">${found.key}</span></div>
-                        <div style="margin-top: 4px;"><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: bold;">${found.purity}</span></div>
-                        <div style="margin-top: 4px;"><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
+                    <div style="font-size: 3.5rem; color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div>
+                    <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalValidTitle}</h2>
+                    <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 20px;">${t.modalValidDesc}</p>
+                    <div style="background: rgba(245, 245, 247, 0.8); padding: 18px; border-radius: 14px; text-align: left; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid var(--gray-200);">
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelProduct}</strong> ${found.product}</div>
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelKey}</strong> <span class="key-code" style="font-size:0.75rem;">${found.key}</span></div>
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: 700;">${found.purity}</span></div>
+                        <div><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 11px;">
+                    <div class="actions-group" style="flex-direction: column; gap: 10px;">
+                        <a href="${found.pdfUrl}" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.pdfUrl}', '${found.product} - Laudo.pdf')">
                             <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
                         </a>
-                        <a href="${found.manualUrl}" target="_blank" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 11px;">
-                            <i class="fas fa-book-medical"></i> ${t.modalDownloadManual}
+                        <a href="${found.manualUrl}" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', '${found.product} - Manual.pdf')">
+                            <i class="fas fa-book-open"></i> ${t.modalDownloadManual}
                         </a>
                     </div>
                 `;
             } else {
                 body.innerHTML = `
-                    <div style="font-size: 2.8rem; color: #dc3545; margin-bottom: 10px;"><i class="fas fa-times-circle"></i></div>
-                    <h2 style="color: #dc3545; text-transform: uppercase; font-size: 1.1rem; margin-bottom: 10px;">${t.modalInvalidTitle}</h2>
-                    <p style="font-size: 0.88rem; color: var(--gray-600); margin-bottom: 18px;">${t.modalInvalidDesc.replace('{code}', cleanCode)}</p>
-                    <button onclick="document.getElementById('verify-modal').classList.remove('active')" style="padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; width: 100%;">${t.modalTryAgain}</button>
+                    <div style="font-size: 3.5rem; color: #ff3b30; margin-bottom: 15px;"><i class="fas fa-times-circle"></i></div>
+                    <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalInvalidTitle}</h2>
+                    <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 25px;">${t.modalInvalidDesc.replace('{code}', cleanCode)}</p>
+                    <button onclick="document.getElementById('verify-modal').classList.remove('active')" style="padding: 12px 24px; background: var(--primary); color: #fff; border: none; border-radius: 30px; cursor: pointer; width: 100%; font-weight:700; text-transform:uppercase; letter-spacing:1px; font-size:0.8rem;">${t.modalTryAgain}</button>
                 `;
             }
 
             modal.classList.add("active");
+            document.body.style.overflow = 'hidden';
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderTable();
+            setLanguage(currentLang);
 
             document.getElementById("search-input").addEventListener("input", (e) => {
                 searchQuery = e.target.value.toLowerCase().trim();
@@ -1080,6 +1204,21 @@
 
             document.getElementById("modal-close-btn").addEventListener("click", () => {
                 document.getElementById("verify-modal").classList.remove("active");
+                document.body.style.overflow = '';
+            });
+            
+            document.getElementById("verify-modal").addEventListener("click", (e) => {
+                if(e.target.id === "verify-modal") {
+                    document.getElementById("verify-modal").classList.remove("active");
+                    document.body.style.overflow = '';
+                }
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.getElementById("verify-modal").classList.remove("active");
+                    document.body.style.overflow = '';
+                }
             });
         });
     </script>
