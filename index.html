@@ -40,8 +40,8 @@
             --accent-green-bg: rgba(45, 150, 93, 0.08);
             
             /* Glassmorphism Variables */
-            --glass-bg: rgba(255, 255, 255, 0.72);
-            --glass-bg-hover: rgba(255, 255, 255, 0.88);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-bg-hover: rgba(255, 255, 255, 0.9);
             --glass-border: rgba(255, 255, 255, 0.8);
             --glass-border-subtle: rgba(226, 232, 240, 0.7);
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
@@ -120,7 +120,7 @@
 
         .navbar.scrolled {
             padding: 12px 0;
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.85);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
@@ -145,10 +145,10 @@
         .btn-nav-pill {
             background: var(--primary);
             color: #ffffff !important;
-            padding: 9px 22px; border-radius: 980px;
+            padding: 9px 24px; border-radius: 980px;
             font-size: 0.88rem; font-weight: 600;
             text-decoration: none; display: inline-flex;
-            align-items: center; gap: 8px;
+            align-items: center; justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 10px rgba(0, 113, 227, 0.22);
             border: none; cursor: pointer;
@@ -189,7 +189,7 @@
             border-radius: 2px; transition: all 0.3s ease;
         }
 
-        /* --- HERO SECTION (SEM SETAS & COM GLASSMORPHISM) --- */
+        /* --- HERO SECTION --- */
         .hero {
             min-height: 88vh; width: 100%;
             display: flex; align-items: center; position: relative;
@@ -261,7 +261,7 @@
         .section-title { font-size: 2.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; margin-bottom: 12px; text-align: center; color: var(--dark); }
         .section-subtitle-center { text-align: center; color: var(--gray-600); max-width: 720px; margin: 0 auto 48px auto; font-size: 1.05rem; line-height: 1.6; letter-spacing: -0.2px; }
 
-        /* --- SEÇÃO DE PRODUTOS (APPLE GLASS CARDS) --- */
+        /* --- SEÇÃO DE PRODUTOS --- */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -370,6 +370,7 @@
             gap: 6px; padding: 10px 12px; font-size: 0.78rem; font-weight: 700;
             border-radius: 10px; text-decoration: none; transition: all 0.25s ease;
             text-align: center; box-sizing: border-box; border: 1px solid transparent;
+            cursor: pointer;
         }
 
         .btn-card-manual { background-color: var(--gray-100); color: var(--dark); border-color: var(--gray-300); }
@@ -381,7 +382,7 @@
         .btn-card-quote { background-color: var(--primary); color: #ffffff; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2); font-size: 0.82rem; padding: 11px; border-radius: 10px; }
         .btn-card-quote:hover { background-color: var(--primary-hover); }
 
-        /* --- ARTIGOS CIENTÍFICOS SECTION (APPLE GLASS CARDS) --- */
+        /* --- ARTIGOS CIENTÍFICOS SECTION --- */
         .articles-section {
             background-color: transparent;
             border-top: 1px solid var(--gray-200);
@@ -426,7 +427,7 @@
         .article-card-excerpt { font-size: 0.88rem; color: var(--gray-600); margin-bottom: 20px; flex-grow: 1; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .article-card-action { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-200); padding-top: 14px; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- SEÇÃO SOBRE A EMPRESA (APPLE GLASS) --- */
+        /* --- SEÇÃO SOBRE A EMPRESA --- */
         .about-grid-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 40px; text-align: left; }
 
         .about-feature-card {
@@ -577,8 +578,7 @@
 
             .nav-menu.active { right: 0; }
             .nav-actions { margin-right: 10px; }
-            .btn-nav-pill span { display: none; }
-            .btn-nav-pill { padding: 8px 14px; border-radius: 30px; }
+            .btn-nav-pill { padding: 8px 18px; border-radius: 30px; font-size: 0.82rem; }
 
             .hero { min-height: auto; padding: 110px 16px 50px 16px; }
             .hero-grid { grid-template-columns: 1fr; text-align: center; }
@@ -614,7 +614,7 @@
 </head>
 <body>
 
-    <!-- NAVBAR COM DESIGN SEMITRANSPARENTE (ESTILO APPLE) -->
+    <!-- NAVBAR (SEM ÍCONE DE WHATSAPP NO BOTAO DE NAV) -->
     <nav class="navbar">
         <div class="container nav-container">
             <a href="#inicio" class="logo-box">
@@ -638,7 +638,6 @@
                 </div>
 
                 <a href="https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR" target="_blank" class="btn-nav-pill">
-                    <i class="fab fa-whatsapp"></i>
                     <span data-i18n="nav_btn_demo">Contato</span>
                 </a>
 
@@ -651,7 +650,7 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION (SEM SETAS & COM MOCKUP APPLE) -->
+    <!-- HERO SECTION -->
     <header id="inicio" class="hero">
         <svg class="hero-bg-curves" viewBox="0 0 1440 600" fill="none" preserveAspectRatio="none">
             <path d="M-100 500 C 300 650, 700 300, 1540 450" stroke="rgba(0, 113, 227, 0.08)" stroke-width="8" fill="none" />
@@ -692,8 +691,8 @@
                             <div class="mockup-body">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                                     <div>
-                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--dark); margin: 0;">Painel de Rastreabilidade</h4>
-                                        <span style="font-size: 0.75rem; color: var(--gray-600);">Lotes Autenticados HPLC</span>
+                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--dark); margin: 0;" data-i18n="mockup_panel_title">Painel de Rastreabilidade</h4>
+                                        <span style="font-size: 0.75rem; color: var(--gray-600);" data-i18n="mockup_panel_sub">Lotes Autenticados HPLC</span>
                                     </div>
                                     <span style="background: var(--accent-green-bg); color: var(--accent-green); font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(45, 150, 93, 0.3);">
                                         99.90% Pureza
@@ -743,7 +742,7 @@
         </div>
     </section>
 
-    <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS (TODOS OS 14 PRODUTOS) -->
+    <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS (14 PRODUTOS) -->
     <section id="artigos" class="section-padding articles-section reveal active">
         <div class="container">
             <h2 class="section-title" data-i18n="section_articles">Artigos & Revisões Científicas</h2>
@@ -794,7 +793,7 @@
         </div>
     </section>
 
-    <!-- RODAPÉ DE FUNDO BRANCO / APPLE GLASS -->
+    <!-- RODAPÉ -->
     <footer id="contato" class="footer-white">
         <div class="container">
             <div class="footer-main-grid">
@@ -808,7 +807,7 @@
                     <div class="footer-address-box">
                         <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 1.15rem; margin-top: 2px;"></i>
                         <div>
-                            <strong style="color: var(--dark); display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Sede Operacional</strong>
+                            <strong style="color: var(--dark); display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;" data-i18n="footer_address_title">Sede Operacional</strong>
                             111 Cooperative Way<br>Georgetown, TX 78626, USA
                         </div>
                     </div>
@@ -855,7 +854,7 @@
             </div>
 
             <div class="footer-bottom-bar">
-                <p data-i18n="footer_copyright">&copy; 2015 New Life Labs. Todos os direitos reservados.</p>
+                <p data-i18n="footer_copyright">&copy; 2026 New Life Labs. Todos os direitos reservados.</p>
                 <div style="display: flex; gap: 20px;">
                     <span style="color: var(--accent-green); font-family: monospace; font-weight: 700;"><i class="fas fa-shield-alt"></i> ISO 9001 / HPLC CERTIFIED</span>
                 </div>
@@ -885,10 +884,10 @@
                 <div id="modal-desc" style="font-size: 0.92rem; color: #424245; line-height: 1.6; margin-bottom: 15px;">Descrição completa do composto.</div>
                 
                 <div class="modal-actions">
-                    <a href="#" id="modal-manual-btn" class="btn-card-action btn-card-manual" target="_blank">
+                    <a href="#" id="modal-manual-btn" class="btn-card-action btn-card-manual">
                         <i class="fas fa-book-open"></i> <span data-i18n="btn_manual">Baixar Manual</span>
                     </a>
-                    <a href="#" id="modal-coa-btn" class="btn-card-action btn-card-laudo" target="_blank">
+                    <a href="#" id="modal-coa-btn" class="btn-card-action btn-card-laudo">
                         <i class="fas fa-file-pdf"></i> <span data-i18n="btn_laudo">Baixar Laudo</span>
                     </a>
                     <a href="#" id="modal-whatsapp-btn" target="_blank" class="btn-card-action btn-card-quote">
@@ -920,7 +919,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL E DADOS DOS 14 PRODUTOS E 14 ARTIGOS CIENTÍFICOS -->
+    <!-- SCRIPT PRINCIPAL, I18N COMPLETO E FORÇAMENTO DE DOWNLOAD -->
     <script>
         const productsQA = [
             { 
@@ -1051,7 +1050,6 @@
             }
         ];
 
-        // MONOGRAFIAS CIENTÍFICAS PARA TODOS OS 14 PRODUTOS
         const artigos = [
             {
                 id: "terzepatida", key: "NL97902TIR60", purity: "99.90%",
@@ -1062,7 +1060,9 @@
                 resumo_pt: "Análise da atuação sinérgica sobre os receptores GIP e GLP-1, promovendo saciedade central e otimização do metabolismo lipídico.",
                 resumo_en: "Analysis of synergistic activity on GIP and GLP-1 receptors, promoting central satiety and lipid metabolism optimization.",
                 resumo_es: "Análisis de la actividad sinérgica en receptores GIP y GLP-1, promoviendo saciedad central y optimización lipídica.",
-                texto_pt: "<h4>1. Mecanismo de Ação Dual GIP/GLP-1</h4><p>Atua diretamente nos receptores pancreáticos e centrais promovendo secreção de insulina dependente de glicose e lentificação do esvaziamento gástrico.</p><h4>2. Pureza HPLC</h4><p>Lote autenticado com pureza analítica de <strong>99.90%</strong> por cromatografia líquida de fase reversa.</p>"
+                texto_pt: "<h4>1. Mecanismo de Ação Dual GIP/GLP-1</h4><p>Atua diretamente nos receptores pancreáticos e centrais promovendo secreção de insulina dependente de glicose e lentificação do esvaziamento gástrico.</p><h4>2. Pureza HPLC</h4><p>Lote autenticado com pureza analítica de <strong>99.90%</strong> por cromatografia líquida de fase reversa.</p>",
+                texto_en: "<h4>1. Dual GIP/GLP-1 Mechanism</h4><p>Acts directly on pancreatic and central receptors driving glucose-dependent insulin secretion.</p><h4>2. HPLC Purity</h4><p>Authenticated batch with analytical purity of <strong>99.90%</strong>.</p>",
+                texto_es: "<h4>1. Mecanismo Doble GIP/GLP-1</h4><p>Actúa directamente en receptores pancreáticos y centrales regulando la glucemia.</p><h4>2. Pureza HPLC</h4><p>Lote autenticado con pureza analítica de <strong>99.90%</strong>.</p>"
             },
             {
                 id: "retatrutide", key: "NL97896RETA60", purity: "99.25%",
@@ -1073,7 +1073,9 @@
                 resumo_pt: "Estudo sobre a estimulação combinada de três receptores hormonais essenciais para acelerar a oxidação de ácidos graxos.",
                 resumo_en: "Study on the combined stimulation of three key hormonal receptors to accelerate fatty acid oxidation.",
                 resumo_es: "Estudio sobre la estimulación combinada de tres receptores hormonales clave para acelerar la oxidación lipídica.",
-                texto_pt: "<h4>1. Ação no Receptor de Glucagon</h4><p>O componente glucagon aumenta o gasto energético basal e ativa a termogênese hepática.</p><h4>2. Validação Científica</h4><p>Lote testado por espectrometria com pureza de <strong>99.25%</strong>.</p>"
+                texto_pt: "<h4>1. Ação no Receptor de Glucagon</h4><p>O componente glucagon aumenta o gasto energético basal e ativa a termogênese hepática.</p><h4>2. Validação Científica</h4><p>Lote testado por espectrometria com pureza de <strong>99.25%</strong>.</p>",
+                texto_en: "<h4>1. Glucagon Receptor Action</h4><p>Increases basal energy expenditure and stimulates thermogenesis.</p>",
+                texto_es: "<h4>1. Acción del Receptor de Glucagón</h4><p>Aumenta el gasto energético basal y activa la termogénesis.</p>"
             },
             {
                 id: "ghk100", key: "NL97891GHK100", purity: "99.62%",
@@ -1084,7 +1086,9 @@
                 resumo_pt: "Revisão sobre o tripeptídeo de cobre de 100mg na regulação de metaloproteinases e estimulação de colágenos Tipos I e III.",
                 resumo_en: "Review on copper tripeptide 100mg in metalloproteinase regulation and collagen Types I and III synthesis.",
                 resumo_es: "Revisión sobre el tripéptido de cobre 100mg en la regulación de metaloproteinasas y síntesis de colágeno.",
-                texto_pt: "<h4>1. Reparo Genômico e Matriz</h4><p>Modula a expressão genômica em fibroblastos, estimulando proteoglicanos e decorina.</p><h4>2. Pureza HPLC</h4><p>Atestado de pureza de <strong>99.62%</strong> sem resíduos solúveis.</p>"
+                texto_pt: "<h4>1. Reparo Genômico e Matriz</h4><p>Modula a expressão genômica em fibroblastos, estimulando proteoglicanos e decorina.</p><h4>2. Pureza HPLC</h4><p>Atestado de pureza de <strong>99.62%</strong> sem resíduos solúveis.</p>",
+                texto_en: "<h4>1. Genomic & Matrix Repair</h4><p>Modulates fibroblast gene expression, stimulating collagen synthesis.</p>",
+                texto_es: "<h4>1. Reparación Genómica y Matriz</h4><p>Modula la expresión genética fibroblástica y síntesis de colágeno.</p>"
             },
             {
                 id: "tesam", key: "NL97901TES10", purity: "99.76%",
@@ -1095,7 +1099,9 @@
                 resumo_pt: "Análise da sequência de 44 aminoácidos na modulação do eixo somatotrópico e redução seletiva de gordura visceral.",
                 resumo_en: "Analysis of the 44-amino acid sequence in somatotropic axis modulation and selective visceral fat reduction.",
                 resumo_es: "Análisis de la secuencia de 44 aminoácidos en la modulación somatotrópica y reducción lipídica visceral.",
-                texto_pt: "<h4>1. Preservação do Eixo Endógeno</h4><p>Estimula a secreção hipofisária mantendo o feedback negativo natural do organismo.</p>"
+                texto_pt: "<h4>1. Preservação do Eixo Endógeno</h4><p>Estimula a secreção hipofisária mantendo o feedback negativo natural do organismo.</p>",
+                texto_en: "<h4>1. Endogenous Axis Preservation</h4><p>Stimulates pituitary release maintaining physiological feedback.</p>",
+                texto_es: "<h4>1. Preservación del Eje Endógeno</h4><p>Estimula la secreción hipofisaria respetando el equilibrio endocrino.</p>"
             },
             {
                 id: "cjc", key: "NL97890CJC10", purity: "99.39%",
@@ -1106,7 +1112,9 @@
                 resumo_pt: "Mecanismo duplo combinando análogo de GHRH e agonista do receptor de ghrelina para secreção sinérgica.",
                 resumo_en: "Dual mechanism combining GHRH analogue and ghrelin receptor agonist for synergistic GH pulses.",
                 resumo_es: "Mecanismo doble combinando análogo de GHRH y agonista del receptor de ghrelina.",
-                texto_pt: "<h4>1. Amplificação de Pulso</h4><p>Promove a liberação de somatotropina preservando os níveis séricos de prolactina e cortisol.</p>"
+                texto_pt: "<h4>1. Amplificação de Pulso</h4><p>Promove a liberação de somatotropina preservando os níveis séricos de prolactina e cortisol.</p>",
+                texto_en: "<h4>1. Pulse Amplification</h4><p>Drives somatotropin release while preserving prolactin and cortisol levels.</p>",
+                texto_es: "<h4>1. Amplificación de Pulso</h4><p>Promueve la liberación de somatotropina sin alterar prolactina o cortisol.</p>"
             },
             {
                 id: "semax", key: "NL97903SEM10", purity: "99.60%",
@@ -1117,7 +1125,9 @@
                 resumo_pt: "Investigação do análogo do fragmento ACTH(4-10) no estímulo aos fatores de crescimento BDNF/NGF e atenção cognitiva.",
                 resumo_en: "Investigation of ACTH(4-10) fragment analogue on BDNF/NGF growth factors and cognitive focus.",
                 resumo_es: "Investigación del análogo del fragmento ACTH(4-10) en factores de crecimiento BDNF/NGF.",
-                texto_pt: "<h4>1. Trofismo Neuronal</h4><p>Aumenta a expressão de BDNF no sistema nervoso central, auxiliando na neuroplasticidade e memória de trabalho.</p>"
+                texto_pt: "<h4>1. Trofismo Neuronal</h4><p>Aumenta a expressão de BDNF no sistema nervoso central, auxiliando na neuroplasticidade e memória de trabalho.</p>",
+                texto_en: "<h4>1. Neuronal Support</h4><p>Upregulates BDNF expression aiding neuroplasticity and memory retention.</p>",
+                texto_es: "<h4>1. Trofismo Neuronal</h4><p>Incrementa la expresión de BDNF favoreciendo la neuroplasticidad.</p>"
             },
             {
                 id: "selank", key: "NL97898SEL10", purity: "99.55%",
@@ -1128,7 +1138,9 @@
                 resumo_pt: "Estudo do heptapeptídeo modulador do receptor GABA-A e regulação do BDNF sem sedação ou dependência.",
                 resumo_en: "Study of the GABA-A modulating heptapeptide and BDNF regulation without sedation or dependency.",
                 resumo_es: "Estudio del heptapéptido modulador del receptor GABA-A y regulación de BDNF.",
-                texto_pt: "<h4>1. Regulação Emocional e Imune</h4><p>Modula os níveis de monoaminas cerebrais e a expressão de interleucinas inflamatórias.</p>"
+                texto_pt: "<h4>1. Regulação Emocional e Imune</h4><p>Modula os níveis de monoaminas cerebrais e a expressão de interleucinas inflamatórias.</p>",
+                texto_en: "<h4>1. Emotional & Immune Balance</h4><p>Modulates brain monoamines and interleukin expression without sedation.</p>",
+                texto_es: "<h4>1. Control Emocional e Inmune</h4><p>Modula las monoaminas cerebrales y citoquinas sin causar sedación.</p>"
             },
             {
                 id: "epithalon", key: "NL97904EPI50", purity: "99.72%",
@@ -1139,7 +1151,9 @@
                 resumo_pt: "Tetrapeptídeo indutor do alongamento de telômeros e regulação da melatonina endógena.",
                 resumo_en: "Tetrapeptide inducing telomere elongation and endogenous melatonin circadian regulation.",
                 resumo_es: "Tetrapéptido inductor del alargamiento de telómeros y regulación de melatonina.",
-                texto_pt: "<h4>1. Manutenção do Telômero</h4><p>Induz a expressão da enzima telomerase estendendo o limite de Hayflick celular.</p>"
+                texto_pt: "<h4>1. Manutenção do Telômero</h4><p>Induz a expressão da enzima telomerase estendendo o limite de Hayflick celular.</p>",
+                texto_en: "<h4>1. Telomere Preservation</h4><p>Triggers telomerase activity extending cellular replication capacity.</p>",
+                texto_es: "<h4>1. Mantenimiento del Telómero</h4><p>Induce la enzima telomerasa prolongando la capacidad replicativa celular.</p>"
             },
             {
                 id: "ss31", key: "NL97899SS3150", purity: "99.37%",
@@ -1150,7 +1164,9 @@
                 resumo_pt: "Atuação seletiva na membrana mitocondrial interna, reduzindo radicais livres e estabilizando cristas mitocondriais.",
                 resumo_en: "Selective action on the inner mitochondrial membrane, reducing ROS and stabilizing cristae structure.",
                 resumo_es: "Acción selectiva en la membrana mitocondrial interna, reduciendo ROS y estabilizando crestas.",
-                texto_pt: "<h4>1. Otimização do ATP</h4><p>Protege a cardiolipina contra oxidação lipidica, restaurando a síntese eficiente de ATP.</p>"
+                texto_pt: "<h4>1. Otimização do ATP</h4><p>Protege a cardiolipina contra oxidação lipídica, restaurando a síntese eficiente de ATP.</p>",
+                texto_en: "<h4>1. ATP Optimization</h4><p>Protects cardiolipin from oxidation restoring mitochondrial efficiency.</p>",
+                texto_es: "<h4>1. Optimización de ATP</h4><p>Protege la cardiolipina contra la oxidación restaurando la síntesis energética.</p>"
             },
             {
                 id: "motsc", key: "NL97894MOTS40", purity: "99.40%",
@@ -1161,7 +1177,9 @@
                 resumo_pt: "Regulação da homeostase metabólica celular, captação muscular de glicose e sensibilidade ao estresse metabólico.",
                 resumo_en: "Regulation of cellular metabolic homeostasis, muscle glucose uptake, and metabolic stress sensitivity.",
                 resumo_es: "Regulación de la homeostasis metabólica celular y captación muscular de glucosa.",
-                texto_pt: "<h4>1. Eixo Mitocôndria-Núcleo</h4><p>Promove a translocação nuclear e ativação da AMPK em resposta ao estresse de energia celular.</p>"
+                texto_pt: "<h4>1. Eixo Mitocôndria-Núcleo</h4><p>Promove a translocação nuclear e ativação da AMPK em resposta ao estresse de energia celular.</p>",
+                texto_en: "<h4>1. Mitochondria-to-Nucleus Axis</h4><p>Promotes nuclear translocation and AMPK activation.</p>",
+                texto_es: "<h4>1. Eje Mitocondria-Núcleo</h4><p>Promueve la translocación nuclear y activación de AMPK.</p>"
             },
             {
                 id: "nad", key: "NL97905NAD500", purity: "99.85%",
@@ -1172,7 +1190,9 @@
                 resumo_pt: "Coenzima central na transferência de elétrons mitocondrial, fosforylação oxidativa e ativação da enzima PARP-1.",
                 resumo_en: "Central coenzyme in mitochondrial electron transport, oxidative phosphorylation, and PARP-1 activation.",
                 resumo_es: "Coenzima central en transporte de electrones mitocondrial y activación de sirtuínas.",
-                texto_pt: "<h4>1. Suporte às Sirtuínas</h4><p>Co-fator indispensável para as enzimas deacetylases SIRT1 a SIRT7 de longevidade.</p>"
+                texto_pt: "<h4>1. Suporte às Sirtuínas</h4><p>Co-fator indispensável para as enzimas deacetylases SIRT1 a SIRT7 de longevidade.</p>",
+                texto_en: "<h4>1. Sirtuin Activation</h4><p>Essential co-factor for SIRT1-SIRT7 enzymes involved in genomic stability.</p>",
+                texto_es: "<h4>1. Soporte de Sirtuínas</h4><p>Cofactor indispensable para enzimas SIRT1-SIRT7 de estabilidad genética.</p>"
             },
             {
                 id: "glow70", key: "NL97892GLOW70", purity: "99.37%",
@@ -1183,7 +1203,9 @@
                 resumo_pt: "Estudo do complexo ativo GLOW 70mg na regulação da tirosinasa e renovação do microambiente dermoepidérmico.",
                 resumo_en: "Study of GLOW 70mg active complex in tyrosinase regulation and dermo-epidermal renewal.",
                 resumo_es: "Estudio del complejo GLOW 70mg en la regulación de la tirosinasa y renovación dermoepidérmica.",
-                texto_pt: "<h4>1. Uniformização e Viço</h4><p>Promove a inibição seletiva da melanogênese reduzindo manchas focais induzidas por UV.</p>"
+                texto_pt: "<h4>1. Uniformização e Viço</h4><p>Promove a inibição seletiva da melanogênese reduzindo manchas focais induzidas por UV.</p>",
+                texto_en: "<h4>1. Skin Radiance</h4><p>Inhibits focal melanogenesis reducing UV-induced hyperpigmentation.</p>",
+                texto_es: "<h4>1. Luminosidad Cutánea</h4><p>Inhibe la melanogénesis focal reduciendo hiperpigmentación UV.</p>"
             },
             {
                 id: "aod", key: "NL97889AOD5", purity: "99.67%",
@@ -1194,7 +1216,9 @@
                 resumo_pt: "Fragmento peptídico sintetizado especificamente para estimular a quebra de lipídios sem alterar glicemia ou IGF-1.",
                 resumo_en: "Peptide fragment engineered to stimulate lipid breakdown without affecting blood glucose or IGF-1 levels.",
                 resumo_es: "Fragmento de péptido para estimular la descomposición de lípidos sin alterar glucemia.",
-                texto_pt: "<h4>1. Ação Lipolítica Isolada</h4><p>Ativa os receptores beta-3 sem desencadear efeitos anabólicos no eixo IGF-1.</p>"
+                texto_pt: "<h4>1. Ação Lipolítica Isolada</h4><p>Ativa os receptores beta-3 sem desencadear efeitos anabólicos no eixo IGF-1.</p>",
+                texto_en: "<h4>1. Selective Lipolysis</h4><p>Activates beta-3 adrenoceptors without altering anabolic IGF-1 axis.</p>",
+                texto_es: "<h4>1. Lipólisis Selectiva</h4><p>Activa receptores beta-3 sin alterar la glucemia o eje IGF-1.</p>"
             },
             {
                 id: "klow80", key: "NL97893KLOW80", purity: "99.70%",
@@ -1205,7 +1229,9 @@
                 resumo_pt: "Complexo peptídico focado na síntese de proteoglicanos, firmeza dérmica e hidratação profunda.",
                 resumo_en: "Peptide complex focused on proteoglycan synthesis, dermal firmness, and deep hydration.",
                 resumo_es: "Complejo peptídico enfocado en síntesis de proteoglicanos y firmeza dérmica.",
-                texto_pt: "<h4>1. Fortalecimento da Barreira Dermoepidérmica</h4><p>Estimula a rede de glicosaminoglicanos aumentando a retenção hídrica profunda.</p>"
+                texto_pt: "<h4>1. Fortalecimento da Barreira Dermoepidérmica</h4><p>Estimula a rede de glicosaminoglicanos aumentando a retenção hídrica profunda.</p>",
+                texto_en: "<h4>1. Dermal Barrier Strength</h4><p>Boosts glycosaminoglycans matrix increasing deep skin hydration.</p>",
+                texto_es: "<h4>1. Fortalecimiento Dermoepidérmico</h4><p>Aumenta la matriz de glicosaminoglicanos mejorando la hidratación.</p>"
             }
         ];
 
@@ -1221,7 +1247,9 @@
                 articles_subtitle: 'Consulte monografias técnicas completas, mecanismos de ação molecular, ensaios cromatográficos e parâmetros de pureza HPLC dos nossos compostos.',
                 search_placeholder: 'Buscar por composto, via celular ou mecanismo...',
                 read_article: 'Ler Monografia Completa',
-                purity_label: 'Pureza',
+                purity_label: 'Pureza', batch_label: 'LOTE', key_label: 'CHAVE',
+                modal_purity_label: 'Pureza Testada (HPLC)',
+                modal_key_label: 'Chave Única de Validação',
                 modal_article_badge: 'Monografia Científica de Laboratório',
                 section_about: 'Sobre a New Life Labs',
                 about_intro: 'A <strong>New Life Labs</strong> é uma instituição biotecnológica global de vanguarda sediada no estado do Texas (EUA), focada na pesquisa, síntese analítica e fornecimento de peptídeos de altíssimo grau de pureza para comunidades científicas e acadêmicas internacionais.',
@@ -1234,10 +1262,12 @@
                 about_f4_title: 'Cadeia de Frio & Borossilicato Tipo I',
                 about_f4_text: 'Acondicionamento em frascos de vidro borossilicato de grau farmacêutico selados a vácuo com atmosfera de argônio, assegurando estabilidade molecular prolongada durante o transporte.',
                 footer_brand: 'Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.',
+                footer_address_title: 'Sede Operacional',
                 footer_nav_title: 'Navegação', footer_compliance: 'Conformidade', footer_link1: 'Rastreabilidade de Lotes', footer_link2: 'Termos de Uso Corporativo', footer_link3: 'Política de Privacidade', footer_link4: 'Certificações HPLC',
-                footer_contact: 'Canais Oficiais', footer_copyright: '© 2015 New Life Labs. Todos os direitos reservados.',
+                footer_contact: 'Canais Oficiais', footer_copyright: '© 2026 New Life Labs. Todos os direitos reservados.',
                 btn_manual: 'Baixar Manual', btn_laudo: 'Baixar Laudo', btn_quote: 'Solicitar Cotação',
-                click_photo_hint: 'Clique na foto para ver os botões'
+                click_photo_hint: 'Clique na foto para ver os botões',
+                mockup_panel_title: 'Painel de Rastreabilidade', mockup_panel_sub: 'Lotes Autenticados HPLC'
             },
             en: {
                 hero_word: 'New Life Labs',
@@ -1250,7 +1280,9 @@
                 articles_subtitle: 'Consult complete technical monographs, molecular action mechanisms, chromatographic assays, and HPLC purity parameters.',
                 search_placeholder: 'Search by compound, cellular pathway, or mechanism...',
                 read_article: 'Read Full Monograph',
-                purity_label: 'Purity',
+                purity_label: 'Purity', batch_label: 'BATCH', key_label: 'KEY',
+                modal_purity_label: 'Tested Purity (HPLC)',
+                modal_key_label: 'Unique Validation Key',
                 modal_article_badge: 'Laboratory Scientific Monograph',
                 section_about: 'About New Life Labs',
                 about_intro: '<strong>New Life Labs</strong> is a premier global biotechnology institution based in Texas, USA, specializing in analytical research, synthesis, and supply of ultra-pure peptides.',
@@ -1263,10 +1295,12 @@
                 about_f4_title: 'Cold Chain & Type I Borosilicate',
                 about_f4_text: 'Packaged in pharmaceutical-grade Type I borosilicate glass vials sealed under argon, guaranteeing long-term stability.',
                 footer_brand: 'Excellence, innovation and high performance in laboratory development and applied biotechnology.',
+                footer_address_title: 'Operational HQ',
                 footer_nav_title: 'Navigation', footer_compliance: 'Compliance', footer_link1: 'Batch Traceability', footer_link2: 'Corporate Terms of Use', footer_link3: 'Privacy Policy', footer_link4: 'HPLC Certifications',
-                footer_contact: 'Official Channels', footer_copyright: '© 2015 New Life Labs. All rights reserved.',
+                footer_contact: 'Official Channels', footer_copyright: '© 2026 New Life Labs. All rights reserved.',
                 btn_manual: 'Download Manual', btn_laudo: 'Download Report', btn_quote: 'Request Quote',
-                click_photo_hint: 'Click photo to show buttons'
+                click_photo_hint: 'Click photo to show buttons',
+                mockup_panel_title: 'Traceability Panel', mockup_panel_sub: 'HPLC Authenticated Batches'
             },
             es: {
                 hero_word: 'New Life Labs',
@@ -1279,7 +1313,9 @@
                 articles_subtitle: 'Consulte monografías técnicas completas, mecanismos de acción molecular, ensayos cromatográficos y parámetros de pureza HPLC.',
                 search_placeholder: 'Buscar por compuesto, vía celular o mecanismo...',
                 read_article: 'Leer Monografía Completa',
-                purity_label: 'Pureza',
+                purity_label: 'Pureza', batch_label: 'LOTE', key_label: 'CLAVE',
+                modal_purity_label: 'Pureza Probada (HPLC)',
+                modal_key_label: 'Clave Única de Validación',
                 modal_article_badge: 'Monografía Científica de Laboratorio',
                 section_about: 'Acerca de New Life Labs',
                 about_intro: '<strong>New Life Labs</strong> es una institución biotecnológica global con sede en Texas, EE. UU., especializada en investigación analítica y síntesis de péptidos ultra puros.',
@@ -1292,15 +1328,37 @@
                 about_f4_title: 'Cadena de Frío y Borosilicato',
                 about_f4_text: 'Acondicionamiento en frascos de vidrio borosilicato Tipo I sellados al vacío con argón para estabilidad molecular prolongada.',
                 footer_brand: 'Excelencia, innovación y alto rendimiento en desarrollo laboratorial.',
+                footer_address_title: 'Sede Operativa',
                 footer_nav_title: 'Navegación', footer_compliance: 'Conformidad', footer_link1: 'Trazabilidad de Lotes', footer_link2: 'Términos de Uso Corporativos', footer_link3: 'Política de Privacidad', footer_link4: 'Certificaciones HPLC',
-                footer_contact: 'Canales Oficiales', footer_copyright: '© 2015 New Life Labs. Todos los derechos reservados.',
+                footer_contact: 'Canales Oficiales', footer_copyright: '© 2026 New Life Labs. Todos los derechos reservados.',
                 btn_manual: 'Manual PDF', btn_laudo: 'Laudo PDF', btn_quote: 'Solicitar Cotización',
-                click_photo_hint: 'Clic en la foto para ver botones'
+                click_photo_hint: 'Clic en la foto para ver botones',
+                mockup_panel_title: 'Panel de Trazabilidad', mockup_panel_sub: 'Lotes Autenticados HPLC'
             }
         };
 
         let currentLanguage = localStorage.getItem('newlifelabs-lang') || 'pt';
         const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0071e3; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
+
+        // FUNÇÃO DE DOWNLOAD AUTOMÁTICO DE ARQUIVOS PDF
+        function forceDownload(event, url, filename) {
+            event.preventDefault();
+            event.stopPropagation();
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || 'documento.pdf';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // FECHAR TODOS OS PAINÉIS/GAVETAS DE BOTÕES DOS CARDS
+        function closeAllDrawers() {
+            document.querySelectorAll('.card-btn-drawer').forEach(drawer => {
+                drawer.classList.remove('active-drawer');
+            });
+        }
 
         function updateLanguage(lang) {
             currentLanguage = lang;
@@ -1346,6 +1404,8 @@
 
             const langObj = i18n[currentLanguage] || i18n.pt;
             const purityLabel = langObj.purity_label || 'Pureza';
+            const batchLabel = langObj.batch_label || 'LOTE';
+            const keyLabel = langObj.key_label || 'CHAVE';
             const manualText = langObj.btn_manual || 'Baixar Manual';
             const laudoText = langObj.btn_laudo || 'Baixar Laudo';
             const quoteText = langObj.btn_quote || 'Solicitar Cotação';
@@ -1373,18 +1433,18 @@
                         <h3 class="product-title-text">${produto.product}${verificadoBadge}</h3>
                         
                         <div class="product-meta-row">
-                            <span>LOTE: ${produto.batch}</span>
-                            <span>KEY: ${produto.key}</span>
+                            <span>${batchLabel}: ${produto.batch}</span>
+                            <span>${keyLabel}: ${produto.key}</span>
                         </div>
 
                         <p class="product-short-desc">${shortDesc}</p>
 
                         <div class="card-btn-drawer" id="drawer-${index}">
                             <div class="card-btn-row">
-                                <a href="${produto.manualUrl}" target="_blank" class="btn-card-action btn-card-manual">
+                                <a href="${produto.manualUrl}" download class="btn-card-action btn-card-manual" onclick="forceDownload(event, '${produto.manualUrl}', '${produto.product} - Manual.pdf')">
                                     <i class="fas fa-book-open"></i> <span>${manualText}</span>
                                 </a>
-                                <a href="${produto.pdfUrl}" target="_blank" class="btn-card-action btn-card-laudo">
+                                <a href="${produto.pdfUrl}" download class="btn-card-action btn-card-laudo" onclick="forceDownload(event, '${produto.pdfUrl}', '${produto.product} - Laudo.pdf')">
                                     <i class="fas fa-file-pdf"></i> <span>${laudoText}</span>
                                 </a>
                             </div>
@@ -1401,6 +1461,8 @@
         function handlePhotoClick(index, event) {
             event.stopPropagation();
             
+            // Fecha outros drawers ativos e abre apenas o do produto selecionado
+            closeAllDrawers();
             const drawer = document.getElementById(`drawer-${index}`);
             if (drawer) {
                 drawer.classList.add('active-drawer');
@@ -1418,11 +1480,16 @@
                 <img src="${prod.imagem}" alt="${prod.product}" class="modal-product-img" onerror="this.src='images/newlogo.png';">
             `;
 
+            // Configuração dos links de download com a função forceDownload
             const manualBtn = document.getElementById('modal-manual-btn');
-            if (manualBtn) manualBtn.href = prod.manualUrl;
+            if (manualBtn) {
+                manualBtn.onclick = (e) => forceDownload(e, prod.manualUrl, `${prod.product} - Manual.pdf`);
+            }
 
             const coaBtn = document.getElementById('modal-coa-btn');
-            if (coaBtn) coaBtn.href = prod.pdfUrl;
+            if (coaBtn) {
+                coaBtn.onclick = (e) => forceDownload(e, prod.pdfUrl, `${prod.product} - Laudo.pdf`);
+            }
 
             const waMessage = encodeURIComponent(`Olá! Gostaria de solicitar cotação para o produto: ${prod.product} (Lote: ${prod.batch})`);
             document.getElementById('modal-whatsapp-btn').href = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${waMessage}`;
@@ -1509,11 +1576,13 @@
                 });
             }
 
+            // AO FECHAR MODAL DE PRODUTO, OCULTA TAMBÉM OS BOTÕES DOS CARDS
             const closeProductBtn = document.getElementById('close-modal');
             if (closeProductBtn) {
                 closeProductBtn.addEventListener('click', () => {
                     productModal.classList.remove('active');
                     document.body.style.overflow = '';
+                    closeAllDrawers();
                 });
             }
 
@@ -1525,14 +1594,29 @@
                 });
             }
 
+            // FECHAR AO CLICAR FORA DO MODAL OU DOS CARDS
             window.addEventListener('click', (e) => {
                 if (e.target === productModal) {
                     productModal.classList.remove('active');
                     document.body.style.overflow = '';
+                    closeAllDrawers();
                 }
                 if (e.target === articleModal) {
                     articleModal.classList.remove('active');
                     document.body.style.overflow = '';
+                }
+                if (!e.target.closest('.product-card')) {
+                    closeAllDrawers();
+                }
+            });
+
+            // SUPORTE À TECLA ESC PARA FECHAR E OCULTAR OS BOTÕES
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (productModal) productModal.classList.remove('active');
+                    if (articleModal) articleModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    closeAllDrawers();
                 }
             });
 
