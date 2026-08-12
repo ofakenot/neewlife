@@ -1392,7 +1392,8 @@
             const batchLabel = langObj.batch_label || 'LOTE';
             const keyLabel = langObj.key_label || 'CHAVE';
             const manualText = langObj.btn_manual || 'Baixar Manual';
-            const laudoText = langObj.btn_laudo || 'Baixar Laudo'
+            const laudoText = langObj.btn_laudo || 'Baixar Laudo';
+            const quoteText = langObj.btn_quote || 'Solicitar Cotação';
             const clickHint = langObj.click_photo_hint || 'Clique na foto para ver os botões';
 
             productsQA.forEach((produto, index) => {
@@ -1474,9 +1475,6 @@
             if (coaBtn) {
                 coaBtn.onclick = (e) => forceDownload(e, prod.pdfUrl, `${prod.product} - Laudo.pdf`);
             }
-
-            const waMessage = encodeURIComponent(`Olá! Gostaria de solicitar cotação para o produto: ${prod.product} (Lote: ${prod.batch})`);
-            document.getElementById('modal-whatsapp-btn').href = ``;
 
             const productModal = document.getElementById('product-modal');
             if (productModal) {
