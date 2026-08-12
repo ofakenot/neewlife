@@ -666,10 +666,6 @@
                     <p class="hero-description-clean" data-i18n="hero_subtitle">
                         Desenvolvimento de alta performance com pureza rigorosamente certificada por ensaios HPLC, máxima estabilidade molecular e logística internacional acelerada.
                     </p>
-
-                    <a href="https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR" target="_blank" class="btn-premium">
-                        <i class="fab fa-whatsapp"></i> <span data-i18n="cta_whatsapp">Falar no WhatsApp</span>
-                    </a>
                 </div>
 
                 <div class="hero-mockup-col">
@@ -841,7 +837,7 @@
                             <div class="footer-contact-icon"><i class="far fa-envelope"></i></div>
                             <span>contact@newlifelabs.com</span>
                         </a>
-                        <a href="https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR" target="_blank" class="footer-contact-item">
+                        <a href="" target="_blank" class="footer-contact-item">
                             <div class="footer-contact-icon" style="color: #25d366;"><i class="fab fa-whatsapp"></i></div>
                             <span>Atendimento WhatsApp</span>
                         </a>
@@ -1413,7 +1409,7 @@
 
                 const shortDesc = produto[`desc_${currentLanguage}`] || produto.desc_pt;
                 const waMessage = encodeURIComponent(`Olá! Solicito cotação corporativa para o composto: ${produto.product} (Lote: ${produto.batch} | Chave: ${produto.key})`);
-                const waUrl = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${waMessage}`;
+                const waUrl = ``;
 
                 card.innerHTML = `
                     <span class="product-purity-tag">${purityLabel} ${produto.purity}</span>
@@ -1488,7 +1484,7 @@
             }
 
             const waMessage = encodeURIComponent(`Olá! Gostaria de solicitar cotação para o produto: ${prod.product} (Lote: ${prod.batch})`);
-            document.getElementById('modal-whatsapp-btn').href = `https://chat.whatsapp.com/LwOUHWpSEpw8noN3aAHJnR?text=${waMessage}`;
+            document.getElementById('modal-whatsapp-btn').href = ``;
 
             const productModal = document.getElementById('product-modal');
             if (productModal) {
