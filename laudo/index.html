@@ -198,7 +198,7 @@
             line-height: 1.6;
         }
 
-        /* --- CAIXA DE VALIDAÇÃO ELEVADA --- */
+        /* --- CAIXA DE VALIDAÇÃO --- */
         .verify-box-card {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -353,7 +353,7 @@
             border-color: var(--primary);
         }
 
-        /* --- TABELA DESKTOP CLEAN --- */
+        /* --- TABELA DESKTOP --- */
         .table-section {
             padding: 25px 0 70px 0;
             flex: 1;
@@ -884,7 +884,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL & TRADUÇÃO COMPLETA -->
+    <!-- SCRIPT PRINCIPAL E TRADUÇÃO COMPLETA -->
     <script>
         const translations = {
             pt: {
@@ -1026,22 +1026,7 @@
 
         let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // FUNÇÃO CORRIGIDA COM ENCODEURI PARA GARANTIR O DOWNLOAD/ACESSO DO SERVIDOR
-        function forceDownload(event, url, filename) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const encodedUrl = encodeURI(url);
-            const link = document.createElement('a');
-            link.href = encodedUrl;
-            link.download = filename || 'documento.pdf';
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // BASE DE DADOS DE PRODUTOS
+        // BASE DE DADOS COM URLS PRÉ-CODIFICADAS (%20) E NORMAS DE ARQUIVOS DO SERVIDOR
         const productsQA = [
             { 
                 id: 1, 
@@ -1052,8 +1037,8 @@
                 purity: "99.62%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-GHK-2506-001", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU 100MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-CU 100MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-CU%20100%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 2, 
@@ -1064,8 +1049,8 @@
                 purity: "99.37%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-GLW-2606-002", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW 70MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%2070%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 3, 
@@ -1076,8 +1061,8 @@
                 purity: "99.70%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-KLW-2706-003", 
-                pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW 80MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%2080%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 4, 
@@ -1088,8 +1073,8 @@
                 purity: "99.76%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TES-2806-004", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 20MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 20MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2020MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2020%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 5, 
@@ -1100,8 +1085,8 @@
                 purity: "99.50%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-CBL-2906-005", 
-                pdfUrl: "https://newlifelabs.us/pdfs/CBL-514 20MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CBL-514 20MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/CBL-514%2020MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CBL-514%2020%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 6, 
@@ -1112,8 +1097,8 @@
                 purity: "99.90%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TIR-3006-006", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 7, 
@@ -1124,8 +1109,8 @@
                 purity: "99.88%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TIR-3106-007", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 120MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 120MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%20120MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%20120%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 8, 
@@ -1136,8 +1121,8 @@
                 purity: "99.25%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-RET-3206-008", 
-                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 9, 
@@ -1148,8 +1133,8 @@
                 purity: "99.30%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-RET-3306-009", 
-                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 120MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 120MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%20120MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%20120%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 10, 
@@ -1160,8 +1145,8 @@
                 purity: "99.39%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-CJC-3406-010", 
-                pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC 1295 + IPAMORELIN 10MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20+%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC%201295%20+%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 11, 
@@ -1172,8 +1157,8 @@
                 purity: "99.40%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-MOT-3506-011", 
-                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 12, 
@@ -1184,8 +1169,8 @@
                 purity: "99.55%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-SEL-3606-012", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 13, 
@@ -1196,8 +1181,8 @@
                 purity: "99.60%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-SEM-3706-013", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10MG - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10MG - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
             { 
                 id: 14, 
@@ -1208,8 +1193,8 @@
                 purity: "99.95%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-BAC-3806-014", 
-                pdfUrl: "https://newlifelabs.us/pdfs/BACTERIOSTATIC WATER 3ML - Test Report New Life Labs.pdf", 
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - BACTERIOSTATIC WATER 3ML - New Life Labs.pdf" 
+                pdfUrl: "https://newlifelabs.us/pdfs/BACTERIOSTATIC%20WATER%203ML%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20BACTERIOSTATIC%20WATER%203%20ml%20-%20New%20Life%20Labs.pdf" 
             }
         ];
 
@@ -1257,9 +1242,6 @@
             }
 
             filtered.forEach(item => {
-                const encodedPdf = encodeURI(item.pdfUrl);
-                const encodedManual = encodeURI(item.manualUrl);
-                
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td class="col-product">
@@ -1282,10 +1264,10 @@
                     </td>
                     <td class="col-pdf">
                         <div class="actions-group">
-                            <a href="${encodedPdf}" target="_blank" download class="btn-download-pdf" onclick="forceDownload(event, '${item.pdfUrl}', '${item.product} - Laudo.pdf')">
+                            <a href="${item.pdfUrl}" target="_blank" download class="btn-download-pdf">
                                 <i class="fas fa-file-pdf"></i> ${t.btnDownload}
                             </a>
-                            <a href="${encodedManual}" target="_blank" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', 'Guia Tecnico - ${item.product} - New Life Labs.pdf')">
+                            <a href="${item.manualUrl}" target="_blank" download class="btn-download-manual">
                                 <i class="fas fa-book-open"></i> ${t.btnManual}
                             </a>
                         </div>
@@ -1303,9 +1285,6 @@
             const t = translations[currentLang];
 
             if (found) {
-                const encodedPdf = encodeURI(found.pdfUrl);
-                const encodedManual = encodeURI(found.manualUrl);
-                
                 body.innerHTML = `
                     <div style="font-size: 3.5rem; color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div>
                     <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalValidTitle}</h2>
@@ -1317,10 +1296,10 @@
                         <div><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
                     </div>
                     <div class="actions-group" style="flex-direction: column; gap: 10px;">
-                        <a href="${encodedPdf}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.pdfUrl}', '${found.product} - Laudo.pdf')">
+                        <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;">
                             <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
                         </a>
-                        <a href="${encodedManual}" target="_blank" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', 'Guia Tecnico - ${found.product} - New Life Labs.pdf')">
+                        <a href="${found.manualUrl}" target="_blank" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;">
                             <i class="fas fa-book-open"></i> ${t.modalDownloadManual}
                         </a>
                     </div>
