@@ -495,7 +495,7 @@
 
         .mobile-label { display: none; }
 
-        /* --- RODAPÉ OFICIAL DO SITE PRINCIPAL --- */
+        /* --- RODAPÉ OFICIAL --- */
         .footer-white {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -1026,12 +1026,14 @@
 
         let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // FUNÇÃO DE DOWNLOAD DIRETO DO ARQUIVO PDF
+        // FUNÇÃO CORRIGIDA COM ENCODEURI PARA GARANTIR O DOWNLOAD/ACESSO DO SERVIDOR
         function forceDownload(event, url, filename) {
             event.preventDefault();
             event.stopPropagation();
+            
+            const encodedUrl = encodeURI(url);
             const link = document.createElement('a');
-            link.href = url;
+            link.href = encodedUrl;
             link.download = filename || 'documento.pdf';
             link.target = '_blank';
             document.body.appendChild(link);
@@ -1039,7 +1041,7 @@
             document.body.removeChild(link);
         }
 
-        // BASE DE DADOS COM LINKS DIRETOS PARA OS PDFS DO TEST REPORT E DO MANUAL TÉCNICO
+        // BASE DE DADOS DE PRODUTOS
         const productsQA = [
             { 
                 id: 1, 
@@ -1255,6 +1257,9 @@
             }
 
             filtered.forEach(item => {
+                const encodedPdf = encodeURI(item.pdfUrl);
+                const encodedManual = encodeURI(item.manualUrl);
+                
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td class="col-product">
@@ -1277,10 +1282,10 @@
                     </td>
                     <td class="col-pdf">
                         <div class="actions-group">
-                            <a href="${item.pdfUrl}" download class="btn-download-pdf" onclick="forceDownload(event, '${item.pdfUrl}', '${item.product} - Laudo.pdf')">
+                            <a href="${encodedPdf}" target="_blank" download class="btn-download-pdf" onclick="forceDownload(event, '${item.pdfUrl}', '${item.product} - Laudo.pdf')">
                                 <i class="fas fa-file-pdf"></i> ${t.btnDownload}
                             </a>
-                            <a href="${item.manualUrl}" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', 'Guia Tecnico - ${item.product} - New Life Labs.pdf')">
+                            <a href="${encodedManual}" target="_blank" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', 'Guia Tecnico - ${item.product} - New Life Labs.pdf')">
                                 <i class="fas fa-book-open"></i> ${t.btnManual}
                             </a>
                         </div>
@@ -1298,6 +1303,9 @@
             const t = translations[currentLang];
 
             if (found) {
+                const encodedPdf = encodeURI(found.pdfUrl);
+                const encodedManual = encodeURI(found.manualUrl);
+                
                 body.innerHTML = `
                     <div style="font-size: 3.5rem; color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div>
                     <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalValidTitle}</h2>
@@ -1309,10 +1317,10 @@
                         <div><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
                     </div>
                     <div class="actions-group" style="flex-direction: column; gap: 10px;">
-                        <a href="${found.pdfUrl}" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.pdfUrl}', '${found.product} - Laudo.pdf')">
+                        <a href="${encodedPdf}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.pdfUrl}', '${found.product} - Laudo.pdf')">
                             <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
                         </a>
-                        <a href="${found.manualUrl}" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', 'Guia Tecnico - ${found.product} - New Life Labs.pdf')">
+                        <a href="${encodedManual}" target="_blank" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', 'Guia Tecnico - ${found.product} - New Life Labs.pdf')">
                             <i class="fas fa-book-open"></i> ${t.modalDownloadManual}
                         </a>
                     </div>
