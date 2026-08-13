@@ -906,11 +906,12 @@
 
     <!-- SCRIPT PRINCIPAL, I18N COMPLETO E FORÇAMENTO DE DOWNLOAD -->
     <script>
+        // BASE DE DADOS COM URLS TOTALMENTE CORRIGIDAS E CODIFICADAS (%20 E %2B)
         const productsQA = [
             { 
                 id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/terzepatida1.png",
                 desc_pt: "Co-agonista dual dos receptores GIP e GLP-1 desenvolvido para regulação metabólica avançada e otimização glicêmica.",
                 desc_en: "Dual GIP and GLP-1 receptor co-agonist engineered for advanced metabolic regulation and glycemic optimization.",
@@ -918,8 +919,8 @@
             },
             { 
                 id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/retatrutide1.png",
                 desc_pt: "Agonista triplo dos receptores GIP, GLP-1 e Glucagon focado em reprogramação e oxidação lipídica profunda.",
                 desc_en: "Triple GIP, GLP-1 and Glucagon receptor agonist focused on metabolic reprogramming and lipid oxidation.",
@@ -927,8 +928,8 @@
             },
             { 
                 id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-Cu 100 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-Cu%20100%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/ghk-cu100.png",
                 desc_pt: "Tripeptídeo de cobre de alta concentração para neocolagênese, remodelação da matriz extracelular e regeneração tecidual.",
                 desc_en: "High-concentration copper tripeptide for neocollagenesis, extracellular matrix remodeling, and tissue regeneration.",
@@ -936,8 +937,8 @@
             },
             { 
                 id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 10 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/tesamorelin10.png",
                 desc_pt: "Análogo sintético do GHRH que estimula a síntese e liberação pulsátil do hormônio do crescimento endógeno.",
                 desc_en: "Synthetic GHRH analogue that stimulates the synthesis and pulsatile release of endogenous growth hormone.",
@@ -945,8 +946,8 @@
             },
             { 
                 id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC-1295 + IPAMORELIN 10 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20%2B%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20%2B%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/cjc.png",
                 desc_pt: "Combinação sinérgica de secretagogo GH e análogo GHRH para amplificação da liberação somatotrópica.",
                 desc_en: "Synergistic GH secretagogue and GHRH analogue blend for amplified somatotropic release.",
@@ -954,8 +955,8 @@
             },
             { 
                 id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/semax1.png",
                 desc_pt: "Heptapeptídeo nootrópico e neuroprotetor estimulador da expressão de BDNF e NGF no sistema nervoso central.",
                 desc_en: "Nootropic and neuroprotective heptapeptide stimulating BDNF and NGF expression in the central nervous system.",
@@ -963,8 +964,8 @@
             },
             { 
                 id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/selank1.png",
                 desc_pt: "Peptídeo ansiolítico e imunomodulador sintético derivado da tuftsina para modulação da neurotransmissão GABAérgica.",
                 desc_en: "Anxiolytic and immunomodulatory peptide derived from tuftsin for GABAergic neurotransmission modulation.",
@@ -972,8 +973,8 @@
             },
             { 
                 id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - EPITHALON 50 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20EPITHALON%2050%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/epithalon1.png",
                 desc_pt: "Tetrapeptídeo sintético ativador da telomerase projetado para longevidade e preservação do comprimento telomérico.",
                 desc_en: "Synthetic telomerase activating tetrapeptide designed for longevity and telomere length preservation.",
@@ -981,8 +982,8 @@
             },
             { 
                 id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SS-31 50 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/SS-31%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SS-31%2050%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/ss31.png",
                 desc_pt: "Tetrapeptídeo mitocôndria-alvo que se liga seletivamente à cardiolipina para otimização do gradiente de prótons e redução de ROS.",
                 desc_en: "Mitochondria-targeted tetrapeptide selectively binding cardiolipin for proton gradient optimization and ROS reduction.",
@@ -990,8 +991,8 @@
             },
             { 
                 id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/motsc.png",
                 desc_pt: "Peptídeo derivado do genoma mitocondrial (MDP) que ativa a via AMPK e restaura a homeostase metabólica celular.",
                 desc_en: "Mitochondrial-derived peptide (MDP) activating AMPK pathway and restoring cellular metabolic homeostasis.",
@@ -999,8 +1000,8 @@
             },
             { 
                 id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - NAD+ 500 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/NAD%2B%20500MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20NAD%2B%20500%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/nad+.png",
                 desc_pt: "Coenzima essencial para o ciclo de Krebs, reparo do DNA via PARP e ativação das sirtuínas (SIRT1-7).",
                 desc_en: "Essential coenzyme for Krebs cycle, DNA repair via PARP, and sirtuin activation (SIRT1-7).",
@@ -1008,8 +1009,8 @@
             },
             { 
                 id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW Blend 70 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%20Blend%2070%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/glow70.png",
                 desc_pt: "Matriz biomimética aceleradora de renovação celular, luminosidade e inibição do estresse oxidativo cutâneo.",
                 desc_en: "Biomimetic matrix accelerating cell turnover, skin radiance, and inhibition of cutaneous oxidative stress.",
@@ -1017,8 +1018,8 @@
             },
             { 
                 id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - AOD-9604 5 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/AOD-9604%205MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20AOD-9604%205%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/aod.png",
                 desc_pt: "Fragmento sintético C-terminal do hGH (177-191) focado em lipólise direcionada e inibição da lipogênese.",
                 desc_en: "Synthetic C-terminal fragment of hGH (177-191) targeted for lipolysis and inhibition of lipogenesis.",
@@ -1026,8 +1027,8 @@
             },
             { 
                 id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW Blend 80 mg - New Life Labs.pdf",
+                pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
+                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%20Blend%2080%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/klow80.png",
                 desc_pt: "Fórmula peptídica de bioestimulação avançada para reconstrução dérmica, firmeza e hidratação de alta profundidade.",
                 desc_en: "Advanced bio-stimulation peptide formula for dermal reconstruction, firmness, and deep hydration.",
@@ -1401,8 +1402,7 @@
                 card.className = 'product-card';
 
                 const shortDesc = produto[`desc_${currentLanguage}`] || produto.desc_pt;
-                const waMessage = encodeURIComponent(`Olá! Solicito cotação corporativa para o composto: ${produto.product} (Lote: ${produto.batch} | Chave: ${produto.key})`);
-                const waUrl = ``;
+                const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Solicito cotação corporativa para o composto: ' + produto.product + ' (Lote: ' + produto.batch + ' | Chave: ' + produto.key + ')')}`;
 
                 card.innerHTML = `
                     <span class="product-purity-tag">${purityLabel} ${produto.purity}</span>
