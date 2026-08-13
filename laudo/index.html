@@ -239,17 +239,19 @@
             border: 1px solid var(--gray-300);
             background: #ffffff;
             border-radius: 30px;
-            font-family: SF Mono, Menlo, monospace;
+            font-family: SF Mono, Menlo, Monaco, monospace;
             font-size: 0.95rem;
             text-transform: uppercase;
             text-align: center;
             outline: none;
             transition: var(--transition);
+            letter-spacing: 1.5px;
+            font-weight: 700;
         }
         
         .verify-input-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(45, 150, 93, 0.15);
         }
 
         .verify-input-group button {
@@ -421,15 +423,16 @@
         }
 
         .key-code {
-            font-family: SF Mono, Menlo, monospace;
+            font-family: SF Mono, Menlo, Monaco, monospace;
             font-weight: 700;
             color: var(--accent-green);
             background: var(--accent-green-bg);
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             border: 1px solid rgba(45, 150, 93, 0.3);
             display: inline-block;
+            letter-spacing: 0.5px;
         }
 
         .purity-badge {
@@ -701,12 +704,14 @@
         .modal-card {
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(20px) saturate(180%);
-            width: 100%; max-width: 500px;
+            width: 100%; max-width: 520px;
             border-radius: 24px; padding: 32px 26px;
             text-align: center; position: relative;
             border: 1px solid var(--glass-border);
             box-shadow: 0 30px 60px rgba(0,0,0,0.15);
             animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         @keyframes modalPop {
@@ -721,6 +726,26 @@
             justify-content: center; transition: color 0.2s ease;
         }
         .modal-close:hover { color: var(--dark); }
+
+        /* CONTAINER DE IMAGEM NO MODAL */
+        .modal-product-img-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px;
+            margin: 15px 0 18px 0;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-product-img-box img {
+            max-height: 140px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.08));
+        }
     </style>
 </head>
 <body>
@@ -760,9 +785,9 @@
             <!-- CAIXA DE VALIDAÇÃO -->
             <div class="verify-box-card">
                 <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green); margin-right: 8px;"></i> <span data-i18n="verifyTitle">Validar Produto por Chave ou Lote</span></div>
-                <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite a chave única ou número de lote impresso em seu produto para confirmar a validação do laboratório:</p>
+                <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite a chave única impressa em seu produto para confirmar a validação do laboratório:</p>
                 <div class="verify-input-group">
-                    <input type="text" id="verify-key-input" placeholder="EX: NL2506GHK100 OU NL-GHK-2506-001" data-i18n-ph="verifyPlaceholder">
+                    <input type="text" id="verify-key-input" placeholder="EX: NL-GHK-2506-001" data-i18n-ph="verifyPlaceholder" maxlength="15">
                     <button id="btn-verify-code"><i class="fas fa-search" style="margin-right: 8px;"></i> <span data-i18n="verifyBtn">Validar</span></button>
                 </div>
             </div>
@@ -893,8 +918,8 @@
                 heroTitle: "Rastreabilidade & Autenticação de Lotes",
                 heroSubtitle: "Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.",
                 verifyTitle: "Validar Produto por Chave ou Lote",
-                verifyDesc: "Digite a chave única ou número de lote impresso em seu produto para confirmar a validação do laboratório:",
-                verifyPlaceholder: "EX: NL2506GHK100 OU NL-GHK-2506-001",
+                verifyDesc: "Digite a chave única impressa em seu produto para confirmar a validação do laboratório:",
+                verifyPlaceholder: "EX: NL-GHK-2506-001",
                 verifyBtn: "Validar",
                 searchPlaceholder: "Buscar por produto, chave, lote ou pureza...",
                 catAll: "Todos",
@@ -939,7 +964,7 @@
                 heroSubtitle: "Check the authenticity of your compounds and download the official HPLC purity Test Report and User Manual.",
                 verifyTitle: "Validate Product by Key or Batch",
                 verifyDesc: "Enter the unique key or batch number printed on your product to confirm laboratory validation:",
-                verifyPlaceholder: "EX: NL2506GHK100 OR NL-GHK-2506-001",
+                verifyPlaceholder: "EX: NL-GHK-2506-001",
                 verifyBtn: "Validate",
                 searchPlaceholder: "Search product, key, batch or purity...",
                 catAll: "All",
@@ -983,8 +1008,8 @@
                 heroTitle: "Trazabilidad y Autenticación de Lotes",
                 heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Test Report oficial de pureza por HPLC y el Manual de Uso.",
                 verifyTitle: "Validar Producto por Clave o Lote",
-                verifyDesc: "Ingrese la clave única o número de lote impreso en su producto para confirmar la validación del laboratorio:",
-                verifyPlaceholder: "EJ: NL2506GHK100 O NL-GHK-2506-001",
+                verifyDesc: "Ingrese la clave única impreso en su producto para confirmar la validación del laboratorio:",
+                verifyPlaceholder: "EJ: NL-GHK-2506-001",
                 verifyBtn: "Validar",
                 searchPlaceholder: "Buscar producto, clave, lote o pureza...",
                 catAll: "Todos",
@@ -1026,17 +1051,18 @@
 
         let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // BASE DE DADOS
+        // BASE DE DADOS COM AS FOTOS E CHAVES PADRONIZADAS
         const productsQA = [
             { 
                 id: 1, 
                 targetId: "ghk100", 
                 product: "GHK-CU 100MG", 
                 category: "aesthetics-anti-aging", 
-                key: "NL2506GHK100", 
+                key: "NL-GHK-2506-001", 
                 purity: "99.62%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-GHK-2506-001", 
+                imageUrl: "https://newlifelabs.us/images/products/ghk100.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-Cu%20100%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1045,10 +1071,11 @@
                 targetId: "glow70", 
                 product: "GLOW 70MG", 
                 category: "aesthetics-anti-aging", 
-                key: "NL2606GLW70", 
+                key: "NL-GLW-2606-002", 
                 purity: "99.37%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-GLW-2606-002", 
+                imageUrl: "https://newlifelabs.us/images/products/glow70.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%20Blend%2070%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1057,10 +1084,11 @@
                 targetId: "klow80", 
                 product: "KLOW 80MG", 
                 category: "aesthetics-anti-aging", 
-                key: "NL2706KLW80", 
+                key: "NL-KLW-2706-003", 
                 purity: "99.70%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-KLW-2706-003", 
+                imageUrl: "https://newlifelabs.us/images/products/klow80.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%20Blend%2080%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1069,10 +1097,11 @@
                 targetId: "tesam", 
                 product: "TESAMORELIN 20MG", 
                 category: "gh-secretagogues", 
-                key: "NL2806TES20", 
+                key: "NL-TES-2806-004", 
                 purity: "99.76%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TES-2806-004", 
+                imageUrl: "https://newlifelabs.us/images/products/tesam.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2020MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1081,10 +1110,11 @@
                 targetId: "cbl514", 
                 product: "CBL-514 20MG", 
                 category: "Research Peptide", 
-                key: "NL2906CBL20", 
+                key: "NL-CBL-2906-005", 
                 purity: "99.50%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-CBL-2906-005", 
+                imageUrl: "https://newlifelabs.us/images/products/cbl514.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/CBL-514%2020MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CBL-514%2020%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1093,10 +1123,11 @@
                 targetId: "tirze60", 
                 product: "TIRZEPATIDE 60MG", 
                 category: "weight-loss", 
-                key: "NL3006TIR60", 
+                key: "NL-TIR-3006-006", 
                 purity: "99.90%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TIR-3006-006", 
+                imageUrl: "https://newlifelabs.us/images/products/tirze60.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1105,10 +1136,11 @@
                 targetId: "tirze120", 
                 product: "TIRZEPATIDE 120MG", 
                 category: "weight-loss", 
-                key: "NL3106TIR120", 
+                key: "NL-TIR-3106-007", 
                 purity: "99.88%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-TIR-3106-007", 
+                imageUrl: "https://newlifelabs.us/images/products/tirze120.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%20120MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%20120%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1117,10 +1149,11 @@
                 targetId: "reta60", 
                 product: "RETATRUTIDE 60MG", 
                 category: "weight-loss", 
-                key: "NL3206RETA60", 
+                key: "NL-RET-3206-008", 
                 purity: "99.25%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-RET-3206-008", 
+                imageUrl: "https://newlifelabs.us/images/products/reta60.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1129,10 +1162,11 @@
                 targetId: "reta120", 
                 product: "RETATRUTIDE 120MG", 
                 category: "weight-loss", 
-                key: "NL3306RETA120", 
+                key: "NL-RET-3306-009", 
                 purity: "99.30%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-RET-3306-009", 
+                imageUrl: "https://newlifelabs.us/images/products/reta120.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%20120MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%20120%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1141,10 +1175,11 @@
                 targetId: "cjc", 
                 product: "CJC 1295 + IPAMORELIN 10MG", 
                 category: "gh-secretagogues", 
-                key: "NL3406CJC10", 
+                key: "NL-CJC-3406-010", 
                 purity: "99.39%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-CJC-3406-010", 
+                imageUrl: "https://newlifelabs.us/images/products/cjc.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20+%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20+%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1153,10 +1188,11 @@
                 targetId: "motsc", 
                 product: "MOTS-C 40MG", 
                 category: "Research Peptide", 
-                key: "NL3506MOTS40", 
+                key: "NL-MOT-3506-011", 
                 purity: "99.40%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-MOT-3506-011", 
+                imageUrl: "https://newlifelabs.us/images/products/motsc.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1165,10 +1201,11 @@
                 targetId: "selank", 
                 product: "SELANK 10MG", 
                 category: "neuromodulation", 
-                key: "NL3606SEL10", 
+                key: "NL-SEL-3606-012", 
                 purity: "99.55%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-SEL-3606-012", 
+                imageUrl: "https://newlifelabs.us/images/products/selank.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1177,10 +1214,11 @@
                 targetId: "semax", 
                 product: "SEMAX 10MG", 
                 category: "neuromodulation", 
-                key: "NL3706SEM10", 
+                key: "NL-SEM-3706-013", 
                 purity: "99.60%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-SEM-3706-013", 
+                imageUrl: "https://newlifelabs.us/images/products/semax.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf" 
             },
@@ -1189,10 +1227,11 @@
                 targetId: "bac3ml", 
                 product: "BACTERIOSTATIC WATER 3ML", 
                 category: "Research Peptide", 
-                key: "NL3806BAC3", 
+                key: "NL-BAC-3806-014", 
                 purity: "99.95%", 
                 date: "Aug 12, 2026", 
                 batch: "NL-BAC-3806-014", 
+                imageUrl: "https://newlifelabs.us/images/products/bac3ml.png",
                 pdfUrl: "https://newlifelabs.us/pdfs/BACTERIOSTATIC%20WATER%203ML%20-%20Test%20Report%20New%20Life%20Labs.pdf", 
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20BACTERIOSTATIC%20WATER%203%20ml%20-%20New%20Life%20Labs.pdf" 
             }
@@ -1200,6 +1239,31 @@
 
         let selectedCategory = "all";
         let searchQuery = "";
+
+        // FUNÇÃO DE MÁSCARA AUTOMÁTICA PARA HÍFENS (FORMATO: NL-XXX-0000-000)
+        function formatValidationCode(value) {
+            let clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (clean.length > 12) {
+                clean = clean.substring(0, 12);
+            }
+
+            let formatted = '';
+            
+            if (clean.length > 0) {
+                formatted += clean.substring(0, Math.min(2, clean.length));
+            }
+            if (clean.length > 2) {
+                formatted += '-' + clean.substring(2, Math.min(5, clean.length));
+            }
+            if (clean.length > 5) {
+                formatted += '-' + clean.substring(5, Math.min(9, clean.length));
+            }
+            if (clean.length > 9) {
+                formatted += '-' + clean.substring(9, Math.min(12, clean.length));
+            }
+
+            return formatted;
+        }
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -1279,7 +1343,7 @@
             });
         }
 
-        // FUNÇÃO DE VALIDAÇÃO FLEXÍVEL (ACEITA CHAVE OU BATCH, COM OU SEM HÍFENS)
+        // FUNÇÃO DE VALIDAÇÃO COM EXIBIÇÃO DA FOTO DO PRODUTO NO MODAL
         function verifyCode(code) {
             const rawCode = code.trim().toUpperCase();
             const cleanCode = rawCode.replace(/[^A-Z0-9]/g, '');
@@ -1296,15 +1360,22 @@
 
             if (found) {
                 body.innerHTML = `
-                    <div style="font-size: 3.5rem; color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div>
-                    <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalValidTitle}</h2>
-                    <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 20px;">${t.modalValidDesc}</p>
-                    <div style="background: rgba(245, 245, 247, 0.8); padding: 18px; border-radius: 14px; text-align: left; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid var(--gray-200);">
-                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelProduct}</strong> ${found.product}</div>
-                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelKey}</strong> <span class="key-code" style="font-size:0.75rem;">${found.key}</span></div>
-                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelBatch}</strong> <span style="font-family: SF Mono, monospace; font-weight: 700; color: var(--dark);">${found.batch}</span></div>
-                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: 700;">${found.purity}</span></div>
+                    <div style="font-size: 3.2rem; color: var(--accent-green); margin-bottom: 8px;"><i class="fas fa-check-circle"></i></div>
+                    <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 6px; letter-spacing:1px;">${t.modalValidTitle}</h2>
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin-bottom: 12px;">${t.modalValidDesc}</p>
+                    
+                    <!-- FOTO DO PRODUTO EM DESTAQUE -->
+                    <div class="modal-product-img-box">
+                        <img src="${found.imageUrl}" alt="${found.product}" onerror="this.parentElement.style.display='none'">
                     </div>
+
+                    <div style="background: rgba(245, 245, 247, 0.85); padding: 16px; border-radius: 14px; text-align: left; font-size: 0.88rem; margin-bottom: 18px; border: 1px solid var(--gray-200);">
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelProduct}</strong> ${found.product}</div>
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelKey}</strong> <span class="key-code" style="font-size:0.78rem;">${found.key}</span></div>
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelBatch}</strong> <span style="font-family: SF Mono, monospace; font-weight: 700; color: var(--dark);">${found.batch}</span></div>
+                        <div><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: 700;">${found.purity}</span></div>
+                    </div>
+
                     <div class="actions-group" style="flex-direction: column; gap: 10px;">
                         <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;">
                             <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
@@ -1329,6 +1400,12 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             setLanguage(currentLang);
+
+            // MÁSCARA EM TEMPO REAL NO CAMPO DE VALIDAÇÃO
+            const inputVerify = document.getElementById("verify-key-input");
+            inputVerify.addEventListener("input", (e) => {
+                e.target.value = formatValidationCode(e.target.value);
+            });
 
             document.getElementById("search-input").addEventListener("input", (e) => {
                 searchQuery = e.target.value.toLowerCase().trim();
