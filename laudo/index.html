@@ -240,7 +240,7 @@
             background: #ffffff;
             border-radius: 30px;
             font-family: SF Mono, Menlo, monospace;
-            font-size: 1rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
             text-align: center;
             outline: none;
@@ -759,10 +759,10 @@
             
             <!-- CAIXA DE VALIDAÇÃO -->
             <div class="verify-box-card">
-                <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green); margin-right: 8px;"></i> <span data-i18n="verifyTitle">Validar Produto por Chave Única</span></div>
-                <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite o código impresso em seu produto para confirmar a validação do laboratório:</p>
+                <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green); margin-right: 8px;"></i> <span data-i18n="verifyTitle">Validar Produto por Chave ou Lote</span></div>
+                <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite a chave única ou número de lote impresso em seu produto para confirmar a validação do laboratório:</p>
                 <div class="verify-input-group">
-                    <input type="text" id="verify-key-input" placeholder="EX: NL2506GHK100" data-i18n-ph="verifyPlaceholder">
+                    <input type="text" id="verify-key-input" placeholder="EX: NL2506GHK100 OU NL-GHK-2506-001" data-i18n-ph="verifyPlaceholder">
                     <button id="btn-verify-code"><i class="fas fa-search" style="margin-right: 8px;"></i> <span data-i18n="verifyBtn">Validar</span></button>
                 </div>
             </div>
@@ -775,7 +775,7 @@
             <div class="controls-grid">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="search-input" placeholder="Buscar por produto, chave ou pureza..." data-i18n-ph="searchPlaceholder">
+                    <input type="text" id="search-input" placeholder="Buscar por produto, chave, lote ou pureza..." data-i18n-ph="searchPlaceholder">
                 </div>
                 <div class="category-filter" id="category-filter">
                     <button class="filter-btn active" data-cat="all" data-i18n="catAll">Todos</button>
@@ -892,11 +892,11 @@
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Rastreabilidade & Autenticação de Lotes",
                 heroSubtitle: "Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.",
-                verifyTitle: "Validar Produto por Chave Única",
-                verifyDesc: "Digite o código impresso em seu produto para confirmar a validação do laboratório:",
-                verifyPlaceholder: "EX: NL2506GHK100",
+                verifyTitle: "Validar Produto por Chave ou Lote",
+                verifyDesc: "Digite a chave única ou número de lote impresso em seu produto para confirmar a validação do laboratório:",
+                verifyPlaceholder: "EX: NL2506GHK100 OU NL-GHK-2506-001",
                 verifyBtn: "Validar",
-                searchPlaceholder: "Buscar por produto, chave ou pureza...",
+                searchPlaceholder: "Buscar por produto, chave, lote ou pureza...",
                 catAll: "Todos",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -913,7 +913,7 @@
                 btnDownload: "Baixar COA PDF",
                 btnManual: "Manual de Uso",
                 modalValidTitle: "Produto Autêntico & Validado",
-                modalValidDesc: "O código inserido corresponde a um lote autêntico da <strong>New Life Labs</strong>.",
+                modalValidDesc: "O código ou lote inserido corresponde a um produto autêntico da <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Produto:",
                 modalLabelKey: "Chave Única:",
                 modalLabelPurity: "Pureza (HPLC):",
@@ -921,7 +921,7 @@
                 modalDownloadPdf: "Baixar Relatório (COA PDF)",
                 modalDownloadManual: "Baixar Manual de Uso (PDF)",
                 modalInvalidTitle: "Código Não Localizado",
-                modalInvalidDesc: "A chave inserida (<strong>{code}</strong>) não foi localizada em nossa base de dados.",
+                modalInvalidDesc: "A chave ou lote inserido (<strong>{code}</strong>) não foi localizado em nossa base de dados.",
                 modalTryAgain: "Tentar Novamente",
                 footer_brand: "Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.",
                 footer_address_title: "Sede Operacional",
@@ -937,11 +937,11 @@
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Traceability & Batch Authentication",
                 heroSubtitle: "Check the authenticity of your compounds and download the official HPLC purity Test Report and User Manual.",
-                verifyTitle: "Validate Product by Unique Key",
-                verifyDesc: "Enter the code printed on your product to confirm laboratory validation:",
-                verifyPlaceholder: "EX: NL2506GHK100",
+                verifyTitle: "Validate Product by Key or Batch",
+                verifyDesc: "Enter the unique key or batch number printed on your product to confirm laboratory validation:",
+                verifyPlaceholder: "EX: NL2506GHK100 OR NL-GHK-2506-001",
                 verifyBtn: "Validate",
-                searchPlaceholder: "Search product, key or purity...",
+                searchPlaceholder: "Search product, key, batch or purity...",
                 catAll: "All",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -958,7 +958,7 @@
                 btnDownload: "Download COA PDF",
                 btnManual: "User Manual",
                 modalValidTitle: "Authentic & Validated Product",
-                modalValidDesc: "The code entered corresponds to an authentic batch tested by <strong>New Life Labs</strong>.",
+                modalValidDesc: "The code or batch entered corresponds to an authentic product tested by <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Product:",
                 modalLabelKey: "Unique Key:",
                 modalLabelPurity: "Purity (HPLC):",
@@ -966,7 +966,7 @@
                 modalDownloadPdf: "Download COA Report (PDF)",
                 modalDownloadManual: "Download User Manual (PDF)",
                 modalInvalidTitle: "Code Not Found",
-                modalInvalidDesc: "The key entered (<strong>{code}</strong>) was not found in our database.",
+                modalInvalidDesc: "The key or batch entered (<strong>{code}</strong>) was not found in our database.",
                 modalTryAgain: "Try Again",
                 footer_brand: "Excellence, innovation and high performance in laboratory development and applied biotechnology.",
                 footer_address_title: "Operational HQ",
@@ -982,11 +982,11 @@
                 heroBadge: "New Life QA Analytical Services",
                 heroTitle: "Trazabilidad y Autenticación de Lotes",
                 heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Test Report oficial de pureza por HPLC y el Manual de Uso.",
-                verifyTitle: "Validar Producto por Clave Única",
-                verifyDesc: "Ingrese el código impreso en su producto para confirmar la validación del laboratorio:",
-                verifyPlaceholder: "EJ: NL2506GHK100",
+                verifyTitle: "Validar Producto por Clave o Lote",
+                verifyDesc: "Ingrese la clave única o número de lote impreso en su producto para confirmar la validación del laboratorio:",
+                verifyPlaceholder: "EJ: NL2506GHK100 O NL-GHK-2506-001",
                 verifyBtn: "Validar",
-                searchPlaceholder: "Buscar producto, clave o pureza...",
+                searchPlaceholder: "Buscar producto, clave, lote o pureza...",
                 catAll: "Todos",
                 catPeptide: "Research Peptide",
                 catGh: "GH Secretagogues",
@@ -1003,7 +1003,7 @@
                 btnDownload: "Descargar COA PDF",
                 btnManual: "Manual de Uso",
                 modalValidTitle: "Producto Auténtico y Validado",
-                modalValidDesc: "El código ingresado corresponde a un lote auténtico de <strong>New Life Labs</strong>.",
+                modalValidDesc: "El código o lote ingresado corresponde a un producto auténtico de <strong>New Life Labs</strong>.",
                 modalLabelProduct: "Producto:",
                 modalLabelKey: "Clave Única:",
                 modalLabelPurity: "Pureza (HPLC):",
@@ -1011,7 +1011,7 @@
                 modalDownloadPdf: "Descargar COA (PDF)",
                 modalDownloadManual: "Descargar Manual de Uso (PDF)",
                 modalInvalidTitle: "Código No Encontrado",
-                modalInvalidDesc: "La clave ingresada (<strong>{code}</strong>) no se encontró en nuestra base de datos.",
+                modalInvalidDesc: "La clave o lote ingresado (<strong>{code}</strong>) no se encontró en nuestra base de datos.",
                 modalTryAgain: "Intentar de Nuevo",
                 footer_brand: "Excelencia, innovación y alto rendimiento en desarrollo laboratorial.",
                 footer_address_title: "Sede Operativa",
@@ -1026,7 +1026,7 @@
 
         let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // BASE DE DADOS AJUSTADA RIGOROSAMENTE COM A PASTA DE MANUAIS DO SERVIDOR
+        // BASE DE DADOS
         const productsQA = [
             { 
                 id: 1, 
@@ -1232,7 +1232,9 @@
                 const matchesCat = selectedCategory === "all" || item.category === selectedCategory;
                 const matchesSearch = searchQuery === "" || 
                                       item.product.toLowerCase().includes(searchQuery) ||
-                                      item.key.toLowerCase().includes(searchQuery);
+                                      item.key.toLowerCase().includes(searchQuery) ||
+                                      item.batch.toLowerCase().includes(searchQuery) ||
+                                      item.purity.toLowerCase().includes(searchQuery);
                 return matchesCat && matchesSearch;
             });
 
@@ -1277,9 +1279,17 @@
             });
         }
 
+        // FUNÇÃO DE VALIDAÇÃO FLEXÍVEL (ACEITA CHAVE OU BATCH, COM OU SEM HÍFENS)
         function verifyCode(code) {
-            const cleanCode = code.trim().toUpperCase();
-            const found = productsQA.find(p => p.key === cleanCode);
+            const rawCode = code.trim().toUpperCase();
+            const cleanCode = rawCode.replace(/[^A-Z0-9]/g, '');
+
+            const found = productsQA.find(p => {
+                const keyClean = p.key.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                const batchClean = p.batch.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                return keyClean === cleanCode || batchClean === cleanCode || p.key.toUpperCase() === rawCode || p.batch.toUpperCase() === rawCode;
+            });
+
             const modal = document.getElementById("verify-modal");
             const body = document.getElementById("modal-content-body");
             const t = translations[currentLang];
@@ -1292,8 +1302,8 @@
                     <div style="background: rgba(245, 245, 247, 0.8); padding: 18px; border-radius: 14px; text-align: left; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid var(--gray-200);">
                         <div style="margin-bottom: 6px;"><strong>${t.modalLabelProduct}</strong> ${found.product}</div>
                         <div style="margin-bottom: 6px;"><strong>${t.modalLabelKey}</strong> <span class="key-code" style="font-size:0.75rem;">${found.key}</span></div>
+                        <div style="margin-bottom: 6px;"><strong>${t.modalLabelBatch}</strong> <span style="font-family: SF Mono, monospace; font-weight: 700; color: var(--dark);">${found.batch}</span></div>
                         <div style="margin-bottom: 6px;"><strong>${t.modalLabelPurity}</strong> <span style="color: var(--accent-green); font-weight: 700;">${found.purity}</span></div>
-                        <div><strong>${t.modalLabelBatch}</strong> ${found.batch}</div>
                     </div>
                     <div class="actions-group" style="flex-direction: column; gap: 10px;">
                         <a href="${found.pdfUrl}" target="_blank" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;">
@@ -1308,8 +1318,8 @@
                 body.innerHTML = `
                     <div style="font-size: 3.5rem; color: #ff3b30; margin-bottom: 15px;"><i class="fas fa-times-circle"></i></div>
                     <h2 style="color: var(--dark); text-transform: uppercase; font-size: 1.25rem; margin-bottom: 10px; letter-spacing:1px;">${t.modalInvalidTitle}</h2>
-                    <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 25px;">${t.modalInvalidDesc.replace('{code}', cleanCode)}</p>
-                    <button onclick="document.getElementById('verify-modal').classList.remove('active')" style="padding: 12px 24px; background: var(--primary); color: #fff; border: none; border-radius: 30px; cursor: pointer; width: 100%; font-weight:700; text-transform:uppercase; letter-spacing:1px; font-size:0.8rem;">${t.modalTryAgain}</button>
+                    <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 25px;">${t.modalInvalidDesc.replace('{code}', rawCode)}</p>
+                    <button onclick="document.getElementById('verify-modal').classList.remove('active'); document.body.style.overflow = '';" style="padding: 12px 24px; background: var(--primary); color: #fff; border: none; border-radius: 30px; cursor: pointer; width: 100%; font-weight:700; text-transform:uppercase; letter-spacing:1px; font-size:0.8rem;">${t.modalTryAgain}</button>
                 `;
             }
 
@@ -1337,6 +1347,14 @@
             document.getElementById("btn-verify-code").addEventListener("click", () => {
                 const code = document.getElementById("verify-key-input").value;
                 if (code) verifyCode(code);
+            });
+
+            // SUPORTE À TECLA ENTER NO CAMPO DE VALIDAÇÃO
+            document.getElementById("verify-key-input").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    const code = document.getElementById("verify-key-input").value;
+                    if (code) verifyCode(code);
+                }
             });
 
             document.getElementById("modal-close-btn").addEventListener("click", () => {
