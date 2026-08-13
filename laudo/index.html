@@ -725,7 +725,7 @@
 </head>
 <body>
 
-    <!-- NAVBAR Glassmorphism (LOGO VIA URL ABSOLUTA) -->
+    <!-- NAVBAR Glassmorphism -->
     <nav class="navbar">
         <div class="container nav-container">
             <a href="https://newlifelabs.us/" class="logo-box">
@@ -811,7 +811,7 @@
         </div>
     </section>
 
-    <!-- RODAPÉ OFICIAL DO SITE PRINCIPAL -->
+    <!-- RODAPÉ OFICIAL -->
     <footer id="contato" class="footer-white">
         <div class="container">
             <div class="footer-main-grid">
@@ -1026,7 +1026,7 @@
 
         let currentLang = localStorage.getItem('newlifelabs-lang') || "pt";
 
-        // FUNÇÃO DE DOWNLOAD AUTOMÁTICO
+        // FUNÇÃO DE DOWNLOAD DIRETO DO ARQUIVO PDF
         function forceDownload(event, url, filename) {
             event.preventDefault();
             event.stopPropagation();
@@ -1039,7 +1039,7 @@
             document.body.removeChild(link);
         }
 
-        // BASE DE DADOS COMPLETA COM OS NOVOS PRODUTOS E LINKS ATUALIZADOS
+        // BASE DE DADOS COM LINKS DIRETOS PARA OS PDFS DO TEST REPORT E DO MANUAL TÉCNICO
         const productsQA = [
             { 
                 id: 1, 
@@ -1280,7 +1280,7 @@
                             <a href="${item.pdfUrl}" download class="btn-download-pdf" onclick="forceDownload(event, '${item.pdfUrl}', '${item.product} - Laudo.pdf')">
                                 <i class="fas fa-file-pdf"></i> ${t.btnDownload}
                             </a>
-                            <a href="${item.manualUrl}" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', '${item.product} - Manual.pdf')">
+                            <a href="${item.manualUrl}" download class="btn-download-manual" onclick="forceDownload(event, '${item.manualUrl}', 'Guia Tecnico - ${item.product} - New Life Labs.pdf')">
                                 <i class="fas fa-book-open"></i> ${t.btnManual}
                             </a>
                         </div>
@@ -1312,7 +1312,7 @@
                         <a href="${found.pdfUrl}" download class="btn-download-pdf" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.pdfUrl}', '${found.product} - Laudo.pdf')">
                             <i class="fas fa-file-pdf"></i> ${t.modalDownloadPdf}
                         </a>
-                        <a href="${found.manualUrl}" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', '${found.product} - Manual.pdf')">
+                        <a href="${found.manualUrl}" download class="btn-download-manual" style="width: 100%; justify-content: center; padding: 12px; border-radius: 10px;" onclick="forceDownload(event, '${found.manualUrl}', 'Guia Tecnico - ${found.product} - New Life Labs.pdf')">
                             <i class="fas fa-book-open"></i> ${t.modalDownloadManual}
                         </a>
                     </div>
