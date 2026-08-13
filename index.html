@@ -338,8 +338,8 @@
 
         .product-meta-row {
             display: flex; justify-content: center; gap: 12px;
-            font-size: 0.75rem; color: var(--gray-600); font-family: monospace;
-            margin-bottom: 12px;
+            font-size: 0.78rem; color: var(--gray-600); font-family: monospace;
+            margin-bottom: 12px; font-weight: 700;
         }
 
         .product-short-desc {
@@ -614,7 +614,7 @@
 </head>
 <body>
 
-    <!-- NAVBAR (SEM ÍCONE DE WHATSAPP NO BOTAO DE NAV) -->
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container nav-container">
             <a href="#inicio" class="logo-box">
@@ -698,7 +698,7 @@
                                         </div>
                                         <div>
                                             <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);">TIRZEPATIDE 60mg</div>
-                                            <div style="font-size: 0.72rem; color: var(--gray-600);">Chave: NL97902TIR60</div>
+                                            <div style="font-size: 0.72rem; color: var(--gray-600);">Lote: NL-TIR-3006-006</div>
                                         </div>
                                     </div>
                                     <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary);">RP-HPLC</span>
@@ -711,7 +711,7 @@
                                         </div>
                                         <div>
                                             <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);">GHK-Cu 100mg</div>
-                                            <div style="font-size: 0.72rem; color: var(--gray-600);">Chave: NL97891GHK100</div>
+                                            <div style="font-size: 0.72rem; color: var(--gray-600);">Lote: NL-GHK-2506-001</div>
                                         </div>
                                     </div>
                                     <span style="font-size: 0.85rem; font-weight: 800; color: var(--accent-green);">99.62%</span>
@@ -734,7 +734,7 @@
         </div>
     </section>
 
-    <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS (14 PRODUTOS) -->
+    <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS -->
     <section id="artigos" class="section-padding articles-section reveal active">
         <div class="container">
             <h2 class="section-title" data-i18n="section_articles">Artigos & Revisões Científicas</h2>
@@ -864,8 +864,8 @@
                         <span class="modal-auth-purity-val" id="modal-purity-val">99.90%</span>
                     </div>
                     <div class="modal-auth-key">
-                        <span class="modal-auth-key-label" data-i18n="modal_key_label">Chave Única de Validação</span>
-                        <span class="modal-auth-key-val" id="modal-key-val">NL97902TIR60</span>
+                        <span class="modal-auth-key-label" data-i18n="modal_key_label">Lote do Produto</span>
+                        <span class="modal-auth-key-val" id="modal-key-val">NL-TIR-3006-006</span>
                     </div>
                 </div>
 
@@ -896,7 +896,7 @@
                 <div class="modal-meta-box">
                     <div><i class="fas fa-flask"></i> <span id="article-modal-compound">Composto</span></div>
                     <div><i class="fas fa-check-circle"></i> <span id="article-modal-purity">Pureza: 99.90%</span></div>
-                    <div><i class="fas fa-barcode"></i> <span id="article-modal-key">NL97902TIR60</span></div>
+                    <div><i class="fas fa-barcode"></i> <span id="article-modal-key">NL-TIR-3006-006</span></div>
                 </div>
 
                 <div class="modal-article-text" id="article-modal-text"></div>
@@ -904,12 +904,11 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL, I18N COMPLETO E FORÇAMENTO DE DOWNLOAD -->
+    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // BASE DE DADOS COM URLS TOTALMENTE CORRIGIDAS E CODIFICADAS (%20 E %2B)
         const productsQA = [
             { 
-                id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", 
+                id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-3006-006", 
                 pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/terzepatida1.png",
@@ -918,7 +917,7 @@
                 desc_es: "Co-agonista dual de los receptores GIP y GLP-1 diseñado para la regulación metabólica avanzada y optimización glucémica."
             },
             { 
-                id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", 
+                id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-3206-008", 
                 pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/retatrutide1.png",
@@ -927,7 +926,7 @@
                 desc_es: "Agonista triple de los receptores GIP, GLP-1 y Glucagón enfocado en reprogramación metabólica y oxidación lipídica."
             },
             { 
-                id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", 
+                id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2506-001", 
                 pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-Cu%20100%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/ghk-cu100.png",
@@ -936,7 +935,7 @@
                 desc_es: "Tripéptido de cobre de alta concentración para neocolagénesis, remodelación de matriz extracelular y regeneración tisular."
             },
             { 
-                id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", 
+                id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2806-004", 
                 pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/tesamorelin10.png",
@@ -945,7 +944,7 @@
                 desc_es: "Análogo sintético del GHRH que estimula la síntesis y liberación pulsátil de la hormona del crecimiento endógena."
             },
             { 
-                id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", 
+                id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-3406-010", 
                 pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20%2B%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20%2B%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/cjc.png",
@@ -954,7 +953,7 @@
                 desc_es: "Mezcla sinérgica de secretagogo GH y análogo GHRH para amplificación somatotrópica."
             },
             { 
-                id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", 
+                id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-3706-013", 
                 pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/semax1.png",
@@ -963,7 +962,7 @@
                 desc_es: "Heptapéptido nootrópico y neuroprotector estimulador de la expresión de BDNF y NGF en el sistema nervioso central."
             },
             { 
-                id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", 
+                id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-3606-012", 
                 pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/selank1.png",
@@ -972,7 +971,7 @@
                 desc_es: "Péptido ansiolítico e inmunomodulador derivado de la tuftsina para modulación neurotransmisora GABAérgica."
             },
             { 
-                id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
+                id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
                 pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20EPITHALON%2050%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/epithalon1.png",
@@ -981,7 +980,7 @@
                 desc_es: "Tetrapéptido sintético activador de la telomerasa diseñado para longevidad y preservación del telómero."
             },
             { 
-                id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
+                id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
                 pdfUrl: "https://newlifelabs.us/pdfs/SS-31%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SS-31%2050%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/ss31.png",
@@ -990,7 +989,7 @@
                 desc_es: "Tetrapéptido mitocondrial dirigido que se une a la cardiolipina para optimización del gradiente de protones."
             },
             { 
-                id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", 
+                id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MOT-3506-011", 
                 pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/motsc.png",
@@ -999,7 +998,7 @@
                 desc_es: "Péptido derivado del genoma mitocondrial que activa la vía AMPK y restaura la homeostasis metabólica."
             },
             { 
-                id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
+                id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
                 pdfUrl: "https://newlifelabs.us/pdfs/NAD%2B%20500MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20NAD%2B%20500%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/nad+.png",
@@ -1008,7 +1007,7 @@
                 desc_es: "Coenzima esencial para el ciclo de Krebs, reparación de ADN vía PARP y activación de sirtuínas."
             },
             { 
-                id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", 
+                id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2606-002", 
                 pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%20Blend%2070%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/glow70.png",
@@ -1017,7 +1016,7 @@
                 desc_es: "Matriz biomimética aceleradora de renovación celular, luminosidad e inhibición del estrés oxidativo."
             },
             { 
-                id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
+                id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
                 pdfUrl: "https://newlifelabs.us/pdfs/AOD-9604%205MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20AOD-9604%205%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/aod.png",
@@ -1026,7 +1025,7 @@
                 desc_es: "Fragmento sintético C-terminal del hGH (177-191) enfocado en lipólisis dirigida e inhibición de lipogénesis."
             },
             { 
-                id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", 
+                id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2706-003", 
                 pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
                 manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%20Blend%2080%20mg%20-%20New%20Life%20Labs.pdf",
                 imagem: "images/klow80.png",
@@ -1038,7 +1037,7 @@
 
         const artigos = [
             {
-                id: "terzepatida", key: "NL97902TIR60", purity: "99.90%",
+                id: "terzepatida", key: "NL-TIR-3006-006", purity: "99.90%",
                 tag_pt: "Agonista Duplo GIP/GLP-1", tag_en: "Dual GIP/GLP-1 Agonist", tag_es: "Agonista Doble GIP/GLP-1",
                 titulo_pt: "TIRZEPATIDE 60mg: Co-Agonismo Dual na Regulação Glicêmica e Sensibilidade Insulínica",
                 titulo_en: "TIRZEPATIDE 60mg: Dual Co-Agonism in Glycemic Control and Insulin Sensitivity",
@@ -1051,7 +1050,7 @@
                 texto_es: "<h4>1. Mecanismo Doble GIP/GLP-1</h4><p>Actúa directamente en receptores pancreáticos y centrales regulando la glucemia.</p><h4>2. Pureza HPLC</h4><p>Lote autenticado con pureza analítica de <strong>99.90%</strong>.</p>"
             },
             {
-                id: "retatrutide", key: "NL97896RETA60", purity: "99.25%",
+                id: "retatrutide", key: "NL-RET-3206-008", purity: "99.25%",
                 tag_pt: "Agonista Triplo", tag_en: "Triple Agonist", tag_es: "Agonista Triple",
                 titulo_pt: "RETATRUTIDE 60mg: Agonismo Triplo (GIP / GLP-1 / Glucagon) no Remodelamento Metabólico",
                 titulo_en: "RETATRUTIDE 60mg: Triple Agonism (GIP / GLP-1 / Glucagon) in Metabolic Remodeling",
@@ -1064,7 +1063,7 @@
                 texto_es: "<h4>1. Acción del Receptor de Glucagón</h4><p>Aumenta el gasto energético basal y activa la termogénesis.</p>"
             },
             {
-                id: "ghk100", key: "NL97891GHK100", purity: "99.62%",
+                id: "ghk100", key: "NL-GHK-2506-001", purity: "99.62%",
                 tag_pt: "Matriz Extracelular", tag_en: "Extracellular Matrix", tag_es: "Matriz Extracelular",
                 titulo_pt: "GHK-Cu 100mg: Remodelação Tecidual Avançada, Neocolagênese e Reprogramação Genômica",
                 titulo_en: "GHK-Cu 100mg: Advanced Tissue Remodeling, Neocollagenesis, and Genomic Reprogramming",
@@ -1077,7 +1076,7 @@
                 texto_es: "<h4>1. Reparación Genómica y Matriz</h4><p>Modula la expresión genética fibroblástica y síntesis de colágeno.</p>"
             },
             {
-                id: "tesam", key: "NL97901TES10", purity: "99.76%",
+                id: "tesam", key: "NL-TES-2806-004", purity: "99.76%",
                 tag_pt: "Secretagogo GH", tag_en: "GH Secretagogue", tag_es: "Secretagogo GH",
                 titulo_pt: "TESAMORELIN 10mg: Estimulação Pulsátil do Fator de Liberação de Hormônio do Crescimento (GHRH)",
                 titulo_en: "TESAMORELIN 10mg: Pulsatile Stimulation of Growth Hormone Releasing Factor (GHRH)",
@@ -1090,7 +1089,7 @@
                 texto_es: "<h4>1. Preservación del Eje Endógeno</h4><p>Estimula la secreción hipofisaria respetando el equilibrio endocrino.</p>"
             },
             {
-                id: "cjc", key: "NL97890CJC10", purity: "99.39%",
+                id: "cjc", key: "NL-CJC-3406-010", purity: "99.39%",
                 tag_pt: "Sinergia Somatotrópica", tag_en: "Somatotropic Synergy", tag_es: "Sinergia Somatotrópica",
                 titulo_pt: "CJC-1295 + IPAMORELIN 10mg: Sinergia Bimodular para Liberação Potencializada de GH",
                 titulo_en: "CJC-1295 + IPAMORELIN 10mg: Bi-Modular Synergy for Enhanced GH Release",
@@ -1103,7 +1102,7 @@
                 texto_es: "<h4>1. Amplificación de Pulso</h4><p>Promueve la liberación de somatotropina sin alterar prolactina o cortisol.</p>"
             },
             {
-                id: "semax", key: "NL97903SEM10", purity: "99.60%",
+                id: "semax", key: "NL-SEM-3706-013", purity: "99.60%",
                 tag_pt: "Neuromodulação / Nootrópico", tag_en: "Neuromodulation / Nootropic", tag_es: "Neuromodulación / Nootrópico",
                 titulo_pt: "SEMAX 10mg: Heptapeptídeo Neuroprotetor, Indução de BDNF e Modulação da Plasticidade Sináptica",
                 titulo_en: "SEMAX 10mg: Neuroprotective Heptapeptide, BDNF Induction and Synaptic Plasticity",
@@ -1116,7 +1115,7 @@
                 texto_es: "<h4>1. Trofismo Neuronal</h4><p>Incrementa la expresión de BDNF favoreciendo la neuroplasticidad.</p>"
             },
             {
-                id: "selank", key: "NL97898SEL10", purity: "99.55%",
+                id: "selank", key: "NL-SEL-3606-012", purity: "99.55%",
                 tag_pt: "Ansiolítico & Imunomodulador", tag_en: "Anxiolytic & Immunomodulator", tag_es: "Ansiolítico e Inmunomodulador",
                 titulo_pt: "SELANK 10mg: Análogo da Tuftsina na Regulação GABAérgica e Estabilidade Emocional",
                 titulo_en: "SELANK 10mg: Tuftsin Analogue in GABAergic Regulation and Emotional Stability",
@@ -1129,7 +1128,7 @@
                 texto_es: "<h4>1. Control Emocional e Inmune</h4><p>Modula las monoaminas cerebrales y citoquinas sin causar sedación.</p>"
             },
             {
-                id: "epithalon", key: "NL97904EPI50", purity: "99.72%",
+                id: "epithalon", key: "NL-EPI-2026-05", purity: "99.72%",
                 tag_pt: "Bioregulação / Telomerase", tag_en: "Bioregulation / Telomerase", tag_es: "Biorregulación / Telomerasa",
                 titulo_pt: "EPITHALON 50mg: Biorregulador Epifisário, Ativação de Telomerase e Longevidade Celular",
                 titulo_en: "EPITHALON 50mg: Epiphyseal Bioregulator, Telomerase Activation and Cellular Longevity",
@@ -1142,7 +1141,7 @@
                 texto_es: "<h4>1. Mantenimiento del Telómero</h4><p>Induce la enzima telomerasa prolongando la capacidad replicativa celular.</p>"
             },
             {
-                id: "ss31", key: "NL97899SS3150", purity: "99.37%",
+                id: "ss31", key: "NL-SS-2026-05", purity: "99.37%",
                 tag_pt: "Proteção Mitocondrial", tag_en: "Mitochondrial Protection", tag_es: "Protección Mitocondrial",
                 titulo_pt: "SS-31 50mg: Tetrapeptídeo Ligante da Cardiolipina e Otimização da Bioenergética Mitocondrial",
                 titulo_en: "SS-31 50mg: Cardiolipin-Binding Tetrapeptide and Mitochondrial Bioenergetics",
@@ -1155,7 +1154,7 @@
                 texto_es: "<h4>1. Optimización de ATP</h4><p>Protege la cardiolipina contra la oxidación restaurando la síntesis energética.</p>"
             },
             {
-                id: "motsc", key: "NL97894MOTS40", purity: "99.40%",
+                id: "motsc", key: "NL-MOT-3506-011", purity: "99.40%",
                 tag_pt: "Metabolismo Mitocondrial", tag_en: "Mitochondrial Metabolism", tag_es: "Metabolismo Mitocondrial",
                 titulo_pt: "MOTS-c 40mg: Peptídeo Codificado pela Mitocôndria (MDP) na Ativação Central da Via AMPK",
                 titulo_en: "MOTS-c 40mg: Mitochondrial-Derived Peptide (MDP) in Central AMPK Activation",
@@ -1168,7 +1167,7 @@
                 texto_es: "<h4>1. Eje Mitocondria-Núcleo</h4><p>Promueve la translocación nuclear y activación de AMPK.</p>"
             },
             {
-                id: "nad", key: "NL97905NAD500", purity: "99.85%",
+                id: "nad", key: "NL-NAD-2026-07", purity: "99.85%",
                 tag_pt: "Coenzima Energética / Sirtuínas", tag_en: "Energy Coenzyme / Sirtuins", tag_es: "Coenzima Energética / Sirtuínas",
                 titulo_pt: "NAD+ 500mg: Nicotinamida Adenina Dinucleotídeo no Reparo de DNA e Sinalização das Sirtuínas",
                 titulo_en: "NAD+ 500mg: Nicotinamide Adenine Dinucleotide in DNA Repair and Sirtuin Signaling",
@@ -1181,7 +1180,7 @@
                 texto_es: "<h4>1. Soporte de Sirtuínas</h4><p>Cofactor indispensable para enzimas SIRT1-SIRT7 de estabilidad genética.</p>"
             },
             {
-                id: "glow70", key: "NL97892GLOW70", purity: "99.37%",
+                id: "glow70", key: "NL-GLW-2606-002", purity: "99.37%",
                 tag_pt: "Biorrevitalização", tag_en: "Biorevitalizing", tag_es: "Biorrevitalización",
                 titulo_pt: "GLOW 70mg: Engenharia Molecular para Luminosidade e Modulação Pigmentar",
                 titulo_en: "GLOW 70mg: Molecular Engineering for Skin Radiance and Pigment Regulation",
@@ -1194,7 +1193,7 @@
                 texto_es: "<h4>1. Luminosidad Cutánea</h4><p>Inhibe la melanogénesis focal reduciendo hiperpigmentación UV.</p>"
             },
             {
-                id: "aod", key: "NL97889AOD5", purity: "99.67%",
+                id: "aod", key: "NL-AOD-2026-07", purity: "99.67%",
                 tag_pt: "Lipólise Direcionada", tag_en: "Targeted Lipolysis", tag_es: "Lipólisis Dirigida",
                 titulo_pt: "AOD-9604 5mg: Fragmento C-Terminal hGH (177-191) na Lipólise e Inibição Lipogênica",
                 titulo_en: "AOD-9604 5mg: C-Terminal hGH Fragment (177-191) in Lipolysis and Lipogenesis Inhibition",
@@ -1207,7 +1206,7 @@
                 texto_es: "<h4>1. Lipólisis Selectiva</h4><p>Activa receptores beta-3 sin alterar la glucemia o eje IGF-1.</p>"
             },
             {
-                id: "klow80", key: "NL97893KLOW80", purity: "99.70%",
+                id: "klow80", key: "NL-KLW-2706-003", purity: "99.70%",
                 tag_pt: "Reconstrução Dérmica", tag_en: "Dermal Reconstruction", tag_es: "Reconstrucción Dérmica",
                 titulo_pt: "KLOW 80mg: Bioestimulação Avançada, Densidade Matricial e Firmeza Tissular",
                 titulo_en: "KLOW 80mg: Advanced Biostimulation, Matrix Density and Tissue Firmness",
@@ -1233,9 +1232,9 @@
                 articles_subtitle: 'Consulte monografias técnicas completas, mecanismos de ação molecular, ensaios cromatográficos e parâmetros de pureza HPLC dos nossos compostos.',
                 search_placeholder: 'Buscar por composto, via celular ou mecanismo...',
                 read_article: 'Ler Monografia Completa',
-                purity_label: 'Pureza', batch_label: 'LOTE', key_label: 'CHAVE',
+                purity_label: 'Pureza', batch_label: 'LOTE',
                 modal_purity_label: 'Pureza Testada (HPLC)',
-                modal_key_label: 'Chave Única de Validação',
+                modal_key_label: 'Lote do Produto',
                 modal_article_badge: 'Monografia Científica de Laboratório',
                 section_about: 'Sobre a New Life Labs',
                 about_intro: 'A <strong>New Life Labs</strong> é uma instituição biotecnológica global de vanguarda sediada no estado do Texas (EUA), focada na pesquisa, síntese analítica e fornecimento de peptídeos de altíssimo grau de pureza para comunidades científicas e acadêmicas internacionais.',
@@ -1266,9 +1265,9 @@
                 articles_subtitle: 'Consult complete technical monographs, molecular action mechanisms, chromatographic assays, and HPLC purity parameters.',
                 search_placeholder: 'Search by compound, cellular pathway, or mechanism...',
                 read_article: 'Read Full Monograph',
-                purity_label: 'Purity', batch_label: 'BATCH', key_label: 'KEY',
+                purity_label: 'Purity', batch_label: 'BATCH',
                 modal_purity_label: 'Tested Purity (HPLC)',
-                modal_key_label: 'Unique Validation Key',
+                modal_key_label: 'Validation Batch',
                 modal_article_badge: 'Laboratory Scientific Monograph',
                 section_about: 'About New Life Labs',
                 about_intro: '<strong>New Life Labs</strong> is a premier global biotechnology institution based in Texas, USA, specializing in analytical research, synthesis, and supply of ultra-pure peptides.',
@@ -1299,9 +1298,9 @@
                 articles_subtitle: 'Consulte monografías técnicas completas, mecanismos de acción molecular, ensayos cromatográficos y parámetros de pureza HPLC.',
                 search_placeholder: 'Buscar por compuesto, vía celular o mecanismo...',
                 read_article: 'Leer Monografía Completa',
-                purity_label: 'Pureza', batch_label: 'LOTE', key_label: 'CLAVE',
+                purity_label: 'Pureza', batch_label: 'LOTE',
                 modal_purity_label: 'Pureza Probada (HPLC)',
-                modal_key_label: 'Clave Única de Validación',
+                modal_key_label: 'Lote de Validación',
                 modal_article_badge: 'Monografía Científica de Laboratorio',
                 section_about: 'Acerca de New Life Labs',
                 about_intro: '<strong>New Life Labs</strong> es una institución biotecnológica global con sede en Texas, EE. UU., especializada en investigación analítica y síntesis de péptidos ultra puros.',
@@ -1326,7 +1325,6 @@
         let currentLanguage = localStorage.getItem('newlifelabs-lang') || 'pt';
         const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0071e3; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
 
-        // FUNÇÃO DE DOWNLOAD AUTOMÁTICO DE ARQUIVOS PDF
         function forceDownload(event, url, filename) {
             event.preventDefault();
             event.stopPropagation();
@@ -1339,7 +1337,6 @@
             document.body.removeChild(link);
         }
 
-        // FECHAR TODOS OS PAINÉIS/GAVETAS DE BOTÕES DOS CARDS
         function closeAllDrawers() {
             document.querySelectorAll('.card-btn-drawer').forEach(drawer => {
                 drawer.classList.remove('active-drawer');
@@ -1391,7 +1388,6 @@
             const langObj = i18n[currentLanguage] || i18n.pt;
             const purityLabel = langObj.purity_label || 'Pureza';
             const batchLabel = langObj.batch_label || 'LOTE';
-            const keyLabel = langObj.key_label || 'CHAVE';
             const manualText = langObj.btn_manual || 'Baixar Manual';
             const laudoText = langObj.btn_laudo || 'Baixar Laudo';
             const quoteText = langObj.btn_quote || 'Solicitar Cotação';
@@ -1402,7 +1398,7 @@
                 card.className = 'product-card';
 
                 const shortDesc = produto[`desc_${currentLanguage}`] || produto.desc_pt;
-                const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Solicito cotação corporativa para o composto: ' + produto.product + ' (Lote: ' + produto.batch + ' | Chave: ' + produto.key + ')')}`;
+                const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Solicito cotação corporativa para o composto: ' + produto.product + ' (Lote: ' + produto.batch + ')')}`;
 
                 card.innerHTML = `
                     <span class="product-purity-tag">${purityLabel} ${produto.purity}</span>
@@ -1419,7 +1415,6 @@
                         
                         <div class="product-meta-row">
                             <span>${batchLabel}: ${produto.batch}</span>
-                            <span>${keyLabel}: ${produto.key}</span>
                         </div>
 
                         <p class="product-short-desc">${shortDesc}</p>
@@ -1446,7 +1441,6 @@
         function handlePhotoClick(index, event) {
             event.stopPropagation();
             
-            // Fecha outros drawers ativos e abre apenas o do produto selecionado
             closeAllDrawers();
             const drawer = document.getElementById(`drawer-${index}`);
             if (drawer) {
@@ -1458,14 +1452,13 @@
 
             document.getElementById('modal-title').innerHTML = `${prod.product}${verificadoBadge}`;
             document.getElementById('modal-purity-val').textContent = prod.purity;
-            document.getElementById('modal-key-val').textContent = prod.key;
+            document.getElementById('modal-key-val').textContent = prod.batch;
             document.getElementById('modal-desc').textContent = shortDesc;
 
             document.getElementById('modal-img-container').innerHTML = `
                 <img src="${prod.imagem}" alt="${prod.product}" class="modal-product-img" onerror="this.src='images/newlogo.png';">
             `;
 
-            // Configuração dos links de download com a função forceDownload
             const manualBtn = document.getElementById('modal-manual-btn');
             if (manualBtn) {
                 manualBtn.onclick = (e) => forceDownload(e, prod.manualUrl, `${prod.product} - Manual.pdf`);
@@ -1558,7 +1551,6 @@
                 });
             }
 
-            // AO FECHAR MODAL DE PRODUTO, OCULTA TAMBÉM OS BOTÕES DOS CARDS
             const closeProductBtn = document.getElementById('close-modal');
             if (closeProductBtn) {
                 closeProductBtn.addEventListener('click', () => {
@@ -1576,7 +1568,6 @@
                 });
             }
 
-            // FECHAR AO CLICAR FORA DO MODAL OU DOS CARDS
             window.addEventListener('click', (e) => {
                 if (e.target === productModal) {
                     productModal.classList.remove('active');
@@ -1592,7 +1583,6 @@
                 }
             });
 
-            // SUPORTE À TECLA ESC PARA FECHAR E OCULTAR OS BOTÕES
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (productModal) productModal.classList.remove('active');
