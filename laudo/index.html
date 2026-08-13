@@ -86,7 +86,6 @@
             align-items: center;
         }
 
-        /* SOMENTE A LOGO */
         .logo-box {
             display: flex;
             align-items: center;
@@ -763,7 +762,7 @@
                 <div class="verify-title"><i class="fas fa-shield-alt" style="color: var(--accent-green); margin-right: 8px;"></i> <span data-i18n="verifyTitle">Validar Produto por Chave Única</span></div>
                 <p style="font-size: 0.9rem; color: var(--gray-600);" data-i18n="verifyDesc">Digite o código impresso em seu produto para confirmar a validação do laboratório:</p>
                 <div class="verify-input-group">
-                    <input type="text" id="verify-key-input" placeholder="EX: NL97902TIR60" data-i18n-ph="verifyPlaceholder">
+                    <input type="text" id="verify-key-input" placeholder="EX: NL2506GHK100" data-i18n-ph="verifyPlaceholder">
                     <button id="btn-verify-code"><i class="fas fa-search" style="margin-right: 8px;"></i> <span data-i18n="verifyBtn">Validar</span></button>
                 </div>
             </div>
@@ -864,7 +863,6 @@
                             <div class="footer-contact-icon"><i class="far fa-envelope"></i></div>
                             <span>contact@newlifelabs.com</span>
                         </a>
-
                     </div>
                 </div>
             </div>
@@ -896,7 +894,7 @@
                 heroSubtitle: "Consulte a autenticidade dos seus compostos e faça o download do Relatório de Análise (Test Report) oficial de pureza por HPLC e do Manual de Uso.",
                 verifyTitle: "Validar Produto por Chave Única",
                 verifyDesc: "Digite o código impresso em seu produto para confirmar a validação do laboratório:",
-                verifyPlaceholder: "EX: NL97902TIR60",
+                verifyPlaceholder: "EX: NL2506GHK100",
                 verifyBtn: "Validar",
                 searchPlaceholder: "Buscar por produto, chave ou pureza...",
                 catAll: "Todos",
@@ -941,7 +939,7 @@
                 heroSubtitle: "Check the authenticity of your compounds and download the official HPLC purity Test Report and User Manual.",
                 verifyTitle: "Validate Product by Unique Key",
                 verifyDesc: "Enter the code printed on your product to confirm laboratory validation:",
-                verifyPlaceholder: "EX: NL97902TIR60",
+                verifyPlaceholder: "EX: NL2506GHK100",
                 verifyBtn: "Validate",
                 searchPlaceholder: "Search product, key or purity...",
                 catAll: "All",
@@ -986,7 +984,7 @@
                 heroSubtitle: "Consulte la autenticidad de sus compuestos y descargue el Test Report oficial de pureza por HPLC y el Manual de Uso.",
                 verifyTitle: "Validar Producto por Clave Única",
                 verifyDesc: "Ingrese el código impreso en su producto para confirmar la validación del laboratorio:",
-                verifyPlaceholder: "EJ: NL97902TIR60",
+                verifyPlaceholder: "EJ: NL2506GHK100",
                 verifyBtn: "Validar",
                 searchPlaceholder: "Buscar producto, clave o pureza...",
                 catAll: "Todos",
@@ -1041,21 +1039,176 @@
             document.body.removeChild(link);
         }
 
+        // BASE DE DADOS COMPLETA COM OS NOVOS PRODUTOS E LINKS ATUALIZADOS
         const productsQA = [
-            { id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", key: "NL97902TIR60", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60 mg - New Life Labs.pdf" },
-            { id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", key: "NL97896RETA60", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60 mg - New Life Labs.pdf" },
-            { id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", key: "NL97891GHK100", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GHK-Cu 100mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-Cu 100 mg - New Life Labs.pdf" },
-            { id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", key: "NL97901TES10", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 10 mg - New Life Labs.pdf" },
-            { id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", key: "NL97890CJC10", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC-1295 + IPAMORELIN 10 mg - New Life Labs.pdf" },
-            { id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", key: "NL97903SEM10", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10 mg - New Life Labs.pdf" },
-            { id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", key: "NL97898SEL10", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10 mg - New Life Labs.pdf" },
-            { id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", key: "NL97904EPI50", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON 50mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - EPITHALON 50 mg - New Life Labs.pdf" },
-            { id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", key: "NL97899SS3150", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/SS-31 50mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SS-31 50 mg - New Life Labs.pdf" },
-            { id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", key: "NL97894MOTS40", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MTS-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40 mg - New Life Labs.pdf" },
-            { id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", key: "NL97905NAD500", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/NAD+ 500mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - NAD+ 500 mg - New Life Labs.pdf" },
-            { id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", key: "NL97892GLOW70", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW Blend 70 mg - New Life Labs.pdf" },
-            { id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", key: "NL97889AOD5", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", pdfUrl: "https://newlifelabs.us/pdfs/AOD 5mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - AOD-9604 5 mg - New Life Labs.pdf" },
-            { id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", key: "NL97893KLOW80", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2026-05", pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80mg - Test Report New Life Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW Blend 80 mg - New Life Labs.pdf" }
+            { 
+                id: 1, 
+                targetId: "ghk100", 
+                product: "GHK-CU 100MG", 
+                category: "aesthetics-anti-aging", 
+                key: "NL2506GHK100", 
+                purity: "99.62%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-GHK-2506-001", 
+                pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU 100MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GHK-CU 100MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 2, 
+                targetId: "glow70", 
+                product: "GLOW 70MG", 
+                category: "aesthetics-anti-aging", 
+                key: "NL2606GLW70", 
+                purity: "99.37%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-GLW-2606-002", 
+                pdfUrl: "https://newlifelabs.us/pdfs/GLOW 70MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - GLOW 70MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 3, 
+                targetId: "klow80", 
+                product: "KLOW 80MG", 
+                category: "aesthetics-anti-aging", 
+                key: "NL2706KLW80", 
+                purity: "99.70%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-KLW-2706-003", 
+                pdfUrl: "https://newlifelabs.us/pdfs/KLOW 80MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - KLOW 80MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 4, 
+                targetId: "tesam", 
+                product: "TESAMORELIN 20MG", 
+                category: "gh-secretagogues", 
+                key: "NL2806TES20", 
+                purity: "99.76%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-TES-2806-004", 
+                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN 20MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TESAMORELIN 20MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 5, 
+                targetId: "cbl514", 
+                product: "CBL-514 20MG", 
+                category: "Research Peptide", 
+                key: "NL2906CBL20", 
+                purity: "99.50%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-CBL-2906-005", 
+                pdfUrl: "https://newlifelabs.us/pdfs/CBL-514 20MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CBL-514 20MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 6, 
+                targetId: "tirze60", 
+                product: "TIRZEPATIDE 60MG", 
+                category: "weight-loss", 
+                key: "NL3006TIR60", 
+                purity: "99.90%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-TIR-3006-006", 
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 60MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 60MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 7, 
+                targetId: "tirze120", 
+                product: "TIRZEPATIDE 120MG", 
+                category: "weight-loss", 
+                key: "NL3106TIR120", 
+                purity: "99.88%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-TIR-3106-007", 
+                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE 120MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - TIRZEPATIDE 120MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 8, 
+                targetId: "reta60", 
+                product: "RETATRUTIDE 60MG", 
+                category: "weight-loss", 
+                key: "NL3206RETA60", 
+                purity: "99.25%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-RET-3206-008", 
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 60MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 60MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 9, 
+                targetId: "reta120", 
+                product: "RETATRUTIDE 120MG", 
+                category: "weight-loss", 
+                key: "NL3306RETA120", 
+                purity: "99.30%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-RET-3306-009", 
+                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE 120MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - RETATRUTIDE 120MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 10, 
+                targetId: "cjc", 
+                product: "CJC 1295 + IPAMORELIN 10MG", 
+                category: "gh-secretagogues", 
+                key: "NL3406CJC10", 
+                purity: "99.39%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-CJC-3406-010", 
+                pdfUrl: "https://newlifelabs.us/pdfs/CJC 1295 + IPAMORELIN 10MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - CJC 1295 + IPAMORELIN 10MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 11, 
+                targetId: "motsc", 
+                product: "MOTS-C 40MG", 
+                category: "Research Peptide", 
+                key: "NL3506MOTS40", 
+                purity: "99.40%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-MOT-3506-011", 
+                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C 40MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - MOTS-C 40MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 12, 
+                targetId: "selank", 
+                product: "SELANK 10MG", 
+                category: "neuromodulation", 
+                key: "NL3606SEL10", 
+                purity: "99.55%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-SEL-3606-012", 
+                pdfUrl: "https://newlifelabs.us/pdfs/SELANK 10MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SELANK 10MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 13, 
+                targetId: "semax", 
+                product: "SEMAX 10MG", 
+                category: "neuromodulation", 
+                key: "NL3706SEM10", 
+                purity: "99.60%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-SEM-3706-013", 
+                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX 10MG - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - SEMAX 10MG - New Life Labs.pdf" 
+            },
+            { 
+                id: 14, 
+                targetId: "bac3ml", 
+                product: "BACTERIOSTATIC WATER 3ML", 
+                category: "Research Peptide", 
+                key: "NL3806BAC3", 
+                purity: "99.95%", 
+                date: "Aug 12, 2026", 
+                batch: "NL-BAC-3806-014", 
+                pdfUrl: "https://newlifelabs.us/pdfs/BACTERIOSTATIC WATER 3ML - Test Report New Life Labs.pdf", 
+                manualUrl: "https://newlifelabs.us/manual/Guia Tecnico - BACTERIOSTATIC WATER 3ML - New Life Labs.pdf" 
+            }
         ];
 
         let selectedCategory = "all";
@@ -1091,8 +1244,8 @@
             const filtered = productsQA.filter(item => {
                 const matchesCat = selectedCategory === "all" || item.category === selectedCategory;
                 const matchesSearch = searchQuery === "" || 
-                                     item.product.toLowerCase().includes(searchQuery) ||
-                                     item.key.toLowerCase().includes(searchQuery);
+                                      item.product.toLowerCase().includes(searchQuery) ||
+                                      item.key.toLowerCase().includes(searchQuery);
                 return matchesCat && matchesSearch;
             });
 
