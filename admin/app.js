@@ -1,0 +1,2143 @@
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas */
+
+// Biblioteca de Ícones SVG
+const icons = {
+  brand: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
+  summary: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  map: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
+  users: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1 0 7.75"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  orders: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+  archive: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
+  catalog: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  products: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L3 12.5V21h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="6.5"/></svg>`,
+  reports: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  profile: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  emergency: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  logout: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+  refresh: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
+  dollar: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  warehouse: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-4.5a2 2 0 0 1 1.48 0l8 4.5A2 2 0 0 1 22 8.35z"/><polyline points="6 18 6 12 10 12 10 18"/><polyline points="14 18 14 12 18 12 18 18"/></svg>`,
+  check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  pdf: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  menu: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+  flash: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  chart: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+  clipboard: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`
+};
+
+// Coordenadas Geográficas
+const cityCoordinates = {
+  'São Paulo': [-23.5505, -46.6333],
+  'Curitiba': [-25.4284, -49.2733],
+  'Cotia': [-23.6039, -46.9190],
+  'São Luís': [-2.5307, -44.3068],
+  'Barueri': [-23.5106, -46.8761],
+  'Londres': [51.5074, -0.1278]
+};
+
+// Base de Usuários
+const defaultSystemUsers = [
+  { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR' },
+  { id: 'u_wg', user: 'wg', password: 'wgsystem2026@', name: 'Wg', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'u_pit', user: 'pit', password: 'pitsystem2026@', name: 'Pit', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'u_spcentro', user: 'spcentro', password: 'spcentrosystem2026@', name: 'SP / CENTRO', role: 'STOCK', warehouseId: 'wh_sp_centro', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'u_spoe', user: 'spoe', password: 'spoesystem2026@', name: 'SP / OE', role: 'STOCK', warehouseId: 'wh_sp_oe', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'u_ukstock', user: 'ukstock', password: 'ukstocksystem2026@', name: 'UK Stock', role: 'STOCK', warehouseId: 'wh_uk', city: 'Londres', uf: 'UK', country: 'UK' },
+  { id: 'u_b2bcotia', user: 'b2bcotia', password: 'b2bcotiasystem2026@', name: 'B2b Cotia', role: 'SELLER', supervisor: 'wg', city: 'Cotia', uf: 'SP', country: 'BR' },
+  { id: 'u_gbmaranhao', user: 'gbmaranhao', password: 'gbmaranhaosystem2026@', name: 'GB Maranhão', role: 'SELLER', supervisor: 'wg', city: 'São Luís', uf: 'MA', country: 'BR' },
+  { id: 'u_011barueri', user: '011barueri', password: '011baruerisystem2026@', name: '011 Barueri', role: 'SELLER', supervisor: 'pit', city: 'Barueri', uf: 'SP', country: 'BR' },
+  { id: 'u_emipiranga', user: 'emipiranga', password: 'emipirangasystem2026@', name: 'Em Ipiranga', role: 'SELLER', supervisor: 'pit', city: 'São Paulo', uf: 'SP', country: 'BR' }
+];
+
+// Estoques Matriz
+const defaultWarehouses = [
+  { id: 'wh_sp_centro', name: 'SP / CENTRO', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'wh_sp_oe', name: 'SP / OE', city: 'São Paulo', uf: 'SP', country: 'BR' },
+  { id: 'wh_uk', name: 'UK Stock', city: 'Londres', uf: 'UK', country: 'UK' }
+];
+
+const catalog = [
+  ['Retatrutide 60mg', 'New Life'], ['Tirzepatide 120mg', 'NEW'], ['Tirzepatide 60mg', 'New Life'],
+  ['GHK-Cu 100mg', 'New Life'], ['GLOW 70mg', 'New Life'], ['KLOW 80mg', 'New Life'],
+  ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
+  ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'],
+  ['Selank 10mg', 'New Life'], ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'],
+  ['CBL-514 20mg', 'New Life'], ['Retatrutide 40mg', 'Usa Peptides'], ['Tirzepatide 120mg', 'Usa Peptides'],
+  ['Tirzepatide 60mg', 'Usa Peptides'], ['Tirzepatide 30mg', 'Usa Peptides'], ['Beauty Stack', 'Usa Peptides'],
+  ['GHK-Cu 100mg', 'Usa Peptides'], ['GLOW Stack', 'Usa Peptides'], ['KLOW Stack', 'Usa Peptides']
+];
+
+const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
+const ibgeCitiesCache = {};
+
+let currentUser = null;
+let activeTab = 'summary';
+let sellerActiveTab = 'sales';
+let drawerOpen = false;
+
+/* Utilitários */
+const read = (k, d = []) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
+const write = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const money = n => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
+
+// Container único de renderização
+function getAppRoot() {
+  let root = document.getElementById('appRoot');
+  if (!root) {
+    root = document.createElement('div');
+    root.id = 'appRoot';
+    document.body.appendChild(root);
+  }
+
+  Array.from(document.body.children).forEach(child => {
+    if (child !== root && child.id !== 'loginScreen' && child.tagName !== 'SCRIPT' && child.tagName !== 'LINK') {
+      child.style.display = 'none';
+    }
+  });
+
+  root.style.display = 'block';
+  return root;
+}
+
+// Sincronização Inicial
+function initSystemData() {
+  if (!localStorage.getItem('nl_v8_initialized')) {
+    localStorage.clear();
+    write('nl_users', defaultSystemUsers);
+    write('nl_warehouses', defaultWarehouses);
+    write('nl_v8_initialized', true);
+  }
+}
+initSystemData();
+
+function allUsers() { return read('nl_users', defaultSystemUsers); }
+function allSellers() { return allUsers().filter(u => u.role === 'SELLER' || u.role === 'ADMIN_SELLER'); }
+function allSupervisors() { return allUsers().filter(u => u.role === 'SUPERVISOR' || u.role === 'ADMIN_SUPERVISOR'); }
+function products() { return read('atlasProducts'); }
+function sales() { return read('atlasSales'); }
+function orders() { return read('atlasOrders'); }
+function warehouses() { return read('nl_warehouses', defaultWarehouses); }
+function warehouseInventory() { return read('nl_warehouse_inventory'); }
+function warehouseTransfers() { return read('nl_transfers'); }
+function systemCatalog() { return [...catalog, ...read('atlasCustomCatalog').map(x => [x.name, x.brand])]; }
+
+function hasAdminAccess(user) { return user?.role === 'ADMIN_SUPERVISOR' || user?.role === 'ADMIN_SELLER' || user?.role === 'ADMIN'; }
+function hasSupervisorAccess(user) { return user?.role === 'SUPERVISOR' || user?.role === 'ADMIN_SUPERVISOR'; }
+function isSellerUser(user) { return user?.role === 'SELLER' || user?.role === 'ADMIN_SELLER'; }
+
+function dayStart(days = 0) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - days);
+  return d;
+}
+
+function periodSales(sid, period) {
+  const now = new Date();
+  const start = period === 'day' ? dayStart() : period === '7days' ? dayStart(6) : period === 'month' ? new Date(now.getFullYear(), now.getMonth(), 1) : new Date(now.getFullYear(), 0, 1);
+  return sales().filter(x => (!sid || x.sellerId === sid) && new Date(x.createdAt) >= start);
+}
+
+function sellerRevenue(id, period = 'day') { return periodSales(id, period).reduce((a, x) => a + x.total, 0); }
+function stock(sid) { return products().filter(p => p.sellerId === sid).reduce((a, p) => a + Number(p.stock || 0), 0); }
+function avatarFor(u) { return String(u?.name || u?.user || 'NL').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase(); }
+
+// Leaflet.js
+function loadLeaflet(callback) {
+  if (window.L) return callback();
+  if (!document.getElementById('leaflet-css')) {
+    const link = document.createElement('link');
+    link.id = 'leaflet-css';
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+  }
+  if (!document.getElementById('leaflet-js')) {
+    const script = document.createElement('script');
+    script.id = 'leaflet-js';
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = callback;
+    document.head.appendChild(script);
+  } else {
+    const check = setInterval(() => {
+      if (window.L) { clearInterval(check); callback(); }
+    }, 100);
+  }
+}
+
+async function fetchCitiesForRegion(uf, citySelect, targetCity = '') {
+  citySelect.innerHTML = '<option value="">Carregando lista de cidades...</option>';
+  citySelect.disabled = true;
+
+  if (!uf) {
+    citySelect.innerHTML = '<option value="">Selecione o estado primeiro</option>';
+    citySelect.disabled = false;
+    return;
+  }
+
+  try {
+    if (!ibgeCitiesCache[uf]) {
+      const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?ordenacao=nome`);
+      const data = await res.json();
+      ibgeCitiesCache[uf] = data.map(m => m.nome);
+    }
+    const cities = ibgeCitiesCache[uf];
+    citySelect.innerHTML = `<option value="">Selecione a cidade (${cities.length} disponíveis)</option>` +
+      cities.map(c => `<option value="${esc(c)}" ${targetCity === c ? 'selected' : ''}>${esc(c)}</option>`).join('');
+  } catch (e) {
+    citySelect.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+  }
+  citySelect.disabled = false;
+}
+
+function confirmActionModal({ title, subtitle, warningText, confirmText = 'Confirmar e Salvar', cancelText = 'Cancelar', onConfirm }) {
+  const m = modal(`
+    <div class="confirm-dialog-wrap">
+      <div class="confirm-icon">${icons.flash}</div>
+      <h2>${esc(title)}</h2>
+      ${subtitle ? `<p>${esc(subtitle)}</p>` : ''}
+      <div class="confirm-warning-box">
+        <strong>⚠️ Confirmação do Sistema:</strong>
+        <span>${esc(warningText || 'Confirme se todas as informações estão corretas.')}</span>
+      </div>
+      <div class="confirm-dialog-actions flex justify-end gap-3 mt-6">
+        <button type="button" class="outline-btn cancel-dialog">${esc(cancelText)}</button>
+        <button type="button" class="primary-btn confirm-dialog">${icons.check} ${esc(confirmText)}</button>
+      </div>
+    </div>
+  `);
+
+  m.querySelector('.cancel-dialog').onclick = () => m.remove();
+  m.querySelector('.confirm-dialog').onclick = () => {
+    m.remove();
+    if (typeof onConfirm === 'function') onConfirm();
+  };
+}
+
+function exportUniversalPDF({ title, subtitle, headers = [], rows = [], fileName = 'relatorio.pdf' }) {
+  if (!window.jspdf) return alert('Aguarde o carregamento do gerador de PDF.');
+
+  const doc = new window.jspdf.jsPDF('p', 'mm', 'a4');
+  const nowStr = new Date().toLocaleString('pt-BR');
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NEWLIFE.SYSTEM', 14, 12);
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`${title.toUpperCase()}`, 14, 19);
+  doc.text(`Gerado em: ${nowStr}`, 130, 19);
+
+  let startY = 36;
+  if (subtitle) {
+    doc.setTextColor(51, 65, 85);
+    doc.setFontSize(9);
+    doc.text(subtitle, 14, startY);
+    startY += 8;
+  }
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setFillColor(241, 245, 249);
+  doc.rect(14, startY, 182, 7, 'F');
+  doc.setTextColor(15, 23, 42);
+
+  const colWidth = 182 / (headers.length || 1);
+  headers.forEach((h, i) => { doc.text(String(h), 16 + (i * colWidth), startY + 5); });
+
+  startY += 10;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+
+  rows.forEach((r, rowIdx) => {
+    if (startY > 275) { doc.addPage(); startY = 20; }
+    if (rowIdx % 2 === 0) { doc.setFillColor(248, 250, 252); doc.rect(14, startY - 4, 182, 7, 'F'); }
+    r.forEach((cell, i) => {
+      const cellText = String(cell || '—').replace(/<[^>]*>?/gm, '');
+      doc.text(cellText.length > 30 ? cellText.substring(0, 28) + '...' : cellText, 16 + (i * colWidth), startY);
+    });
+    startY += 7;
+  });
+
+  doc.save(fileName);
+  showToast('Relatório PDF baixado!');
+}
+
+/* Navegação e Sessão */
+function login(user) {
+  currentUser = user;
+  const loginScreen = document.getElementById('loginScreen');
+  if (loginScreen) loginScreen.style.display = 'none';
+
+  if (user.role === 'STOCK') { renderStockPanel(); }
+  else if (hasAdminAccess(user)) { activeTab = 'adminHome'; renderAdmin(); }
+  else if (hasSupervisorAccess(user)) { activeTab = 'summary'; renderSupervisor(); }
+  else { sellerActiveTab = 'sales'; renderSeller(); }
+}
+
+function logout() {
+  currentUser = null;
+  location.reload();
+}
+
+function appFooter() {
+  return `
+    <footer class="app-footer">
+      <div class="footer-container">
+        <div><b>newlife.system</b> &copy; 2026 — Gestão Integrada</div>
+        <div class="footer-links"><span>Estoques Sep.</span> · <span>Modo Vendedor + ADM</span></div>
+      </div>
+    </footer>
+  `;
+}
+
+function navContent() {
+  const isAdmin = hasAdminAccess(currentUser);
+  const isSeller = isSellerUser(currentUser);
+
+  return `
+    <div class="app-brand flex items-center justify-between p-4">
+      <div class="flex items-center gap-2">
+        <div class="brand-mark">${icons.brand}</div>
+        <div><b>newlife<span>.system</span></b><small>gestão</small></div>
+      </div>
+      <button class="mobile-close-drawer md:hidden text-slate-400 hover:text-white text-xl p-2" title="Fechar Menu">✕</button>
+    </div>
+
+    ${isSeller ? `
+      <div style="padding: 0 12px 10px 12px;">
+        <button id="switchToSellerBtn" class="primary-btn w-full flex items-center justify-center gap-2" style="background: #0284c7; color: #fff; height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
+          ${icons.chart} <span>🛒 MODO VENDEDOR (DAR BAIXA)</span>
+        </button>
+      </div>
+    ` : ''}
+
+    <div class="side-label">${isAdmin ? 'ADMINISTRAÇÃO GERAL' : 'SUPERVISÃO OPERACIONAL'}</div>
+    ${isAdmin ? `
+      <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
+      <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
+      <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
+      <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques (SP/CENTRO, SP/OE, UK)</span></button>
+      <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
+      <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
+      <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
+      <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
+      <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+      <button class="side-link ${activeTab === 'adminReports' ? 'active' : ''}" data-admin-tab="adminReports">${icons.reports} <span>Relatórios Globais</span></button>
+    ` : `
+      <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
+      <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
+      <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
+      <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>
+      <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
+      <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
+      <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
+      <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+      <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
+    `}
+
+    ${isAdmin ? `
+      <div class="side-danger"><button id="emergencyBtn">${icons.emergency} <span>Reset do Sistema</span></button></div>
+    ` : ''}
+
+    <div class="side-account">
+      <div class="avatar small">${avatarFor(currentUser)}</div>
+      <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      <button id="logoutSide" title="Sair">${icons.logout}</button>
+    </div>
+  `;
+}
+
+function sellerNavContent() {
+  const isAdmin = hasAdminAccess(currentUser);
+  return `
+    <div class="app-brand flex items-center justify-between p-4">
+      <div class="flex items-center gap-2">
+        <div class="brand-mark">${icons.brand}</div>
+        <div><b>newlife<span>.system</span></b><small>vendedor</small></div>
+      </div>
+      <button class="mobile-close-drawer md:hidden text-slate-400 hover:text-white text-xl p-2" title="Fechar Menu">✕</button>
+    </div>
+
+    ${isAdmin ? `
+      <div style="padding: 0 12px 10px 12px;">
+        <button id="switchToAdminBtn" class="outline-btn w-full flex items-center justify-center gap-2" style="background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
+          ${icons.summary} <span>⚙️ PAINEL ADMINISTRATIVO</span>
+        </button>
+      </div>
+    ` : ''}
+
+    <div class="side-label">PAINEL DO VENDEDOR</div>
+    <button class="side-link ${sellerActiveTab === 'sales' ? 'active' : ''}" data-seller-tab="sales">${icons.chart} <span>Registrar Baixas / Vendas</span></button>
+    <button class="side-link ${sellerActiveTab === 'newOrder' ? 'active' : ''}" data-seller-tab="newOrder">${icons.orders} <span>Pedido de Reposição</span></button>
+    <button class="side-link ${sellerActiveTab === 'myOrders' ? 'active' : ''}" data-seller-tab="myOrders">${icons.clipboard} <span>Acompanhar Meus Pedidos</span></button>
+    <button class="side-link ${sellerActiveTab === 'archived' ? 'active' : ''}" data-seller-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
+    <div class="side-account mt-auto">
+      <div class="avatar small">${avatarFor(currentUser)}</div>
+      <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      <button class="logoutSellerSideBtn" title="Sair">${icons.logout}</button>
+    </div>
+  `;
+}
+
+function closeMobileDrawer() {
+  drawerOpen = false;
+  const drawer = document.getElementById('appDrawer');
+  const overlay = document.getElementById('appDrawerOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function openMobileDrawer() {
+  drawerOpen = true;
+  const drawer = document.getElementById('appDrawer');
+  const overlay = document.getElementById('appDrawerOverlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+}
+
+function appFrame(title, sub, body) {
+  const container = getAppRoot();
+  container.innerHTML = `
+    <div class="app-layout w-full min-h-screen flex flex-col md:flex-row">
+      <aside class="app-sidebar hidden md:flex flex-col">${navContent()}</aside>
+      <div id="appDrawerOverlay" class="drawer-overlay ${drawerOpen ? 'open' : ''}"></div>
+      <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${navContent()}</aside>
+      <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
+        <div>
+          <!-- NAV MOBILE COM HAMBÚRGUER À ESQUERDA E MARCA À DIREITA -->
+          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+            
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <button id="hamburgerBtn" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" style="position: static !important; float: none !important; margin: 0 !important;" title="Abrir Menu">
+                ${icons.menu}
+              </button>
+              
+              <div class="hidden md:block">
+                <div class="eyebrow text-[10px] font-bold text-sky-600 uppercase tracking-wider">NEWLIFE.SYSTEM · ${new Date().toLocaleDateString('pt-BR')}</div>
+                <h1 class="text-xl font-black text-slate-900 leading-tight">${title}</h1>
+                <p class="text-xs text-slate-500">${sub}</p>
+              </div>
+
+              <div class="md:hidden font-extrabold text-xs text-slate-800 truncate">
+                ${title}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 ml-auto" style="margin-left: auto !important;">
+              <button id="refreshPage" class="outline-btn hidden md:flex items-center gap-1">${icons.refresh} <span>Atualizar</span></button>
+              
+              <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
+                newlife<span class="text-sky-600">.system</span>
+              </div>
+              
+              <div class="avatar hidden md:flex">${avatarFor(currentUser)}</div>
+            </div>
+          </header>
+
+          <div class="page-body p-4 md:p-6">${body}</div>
+        </div>
+        ${appFooter()}
+      </section>
+    </div>
+  `;
+
+  const hBtn = document.getElementById('hamburgerBtn');
+  const overlay = document.getElementById('appDrawerOverlay');
+  if (hBtn) hBtn.onclick = () => drawerOpen ? closeMobileDrawer() : openMobileDrawer();
+  if (overlay) overlay.onclick = closeMobileDrawer;
+
+  document.querySelectorAll('.mobile-close-drawer').forEach(b => b.onclick = closeMobileDrawer);
+
+  document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { 
+    activeTab = b.dataset.tab; 
+    closeMobileDrawer(); 
+    renderSupervisor(); 
+  });
+
+  document.querySelectorAll('[data-admin-tab]').forEach(b => b.onclick = () => { 
+    activeTab = b.dataset.adminTab; 
+    closeMobileDrawer(); 
+    renderAdmin(); 
+  });
+  
+  const switchBtn = document.getElementById('switchToSellerBtn');
+  if (switchBtn) switchBtn.onclick = () => { closeMobileDrawer(); sellerActiveTab = 'sales'; renderSeller(); };
+
+  const logoutBtn = document.getElementById('logoutSide');
+  if (logoutBtn) logoutBtn.onclick = logout;
+
+  const emergencyBtn = document.getElementById('emergencyBtn');
+  if (emergencyBtn) emergencyBtn.onclick = emergencyWipeModal;
+  
+  const refreshBtn = document.getElementById('refreshPage');
+  if (refreshBtn) refreshBtn.onclick = () => { hasAdminAccess(currentUser) ? renderAdmin() : renderSupervisor(); showToast('Dados atualizados'); };
+}
+
+function modal(content) {
+  const m = document.createElement('div');
+  m.className = 'modal open';
+  m.innerHTML = `<div class="modal-card glass-panel"><button class="close-btn" type="button">×</button>${content}</div>`;
+  document.body.appendChild(m);
+  const close = () => m.remove();
+  m.querySelector('.close-btn').onclick = close;
+  m.onclick = e => { if (e.target === m) close(); };
+  return m;
+}
+
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast glass-panel show';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* RESET DO SISTEMA */
+function emergencyWipeModal() {
+  if (!hasAdminAccess(currentUser)) {
+    showToast('Apenas administradores podem resetar o sistema.');
+    return;
+  }
+
+  const m = modal(`
+    <h2>🔐 Confirmação de Segurança</h2>
+    <p class="text-xs text-slate-500 mb-4">Atenção! Esta ação apaga todos os vendedores, vendas, estoques e histórico. Para prosseguir, digite sua senha de Administrador.</p>
+    <form id="resetConfirmForm" class="seller-form">
+      <label>Senha do Administrador (${esc(currentUser.user)})
+        <input type="password" id="resetAdminPassword" class="control" required placeholder="Digite sua senha">
+      </label>
+      <div id="resetErrorMsg" class="text-red-500 text-xs font-bold mt-1" style="color: #ef4444; font-size: 12px; margin-top: 4px;"></div>
+      <div class="flex gap-2 mt-4 justify-end">
+        <button type="button" class="outline-btn cancel-reset-btn">Cancelar</button>
+        <button type="submit" class="delete-btn" style="background: #dc2626; color: white;">⚠️ Confirmar Reset Geral</button>
+      </div>
+    </form>
+  `);
+
+  m.querySelector('.cancel-reset-btn').onclick = () => m.remove();
+  
+  m.querySelector('#resetConfirmForm').onsubmit = (e) => {
+    e.preventDefault();
+    const pwd = m.querySelector('#resetAdminPassword').value;
+    if (pwd === currentUser.password || pwd === 'iksystem2026@') {
+      localStorage.clear();
+      location.reload();
+    } else {
+      m.querySelector('#resetErrorMsg').textContent = 'Senha incorreta! Operação cancelada.';
+    }
+  };
+}
+
+/* Telas do Supervisor */
+function renderSupervisor() {
+  if (activeTab === 'sales') return renderSupervisorSalesPage();
+  if (activeTab === 'map') return renderMapPage();
+  if (activeTab === 'sellers') return renderSellersPage();
+  if (activeTab === 'orders') return renderSupervisorOrdersPage();
+  if (activeTab === 'archived') return renderArchivedPage();
+  if (activeTab === 'catalog') return renderCatalogPage();
+  if (activeTab === 'products') return renderProductsPage();
+  if (activeTab === 'reports') return renderReportsPage();
+  renderSummary();
+}
+
+/* Telas do Admin Geral */
+function renderAdmin() {
+  if (activeTab === 'sales') return renderSupervisorSalesPage();
+  if (activeTab === 'map') return renderMapPage();
+  if (activeTab === 'warehouses') return renderWarehousesPage();
+  if (activeTab === 'adminSupervisors') return renderAdminSupervisorsPage();
+  if (activeTab === 'sellers') return renderSellersPage();
+  if (activeTab === 'orders') return renderSupervisorOrdersPage();
+  if (activeTab === 'catalog') return renderCatalogPage();
+  if (activeTab === 'products') return renderProductsPage();
+  if (activeTab === 'adminReports') return renderReportsPage();
+  renderAdminHome();
+}
+
+/* TELA DE DAR BAIXA DO SUPERVISOR */
+function renderSupervisorSalesPage() {
+  const myProducts = products().filter(p => p.sellerId === currentUser.id && Number(p.stock) > 0);
+  
+  appFrame('Dar Baixa / Registrar Vendas (Supervisor)', 'Registre as vendas efetuadas diretamente do seu estoque próprio de supervisor.', `
+    <div class="panel glass-panel">
+      <div class="panel-head flex-wrap gap-3">
+        <h2>Registrar Baixas do Seu Estoque</h2>
+        ${myProducts.length ? `<button id="registerSupSaleBtn" class="primary-btn">${icons.check} Confirmar Vendas</button>` : ''}
+      </div>
+      ${myProducts.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço Unit.</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
+          </div>
+          ${myProducts.map(p => `
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                <b>${esc(p.name)}</b> <small class="text-slate-500">(${esc(p.brand)})</small>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                <span>${money(p.price)}</span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                <b class="text-emerald-600">${p.stock} un.</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
+                <input class="sup-baja-input control max-w-[100px] md:max-w-none" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="empty-state">Você não possui produtos em seu estoque no momento. Receba envios dos Estoques Matriz para o seu usuário para poder dar baixa.</div>'}
+    </div>
+  `);
+
+  const btn = document.getElementById('registerSupSaleBtn');
+  if (btn) {
+    btn.onclick = () => {
+      const inputs = [...document.querySelectorAll('.sup-baja-input')];
+      const items = inputs.map(i => ({ p: myProducts.find(x => x.id === i.dataset.id), q: Number(i.value) })).filter(x => x.q > 0);
+      if (!items.length) return alert('Informe a quantidade de vendas.');
+
+      const pl = products();
+      const sl = sales();
+
+      items.forEach(x => {
+        const targetP = pl.find(p => p.id === x.p.id);
+        if (targetP) targetP.stock -= x.q;
+        sl.push({
+          id: uid(),
+          sellerId: currentUser.id,
+          productId: x.p.id,
+          quantity: x.q,
+          unitPrice: x.p.price,
+          total: x.q * x.p.price,
+          createdAt: new Date().toISOString()
+        });
+      });
+
+      write('atlasProducts', pl);
+      write('atlasSales', sl);
+      showToast('Vendas do supervisor registradas!');
+      renderSupervisorSalesPage();
+    };
+  }
+}
+
+/* MODAL: ENVIAR ESTOQUE DO SUPERVISOR PARA VENDEDOR */
+function transferSupervisorStockModal() {
+  const myProds = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
+  const mySellers = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+
+  if (!myProds.length) return alert('Você não possui produtos em seu estoque no momento para enviar.');
+  if (!mySellers.length) return alert('Você não possui vendedores cadastrados sob sua supervisão para receber produtos.');
+
+  const m = modal(`
+    <h2>Enviar Produtos para Vendedor</h2>
+    <p class="text-xs text-slate-500 mb-3">Transfira itens do seu próprio estoque de supervisor diretamente para a sua equipe.</p>
+    <form id="supTransferForm" class="seller-form">
+      <label>Selecione o Vendedor Destinatário
+        <select name="targetId" class="control" required>
+          ${mySellers.map(s => `<option value="${s.id}">${esc(s.name)} (@${esc(s.user)}) — ${esc(s.city)}/${esc(s.uf)}</option>`).join('')}
+        </select>
+      </label>
+
+      <label>Produto Disponível em Seu Estoque
+        <select name="productId" class="control" required>
+          ${myProds.map(p => `<option value="${p.id}">${esc(p.name)} (${esc(p.brand)}) — Disponível: ${p.stock} un. (R$ ${p.price})</option>`).join('')}
+        </select>
+      </label>
+
+      <div class="form-grid">
+        <label>Quantidade a Enviar
+          <input name="quantity" type="number" min="1" value="1" class="control" required>
+        </label>
+      </div>
+
+      <button type="button" id="triggerSupTransfer" class="primary-btn w-full mt-3">${icons.check} Confirmar Transferência</button>
+    </form>
+  `);
+
+  m.querySelector('#triggerSupTransfer').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    const productId = f.get('productId');
+    const targetId = f.get('targetId');
+    const qty = Number(f.get('quantity'));
+
+    const prods = products();
+    const supItem = prods.find(p => p.id === productId);
+    const targetSeller = mySellers.find(s => s.id === targetId);
+
+    if (!supItem) return alert('Produto inválido.');
+    if (qty > supItem.stock) return alert(`Quantidade indisponível. Seu saldo é de ${supItem.stock} un.`);
+
+    confirmActionModal({
+      title: 'Confirmar Envio ao Vendedor',
+      subtitle: `${qty}x ${supItem.name} → ${targetSeller.name}`,
+      warningText: 'A quantidade será debitada do seu estoque e creditada ao vendedor selecionado.',
+      confirmText: 'Enviar Agora',
+      onConfirm: () => {
+        supItem.stock -= qty;
+
+        let sellerItem = prods.find(p => p.sellerId === targetSeller.id && p.name === supItem.name);
+        if (sellerItem) {
+          sellerItem.stock += qty;
+          sellerItem.price = supItem.price;
+        } else {
+          prods.push({
+            id: uid(),
+            sellerId: targetSeller.id,
+            name: supItem.name,
+            brand: supItem.brand,
+            price: supItem.price,
+            stock: qty
+          });
+        }
+        write('atlasProducts', prods);
+
+        const transfers = warehouseTransfers();
+        transfers.push({
+          id: uid(),
+          warehouseId: 'sup_' + currentUser.id,
+          warehouseName: `Supervisor ${currentUser.name}`,
+          targetType: 'SELLER',
+          targetId: targetSeller.id,
+          targetName: targetSeller.name,
+          productName: supItem.name,
+          brand: supItem.brand,
+          quantity: qty,
+          price: supItem.price,
+          createdAt: new Date().toISOString()
+        });
+        write('nl_transfers', transfers);
+
+        m.remove();
+        showToast('Produtos enviados ao vendedor com sucesso!');
+        activeTab === 'products' ? renderProductsPage() : renderSellersPage();
+      }
+    });
+  };
+}
+
+/* MAPA DE LOCALIZAÇÕES */
+function renderMapPage() {
+  const users = allUsers();
+  const isAdm = hasAdminAccess(currentUser);
+  const filteredUsers = isAdm ? users : users.filter(u => u.role === 'STOCK' || u.user === currentUser.user || u.supervisor === currentUser.user);
+
+  appFrame('Mapa de Localizações da Equipe', 'Visualização geográfica de Vendedores, Supervisores e Depósitos no Brasil e Reino Unido.', `
+    <div class="stats-grid mb-6">
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Total Mapeados</span><span class="metric-icon cyan">${icons.map}</span></div>
+        <div class="metric-value">${filteredUsers.length} Pessoas/Depósitos</div>
+      </div>
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Legenda do Mapa</span><span class="metric-icon orange">${icons.users}</span></div>
+        <div class="flex items-center gap-3 mt-2 text-xs font-bold">
+          <span style="color:#2563eb;">🔵 Estoque Matriz</span>
+          <span style="color:#7c3aed;">🟣 Supervisor</span>
+          <span style="color:#059669;">🟢 Vendedor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel glass-panel overflow-hidden p-0 rounded-2xl" style="height: 550px; position: relative;">
+      <div id="teamMap" style="width: 100%; height: 100%; z-index: 1;"></div>
+    </div>
+  `);
+
+  loadLeaflet(() => {
+    const mapContainer = document.getElementById('teamMap');
+    if (!mapContainer) return;
+
+    const map = L.map('teamMap').setView([-15.7801, -47.9292], 4);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const blueIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+
+    const violetIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+
+    const greenIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+
+    const bounds = [];
+
+    filteredUsers.forEach(u => {
+      const coords = cityCoordinates[u.city] || [-23.5505, -46.6333];
+      const latJitter = coords[0] + (Math.random() - 0.5) * 0.05;
+      const lngJitter = coords[1] + (Math.random() - 0.5) * 0.05;
+
+      let markerIcon = greenIcon;
+      let roleLabel = 'Vendedor';
+      if (u.role === 'STOCK') { markerIcon = blueIcon; roleLabel = 'Estoque Matriz'; }
+      else if (u.role.includes('SUPERVISOR')) { markerIcon = violetIcon; roleLabel = 'Supervisor'; }
+
+      const popupContent = `
+        <div style="font-family: sans-serif; padding: 4px;">
+          <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold; color: #0f172a;">${esc(u.name)}</h4>
+          <span style="font-size: 11px; padding: 2px 6px; background: #e2e8f0; border-radius: 4px; font-weight: bold; color: #334155;">${roleLabel}</span>
+          <p style="margin: 8px 0 0 0; font-size: 11px; color: #64748b;">
+            📍 <b>Local:</b> ${esc(u.city)} / ${esc(u.uf)} (${esc(u.country)})<br>
+            ${u.supervisor ? `👤 <b>Supervisor:</b> @${esc(u.supervisor)}` : ''}
+          </p>
+        </div>
+      `;
+
+      const m = L.marker([latJitter, lngJitter], { icon: markerIcon }).addTo(map);
+      m.bindPopup(popupContent);
+      bounds.push([latJitter, lngJitter]);
+    });
+
+    if (bounds.length) map.fitBounds(bounds, { padding: [40, 40] });
+  });
+}
+
+/* RESUMO */
+function renderSummary() {
+  const mySellers = allSellers().filter(s => s.supervisor === currentUser.user);
+  const rows = mySellers.map(s => ({ s, xs: periodSales(s.id, 'day') }));
+  const rev = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.total, 0), 0);
+  const qty = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.quantity, 0), 0);
+
+  appFrame('Resumo da Equipe', 'Visão geral das vendas do dia da equipe.', `
+    <div class="stats-grid">
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Faturamento Hoje</span><span class="metric-icon cyan">${icons.dollar}</span></div>
+        <div class="metric-value">${money(rev)}</div>
+      </div>
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Itens Vendidos</span><span class="metric-icon green">${icons.check}</span></div>
+        <div class="metric-value">${qty} un.</div>
+      </div>
+    </div>
+
+    <div class="panel glass-panel mt-6">
+      <div class="panel-head"><h2>Desempenho da Equipe Hoje</h2></div>
+      <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
+        </div>
+        ${rows.map(r => `
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+              <b>${esc(r.s.name)}</b>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
+              <span>${esc(r.s.city)} / ${esc(r.s.uf)}</span>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
+              <b>${r.xs.reduce((a, x) => a + x.quantity, 0)} un.</b>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
+              <strong class="highlight-val">${money(r.xs.reduce((a, x) => a + x.total, 0))}</strong>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `);
+}
+
+/* GERENCIAMENTO DE ESTOQUES */
+function renderWarehousesPage() {
+  const whList = warehouses();
+  const inv = warehouseInventory();
+  const transfers = warehouseTransfers();
+
+  appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie individualmente o estoque de cada localidade e envie produtos para Supervisores ou Vendedores.', `
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      ${whList.map(w => {
+        const wItems = inv.filter(i => i.warehouseId === w.id);
+        const totalQty = wItems.reduce((a, i) => a + Number(i.stock || 0), 0);
+        return `
+          <div class="p-5 glass-panel rounded-2xl bg-white/80 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-black text-slate-900 text-base flex items-center gap-2">${icons.warehouse} ${esc(w.name)}</h3>
+                <span class="status-pill style-blue">${esc(w.uf)}</span>
+              </div>
+              <p class="text-xs text-slate-500 mb-3">Localização: ${esc(w.city)} (${esc(w.country)})</p>
+              <div class="p-3 bg-slate-100 rounded-xl mb-4">
+                <span class="text-[10px] font-bold text-slate-500 uppercase block">Estoque Cadastrado</span>
+                <strong class="text-lg text-slate-900 font-extrabold">${totalQty} unidades</strong>
+                <small class="block text-slate-500 mt-1">${wItems.length} tipo(s) de produtos</small>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="primary-btn flex-1 add-item-wh" data-id="${w.id}" style="height: 36px; font-size: 11px;">+ Inserir Produto</button>
+              <button class="outline-btn flex-1 send-from-wh" data-id="${w.id}" style="height: 36px; font-size: 11px;">Enviar Produtos</button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div class="panel glass-panel mb-6">
+      <div class="panel-head flex justify-between items-center">
+        <div><h2>Produtos em Cada Estoque</h2><p>Listagem detalhada do inventário individual de cada depósito.</p></div>
+      </div>
+      <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1fr 1fr auto; align-items: center;">
+          <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Disponível</span><span>Preço Unit.</span><span>Ações</span>
+        </div>
+        ${inv.length ? inv.map(i => {
+          const w = whList.find(x => x.id === i.warehouseId);
+          return `
+            <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Depósito</span>
+                <b>${esc(w?.name || 'Desconhecido')}</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                <span><b>${esc(i.productName)}</b> <small>(${esc(i.brand)})</small></span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                <strong class="text-slate-800">${i.stock} un.</strong>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                <span>${money(i.price)}</span>
+              </div>
+              <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
+              </div>
+            </div>
+          `;
+        }).join('') : '<div class="p-6 text-center text-slate-400">Nenhum produto cadastrado nos estoques. Clique em "+ Inserir Produto" acima para adicionar.</div>'}
+      </div>
+    </div>
+
+    <div class="panel glass-panel">
+      <div class="panel-head"><h2>Histórico Geral de Transferências dos Estoques</h2></div>
+      ${transfers.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.5fr 1.2fr 1.8fr 2fr 1fr; align-items: center;">
+            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span>
+          </div>
+          ${transfers.slice().reverse().map(t => `
+            <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                <small>${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Origem</span>
+                <b>${esc(t.warehouseName)}</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Tipo</span>
+                <span class="status-pill">${t.targetType === 'SUPERVISOR' ? 'Supervisor' : 'Vendedor'}</span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Destinatário</span>
+                <b>${esc(t.targetName)}</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                <span>${esc(t.productName)}</span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
+                <b>${t.quantity} un.</b>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="p-6 text-center text-slate-400">Nenhum envio de estoque registrado ainda.</div>'}
+    </div>
+  `);
+
+  document.querySelectorAll('.add-item-wh').forEach(b => b.onclick = () => addWarehouseItemModal(b.dataset.id));
+  document.querySelectorAll('.send-from-wh').forEach(b => b.onclick = () => transferStockModal(b.dataset.id));
+  document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
+}
+
+/* PAINEL DE CADA ESTOQUE (PADRONIZADO COM O TEMA CLARO DO SISTEMA) */
+function renderStockPanel() {
+  const wh = warehouses().find(w => w.id === currentUser.warehouseId) || warehouses()[0];
+  const myInv = warehouseInventory().filter(i => i.warehouseId === wh.id);
+  const myTransfers = warehouseTransfers().filter(t => t.warehouseId === wh.id);
+
+  const container = getAppRoot();
+  container.innerHTML = `
+    <div class="app-layout w-full min-h-screen flex flex-col justify-between">
+      <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+        <div class="flex items-center gap-3">
+          <div class="brand-mark text-sky-600">${icons.warehouse}</div>
+          <div>
+            <h1 class="text-lg font-black text-slate-900">${esc(currentUser.name)}</h1>
+            <p class="text-xs text-slate-500">Gestão Exclusiva do Estoque · ${esc(wh.city)} (${esc(wh.country)})</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="font-black text-sm tracking-tight text-slate-900 whitespace-nowrap mr-2 hidden md:block">
+            newlife<span class="text-sky-600">.system</span>
+          </div>
+          <button id="stockLogout" class="outline-btn flex items-center gap-1">${icons.logout} <span>Sair</span></button>
+        </div>
+      </header>
+
+      <main class="p-4 md:p-6 flex-1 max-w-6xl w-full mx-auto space-y-6">
+        <div class="p-6 glass-panel rounded-2xl flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Enviar Produtos deste Estoque</h2>
+            <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e a quantidade a transferir.</p>
+          </div>
+          <div class="flex gap-2 w-full md:w-auto">
+            <button id="stockAddItemBtn" class="outline-btn flex-1 md:flex-none">+ Adicionar Produtos</button>
+            <button id="stockDispatchBtn" class="primary-btn flex-1 md:flex-none">${icons.check} Enviar Produtos</button>
+          </div>
+        </div>
+
+        <div class="panel glass-panel p-6 rounded-2xl">
+          <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Produtos Disponíveis neste Estoque (${myInv.length})</h3>
+          ${myInv.length ? `
+            <div class="data-table flex flex-col gap-3 md:gap-0">
+              <div class="table-head hidden md:grid" style="grid-template-columns: 2.5fr 1fr 1fr auto; align-items: center;">
+                <span>Produto & Marca</span><span>Qtd em Estoque</span><span>Preço Unit.</span><span>Ações</span>
+              </div>
+              ${myInv.map(i => `
+                <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                    <span><b>${esc(i.productName)}</b> <small class="text-slate-500">(${esc(i.brand)})</small></span>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                    <b class="text-emerald-600">${i.stock} un.</b>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                    <span>${money(i.price)}</span>
+                  </div>
+                  <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                    <button class="small-btn edit-stock-item" data-id="${i.id}">Ajustar Qtd</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div class="p-8 text-center text-slate-400">Nenhum produto cadastrado neste estoque. Cadastre novos produtos para realizar envios.</div>'}
+        </div>
+
+        <div class="panel glass-panel p-6 rounded-2xl">
+          <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
+          ${myTransfers.length ? `
+            <div class="data-table flex flex-col gap-3 md:gap-0">
+              <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2fr 2fr 1fr; align-items: center;">
+                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd Enviada</span>
+              </div>
+              ${myTransfers.slice().reverse().map(t => `
+                <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                    <small class="text-slate-500">${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Tipo</span>
+                    <span class="status-pill style-blue">${t.targetType === 'SUPERVISOR' ? 'Supervisor' : 'Vendedor'}</span>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Destinatário</span>
+                    <b class="text-slate-800">${esc(t.targetName)}</b>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                    <span>${esc(t.productName)}</span>
+                  </div>
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
+                    <b>${t.quantity} un.</b>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div class="p-8 text-center text-slate-400">Nenhum envio realizado ainda por este depósito.</div>'}
+        </div>
+      </main>
+
+      ${appFooter()}
+    </div>
+  `;
+
+  document.getElementById('stockLogout').onclick = logout;
+  document.getElementById('stockAddItemBtn').onclick = () => addWarehouseItemModal(wh.id);
+  document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
+  document.querySelectorAll('.edit-stock-item').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
+}
+
+/* MODAIS DE ESTOQUE */
+function addWarehouseItemModal(warehouseId) {
+  const wh = warehouses().find(w => w.id === warehouseId);
+  const sysCat = systemCatalog();
+
+  const m = modal(`
+    <h2>Adicionar Produto ao Estoque (${esc(wh.name)})</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Produto do Catálogo
+        <select name="catalogIndex" class="control" required>
+          ${sysCat.map((c, i) => `<option value="${i}">${esc(c[0])} · ${esc(c[1])}</option>`).join('')}
+        </select>
+      </label>
+      <div class="form-grid">
+        <label>Quantidade em Estoque
+          <input name="stock" type="number" min="1" value="50" class="control" required>
+        </label>
+        <label>Preço Unitário (R$)
+          <input name="price" type="number" step="0.01" min="0" placeholder="150.00" class="control" required>
+        </label>
+      </div>
+      <button type="button" id="triggerAddInv" class="primary-btn w-full mt-3">${icons.check} Adicionar ao Estoque</button>
+    </form>
+  `);
+
+  m.querySelector('#triggerAddInv').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    const idx = Number(f.get('catalogIndex'));
+    const item = sysCat[idx];
+    const inv = warehouseInventory();
+
+    inv.push({
+      id: uid(),
+      warehouseId,
+      productName: item[0],
+      brand: item[1],
+      stock: Number(f.get('stock')),
+      price: Number(f.get('price'))
+    });
+    write('nl_warehouse_inventory', inv);
+
+    m.remove();
+    showToast('Produto adicionado ao estoque!');
+    currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+  };
+}
+
+function editWarehouseItemModal(itemId) {
+  const inv = warehouseInventory();
+  const item = inv.find(i => i.id === itemId);
+
+  const m = modal(`
+    <h2>Ajustar Estoque: ${esc(item.productName)}</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nova Quantidade em Estoque
+        <input name="stock" type="number" min="0" value="${item.stock}" class="control" required>
+      </label>
+      <label>Preço Unitário (R$)
+        <input name="price" type="number" step="0.01" min="0" value="${item.price}" class="control" required>
+      </label>
+      <button type="button" id="triggerEditInv" class="primary-btn w-full mt-3">${icons.check} Atualizar Estoque</button>
+    </form>
+  `);
+
+  m.querySelector('#triggerEditInv').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    item.stock = Number(f.get('stock'));
+    item.price = Number(f.get('price'));
+    write('nl_warehouse_inventory', inv);
+
+    m.remove();
+    showToast('Estoque atualizado!');
+    currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+  };
+}
+
+function transferStockModal(forcedWarehouseId = null) {
+  const whList = warehouses();
+  const sellersList = allSellers();
+  const supsList = allSupervisors();
+  const currentInv = warehouseInventory();
+
+  const m = modal(`
+    <h2>Enviar Produtos do Estoque Matriz</h2>
+    <p>Selecione se deseja enviar para um <b>Supervisor</b> ou diretamente para um <b>Vendedor</b>.</p>
+    <form id="entityForm" class="seller-form">
+      <label>Estoque Origem
+        <select name="warehouseId" id="whSelect" class="control" ${forcedWarehouseId ? 'disabled' : ''} required>
+          ${whList.map(w => `<option value="${w.id}" ${forcedWarehouseId === w.id ? 'selected' : ''}>${esc(w.name)} (${esc(w.city)})</option>`).join('')}
+        </select>
+      </label>
+
+      <label>Tipo de Destinatário
+        <select name="targetType" id="targetTypeSelect" class="control" required>
+          <option value="SELLER" selected>Enviar para Vendedor</option>
+          <option value="SUPERVISOR">Enviar para Supervisor</option>
+        </select>
+      </label>
+
+      <label id="targetLabel">Selecione o Destinatário
+        <select name="targetId" id="targetIdSelect" class="control" required>
+          ${sellersList.map(s => `<option value="${s.id}">${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
+        </select>
+      </label>
+
+      <label>Produto Disponível em Estoque
+        <select name="inventoryItemId" id="invItemSelect" class="control" required></select>
+      </label>
+
+      <div class="form-grid">
+        <label>Quantidade Enviar
+          <input name="quantity" type="number" min="1" value="10" class="control" required>
+        </label>
+      </div>
+
+      <button type="button" id="triggerTransfer" class="primary-btn w-full mt-3">${icons.check} Confirmar Envio e Debitar do Estoque</button>
+    </form>
+  `);
+
+  const whSelect = m.querySelector('#whSelect');
+  const targetTypeSelect = m.querySelector('#targetTypeSelect');
+  const targetIdSelect = m.querySelector('#targetIdSelect');
+  const invItemSelect = m.querySelector('#invItemSelect');
+
+  const populateTargets = () => {
+    const isSup = targetTypeSelect.value === 'SUPERVISOR';
+    const list = isSup ? supsList : sellersList;
+    targetIdSelect.innerHTML = list.map(x => `<option value="${x.id}">${esc(x.name)} (@${esc(x.user)})</option>`).join('');
+  };
+
+  const populateInventory = () => {
+    const selectedWh = forcedWarehouseId || whSelect.value;
+    const items = currentInv.filter(i => i.warehouseId === selectedWh && i.stock > 0);
+    if (!items.length) {
+      invItemSelect.innerHTML = '<option value="">Nenhum produto com estoque neste depósito</option>';
+      invItemSelect.disabled = true;
+    } else {
+      invItemSelect.disabled = false;
+      invItemSelect.innerHTML = items.map(i => `<option value="${i.id}">${esc(i.productName)} — Disp: ${i.stock} un. (R$ ${i.price})</option>`).join('');
+    }
+  };
+
+  populateInventory();
+  targetTypeSelect.onchange = populateTargets;
+  if (!forcedWarehouseId) whSelect.onchange = populateInventory;
+
+  m.querySelector('#triggerTransfer').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    const itemId = f.get('inventoryItemId');
+    const invItem = currentInv.find(i => i.id === itemId);
+    const qty = Number(f.get('quantity'));
+
+    if (!invItem) return alert('Selecione um produto válido.');
+    if (qty > invItem.stock) return alert(`Quantidade indisponível em estoque. Máximo disponível: ${invItem.stock}`);
+
+    const targetType = f.get('targetType');
+    const targetObj = targetType === 'SUPERVISOR' ? supsList.find(s => s.id === f.get('targetId')) : sellersList.find(s => s.id === f.get('targetId'));
+    const wId = forcedWarehouseId || f.get('warehouseId');
+    const whObj = whList.find(w => w.id === wId);
+
+    confirmActionModal({
+      title: 'Confirmar Envio do Estoque',
+      subtitle: `${qty}x ${invItem.productName} → ${targetObj.name}`,
+      warningText: `A quantidade será debitada do estoque ${whObj.name} e creditada ao ${targetType === 'SUPERVISOR' ? 'supervisor' : 'vendedor'}.`,
+      confirmText: 'Enviar Agora',
+      onConfirm: () => {
+        invItem.stock -= qty;
+        write('nl_warehouse_inventory', currentInv);
+
+        const transfers = warehouseTransfers();
+        transfers.push({
+          id: uid(),
+          warehouseId: whObj.id,
+          warehouseName: whObj.name,
+          targetType,
+          targetId: targetObj.id,
+          targetName: targetObj.name,
+          productName: invItem.productName,
+          brand: invItem.brand,
+          quantity: qty,
+          price: invItem.price,
+          createdAt: new Date().toISOString()
+        });
+        write('nl_transfers', transfers);
+
+        const prods = products();
+        let p = prods.find(x => x.sellerId === targetObj.id && x.name === invItem.productName);
+        if (p) {
+          p.stock += qty;
+          p.price = invItem.price;
+        } else {
+          prods.push({
+            id: uid(),
+            sellerId: targetObj.id,
+            name: invItem.productName,
+            brand: invItem.brand,
+            price: invItem.price,
+            stock: qty
+          });
+        }
+        write('atlasProducts', prods);
+
+        m.remove();
+        showToast('Produto enviado com sucesso!');
+        currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+      }
+    });
+  };
+}
+
+/* SUPERVISORES E VENDEDORES CADASTRADOS (SOMENTE ADM) */
+function renderAdminSupervisorsPage() {
+  if (!hasAdminAccess(currentUser)) {
+    return renderSellersPage();
+  }
+
+  const sups = allSupervisors();
+  const sellersList = allSellers();
+
+  appFrame('Supervisores & Vendedores', 'Gerencie supervisores e reatribua a qual supervisor cada vendedor pertence.', `
+    <div class="page-toolbar flex justify-between items-center mb-6 gap-3 flex-wrap">
+      <div><b>Estrutura de Equipes da newlife.system</b></div>
+      <div class="flex gap-2">
+        <button id="addSupervisorBtn" class="outline-btn">+ Cadastrar Supervisor</button>
+        <button id="addSellerBtn" class="primary-btn">+ Cadastrar Vendedor</button>
+      </div>
+    </div>
+
+    <div class="panel glass-panel">
+      <div class="panel-head mb-4"><h2>Equipes por Supervisor</h2></div>
+
+      <div class="space-y-6">
+        ${sups.map(sup => {
+          const supSellers = sellersList.filter(s => s.supervisor.toLowerCase() === sup.user.toLowerCase());
+          return `
+            <div class="p-4 md:p-5 bg-white/90 border border-slate-200 rounded-2xl shadow-sm">
+              <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                  <div class="avatar">${avatarFor(sup)}</div>
+                  <div>
+                    <h3 class="text-base font-extrabold text-slate-900">${esc(sup.name)}</h3>
+                    <small class="text-xs text-slate-500">Login: @${esc(sup.user)}</small>
+                  </div>
+                </div>
+                <span class="status-pill style-blue">${supSellers.length} Vendedor(es)</span>
+              </div>
+
+              ${supSellers.length ? `
+                <div class="data-table flex flex-col gap-3 md:gap-0">
+                  <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1.8fr 1.2fr auto; align-items: center;">
+                    <span>Vendedor</span><span>Localização</span><span>Alterar Supervisor Responsável</span><span>Estoque</span><span>Ações</span>
+                  </div>
+                  ${supSellers.map(s => `
+                    <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-3 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                      <div class="flex justify-between items-center md:block">
+                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                        <div>
+                          <b class="text-slate-900 font-bold">${esc(s.name)}</b>
+                          <small class="text-slate-500 block md:inline">(@${esc(s.user)})</small>
+                        </div>
+                      </div>
+
+                      <div class="flex justify-between items-center md:block">
+                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
+                        <span class="text-sm font-semibold text-slate-700">${esc(s.city)} / ${esc(s.uf)}</span>
+                      </div>
+
+                      <div class="flex justify-between items-center md:block">
+                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
+                        <select class="control compact change-supervisor-select max-w-[160px] md:max-w-none" data-seller-id="${s.id}">
+                          ${sups.map(sp => `<option value="${sp.user}" ${s.supervisor === sp.user ? 'selected' : ''}>${esc(sp.name)}</option>`).join('')}
+                        </select>
+                      </div>
+
+                      <div class="flex justify-between items-center md:block">
+                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                        <span class="font-bold text-slate-900">${stock(s.id)} un.</span>
+                      </div>
+
+                      <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                        <div class="flex gap-2">
+                          <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
+                          <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : '<div class="text-xs text-slate-400 p-3 italic">Nenhum vendedor associado a este supervisor.</div>'}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `);
+
+  document.getElementById('addSupervisorBtn').onclick = () => supervisorModal();
+  document.getElementById('addSellerBtn').onclick = () => sellerModal();
+
+  document.querySelectorAll('.change-supervisor-select').forEach(sel => {
+    sel.onchange = e => {
+      const sellerId = e.target.dataset.sellerId;
+      const newSupUser = e.target.value;
+      const users = allUsers();
+      const s = users.find(u => u.id === sellerId);
+      if (s) {
+        s.supervisor = newSupUser;
+        write('nl_users', users);
+        showToast(`Supervisor do vendedor alterado!`);
+        renderAdminSupervisorsPage();
+      }
+    };
+  });
+
+  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
+  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
+}
+
+/* LISTA DE VENDEDORES */
+function renderSellersPage() {
+  const isAdm = hasAdminAccess(currentUser);
+  const sellersList = isAdm ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+
+  appFrame('Equipe de Vendedores', isAdm ? 'Gerencie a lista global de vendedores.' : 'Gerencie apenas a sua equipe direta de vendedores.', `
+    <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
+      <div><b>${sellersList.length} Vendedor(es) Ativo(s) ${isAdm ? '' : '(Sua Equipe)'}</b></div>
+      <div class="flex gap-2">
+        <button id="supSendStockSellersBtn" class="outline-btn flex items-center gap-1">${icons.orders} Enviar do Meu Estoque</button>
+        <button id="addNewSellerGlobal" class="primary-btn">+ Cadastrar Novo Vendedor</button>
+      </div>
+    </div>
+
+    <div class="panel glass-panel">
+      ${sellersList.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1.5fr 1.5fr 1.2fr 1.2fr auto' : '2fr 1.5fr 1.2fr 1.2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
+            <span>VENDEDOR & LOGIN</span>
+            ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
+            <span>CIDADE / UF</span>
+            <span>ESTOQUE</span>
+            <span>VALOR POSSE</span>
+            <span>AÇÕES</span>
+          </div>
+          ${sellersList.map(s => {
+            const sStock = stock(s.id);
+            const sStockVal = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+            return `
+              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                  <div class="flex flex-col">
+                    <b class="text-slate-900">${esc(s.name)}</b>
+                    <small class="text-slate-500">@${esc(s.user)}</small>
+                  </div>
+                </div>
+                ${isAdm ? `
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
+                    <span class="catalog-badge">${esc(s.supervisor || 'Geral')}</span>
+                  </div>
+                ` : ''}
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Cidade/UF</span>
+                  <b>${esc(s.city)} / ${esc(s.uf)}</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                  <b>${sStock} un.</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor</span>
+                  <strong class="highlight-val">${money(sStockVal)}</strong>
+                </div>
+                <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                  <div class="flex gap-2">
+                    <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
+                    <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : '<div class="empty-state"><strong>Nenhum vendedor encontrado para a sua supervisão.</strong></div>'}
+    </div>
+  `);
+
+  document.getElementById('supSendStockSellersBtn').onclick = transferSupervisorStockModal;
+  document.getElementById('addNewSellerGlobal').onclick = () => sellerModal();
+  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
+  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
+}
+
+function sellerModal(existing) {
+  const isAdm = hasAdminAccess(currentUser);
+  const sups = allSupervisors();
+
+  const m = modal(`
+    <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Vendedor</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nome Completo<input name="name" class="control" value="${esc(existing?.name)}" required></label>
+      <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: joaovendedor"></label>
+      <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: joaosystem2026@"></label>
+      
+      ${isAdm ? `
+        <label>Supervisor Responsável
+          <select name="supervisor" class="control" required>
+            ${sups.map(s => `<option value="${s.user}" ${existing ? (existing.supervisor === s.user ? 'selected' : '') : (s.user === currentUser.user ? 'selected' : '')}>${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
+          </select>
+        </label>
+      ` : `
+        <input type="hidden" name="supervisor" value="${esc(currentUser.user)}">
+      `}
+
+      <div class="form-grid">
+        <label>Estado (UF)
+          <select name="uf" id="ufSelect" class="control" required>
+            <option value="">Selecione</option>
+            ${brazilStatesList.map(u => `<option value="${u}" ${existing?.uf === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </label>
+        <label>Cidade
+          <select name="city" id="citySelect" class="control" required>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="button" id="triggerSaveSeller" class="primary-btn w-full mt-3">${icons.check} Salvar Vendedor</button>
+    </form>
+  `);
+
+  const ufSelect = m.querySelector('#ufSelect');
+  const citySelect = m.querySelector('#citySelect');
+
+  if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
+  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
+
+  m.querySelector('#triggerSaveSeller').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    confirmActionModal({
+      title: existing ? 'Salvar Vendedor' : 'Cadastrar Vendedor',
+      subtitle: `Vendedor: ${f.get('name')}`,
+      warningText: 'Confirmar os dados do vendedor?',
+      confirmText: 'Salvar Cadastro',
+      onConfirm: () => {
+        const users = allUsers();
+        let seller = existing || { id: uid(), role: 'SELLER' };
+        seller.name = f.get('name');
+        seller.user = String(f.get('user')).trim().toLowerCase();
+        seller.password = f.get('password');
+        seller.supervisor = isAdm ? f.get('supervisor') : currentUser.user;
+        seller.uf = f.get('uf');
+        seller.city = f.get('city');
+
+        const pos = users.findIndex(u => u.id === seller.id);
+        pos >= 0 ? users[pos] = seller : users.push(seller);
+        write('nl_users', users);
+
+        m.remove();
+        showToast('Vendedor salvo!');
+        isAdm && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
+      }
+    });
+  };
+}
+
+function supervisorModal() {
+  if (!hasAdminAccess(currentUser)) return;
+
+  const m = modal(`
+    <h2>Cadastrar Novo Supervisor</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nome do Supervisor<input name="name" class="control" required></label>
+      <label>Login<input name="user" class="control" required placeholder="ex: carlos"></label>
+      <label>Senha<input name="password" class="control" required placeholder="ex: carlossystem2026@"></label>
+      <div class="form-grid">
+        <label>Estado (UF)
+          <select name="uf" id="supUf" class="control" required>
+            <option value="">Selecione</option>
+            ${brazilStatesList.map(u => `<option value="${u}">${u}</option>`).join('')}
+          </select>
+        </label>
+        <label>Cidade
+          <select name="city" id="supCity" class="control" required>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+      </div>
+      <button type="button" id="triggerSaveSup" class="primary-btn w-full mt-3">${icons.check} Cadastrar Supervisor</button>
+    </form>
+  `);
+
+  const ufSelect = m.querySelector('#supUf');
+  const citySelect = m.querySelector('#supCity');
+  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
+
+  m.querySelector('#triggerSaveSup').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    const users = allUsers();
+    users.push({
+      id: uid(),
+      name: f.get('name'),
+      user: String(f.get('user')).trim().toLowerCase(),
+      password: f.get('password'),
+      role: 'SUPERVISOR',
+      supervisor: 'ik',
+      uf: f.get('uf'),
+      city: f.get('city')
+    });
+    write('nl_users', users);
+
+    m.remove();
+    showToast('Supervisor cadastrado!');
+    renderAdminSupervisorsPage();
+  };
+}
+
+function deleteSeller(id) {
+  const s = allUsers().find(u => u.id === id);
+
+  if (!hasAdminAccess(currentUser) && s?.supervisor.toLowerCase() !== currentUser.user.toLowerCase()) {
+    showToast('Ação não permitida para este vendedor.');
+    return;
+  }
+
+  confirmActionModal({
+    title: `Excluir Vendedor: ${s?.name}`,
+    subtitle: 'Exclusão do cadastro',
+    warningText: 'Este vendedor e seus dados serão removidos.',
+    confirmText: 'Excluir Vendedor',
+    onConfirm: () => {
+      write('nl_users', allUsers().filter(u => u.id !== id));
+      write('atlasProducts', products().filter(p => p.sellerId !== id));
+      showToast('Vendedor removido!');
+      hasAdminAccess(currentUser) && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
+    }
+  });
+}
+
+/* PEDIDOS EM REPOSIÇÃO */
+function renderSupervisorOrdersPage() {
+  const mySellers = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+  const mySellerIds = mySellers.map(s => s.id);
+  const activeOrders = orders().filter(o => mySellerIds.includes(o.sellerId) && o.status !== 'Entregue');
+
+  appFrame('Pedidos em Reposição', 'Solicitações de novos produtos dos vendedores.', `
+    <div class="panel glass-panel">
+      <div class="panel-head"><h2>Solicitações Ativas (${activeOrders.length})</h2></div>
+      ${activeOrders.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2fr 1.5fr auto; align-items: center;">
+            <span>Vendedor</span><span>Data Desejada</span><span>Produtos Solicitados</span><span>Status</span><span>Ações</span>
+          </div>
+          ${activeOrders.slice().reverse().map(o => {
+            const seller = mySellers.find(s => s.id === o.sellerId);
+            return `
+              <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                  <b>${esc(seller?.name || o.sellerName)}</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                  <strong class="text-sky-600">${o.deliveryDate ? new Date(o.deliveryDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}</strong>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produtos</span>
+                  <span>${esc(o.productName || 'Vários itens')} (${o.quantity || 1} un)</span>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                  <select class="control compact status-select max-w-[140px] md:max-w-none" data-id="${o.id}">
+                    <option value="Em análise" ${o.status === 'Em análise' ? 'selected' : ''}>Em análise</option>
+                    <option value="A caminho" ${o.status === 'A caminho' ? 'selected' : ''}>A caminho</option>
+                  </select>
+                </div>
+                <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                  <button class="small-btn mark-delivered" data-id="${o.id}">${icons.check} Marcar Entregue</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : '<div class="empty-state"><strong>Nenhum pedido pendente.</strong></div>'}
+    </div>
+  `);
+
+  document.querySelectorAll('.mark-delivered').forEach(b => {
+    b.onclick = () => {
+      const allOrd = orders();
+      const idx = allOrd.findIndex(o => o.id === b.dataset.id);
+      if (idx >= 0) {
+        allOrd[idx].status = 'Entregue';
+        allOrd[idx].deliveredAt = new Date().toISOString();
+        write('atlasOrders', allOrd);
+        showToast('Pedido entregue!');
+        renderSupervisorOrdersPage();
+      }
+    };
+  });
+}
+
+function renderArchivedPage() {
+  const mySellers = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+  const archived = orders().filter(o => mySellers.some(s => s.id === o.sellerId) && o.status === 'Entregue');
+
+  appFrame('Arquivados / Histórico', 'Pedidos concluídos.', `
+    <div class="panel glass-panel">
+      <div class="panel-head"><h2>Pedidos Entregues (${archived.length})</h2></div>
+      ${archived.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2.5fr 1.2fr; align-items: center;">
+            <span>Vendedor</span><span>Data Solicitada</span><span>Produtos</span><span>Status</span>
+          </div>
+          ${archived.map(o => `
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                <b>${esc(o.sellerName)}</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                <small>${new Date(o.createdAt).toLocaleDateString('pt-BR')}</small>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produtos</span>
+                <span>${esc(o.productName)} (${o.quantity} un)</span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                <span class="status-pill style-green">Entregue</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="empty-state">Nenhum pedido arquivado.</div>'}
+    </div>
+  `);
+}
+
+function renderCatalogPage() {
+  appFrame('Catálogo do Sistema', 'Catálogo oficial.', `
+    <div class="panel glass-panel">
+      <div class="catalog-grid">
+        ${systemCatalog().map(p => `
+          <div class="catalog-card">
+            <div class="catalog-badge">${esc(p[1])}</div>
+            <h3>${esc(p[0])}</h3>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `);
+}
+
+function renderProductsPage() {
+  const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
+  const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
+
+  appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe.', `
+    <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h3 class="font-extrabold text-slate-900 text-base">Seu Estoque de Supervisor</h3>
+        <p class="text-xs text-slate-600">Você possui <b>${mySupStock.reduce((a,p)=>a+p.stock,0)} unidades</b> de produtos no seu usuário para repassar aos vendedores ou dar baixa.</p>
+      </div>
+      <button id="supTransferStockBtn" class="primary-btn flex items-center gap-2">${icons.orders} Enviar do Meu Estoque para Vendedor</button>
+    </div>
+
+    <div class="seller-attribution-grid">
+      ${ss.map(s => {
+        const sProds = products().filter(p => p.sellerId === s.id && p.stock > 0);
+        return `
+          <div class="seller-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">${esc(s.name)}</h3>
+              <p class="text-xs text-slate-500 mb-3">@${esc(s.user)} · ${esc(s.city)}/${esc(s.uf)}</p>
+              <strong class="highlight-val text-base block mb-3">${sProds.reduce((a, p) => a + p.stock, 0)} un. em posse</strong>
+              <div class="text-xs text-slate-600 space-y-1 mb-4">
+                ${sProds.length ? sProds.map(p => `<div>• ${esc(p.name)}: <b>${p.stock} un.</b></div>`).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `);
+
+  const trBtn = document.getElementById('supTransferStockBtn');
+  if (trBtn) trBtn.onclick = transferSupervisorStockModal;
+}
+
+function renderReportsPage() {
+  const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
+  appFrame('Relatórios', 'Relatório operacional.', `
+    <div class="flex justify-between items-center mb-6">
+      <b>Resumo de Vendas</b>
+      <button id="downloadPdfBtn" class="primary-btn">${icons.pdf} Baixar PDF</button>
+    </div>
+    <div class="panel glass-panel">
+      <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
+        </div>
+        ${ss.map(s => `
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+              <b>${esc(s.name)}</b>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
+              <span>${esc(s.city)}/${esc(s.uf)}</span>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
+              <span>${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.</span>
+            </div>
+            <div class="flex justify-between items-center md:block">
+              <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
+              <strong class="highlight-val">${money(sellerRevenue(s.id, 'month'))}</strong>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `);
+
+  document.getElementById('downloadPdfBtn').onclick = () => {
+    exportUniversalPDF({
+      title: 'Relatório Oficial de Vendas',
+      headers: ['Vendedor', 'Localização', 'Qtd Vendida', 'Faturamento'],
+      rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, money(sellerRevenue(s.id, 'month'))]),
+      fileName: 'newlife-relatorio.pdf'
+    });
+  };
+}
+
+function renderAdminHome() {
+  appFrame('Visão Consolidada', 'Consolidado geral newlife.system.', `
+    <div class="stats-grid mb-6">
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
+        <div class="metric-value">${money(sales().reduce((a, x) => a + x.total, 0))}</div>
+      </div>
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>3 Estoques Ativos</span><span class="metric-icon orange">${icons.warehouse}</span></div>
+        <div class="metric-value">SP/CENTRO, SP/OE, UK</div>
+      </div>
+    </div>
+  `);
+}
+
+/* PAINEL DO VENDEDOR */
+function renderSeller() {
+  const sellerProducts = products().filter(p => p.sellerId === currentUser.id && Number(p.stock) > 0);
+  const container = getAppRoot();
+
+  container.innerHTML = `
+    <div class="app-layout w-full min-h-screen flex flex-col md:flex-row">
+      <aside class="app-sidebar hidden md:flex flex-col">${sellerNavContent()}</aside>
+      <div id="appDrawerOverlay" class="drawer-overlay ${drawerOpen ? 'open' : ''}"></div>
+      <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${sellerNavContent()}</aside>
+      <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
+        <div>
+          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+            
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <button id="hamburgerBtnSeller" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" style="position: static !important; float: none !important; margin: 0 !important;" title="Abrir Menu">
+                ${icons.menu}
+              </button>
+              <h1 class="text-xs md:text-xl font-black text-slate-900 truncate">${currentUser.name} (Painel Vendedor)</h1>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 ml-auto" style="margin-left: auto !important;">
+              <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
+                newlife<span class="text-sky-600">.system</span>
+              </div>
+              <button id="sellerLogout" class="outline-btn text-xs px-2.5 py-1.5 hidden md:flex">${icons.logout} <span>Sair</span></button>
+            </div>
+          </header>
+
+          <div class="page-body p-4 md:p-6">
+            ${sellerActiveTab === 'sales' ? renderSellerSalesTab(sellerProducts) : ''}
+            ${sellerActiveTab === 'newOrder' ? renderSellerNewOrderTab() : ''}
+            ${sellerActiveTab === 'myOrders' ? renderSellerMyOrdersTab() : ''}
+            ${sellerActiveTab === 'archived' ? renderSellerArchivedTab() : ''}
+          </div>
+        </div>
+        ${appFooter()}
+      </section>
+    </div>
+  `;
+
+  document.getElementById('sellerLogout').onclick = logout;
+
+  const hBtn = document.getElementById('hamburgerBtnSeller');
+  const overlay = document.getElementById('appDrawerOverlay');
+  if (hBtn) hBtn.onclick = () => drawerOpen ? closeMobileDrawer() : openMobileDrawer();
+  if (overlay) overlay.onclick = closeMobileDrawer;
+
+  document.querySelectorAll('.mobile-close-drawer').forEach(b => b.onclick = closeMobileDrawer);
+
+  const switchToAdminBtn = document.getElementById('switchToAdminBtn');
+  if (switchToAdminBtn) {
+    switchToAdminBtn.onclick = () => { closeMobileDrawer(); activeTab = 'adminHome'; renderAdmin(); };
+  }
+
+  document.querySelectorAll('[data-seller-tab]').forEach(b => {
+    b.onclick = () => { sellerActiveTab = b.dataset.sellerTab; closeMobileDrawer(); renderSeller(); };
+  });
+
+  if (sellerActiveTab === 'sales') setupSalesTabEvents(sellerProducts);
+  if (sellerActiveTab === 'newOrder') setupNewOrderEvents();
+}
+
+function renderSellerSalesTab(sellerProducts) {
+  return `
+    <div class="panel glass-panel">
+      <div class="panel-head flex-wrap gap-3">
+        <h2>Registrar Baixas de Vendas (Estoque Próprio)</h2>
+        ${sellerProducts.length ? `<button id="registerSaleBtn" class="primary-btn">${icons.check} Confirmar Vendas</button>` : ''}
+      </div>
+      ${sellerProducts.length ? `
+        <div class="data-table flex flex-col gap-3 md:gap-0">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
+          </div>
+          ${sellerProducts.map(p => `
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                <b>${esc(p.name)}</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                <span>${money(p.price)}</span>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Disponível</span>
+                <b>${p.stock} un.</b>
+              </div>
+              <div class="flex justify-between items-center md:block">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
+                <input class="baja-input control max-w-[100px] md:max-w-none" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="empty-state">Você não possui produtos em estoque no momento. Receba envios dos Estoques Matriz para registrar vendas.</div>'}
+    </div>
+  `;
+}
+
+function setupSalesTabEvents(sellerProducts) {
+  const btn = document.getElementById('registerSaleBtn');
+  if (btn) {
+    btn.onclick = () => {
+      const inputs = [...document.querySelectorAll('.baja-input')];
+      const items = inputs.map(i => ({ p: sellerProducts.find(x => x.id === i.dataset.id), q: Number(i.value) })).filter(x => x.q > 0);
+      if (!items.length) return alert('Informe as vendas.');
+
+      const pl = products();
+      const sl = sales();
+
+      items.forEach(x => {
+        pl[pl.findIndex(p => p.id === x.p.id)].stock -= x.q;
+        sl.push({
+          id: uid(),
+          sellerId: currentUser.id,
+          productId: x.p.id,
+          quantity: x.q,
+          unitPrice: x.p.price,
+          total: x.q * x.p.price,
+          createdAt: new Date().toISOString()
+        });
+      });
+
+      write('atlasProducts', pl);
+      write('atlasSales', sl);
+      showToast('Vendas confirmadas!');
+      renderSeller();
+    };
+  }
+}
+
+function renderSellerNewOrderTab() {
+  const sysCat = systemCatalog();
+  return `
+    <div class="panel glass-panel">
+      <h2>Solicitar Reposição de Estoque</h2>
+      <form id="newOrderForm" class="seller-form">
+        <label>Data Desejada<input type="date" name="deliveryDate" class="control" required></label>
+        <label>Produto
+          <select name="catIndex" class="control" required>
+            ${sysCat.map((c, i) => `<option value="${i}">${esc(c[0])} · ${esc(c[1])}</option>`).join('')}
+          </select>
+        </label>
+        <label>Quantidade<input name="quantity" type="number" min="1" value="10" class="control" required></label>
+        <button type="submit" class="primary-btn mt-3">${icons.check} Enviar Pedido</button>
+      </form>
+    </div>
+  `;
+}
+
+function setupNewOrderEvents() {
+  const form = document.getElementById('newOrderForm');
+  if (form) {
+    form.onsubmit = e => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const item = systemCatalog()[Number(f.get('catIndex'))];
+
+      const ords = orders();
+      ords.push({
+        id: uid(),
+        sellerId: currentUser.id,
+        sellerName: currentUser.name,
+        supervisor: currentUser.supervisor,
+        deliveryDate: f.get('deliveryDate'),
+        productName: item[0],
+        brand: item[1],
+        quantity: Number(f.get('quantity')),
+        status: 'Em análise',
+        createdAt: new Date().toISOString()
+      });
+      write('atlasOrders', ords);
+      showToast('Pedido enviado!');
+      sellerActiveTab = 'myOrders';
+      renderSeller();
+    };
+  }
+}
+
+function renderSellerMyOrdersTab() {
+  const myOrd = orders().filter(o => o.sellerId === currentUser.id && o.status !== 'Entregue');
+  return `
+    <div class="panel glass-panel">
+      <h2>Pedidos em Andamento</h2>
+      ${myOrd.length ? myOrd.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800">${esc(o.productName)} (${o.quantity} un) - <span class="text-sky-600">${esc(o.status)}</span></div>`).join('') : '<div class="empty-state">Sem pedidos pendentes.</div>'}
+    </div>
+  `;
+}
+
+function renderSellerArchivedTab() {
+  const myDelivered = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
+  return `
+    <div class="panel glass-panel">
+      <h2>Pedidos Concluídos</h2>
+      ${myDelivered.length ? myDelivered.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800">${esc(o.productName)} (${o.quantity} un) - <span class="text-emerald-600">Entregue</span></div>`).join('') : '<div class="empty-state">Nenhum histórico.</div>'}
+    </div>
+  `;
+}
+
+/* DOM Ready */
+document.addEventListener('DOMContentLoaded', () => {
+  const passwordInput = document.getElementById('loginPassword');
+  if (passwordInput) {
+    const parent = passwordInput.parentElement;
+    if (parent) {
+      parent.style.position = 'relative';
+      passwordInput.style.paddingRight = '75px';
+
+      const oldElements = parent.querySelectorAll('button, span.toggle-pass, .show-password, a');
+      oldElements.forEach(el => el.remove());
+
+      let toggleBtn = document.getElementById('toggleLoginPasswordBtn');
+      if (!toggleBtn) {
+        toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.id = 'toggleLoginPasswordBtn';
+        parent.appendChild(toggleBtn);
+      }
+
+      toggleBtn.textContent = 'Mostrar';
+      toggleBtn.title = 'Mostrar / Ocultar Senha';
+      toggleBtn.style.cssText = `
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #0284c7;
+        z-index: 10;
+        padding: 4px 6px;
+        line-height: 1;
+        transition: color 0.2s ease;
+      `;
+
+      toggleBtn.onclick = () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        toggleBtn.textContent = isPassword ? 'Ocultar' : 'Mostrar';
+      };
+    }
+  }
+
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.onsubmit = e => {
+      e.preventDefault();
+      const u = document.getElementById('loginUser').value.trim().toLowerCase();
+      const p = document.getElementById('loginPassword').value;
+      const account = allUsers().find(x => x.user.toLowerCase() === u && x.password === p);
+
+      if (!account) {
+        document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.';
+        return;
+      }
+      login(account);
+    };
+  }
+});

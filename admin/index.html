@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>buyclub.us system · Operação</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts Google (iOS Light Style: Plus Jakarta Sans, Manrope, Bebas Neue, DM Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Custom Light Glassmorphism CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#f1f5f9] text-slate-900 antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- Tela de Login -->
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card glass-panel">
+      <div class="brand-mark login-brand">✦</div>
+      <div class="login-kicker">FIELD INTELLIGENCE</div>
+      <h1>Bem-vindo ao <span>buyclub.us</span></h1>
+      <p class="login-description">Entre para acompanhar sua operação em campo.</p>
+      
+      <form id="loginForm" class="login-form">
+        <label>
+          Usuário
+          <input id="loginUser" class="control" type="text" autocomplete="username" placeholder="Digite seu usuário" required />
+        </label>
+        
+        <label>
+          Senha
+          <div class="password-wrap">
+            <input id="loginPassword" class="control" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+            <button type="button" id="togglePassword" class="field-toggle">Mostrar</button>
+          </div>
+        </label>
+
+        <div id="loginError" class="login-error"></div>
+        <button class="primary-btn login-submit" type="submit">
+          Entrar no sistema <span>→</span>
+        </button>
+      </form>
+      <div class="login-help">Acesso protegido · Ambiente operacional</div>
+    </div>
+  </section>
+
+  <!-- Shell do Aplicativo -->
+  <div class="min-h-screen flex app-layout">
+    
+    <!-- Sidebar Desktop -->
+    <aside class="sidebar hidden lg:flex w-[260px] shrink-0 flex-col bg-slate-900 text-white p-5 border-r border-slate-800">
+      <div class="flex items-center gap-3 mb-10">
+        <div class="brand-mark">✦</div>
+        <div>
+          <div class="font-extrabold tracking-tight text-lg">buyclub<span class="text-sky-400">.us</span></div>
+          <div class="text-[9px] text-slate-400 tracking-[0.2em] uppercase font-semibold">field intelligence</div>
+        </div>
+      </div>
+      
+      <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-3 px-2">Workspace</div>
+      <nav class="space-y-1 text-sm">
+        <a class="nav-item active" href="#"><span>◈</span> Visão geral</a>
+        <a class="nav-item" href="#"><span>⌖</span> Mapa operacional</a>
+        <a class="nav-item" href="#"><span>▦</span> Vendas</a>
+        <a class="nav-item" href="#"><span>▤</span> Estoque</a>
+      </nav>
+
+      <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mt-8 mb-3 px-2">Gestão</div>
+      <nav class="space-y-1 text-sm">
+        <a class="nav-item" href="#"><span>♙</span> Vendedores</a>
+        <a class="nav-item" href="#"><span>⚙</span> Configurações</a>
+      </nav>
+
+      <div class="mt-auto rounded-2xl bg-white/5 border border-white/10 p-3.5 backdrop-blur-md">
+        <div class="flex items-center gap-3 mb-2.5">
+          <div id="sideAvatar" class="avatar small">MC</div>
+          <div class="min-w-0 flex-1">
+            <div id="sideName" class="text-xs font-bold truncate">Administrador</div>
+            <div id="sideRole" class="text-[10px] text-slate-400 truncate">Administrador</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Sair da conta</button>
+        <div class="flex justify-between items-center text-[10px] text-slate-400 mt-2.5 pt-2 border-t border-white/5">
+          <span>Ambiente</span>
+          <span class="text-emerald-400 font-semibold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Produção
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Dynamic Content -->
+    <main class="flex-1 min-w-0 app-content">
+      <header class="h-[80px] bg-white/60 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-5 sm:px-8">
+        <div>
+          <div class="text-xs text-slate-500 font-medium">Operação em Tempo Real</div>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">Visão geral</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="hidden sm:flex live-pill"><i></i> Dados ao vivo</span>
+          <button class="icon-btn" title="Notificações">♢<b>3</b></button>
+          <div class="avatar">MC</div>
+        </div>
+      </header>
+
+      <div class="p-4 sm:p-8 max-w-[1500px] mx-auto page-body">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+          <div>
+            <p class="text-sm text-slate-600">Acompanhe a performance da sua equipe de campo em tempo real.</p>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <select id="roleSelect" class="control min-w-[180px]">
+              <option value="ADMIN">Visão: Administrador</option>
+              <option value="SUPERVISOR">Visão: Supervisor</option>
+              <option value="SELLER">Visão: Vendedor</option>
+            </select>
+            <button id="refreshBtn" class="primary-btn"><span>↻</span> Atualizar agora</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6 stats-grid">
+          <div class="metric-card glass-panel">
+            <div class="metric-top"><span>Vendas hoje</span><span class="metric-icon cyan">$</span></div>
+            <div id="salesValue" class="metric-value">R$ 84.920</div>
+            <div class="trend up">↗ 18,6% <em>vs. ontem</em></div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-top"><span>Itens vendidos</span><span class="metric-icon purple">▥</span></div>
+            <div id="itemsValue" class="metric-value">327</div>
+            <div class="trend up">↗ 11,2% <em>vs. ontem</em></div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-top"><span>Vendedores ativos</span><span class="metric-icon green">♙</span></div>
+            <div id="activeValue" class="metric-value">24 <small>/ 28</small></div>
+            <div class="trend neutral">● 85,7% <em>da operação</em></div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-top"><span>Estoque em campo</span><span class="metric-icon orange">▣</span></div>
+            <div id="stockValue" class="metric-value">1.842</div>
+            <div class="trend down">↘ 4,3% <em>vs. início do dia</em></div>
+          </div>
+        </div>
+
+        <section class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-6">
+          <div class="panel glass-panel overflow-hidden">
+            <div class="panel-head flex-wrap gap-3">
+              <div>
+                <h2>Mapa operacional</h2>
+                <p>Localização dos vendedores · <span class="live-text">atualização em tempo real</span></p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <select id="countryFilter" class="control compact">
+                  <option value="ALL">Todos os países</option>
+                  <option value="BR">Brasil</option>
+                  <option value="PY">Paraguai</option>
+                </select>
+                <select id="statusFilter" class="control compact">
+                  <option value="ALL">Todos os status</option>
+                  <option value="active">Ativos agora</option>
+                  <option value="away">Sem atividade</option>
+                </select>
+              </div>
+            </div>
+            <div id="map" class="h-[460px] w-full"></div>
+            <div class="map-legend">
+              <span><i class="dot online"></i> Ativo</span>
+              <span><i class="dot away"></i> Sem atividade</span>
+              <span class="ml-auto hidden sm:inline">● Clique em um marcador para ver detalhes</span>
+            </div>
+          </div>
+
+          <aside class="panel glass-panel detail-panel flex flex-col justify-between">
+            <div class="panel-head">
+              <div>
+                <h2>Atividade recente</h2>
+                <p>Últimas movimentações registradas</p>
+              </div>
+              <button class="dots" title="Mais opções">•••</button>
+            </div>
+            <div id="activityList" class="divide-y divide-slate-200/60 overflow-y-auto max-h-[380px]"></div>
+            <button id="allActivity" class="see-all">Ver todas as atividades <span>→</span></button>
+          </aside>
+        </section>
+
+        <section class="panel glass-panel mt-6">
+          <div class="panel-head flex-wrap gap-3">
+            <div>
+              <h2>Performance por região</h2>
+              <p>Comparativo de vendas acumuladas por estado/região</p>
+            </div>
+            <div class="flex gap-2">
+              <button id="addSellerBtn" class="primary-btn">+ Cadastrar vendedor</button>
+              <button class="outline-btn">Exportar relatório ↗</button>
+            </div>
+          </div>
+          <div id="regionBars" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Cadastro / Edição -->
+  <div id="sellerModal" class="modal">
+    <div class="modal-card glass-panel">
+      <button id="closeSellerModal" class="close-btn" type="button">×</button>
+      <h2>Cadastrar vendedor</h2>
+      <p>Crie o acesso e defina a localização do vendedor.</p>
+      
+      <form id="sellerForm" class="seller-form">
+        <label>
+          Nome completo
+          <input id="sellerName" class="control" required placeholder="Ex.: Pedro Oliveira" />
+        </label>
+        
+        <label>
+          Usuário de acesso
+          <input id="sellerUser" class="control" required placeholder="Ex.: pedro.oliveira" />
+        </label>
+        
+        <label>
+          Senha
+          <input id="sellerPassword" class="control" type="password" required placeholder="Senha inicial" />
+        </label>
+        
+        <div class="form-grid">
+          <label>
+            País
+            <input id="sellerCountry" class="control" value="BR" maxlength="2" required />
+          </label>
+          <label>
+            UF
+            <input id="sellerUf" class="control" maxlength="3" required placeholder="SP" />
+          </label>
+        </div>
+        
+        <div class="form-grid">
+          <label>
+            Latitude
+            <input id="sellerLat" class="control" type="number" step="any" required placeholder="-23.55" />
+          </label>
+          <label>
+            Longitude
+            <input id="sellerLng" class="control" type="number" step="any" required placeholder="-46.63" />
+          </label>
+        </div>
+        
+        <div id="sellerFormError" class="login-error"></div>
+        <button class="primary-btn w-full mt-2" type="submit">Salvar vendedor</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Drawer para Detalhes -->
+  <div id="drawer" class="drawer">
+    <div class="drawer-inner glass-panel">
+      <button id="closeDrawer" class="close-btn" type="button">×</button>
+      <div id="drawerContent"></div>
+    </div>
+  </div>
+
+  <!-- Toast Flutuante -->
+  <div id="toast" class="toast glass-panel">Dados atualizados com sucesso</div>
+
+  <!-- Scripts Externos -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  
+  <!-- JavaScript Principal -->
+  <script src="app.js"></script>
+</body>
+</html>
