@@ -313,7 +313,7 @@ function navContent() {
 
     ${isSeller ? `
       <div style="padding: 0 12px 10px 12px;">
-        <button id="switchToSellerBtn" class="primary-btn w-full flex items-center justify-center gap-2" style="background: #0284c7; color: #fff; height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
+        <button class="switchToSellerBtn primary-btn w-full flex items-center justify-center gap-2" style="background: #0284c7; color: #fff; height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
           ${icons.chart} <span>🛒 MODO VENDEDOR (DAR BAIXA)</span>
         </button>
       </div>
@@ -344,13 +344,13 @@ function navContent() {
     `}
 
     ${isAdmin ? `
-      <div class="side-danger"><button id="emergencyBtn">${icons.emergency} <span>Reset do Sistema</span></button></div>
+      <div class="side-danger"><button class="emergencyBtn">${icons.emergency} <span>Reset do Sistema</span></button></div>
     ` : ''}
 
     <div class="side-account">
       <div class="avatar small">${avatarFor(currentUser)}</div>
       <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
-      <button id="logoutSide" title="Sair">${icons.logout}</button>
+      <button class="logoutSideBtn" title="Sair">${icons.logout}</button>
     </div>
   `;
 }
@@ -368,7 +368,7 @@ function sellerNavContent() {
 
     ${isAdmin ? `
       <div style="padding: 0 12px 10px 12px;">
-        <button id="switchToAdminBtn" class="outline-btn w-full flex items-center justify-center gap-2" style="background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
+        <button class="switchToAdminBtn outline-btn w-full flex items-center justify-center gap-2" style="background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
           ${icons.summary} <span>⚙️ PAINEL ADMINISTRATIVO</span>
         </button>
       </div>
@@ -412,11 +412,10 @@ function appFrame(title, sub, body) {
       <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${navContent()}</aside>
       <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
         <div>
-          <!-- NAV MOBILE COM HAMBÚRGUER À ESQUERDA E MARCA À DIREITA -->
-          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm flex flex-row items-center justify-between gap-2">
             
             <div class="flex items-center gap-2.5 min-w-0 flex-1">
-              <button id="hamburgerBtn" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" style="position: static !important; float: none !important; margin: 0 !important;" title="Abrir Menu">
+              <button id="hamburgerBtn" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" title="Abrir Menu">
                 ${icons.menu}
               </button>
               
@@ -431,7 +430,7 @@ function appFrame(title, sub, body) {
               </div>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0 ml-auto" style="margin-left: auto !important;">
+            <div class="flex items-center gap-2 shrink-0 ml-auto">
               <button id="refreshPage" class="outline-btn hidden md:flex items-center gap-1">${icons.refresh} <span>Atualizar</span></button>
               
               <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
@@ -468,14 +467,12 @@ function appFrame(title, sub, body) {
     renderAdmin(); 
   });
   
-  const switchBtn = document.getElementById('switchToSellerBtn');
-  if (switchBtn) switchBtn.onclick = () => { closeMobileDrawer(); sellerActiveTab = 'sales'; renderSeller(); };
+  document.querySelectorAll('.switchToSellerBtn').forEach(b => {
+    b.onclick = () => { closeMobileDrawer(); sellerActiveTab = 'sales'; renderSeller(); };
+  });
 
-  const logoutBtn = document.getElementById('logoutSide');
-  if (logoutBtn) logoutBtn.onclick = logout;
-
-  const emergencyBtn = document.getElementById('emergencyBtn');
-  if (emergencyBtn) emergencyBtn.onclick = emergencyWipeModal;
+  document.querySelectorAll('.logoutSideBtn').forEach(b => b.onclick = logout);
+  document.querySelectorAll('.emergencyBtn').forEach(b => b.onclick = emergencyWipeModal);
   
   const refreshBtn = document.getElementById('refreshPage');
   if (refreshBtn) refreshBtn.onclick = () => { hasAdminAccess(currentUser) ? renderAdmin() : renderSupervisor(); showToast('Dados atualizados'); };
@@ -571,32 +568,35 @@ function renderSupervisorSalesPage() {
   
   appFrame('Dar Baixa / Registrar Vendas (Supervisor)', 'Registre as vendas efetuadas diretamente do seu estoque próprio de supervisor.', `
     <div class="panel glass-panel">
-      <div class="panel-head flex-wrap gap-3">
+      <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
         <h2>Registrar Baixas do Seu Estoque</h2>
-        ${myProducts.length ? `<button id="registerSupSaleBtn" class="primary-btn">${icons.check} Confirmar Vendas</button>` : ''}
+        ${myProducts.length ? `<button id="registerSupSaleBtn" class="primary-btn w-full sm:w-auto">${icons.check} Confirmar Vendas</button>` : ''}
       </div>
       ${myProducts.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
             <span>Produto</span><span>Preço Unit.</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${myProducts.map(p => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                <b>${esc(p.name)}</b> <small class="text-slate-500">(${esc(p.brand)})</small>
+                <div>
+                  <b class="text-slate-900">${esc(p.name)}</b>
+                  <small class="text-slate-500 block md:inline">(${esc(p.brand)})</small>
+                </div>
               </div>
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
-                <span>${money(p.price)}</span>
+                <span class="text-slate-700 font-semibold">${money(p.price)}</span>
               </div>
               <div class="flex justify-between items-center md:block">
-                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque Disponível</span>
                 <b class="text-emerald-600">${p.stock} un.</b>
               </div>
-              <div class="flex justify-between items-center md:block">
+              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
-                <input class="sup-baja-input control max-w-[100px] md:max-w-none" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
+                <input class="sup-baja-input control w-28 md:w-full" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
               </div>
             </div>
           `).join('')}
@@ -749,7 +749,7 @@ function renderMapPage() {
       </div>
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Legenda do Mapa</span><span class="metric-icon orange">${icons.users}</span></div>
-        <div class="flex items-center gap-3 mt-2 text-xs font-bold">
+        <div class="flex items-center gap-3 mt-2 text-xs font-bold flex-wrap">
           <span style="color:#2563eb;">🔵 Estoque Matriz</span>
           <span style="color:#7c3aed;">🟣 Supervisor</span>
           <span style="color:#059669;">🟢 Vendedor</span>
@@ -757,7 +757,7 @@ function renderMapPage() {
       </div>
     </div>
 
-    <div class="panel glass-panel overflow-hidden p-0 rounded-2xl" style="height: 550px; position: relative;">
+    <div class="panel glass-panel overflow-hidden p-0 rounded-2xl" style="height: 450px; min-height: 350px; position: relative;">
       <div id="teamMap" style="width: 100%; height: 100%; z-index: 1;"></div>
     </div>
   `);
@@ -843,26 +843,26 @@ function renderSummary() {
     </div>
 
     <div class="panel glass-panel mt-6">
-      <div class="panel-head"><h2>Desempenho da Equipe Hoje</h2></div>
-      <div class="data-table flex flex-col gap-3 md:gap-0">
+      <div class="panel-head mb-4"><h2>Desempenho da Equipe Hoje</h2></div>
+      <div class="data-table flex flex-col gap-3">
         <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
           <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
         </div>
         ${rows.map(r => `
-          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-              <b>${esc(r.s.name)}</b>
+              <b class="text-slate-900">${esc(r.s.name)}</b>
             </div>
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
-              <span>${esc(r.s.city)} / ${esc(r.s.uf)}</span>
+              <span class="text-slate-700">${esc(r.s.city)} / ${esc(r.s.uf)}</span>
             </div>
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
               <b>${r.xs.reduce((a, x) => a + x.quantity, 0)} un.</b>
             </div>
-            <div class="flex justify-between items-center md:block">
+            <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
               <strong class="highlight-val">${money(r.xs.reduce((a, x) => a + x.total, 0))}</strong>
             </div>
@@ -885,22 +885,22 @@ function renderWarehousesPage() {
         const wItems = inv.filter(i => i.warehouseId === w.id);
         const totalQty = wItems.reduce((a, i) => a + Number(i.stock || 0), 0);
         return `
-          <div class="p-5 glass-panel rounded-2xl bg-white/80 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="p-5 glass-panel rounded-2xl bg-white/80 border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
             <div>
               <div class="flex justify-between items-center mb-2">
                 <h3 class="font-black text-slate-900 text-base flex items-center gap-2">${icons.warehouse} ${esc(w.name)}</h3>
                 <span class="status-pill style-blue">${esc(w.uf)}</span>
               </div>
               <p class="text-xs text-slate-500 mb-3">Localização: ${esc(w.city)} (${esc(w.country)})</p>
-              <div class="p-3 bg-slate-100 rounded-xl mb-4">
+              <div class="p-3 bg-slate-100 rounded-xl mb-2">
                 <span class="text-[10px] font-bold text-slate-500 uppercase block">Estoque Cadastrado</span>
                 <strong class="text-lg text-slate-900 font-extrabold">${totalQty} unidades</strong>
                 <small class="block text-slate-500 mt-1">${wItems.length} tipo(s) de produtos</small>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button class="primary-btn flex-1 add-item-wh" data-id="${w.id}" style="height: 36px; font-size: 11px;">+ Inserir Produto</button>
-              <button class="outline-btn flex-1 send-from-wh" data-id="${w.id}" style="height: 36px; font-size: 11px;">Enviar Produtos</button>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button class="primary-btn flex-1 add-item-wh text-xs py-2" data-id="${w.id}">+ Inserir Produto</button>
+              <button class="outline-btn flex-1 send-from-wh text-xs py-2" data-id="${w.id}">Enviar Produtos</button>
             </div>
           </div>
         `;
@@ -908,17 +908,17 @@ function renderWarehousesPage() {
     </div>
 
     <div class="panel glass-panel mb-6">
-      <div class="panel-head flex justify-between items-center">
+      <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <div><h2>Produtos em Cada Estoque</h2><p>Listagem detalhada do inventário individual de cada depósito.</p></div>
       </div>
-      <div class="data-table flex flex-col gap-3 md:gap-0">
+      <div class="data-table flex flex-col gap-3">
         <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1fr 1fr auto; align-items: center;">
           <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Disponível</span><span>Preço Unit.</span><span>Ações</span>
         </div>
         ${inv.length ? inv.map(i => {
           const w = whList.find(x => x.id === i.warehouseId);
           return `
-            <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Depósito</span>
                 <b>${esc(w?.name || 'Desconhecido')}</b>
@@ -946,14 +946,14 @@ function renderWarehousesPage() {
     </div>
 
     <div class="panel glass-panel">
-      <div class="panel-head"><h2>Histórico Geral de Transferências dos Estoques</h2></div>
+      <div class="panel-head mb-4"><h2>Histórico Geral de Transferências dos Estoques</h2></div>
       ${transfers.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.5fr 1.2fr 1.8fr 2fr 1fr; align-items: center;">
             <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span>
           </div>
           ${transfers.slice().reverse().map(t => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                 <small>${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -974,7 +974,7 @@ function renderWarehousesPage() {
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                 <span>${esc(t.productName)}</span>
               </div>
-              <div class="flex justify-between items-center md:block">
+              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                 <b>${t.quantity} un.</b>
               </div>
@@ -999,7 +999,7 @@ function renderStockPanel() {
   const container = getAppRoot();
   container.innerHTML = `
     <div class="app-layout w-full min-h-screen flex flex-col justify-between">
-      <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+      <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm flex flex-row justify-between items-center">
         <div class="flex items-center gap-3">
           <div class="brand-mark text-sky-600">${icons.warehouse}</div>
           <div>
@@ -1011,31 +1011,31 @@ function renderStockPanel() {
           <div class="font-black text-sm tracking-tight text-slate-900 whitespace-nowrap mr-2 hidden md:block">
             newlife<span class="text-sky-600">.system</span>
           </div>
-          <button id="stockLogout" class="outline-btn flex items-center gap-1">${icons.logout} <span>Sair</span></button>
+          <button id="stockLogout" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5">${icons.logout} <span>Sair</span></button>
         </div>
       </header>
 
       <main class="p-4 md:p-6 flex-1 max-w-6xl w-full mx-auto space-y-6">
-        <div class="p-6 glass-panel rounded-2xl flex justify-between items-center flex-wrap gap-4">
+        <div class="p-5 glass-panel rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 class="text-lg font-bold text-slate-900">Enviar Produtos deste Estoque</h2>
             <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e a quantidade a transferir.</p>
           </div>
-          <div class="flex gap-2 w-full md:w-auto">
-            <button id="stockAddItemBtn" class="outline-btn flex-1 md:flex-none">+ Adicionar Produtos</button>
-            <button id="stockDispatchBtn" class="primary-btn flex-1 md:flex-none">${icons.check} Enviar Produtos</button>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button id="stockAddItemBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Adicionar Produtos</button>
+            <button id="stockDispatchBtn" class="primary-btn flex-1 sm:flex-none text-xs py-2">${icons.check} Enviar Produtos</button>
           </div>
         </div>
 
-        <div class="panel glass-panel p-6 rounded-2xl">
+        <div class="panel glass-panel p-4 md:p-6 rounded-2xl">
           <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Produtos Disponíveis neste Estoque (${myInv.length})</h3>
           ${myInv.length ? `
-            <div class="data-table flex flex-col gap-3 md:gap-0">
+            <div class="data-table flex flex-col gap-3">
               <div class="table-head hidden md:grid" style="grid-template-columns: 2.5fr 1fr 1fr auto; align-items: center;">
                 <span>Produto & Marca</span><span>Qtd em Estoque</span><span>Preço Unit.</span><span>Ações</span>
               </div>
               ${myInv.map(i => `
-                <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                     <span><b>${esc(i.productName)}</b> <small class="text-slate-500">(${esc(i.brand)})</small></span>
@@ -1058,15 +1058,15 @@ function renderStockPanel() {
           ` : '<div class="p-8 text-center text-slate-400">Nenhum produto cadastrado neste estoque. Cadastre novos produtos para realizar envios.</div>'}
         </div>
 
-        <div class="panel glass-panel p-6 rounded-2xl">
+        <div class="panel glass-panel p-4 md:p-6 rounded-2xl">
           <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
           ${myTransfers.length ? `
-            <div class="data-table flex flex-col gap-3 md:gap-0">
+            <div class="data-table flex flex-col gap-3">
               <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2fr 2fr 1fr; align-items: center;">
                 <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd Enviada</span>
               </div>
               ${myTransfers.slice().reverse().map(t => `
-                <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                     <small class="text-slate-500">${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -1083,7 +1083,7 @@ function renderStockPanel() {
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                     <span>${esc(t.productName)}</span>
                   </div>
-                  <div class="flex justify-between items-center md:block">
+                  <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                     <b>${t.quantity} un.</b>
                   </div>
@@ -1335,9 +1335,9 @@ function renderAdminSupervisorsPage() {
   appFrame('Supervisores & Vendedores', 'Gerencie supervisores e reatribua a qual supervisor cada vendedor pertence.', `
     <div class="page-toolbar flex justify-between items-center mb-6 gap-3 flex-wrap">
       <div><b>Estrutura de Equipes da newlife.system</b></div>
-      <div class="flex gap-2">
-        <button id="addSupervisorBtn" class="outline-btn">+ Cadastrar Supervisor</button>
-        <button id="addSellerBtn" class="primary-btn">+ Cadastrar Vendedor</button>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="addSupervisorBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Supervisor</button>
+        <button id="addSellerBtn" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Vendedor</button>
       </div>
     </div>
 
@@ -1361,12 +1361,12 @@ function renderAdminSupervisorsPage() {
               </div>
 
               ${supSellers.length ? `
-                <div class="data-table flex flex-col gap-3 md:gap-0">
+                <div class="data-table flex flex-col gap-3">
                   <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1.8fr 1.2fr auto; align-items: center;">
                     <span>Vendedor</span><span>Localização</span><span>Alterar Supervisor Responsável</span><span>Estoque</span><span>Ações</span>
                   </div>
                   ${supSellers.map(s => `
-                    <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-3 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                    <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-3 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                       <div class="flex justify-between items-center md:block">
                         <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
                         <div>
@@ -1382,7 +1382,7 @@ function renderAdminSupervisorsPage() {
 
                       <div class="flex justify-between items-center md:block">
                         <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
-                        <select class="control compact change-supervisor-select max-w-[160px] md:max-w-none" data-seller-id="${s.id}">
+                        <select class="control compact change-supervisor-select w-36 md:w-full" data-seller-id="${s.id}">
                           ${sups.map(sp => `<option value="${sp.user}" ${s.supervisor === sp.user ? 'selected' : ''}>${esc(sp.name)}</option>`).join('')}
                         </select>
                       </div>
@@ -1440,15 +1440,15 @@ function renderSellersPage() {
   appFrame('Equipe de Vendedores', isAdm ? 'Gerencie a lista global de vendedores.' : 'Gerencie apenas a sua equipe direta de vendedores.', `
     <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
       <div><b>${sellersList.length} Vendedor(es) Ativo(s) ${isAdm ? '' : '(Sua Equipe)'}</b></div>
-      <div class="flex gap-2">
-        <button id="supSendStockSellersBtn" class="outline-btn flex items-center gap-1">${icons.orders} Enviar do Meu Estoque</button>
-        <button id="addNewSellerGlobal" class="primary-btn">+ Cadastrar Novo Vendedor</button>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="supSendStockSellersBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2 flex items-center justify-center gap-1">${icons.orders} Enviar do Meu Estoque</button>
+        <button id="addNewSellerGlobal" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Novo Vendedor</button>
       </div>
     </div>
 
     <div class="panel glass-panel">
       ${sellersList.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1.5fr 1.5fr 1.2fr 1.2fr auto' : '2fr 1.5fr 1.2fr 1.2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
             <span>VENDEDOR & LOGIN</span>
             ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
@@ -1461,7 +1461,7 @@ function renderSellersPage() {
             const sStock = stock(s.id);
             const sStockVal = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
             return `
-              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
                   <div class="flex flex-col">
@@ -1669,16 +1669,16 @@ function renderSupervisorOrdersPage() {
 
   appFrame('Pedidos em Reposição', 'Solicitações de novos produtos dos vendedores.', `
     <div class="panel glass-panel">
-      <div class="panel-head"><h2>Solicitações Ativas (${activeOrders.length})</h2></div>
+      <div class="panel-head mb-4"><h2>Solicitações Ativas (${activeOrders.length})</h2></div>
       ${activeOrders.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2fr 1.5fr auto; align-items: center;">
             <span>Vendedor</span><span>Data Desejada</span><span>Produtos Solicitados</span><span>Status</span><span>Ações</span>
           </div>
           ${activeOrders.slice().reverse().map(o => {
             const seller = mySellers.find(s => s.id === o.sellerId);
             return `
-              <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+              <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
                   <b>${esc(seller?.name || o.sellerName)}</b>
@@ -1693,7 +1693,7 @@ function renderSupervisorOrdersPage() {
                 </div>
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
-                  <select class="control compact status-select max-w-[140px] md:max-w-none" data-id="${o.id}">
+                  <select class="control compact status-select w-32 md:w-full" data-id="${o.id}">
                     <option value="Em análise" ${o.status === 'Em análise' ? 'selected' : ''}>Em análise</option>
                     <option value="A caminho" ${o.status === 'A caminho' ? 'selected' : ''}>A caminho</option>
                   </select>
@@ -1731,14 +1731,14 @@ function renderArchivedPage() {
 
   appFrame('Arquivados / Histórico', 'Pedidos concluídos.', `
     <div class="panel glass-panel">
-      <div class="panel-head"><h2>Pedidos Entregues (${archived.length})</h2></div>
+      <div class="panel-head mb-4"><h2>Pedidos Entregues (${archived.length})</h2></div>
       ${archived.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2.5fr 1.2fr; align-items: center;">
             <span>Vendedor</span><span>Data Solicitada</span><span>Produtos</span><span>Status</span>
           </div>
           ${archived.map(o => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
                 <b>${esc(o.sellerName)}</b>
@@ -1751,7 +1751,7 @@ function renderArchivedPage() {
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produtos</span>
                 <span>${esc(o.productName)} (${o.quantity} un)</span>
               </div>
-              <div class="flex justify-between items-center md:block">
+              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
                 <span class="status-pill style-green">Entregue</span>
               </div>
@@ -1766,11 +1766,11 @@ function renderArchivedPage() {
 function renderCatalogPage() {
   appFrame('Catálogo do Sistema', 'Catálogo oficial.', `
     <div class="panel glass-panel">
-      <div class="catalog-grid">
+      <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         ${systemCatalog().map(p => `
-          <div class="catalog-card">
-            <div class="catalog-badge">${esc(p[1])}</div>
-            <h3>${esc(p[0])}</h3>
+          <div class="catalog-card p-4 bg-white/90 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-2">
+            <div class="catalog-badge self-start">${esc(p[1])}</div>
+            <h3 class="font-bold text-slate-900 text-sm">${esc(p[0])}</h3>
           </div>
         `).join('')}
       </div>
@@ -1783,24 +1783,24 @@ function renderProductsPage() {
   const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
 
   appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe.', `
-    <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h3 class="font-extrabold text-slate-900 text-base">Seu Estoque de Supervisor</h3>
         <p class="text-xs text-slate-600">Você possui <b>${mySupStock.reduce((a,p)=>a+p.stock,0)} unidades</b> de produtos no seu usuário para repassar aos vendedores ou dar baixa.</p>
       </div>
-      <button id="supTransferStockBtn" class="primary-btn flex items-center gap-2">${icons.orders} Enviar do Meu Estoque para Vendedor</button>
+      <button id="supTransferStockBtn" class="primary-btn w-full sm:w-auto text-xs py-2 flex items-center justify-center gap-2">${icons.orders} Enviar do Meu Estoque para Vendedor</button>
     </div>
 
-    <div class="seller-attribution-grid">
+    <div class="seller-attribution-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       ${ss.map(s => {
         const sProds = products().filter(p => p.sellerId === s.id && p.stock > 0);
         return `
-          <div class="seller-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+          <div class="seller-card glass-panel p-5 rounded-2xl flex flex-col justify-between gap-3 bg-white/90 border border-slate-200 shadow-sm">
             <div>
               <h3 class="text-base font-bold text-slate-900">${esc(s.name)}</h3>
               <p class="text-xs text-slate-500 mb-3">@${esc(s.user)} · ${esc(s.city)}/${esc(s.uf)}</p>
               <strong class="highlight-val text-base block mb-3">${sProds.reduce((a, p) => a + p.stock, 0)} un. em posse</strong>
-              <div class="text-xs text-slate-600 space-y-1 mb-4">
+              <div class="text-xs text-slate-600 space-y-1">
                 ${sProds.length ? sProds.map(p => `<div>• ${esc(p.name)}: <b>${p.stock} un.</b></div>`).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
               </div>
             </div>
@@ -1817,20 +1817,20 @@ function renderProductsPage() {
 function renderReportsPage() {
   const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
   appFrame('Relatórios', 'Relatório operacional.', `
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
       <b>Resumo de Vendas</b>
-      <button id="downloadPdfBtn" class="primary-btn">${icons.pdf} Baixar PDF</button>
+      <button id="downloadPdfBtn" class="primary-btn text-xs py-2 w-full sm:w-auto flex items-center justify-center gap-1">${icons.pdf} Baixar PDF</button>
     </div>
     <div class="panel glass-panel">
-      <div class="data-table flex flex-col gap-3 md:gap-0">
+      <div class="data-table flex flex-col gap-3">
         <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
           <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
         </div>
         ${ss.map(s => `
-          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-              <b>${esc(s.name)}</b>
+              <b class="text-slate-900">${esc(s.name)}</b>
             </div>
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
@@ -1840,7 +1840,7 @@ function renderReportsPage() {
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
               <span>${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.</span>
             </div>
-            <div class="flex justify-between items-center md:block">
+            <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
               <strong class="highlight-val">${money(sellerRevenue(s.id, 'month'))}</strong>
             </div>
@@ -1887,20 +1887,20 @@ function renderSeller() {
       <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${sellerNavContent()}</aside>
       <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
         <div>
-          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+          <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm flex flex-row items-center justify-between gap-2">
             
             <div class="flex items-center gap-2.5 min-w-0 flex-1">
-              <button id="hamburgerBtnSeller" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" style="position: static !important; float: none !important; margin: 0 !important;" title="Abrir Menu">
+              <button id="hamburgerBtnSeller" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center" title="Abrir Menu">
                 ${icons.menu}
               </button>
               <h1 class="text-xs md:text-xl font-black text-slate-900 truncate">${currentUser.name} (Painel Vendedor)</h1>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0 ml-auto" style="margin-left: auto !important;">
+            <div class="flex items-center gap-2 shrink-0 ml-auto">
               <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
                 newlife<span class="text-sky-600">.system</span>
               </div>
-              <button id="sellerLogout" class="outline-btn text-xs px-2.5 py-1.5 hidden md:flex">${icons.logout} <span>Sair</span></button>
+              <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex flex items-center gap-1">${icons.logout} <span>Sair</span></button>
             </div>
           </header>
 
@@ -1916,7 +1916,7 @@ function renderSeller() {
     </div>
   `;
 
-  document.getElementById('sellerLogout').onclick = logout;
+  document.querySelectorAll('.logoutSellerSideBtn').forEach(b => b.onclick = logout);
 
   const hBtn = document.getElementById('hamburgerBtnSeller');
   const overlay = document.getElementById('appDrawerOverlay');
@@ -1925,10 +1925,9 @@ function renderSeller() {
 
   document.querySelectorAll('.mobile-close-drawer').forEach(b => b.onclick = closeMobileDrawer);
 
-  const switchToAdminBtn = document.getElementById('switchToAdminBtn');
-  if (switchToAdminBtn) {
-    switchToAdminBtn.onclick = () => { closeMobileDrawer(); activeTab = 'adminHome'; renderAdmin(); };
-  }
+  document.querySelectorAll('.switchToAdminBtn').forEach(b => {
+    b.onclick = () => { closeMobileDrawer(); activeTab = 'adminHome'; renderAdmin(); };
+  });
 
   document.querySelectorAll('[data-seller-tab]').forEach(b => {
     b.onclick = () => { sellerActiveTab = b.dataset.sellerTab; closeMobileDrawer(); renderSeller(); };
@@ -1941,32 +1940,32 @@ function renderSeller() {
 function renderSellerSalesTab(sellerProducts) {
   return `
     <div class="panel glass-panel">
-      <div class="panel-head flex-wrap gap-3">
+      <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
         <h2>Registrar Baixas de Vendas (Estoque Próprio)</h2>
-        ${sellerProducts.length ? `<button id="registerSaleBtn" class="primary-btn">${icons.check} Confirmar Vendas</button>` : ''}
+        ${sellerProducts.length ? `<button id="registerSaleBtn" class="primary-btn w-full sm:w-auto">${icons.check} Confirmar Vendas</button>` : ''}
       </div>
       ${sellerProducts.length ? `
-        <div class="data-table flex flex-col gap-3 md:gap-0">
+        <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
             <span>Produto</span><span>Preço</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${sellerProducts.map(p => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2 p-4 md:p-3 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                <b>${esc(p.name)}</b>
+                <b class="text-slate-900">${esc(p.name)}</b>
               </div>
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
-                <span>${money(p.price)}</span>
+                <span class="text-slate-700 font-semibold">${money(p.price)}</span>
               </div>
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Disponível</span>
-                <b>${p.stock} un.</b>
+                <b class="text-emerald-600">${p.stock} un.</b>
               </div>
-              <div class="flex justify-between items-center md:block">
+              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Vendida</span>
-                <input class="baja-input control max-w-[100px] md:max-w-none" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
+                <input class="baja-input control w-28 md:w-full" data-id="${p.id}" type="number" min="0" max="${p.stock}" value="0">
               </div>
             </div>
           `).join('')}
@@ -2021,7 +2020,7 @@ function renderSellerNewOrderTab() {
           </select>
         </label>
         <label>Quantidade<input name="quantity" type="number" min="1" value="10" class="control" required></label>
-        <button type="submit" class="primary-btn mt-3">${icons.check} Enviar Pedido</button>
+        <button type="submit" class="primary-btn mt-3 w-full sm:w-auto">${icons.check} Enviar Pedido</button>
       </form>
     </div>
   `;
@@ -2060,8 +2059,8 @@ function renderSellerMyOrdersTab() {
   const myOrd = orders().filter(o => o.sellerId === currentUser.id && o.status !== 'Entregue');
   return `
     <div class="panel glass-panel">
-      <h2>Pedidos em Andamento</h2>
-      ${myOrd.length ? myOrd.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800">${esc(o.productName)} (${o.quantity} un) - <span class="text-sky-600">${esc(o.status)}</span></div>`).join('') : '<div class="empty-state">Sem pedidos pendentes.</div>'}
+      <h2 class="mb-3">Pedidos em Andamento</h2>
+      ${myOrd.length ? myOrd.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800 flex justify-between items-center text-sm"><span>${esc(o.productName)} (${o.quantity} un)</span><span class="text-sky-600 font-bold">${esc(o.status)}</span></div>`).join('') : '<div class="empty-state">Sem pedidos pendentes.</div>'}
     </div>
   `;
 }
@@ -2070,8 +2069,8 @@ function renderSellerArchivedTab() {
   const myDelivered = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
   return `
     <div class="panel glass-panel">
-      <h2>Pedidos Concluídos</h2>
-      ${myDelivered.length ? myDelivered.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800">${esc(o.productName)} (${o.quantity} un) - <span class="text-emerald-600">Entregue</span></div>`).join('') : '<div class="empty-state">Nenhum histórico.</div>'}
+      <h2 class="mb-3">Pedidos Concluídos</h2>
+      ${myDelivered.length ? myDelivered.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800 flex justify-between items-center text-sm"><span>${esc(o.productName)} (${o.quantity} un)</span><span class="text-emerald-600 font-bold">Entregue</span></div>`).join('') : '<div class="empty-state">Nenhum histórico.</div>'}
     </div>
   `;
 }
