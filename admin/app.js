@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v14 - Câmbio Oficial USD/BRL + USDT Binance/CoinGecko) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v15 - Função Desfazer Envio + Câmbio Automático) */
 
 // Estado e Cotações Globais Padrão (Fallback)
 let exchangeRates = {
@@ -73,7 +73,6 @@ async function fetchExchangeRates() {
     }
   }
 
-  // Contingência caso a API de crypto falhe
   if (!usdtSuccess && usdSuccess) {
     exchangeRates.USDT_BRL = exchangeRates.USD_BRL * 1.003;
   }
@@ -104,6 +103,7 @@ const icons = {
   dollar: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
   warehouse: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-4.5a2 2 0 0 1 1.48 0l8 4.5A2 2 0 0 1 22 8.35z"/><polyline points="6 18 6 12 10 12 10 18"/><polyline points="14 18 14 12 18 12 18 18"/></svg>`,
   check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  undo: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`,
   pdf: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
   menu: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
   flash: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
@@ -125,7 +125,7 @@ const cityCoordinates = {
   'Assunção': [-25.2637, -57.5759]
 };
 
-// Base de Usuários (UK Stock alterado para ASU Stock)
+// Base de Usuários (ASU Stock)
 const defaultSystemUsers = [
   { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
   { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR', active: true, avatarUrl: '' },
@@ -146,7 +146,7 @@ const defaultMotoboys = [
   { id: 'mb_2', name: 'Lucas Express PR', whatsapp: '41999998888', city: 'Curitiba', uf: 'PR', supervisor: 'ik' }
 ];
 
-// Estoques Matriz (UK Stock alterado para ASU Stock)
+// Estoques Matriz
 const defaultWarehouses = [
   { id: 'wh_sp_centro', name: 'SP / CENTRO', city: 'São Paulo', uf: 'SP', country: 'BR' },
   { id: 'wh_sp_oe', name: 'SP / OE', city: 'São Paulo', uf: 'SP', country: 'BR' },
@@ -229,7 +229,7 @@ const write = (k, v) => {
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
 
-// Formatação Tripla de Câmbio em Tempo Real (USD / BRL / USDT)
+// Formatação Tripla de Câmbio (USD / BRL / USDT)
 function money(usdVal) {
   const usd = Number(usdVal || 0);
   const brl = usd * exchangeRates.USD_BRL;
@@ -284,14 +284,14 @@ function getAppRoot() {
   return root;
 }
 
-// Sincronização Inicial (v14 para aplicar ASU Stock e Câmbio de Precisão)
+// Sincronização Inicial
 function initSystemData() {
-  if (!localStorage.getItem('nl_v14_initialized')) {
+  if (!localStorage.getItem('nl_v15_initialized')) {
     localStorage.clear();
     write('nl_users', defaultSystemUsers);
     write('nl_warehouses', defaultWarehouses);
     write('nl_motoboys', defaultMotoboys);
-    write('nl_v14_initialized', true);
+    write('nl_v15_initialized', true);
   }
 }
 initSystemData();
@@ -640,7 +640,7 @@ function appFrame(title, sub, body) {
             </div>
 
             <!-- BADGE DE CÂMBIO EM TEMPO REAL -->
-            <div class="hidden lg:flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700" title="Cotações obtidas via ExchangeRate-API e Binance OTC">
+            <div class="hidden lg:flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
               <span class="text-emerald-600 font-extrabold">💵 Câmbio Hoje:</span>
               <span>1 USD = R$ ${exchangeRates.USD_BRL.toFixed(2)}</span>
               <span class="text-slate-300">|</span>
@@ -721,6 +721,89 @@ function showToast(msg) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2600);
+}
+
+/* FUNÇÃO PRINCIPAL: DESFAZER ENVIO DE ESTOQUE (ROLLBACK E REVERTER) */
+function undoTransferModal(transferId) {
+  const transfers = warehouseTransfers();
+  const t = transfers.find(x => x.id === transferId);
+
+  if (!t) return alert('Transferência não encontrada.');
+  if (t.reverted) return alert('Esta transferência já foi desfeita anteriormente.');
+
+  const prods = products();
+  const currentInv = warehouseInventory();
+  
+  // Buscar produto no destinatário para verificar saldo disponível
+  const targetProduct = prods.find(p => p.sellerId === t.targetId && p.name === t.productName);
+  const targetAvailable = targetProduct ? targetProduct.stock : 0;
+
+  if (targetAvailable < t.quantity) {
+    alert(`Não é possível desfazer totalmente este envio. O destinatário (${esc(t.targetName)}) possui apenas ${targetAvailable} un. em estoque (já vendeu ${t.quantity - targetAvailable} un.).`);
+    return;
+  }
+
+  confirmActionModal({
+    title: '↩️ Desfazer Envio de Estoque',
+    subtitle: `Reverter ${t.quantity}x ${t.productName} enviado para ${t.targetName}`,
+    warningText: `Os itens serão debitados de ${t.targetName} e retornados para o estoque de origem (${t.warehouseName}).`,
+    confirmText: 'Confirmar e Reverter Envio',
+    onConfirm: () => {
+      // 1. Debitar do destinatário
+      if (targetProduct) {
+        targetProduct.stock -= t.quantity;
+      }
+
+      // 2. Recreditar no estoque de origem
+      if (t.warehouseId.startsWith('sup_')) {
+        const supId = t.warehouseId.replace('sup_', '');
+        let supProd = prods.find(p => p.sellerId === supId && p.name === t.productName);
+        if (supProd) {
+          supProd.stock += t.quantity;
+        } else {
+          prods.push({
+            id: uid(),
+            sellerId: supId,
+            name: t.productName,
+            brand: t.brand,
+            price: t.price,
+            stock: t.quantity
+          });
+        }
+      } else {
+        let invItem = currentInv.find(i => i.warehouseId === t.warehouseId && i.productName === t.productName);
+        if (invItem) {
+          invItem.stock += t.quantity;
+        } else {
+          currentInv.push({
+            id: uid(),
+            warehouseId: t.warehouseId,
+            productName: t.productName,
+            brand: t.brand,
+            stock: t.quantity
+          });
+        }
+        write('nl_warehouse_inventory', currentInv);
+      }
+
+      // 3. Marcar transferência como desfeita
+      t.reverted = true;
+      t.revertedAt = new Date().toISOString();
+
+      write('atlasProducts', prods);
+      write('nl_transfers', transfers);
+
+      showToast('Envio desfeito com sucesso! Estoque restaurado.');
+
+      if (currentUser.role === 'STOCK') {
+        renderStockPanel();
+      } else if (activeTab === 'warehouses') {
+        renderWarehousesPage();
+      } else {
+        renderAdmin();
+      }
+    }
+  });
 }
 
 /* MODAL DE ALTERAÇÃO DA FOTO DO PRÓPRIO PERFIL */
@@ -863,7 +946,6 @@ function renderAdminHome() {
   const activeSellersCount = allSellers().filter(s => s.active !== false).length;
   const activeSupCount = allSupervisors().filter(s => s.active !== false).length;
   
-  // Cálculo do estoque dos vendedores em USD
   const sellerStockValueUSD = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
   const warehouseTotalUnits = warehouseInventory().reduce((a, i) => a + Number(i.stock || 0), 0);
 
@@ -888,7 +970,6 @@ function renderAdminHome() {
       </div>
     </div>
 
-    <!-- TABELA DE VENDAS E AUDITORIA RECENTE GLOBAL -->
     <div class="panel glass-panel mb-6">
       <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
         <div>
@@ -1707,7 +1788,7 @@ function renderBackupPage() {
       confirmText: 'Baixar Backup',
       onConfirm: () => {
         const backupData = {
-          systemVersion: 'v14',
+          systemVersion: 'v15',
           exportedAt: new Date().toISOString(),
           users: allUsers(),
           warehouses: warehouses(),
@@ -1990,6 +2071,7 @@ function transferSupervisorStockModal() {
           brand: supItem.brand,
           quantity: qty,
           price: priceUSD,
+          reverted: false,
           createdAt: new Date().toISOString()
         });
         write('nl_transfers', transfers);
@@ -2149,7 +2231,7 @@ function renderWarehousesPage() {
   const inv = warehouseInventory();
   const transfers = warehouseTransfers();
 
-  appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie o estoque físico dos depósitos matriz (SP/CENTRO, SP/OE, ASU Stock) e envie produtos atribuindo preços em dólar para Supervisores ou Vendedores.', `
+  appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie o estoque físico dos depósitos matriz (SP/CENTRO, SP/OE, ASU Stock) e envie produtos com opção de desfecho.', `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       ${whList.map(w => {
         const wItems = inv.filter(i => i.warehouseId === w.id);
@@ -2212,14 +2294,14 @@ function renderWarehousesPage() {
     </div>
 
     <div class="panel glass-panel">
-      <div class="panel-head mb-4"><h2>Histórico Geral de Transferências dos Estoques</h2></div>
+      <div class="panel-head mb-4"><h2>Histórico Geral de Transferências (Com opção de Desfazer)</h2></div>
       ${transfers.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.5fr 1.2fr 1.8fr 2fr 1fr 2fr; align-items: center;">
-            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.3fr 1.1fr 1.5fr 1.8fr 1fr 1.8fr auto; align-items: center;">
+            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span><span>Ações</span>
           </div>
           ${transfers.slice().reverse().map(t => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-7 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
+            <div class="table-row flex flex-col md:grid md:grid-cols-8 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                 <small>${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -2244,9 +2326,17 @@ function renderWarehousesPage() {
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                 <b>${t.quantity} un.</b>
               </div>
-              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+              <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
                 <span class="font-bold text-emerald-600">${money(t.price)}</span>
+              </div>
+              <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                ${t.reverted ? `
+                  <span class="status-pill style-red">🔴 Desfeito</span>
+                ` : `
+                  <button class="delete-btn undo-transfer-btn text-xs py-1 px-2.5 flex items-center gap-1" data-id="${t.id}">${icons.undo} Desfazer Envio</button>
+                `}
               </div>
             </div>
           `).join('')}
@@ -2258,6 +2348,7 @@ function renderWarehousesPage() {
   document.querySelectorAll('.add-item-wh').forEach(b => b.onclick = () => addWarehouseItemModal(b.dataset.id));
   document.querySelectorAll('.send-from-wh').forEach(b => b.onclick = () => transferStockModal(b.dataset.id));
   document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
+  document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
 }
 
 /* PAINEL DE CADA ESTOQUE MATRIZ */
@@ -2328,11 +2419,11 @@ function renderStockPanel() {
           <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
           ${myTransfers.length ? `
             <div class="data-table flex flex-col gap-3">
-              <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 1.8fr 1.8fr 1fr 2fr; align-items: center;">
-                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span>
+              <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 1.5fr 1.5fr 1fr 1.8fr auto; align-items: center;">
+                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span><span>Ações</span>
               </div>
               ${myTransfers.slice().reverse().map(t => `
-                <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none text-xs">
+                <div class="table-row flex flex-col md:grid md:grid-cols-7 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none text-xs">
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                     <small class="text-slate-500">${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -2353,9 +2444,17 @@ function renderStockPanel() {
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                     <b>${t.quantity} un.</b>
                   </div>
-                  <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
                     <b class="text-emerald-600">${money(t.price)}</b>
+                  </div>
+                  <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                    ${t.reverted ? `
+                      <span class="status-pill style-red">🔴 Desfeito</span>
+                    ` : `
+                      <button class="delete-btn undo-transfer-btn text-xs py-1 px-2.5 flex items-center gap-1" data-id="${t.id}">${icons.undo} Desfazer Envio</button>
+                    `}
                   </div>
                 </div>
               `).join('')}
@@ -2372,6 +2471,7 @@ function renderStockPanel() {
   document.getElementById('stockAddItemBtn').onclick = () => addWarehouseItemModal(wh.id);
   document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
   document.querySelectorAll('.edit-stock-item').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
+  document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
 }
 
 /* MODAIS DE ESTOQUE MATRIZ */
@@ -2576,6 +2676,7 @@ function transferStockModal(forcedWarehouseId = null) {
           brand: invItem.brand,
           quantity: qty,
           price: priceUSD,
+          reverted: false,
           createdAt: new Date().toISOString()
         });
         write('nl_transfers', transfers);
