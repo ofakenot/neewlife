@@ -1,89 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v15 - Função Desfazer Envio + Câmbio Automático) */
-
-// Estado e Cotações Globais Padrão (Fallback)
-let exchangeRates = {
-  USD_BRL: 5.45,
-  USDT_BRL: 5.48,
-  source: 'Carregando...',
-  lastUpdated: null
-};
-
-// Busca de Câmbio em Tempo Real via APIs Públicas de Alta Precisão
-async function fetchExchangeRates() {
-  let usdSuccess = false;
-  let usdtSuccess = false;
-
-  // 1. Cotação Oficial do Dólar Comercial (USD -> BRL) via ExchangeRate-API Open
-  try {
-    const resUSD = await fetch('https://open.er-api.com/v6/latest/USD');
-    if (resUSD.ok) {
-      const dataUSD = await resUSD.json();
-      if (dataUSD && dataUSD.rates && dataUSD.rates.BRL) {
-        exchangeRates.USD_BRL = parseFloat(dataUSD.rates.BRL);
-        usdSuccess = true;
-      }
-    }
-  } catch (e) {
-    console.warn('[newlife.system] Falha na ExchangeRate-API para USD.', e);
-  }
-
-  // Backup para USD: Coinbase API Pública
-  if (!usdSuccess) {
-    try {
-      const resCB = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=USD');
-      if (resCB.ok) {
-        const dataCB = await resCB.json();
-        if (dataCB?.data?.rates?.BRL) {
-          exchangeRates.USD_BRL = parseFloat(dataCB.data.rates.BRL);
-          usdSuccess = true;
-        }
-      }
-    } catch (e) {
-      console.warn('[newlife.system] Falha na Coinbase API para USD.', e);
-    }
-  }
-
-  // 2. Cotação do Tether (USDT -> BRL) via Binance API Pública
-  try {
-    const resUSDT = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=USDTBRL');
-    if (resUSDT.ok) {
-      const dataUSDT = await resUSDT.json();
-      if (dataUSDT && dataUSDT.price) {
-        exchangeRates.USDT_BRL = parseFloat(dataUSDT.price);
-        usdtSuccess = true;
-      }
-    }
-  } catch (e) {
-    console.warn('[newlife.system] Falha na Binance API para USDT.', e);
-  }
-
-  // Backup para USDT: CoinGecko API Pública
-  if (!usdtSuccess) {
-    try {
-      const resCG = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=brl');
-      if (resCG.ok) {
-        const dataCG = await resCG.json();
-        if (dataCG?.tether?.brl) {
-          exchangeRates.USDT_BRL = parseFloat(dataCG.tether.brl);
-          usdtSuccess = true;
-        }
-      }
-    } catch (e) {
-      console.warn('[newlife.system] Falha na CoinGecko API para USDT.', e);
-    }
-  }
-
-  if (!usdtSuccess && usdSuccess) {
-    exchangeRates.USDT_BRL = exchangeRates.USD_BRL * 1.003;
-  }
-
-  exchangeRates.lastUpdated = new Date();
-  exchangeRates.source = 'ExchangeRate-API + Binance OTC';
-  console.log(`[newlife.system] Cotações atualizadas: 1 USD = R$ ${exchangeRates.USD_BRL.toFixed(3)} | 1 USDT = R$ ${exchangeRates.USDT_BRL.toFixed(3)}`);
-}
-
-fetchExchangeRates();
-setInterval(fetchExchangeRates, 3 * 60 * 1000); // Atualização automática a cada 3 minutos
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v16 - Exclusivo BRL R$, Remoção de Foto, Atualizar Mobile & Planilha Consolidada) */
 
 // Biblioteca de Ícones SVG
 const icons = {
@@ -112,7 +27,8 @@ const icons = {
   motoboy: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1 .4-1 1v7c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>`,
   database: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
   whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`,
-  camera: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
+  camera: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`
 };
 
 // Coordenadas Geográficas (Incluso Assunção - PY)
@@ -220,7 +136,7 @@ let activeTab = 'adminHome';
 let sellerActiveTab = 'sales';
 let drawerOpen = false;
 
-/* Utilitários e Formatação Tripla de Câmbio */
+/* Utilitários e Formatação Exclusiva em Reais (R$) */
 const read = (k, d = []) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
 const write = (k, v) => {
   localStorage.setItem(k, JSON.stringify(v));
@@ -229,22 +145,14 @@ const write = (k, v) => {
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
 
-// Formatação Tripla de Câmbio (USD / BRL / USDT)
-function money(usdVal) {
-  const usd = Number(usdVal || 0);
-  const brl = usd * exchangeRates.USD_BRL;
-  const usdt = (brl / (exchangeRates.USDT_BRL || exchangeRates.USD_BRL));
-
-  const usdFormatted = usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-  const brlFormatted = brl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const usdtFormatted = `${usdt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
-
-  return `${usdFormatted} <span class="text-xs font-normal text-slate-500">(${brlFormatted} | ${usdtFormatted})</span>`;
+// Formatação Direta em Reais (R$)
+function money(brlVal) {
+  const brl = Number(brlVal || 0);
+  return brl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function moneySimple(usdVal) {
-  const usd = Number(usdVal || 0);
-  return usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+function moneySimple(brlVal) {
+  return money(brlVal);
 }
 
 // Sincronização em tempo real entre abas / usuários
@@ -253,17 +161,23 @@ window.addEventListener('storage', () => {
     const updatedUser = allUsers().find(u => u.id === currentUser.id);
     if (updatedUser) currentUser = updatedUser;
 
-    if (currentUser.role === 'STOCK') {
-      renderStockPanel();
-    } else if (hasAdminAccess(currentUser)) {
-      renderAdmin();
-    } else if (hasSupervisorAccess(currentUser)) {
-      renderSupervisor();
-    } else {
-      renderSeller();
-    }
+    refreshCurrentScreen();
   }
 });
+
+// Atualizador Dinâmico de Tela (Sem reload do navegador)
+function refreshCurrentScreen() {
+  if (!currentUser) return;
+  if (currentUser.role === 'STOCK') {
+    renderStockPanel();
+  } else if (hasAdminAccess(currentUser)) {
+    renderAdmin();
+  } else if (hasSupervisorAccess(currentUser)) {
+    renderSupervisor();
+  } else {
+    renderSeller();
+  }
+}
 
 // Container único de renderização
 function getAppRoot() {
@@ -286,12 +200,12 @@ function getAppRoot() {
 
 // Sincronização Inicial
 function initSystemData() {
-  if (!localStorage.getItem('nl_v15_initialized')) {
+  if (!localStorage.getItem('nl_v16_initialized')) {
     localStorage.clear();
     write('nl_users', defaultSystemUsers);
     write('nl_warehouses', defaultWarehouses);
     write('nl_motoboys', defaultMotoboys);
-    write('nl_v15_initialized', true);
+    write('nl_v16_initialized', true);
   }
 }
 initSystemData();
@@ -397,7 +311,7 @@ function confirmActionModal({ title, subtitle, warningText, confirmText = 'Confi
       ${subtitle ? `<p class="text-xs text-slate-500 mb-3">${esc(subtitle)}</p>` : ''}
       <div class="confirm-warning-box p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 mb-4">
         <strong>⚠️ Confirmação Exigida pelo Sistema:</strong>
-        <span class="block mt-1">${esc(warningText || 'Confirme se todas as informações e dados fornecidos estão corretos antes de salvar.')}</span>
+        <span class="block mt-1">${esc(warningText || 'Confirme se todas as informações fornecidas estão corretas antes de salvar.')}</span>
       </div>
       <div class="confirm-dialog-actions flex justify-end gap-2 mt-4">
         <button type="button" class="outline-btn text-xs py-2 px-4 cancel-dialog">${esc(cancelText)}</button>
@@ -492,7 +406,7 @@ function appFooter() {
   return `
     <footer class="app-footer">
       <div class="footer-container">
-        <div><b>newlife.system</b> &copy; 2026 — Gestão Integrada Multi-Moedas (USD/BRL/USDT)</div>
+        <div><b>newlife.system</b> &copy; 2026 — Gestão Integrada de Estoque e Vendas (R$)</div>
         <div class="footer-links"><span>Estoques Sep. (SP / ASU)</span> · <span>Modo Vendedor + ADM</span></div>
       </div>
     </footer>
@@ -639,23 +553,14 @@ function appFrame(title, sub, body) {
               </div>
             </div>
 
-            <!-- BADGE DE CÂMBIO EM TEMPO REAL -->
-            <div class="hidden lg:flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
-              <span class="text-emerald-600 font-extrabold">💵 Câmbio Hoje:</span>
-              <span>1 USD = R$ ${exchangeRates.USD_BRL.toFixed(2)}</span>
-              <span class="text-slate-300">|</span>
-              <span>1 USDT = R$ ${exchangeRates.USDT_BRL.toFixed(2)}</span>
-            </div>
-
             <div class="flex items-center gap-2 shrink-0 ml-auto">
-              <button id="refreshPage" class="outline-btn hidden md:flex items-center gap-1">${icons.refresh} <span>Atualizar</span></button>
-              
-              <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
-                newlife<span class="text-sky-600">.system</span>
-              </div>
+              <!-- BOTÃO DE ATUALIZAR VISÍVEL NO MOBILE E DESKTOP EM TODAS AS SESSÕES -->
+              <button id="refreshPage" class="outline-btn flex items-center gap-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100 font-bold" title="Atualizar Sessão">
+                ${icons.refresh} <span>Atualizar</span>
+              </button>
               
               <div class="editSelfAvatarTrigger cursor-pointer" title="Alterar Foto de Perfil">
-                ${renderAvatarHTML(currentUser, 'hidden md:flex')}
+                ${renderAvatarHTML(currentUser, 'flex')}
               </div>
             </div>
           </header>
@@ -695,10 +600,9 @@ function appFrame(title, sub, body) {
   document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
   
   const refreshBtn = document.getElementById('refreshPage');
-  if (refreshBtn) refreshBtn.onclick = async () => { 
-    await fetchExchangeRates();
-    hasAdminAccess(currentUser) ? renderAdmin() : renderSupervisor(); 
-    showToast('Cotação do Câmbio Atualizada!'); 
+  if (refreshBtn) refreshBtn.onclick = () => { 
+    refreshCurrentScreen();
+    showToast('Sessão atualizada!'); 
   };
 }
 
@@ -806,33 +710,45 @@ function undoTransferModal(transferId) {
   });
 }
 
-/* MODAL DE ALTERAÇÃO DA FOTO DO PRÓPRIO PERFIL */
+/* MODAL DE ALTERAÇÃO/REMOÇÃO DA FOTO DO PRÓPRIO PERFIL */
 function editSelfAvatarModal() {
   const m = modal(`
-    <h2>Alterar Foto de Perfil</h2>
-    <p class="text-xs text-slate-500 mb-3">Escolha uma foto em formato de imagem (PNG, JPG) para a sua conta <b>${esc(currentUser.name)}</b>.</p>
+    <h2>Foto de Perfil</h2>
+    <p class="text-xs text-slate-500 mb-3">Escolha uma foto em formato de imagem ou remova a foto atual da sua conta <b>${esc(currentUser.name)}</b>.</p>
     <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-200">
       <div id="selfAvatarPreview" class="w-24 h-24 mb-3 rounded-full overflow-hidden border-2 border-sky-500 shadow-md flex items-center justify-center bg-white">
         ${renderAvatarHTML(currentUser, 'w-full h-full')}
       </div>
       <input type="file" id="selfAvatarInput" accept="image/*" class="hidden">
-      <button type="button" id="triggerChooseSelfAvatar" class="outline-btn text-xs py-2 px-4 flex items-center gap-2">
-        ${icons.camera} <span>Selecionar Imagem</span>
-      </button>
+      <div class="flex gap-2">
+        <button type="button" id="triggerChooseSelfAvatar" class="outline-btn text-xs py-2 px-3 flex items-center gap-1.5">
+          ${icons.camera} <span>Selecionar Imagem</span>
+        </button>
+        <button type="button" id="removeSelfAvatarBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border: 1px solid #fecaca;">
+          ${icons.trash} <span>Remover Foto</span>
+        </button>
+      </div>
       <input type="hidden" id="selfAvatarBase64" value="${esc(currentUser.avatarUrl || '')}">
     </div>
     <div class="flex justify-end gap-2">
       <button type="button" class="outline-btn cancel-avatar-btn">Cancelar</button>
-      <button type="button" id="saveSelfAvatarBtn" class="primary-btn">${icons.check} Salvar Foto</button>
+      <button type="button" id="saveSelfAvatarBtn" class="primary-btn">${icons.check} Salvar Alteração</button>
     </div>
   `);
 
   const fileInput = m.querySelector('#selfAvatarInput');
   const triggerBtn = m.querySelector('#triggerChooseSelfAvatar');
+  const removeBtn = m.querySelector('#removeSelfAvatarBtn');
   const preview = m.querySelector('#selfAvatarPreview');
   const base64Input = m.querySelector('#selfAvatarBase64');
 
   triggerBtn.onclick = () => fileInput.click();
+
+  removeBtn.onclick = () => {
+    base64Input.value = '';
+    preview.innerHTML = `<div class="avatar text-xl font-black text-slate-700">${avatarFor(currentUser)}</div>`;
+    showToast('Foto removida! Clique em Salvar para confirmar.');
+  };
 
   fileInput.onchange = (e) => {
     const file = e.target.files[0];
@@ -856,8 +772,9 @@ function editSelfAvatarModal() {
       u.avatarUrl = base64Input.value;
       currentUser.avatarUrl = base64Input.value;
       write('nl_users', users);
-      showToast('Foto de perfil atualizada!');
+      showToast('Perfil atualizado com sucesso!');
       m.remove();
+      refreshCurrentScreen();
     }
   };
 }
@@ -941,25 +858,25 @@ function renderAdminHome() {
   const allSalesList = sales();
   const allProds = products();
   
-  const totalRevenueUSD = allSalesList.reduce((a, x) => a + x.total, 0);
+  const totalRevenueBRL = allSalesList.reduce((a, x) => a + x.total, 0);
   const totalItemsSold = allSalesList.reduce((a, x) => a + x.quantity, 0);
   const activeSellersCount = allSellers().filter(s => s.active !== false).length;
   const activeSupCount = allSupervisors().filter(s => s.active !== false).length;
   
-  const sellerStockValueUSD = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+  const sellerStockValueBRL = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
   const warehouseTotalUnits = warehouseInventory().reduce((a, i) => a + Number(i.stock || 0), 0);
 
-  appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento em tempo real, conversão USD/BRL/USDT e auditoria global.', `
+  appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento em tempo real e auditoria global.', `
     <div class="stats-grid mb-6">
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-        <div class="metric-value text-base md:text-lg font-black">${money(totalRevenueUSD)}</div>
+        <div class="metric-value text-base md:text-lg font-black">${money(totalRevenueBRL)}</div>
         <small class="text-xs text-slate-500 mt-1 block">${totalItemsSold} unidades vendidas no total</small>
       </div>
 
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Estoque em Posse (Vendedores)</span><span class="metric-icon green">${icons.warehouse}</span></div>
-        <div class="metric-value text-base md:text-lg font-black">${money(sellerStockValueUSD)}</div>
+        <div class="metric-value text-base md:text-lg font-black">${money(sellerStockValueBRL)}</div>
         <small class="text-xs text-slate-500 mt-1 block">${warehouseTotalUnits} un. armazenadas nos Depósitos Matriz</small>
       </div>
 
@@ -974,14 +891,14 @@ function renderAdminHome() {
       <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
         <div>
           <h2>Auditoria Global de Vendas Registradas</h2>
-          <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores (USD / BRL / USDT).</p>
+          <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores.</p>
         </div>
       </div>
 
       ${allSalesList.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 2.5fr; align-items: center;">
-            <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (USD | BRL | USDT)</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 2fr; align-items: center;">
+            <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (R$)</span>
           </div>
           ${allSalesList.slice().reverse().slice(0, 15).map(s => {
             const seller = users.find(u => u.id === s.sellerId);
@@ -1192,6 +1109,11 @@ function supervisorModal(existing = null) {
         <div class="flex-1">
           <label class="text-xs font-bold text-slate-700 block mb-1">Foto de Perfil (Avatar)</label>
           <input type="file" id="supAvatarInput" accept="image/*" class="text-xs control">
+          <div class="flex gap-2 mt-2">
+            <button type="button" id="removeSupAvatarBtn" class="delete-btn text-[11px] py-1 px-2.5" style="background:#fef2f2; color:#dc2626; border: 1px solid #fecaca;">
+              ${icons.trash} Remover Foto
+            </button>
+          </div>
           <input type="hidden" name="avatarUrl" id="supAvatarBase64" value="${esc(existing?.avatarUrl || '')}">
         </div>
       </div>
@@ -1226,8 +1148,15 @@ function supervisorModal(existing = null) {
   `);
 
   const fileInput = m.querySelector('#supAvatarInput');
+  const removeBtn = m.querySelector('#removeSupAvatarBtn');
   const preview = m.querySelector('#supAvatarPreview');
   const avatarBase64 = m.querySelector('#supAvatarBase64');
+
+  removeBtn.onclick = () => {
+    avatarBase64.value = '';
+    preview.innerHTML = existing ? avatarFor(existing) : 'SUP';
+    showToast('Foto removida!');
+  };
 
   fileInput.onchange = e => {
     const file = e.target.files[0];
@@ -1321,12 +1250,12 @@ function renderSellersPage() {
             ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
             <span>CIDADE / UF</span>
             <span>ESTOQUE</span>
-            <span>VALOR POSSE (USD / BRL / USDT)</span>
+            <span>VALOR EM POSSE (R$)</span>
             <span>AÇÕES</span>
           </div>
           ${sellersList.map(s => {
             const sStock = stock(s.id);
-            const sStockValUSD = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+            const sStockValBRL = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
             const isSellerActive = s.active !== false;
 
             return `
@@ -1365,7 +1294,7 @@ function renderSellersPage() {
                 </div>
                 <div class="flex justify-between items-center md:block text-xs">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor</span>
-                  <strong class="highlight-val">${money(sStockValUSD)}</strong>
+                  <strong class="highlight-val">${money(sStockValBRL)}</strong>
                 </div>
                 <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
@@ -1402,6 +1331,11 @@ function sellerModal(existing = null) {
         <div class="flex-1">
           <label class="text-xs font-bold text-slate-700 block mb-1">Foto de Perfil (Avatar)</label>
           <input type="file" id="sellerAvatarInput" accept="image/*" class="text-xs control">
+          <div class="flex gap-2 mt-2">
+            <button type="button" id="removeSellerAvatarBtn" class="delete-btn text-[11px] py-1 px-2.5" style="background:#fef2f2; color:#dc2626; border: 1px solid #fecaca;">
+              ${icons.trash} Remover Foto
+            </button>
+          </div>
           <input type="hidden" name="avatarUrl" id="sellerAvatarBase64" value="${esc(existing?.avatarUrl || '')}">
         </div>
       </div>
@@ -1446,8 +1380,15 @@ function sellerModal(existing = null) {
   `);
 
   const fileInput = m.querySelector('#sellerAvatarInput');
+  const removeBtn = m.querySelector('#removeSellerAvatarBtn');
   const preview = m.querySelector('#sellerAvatarPreview');
   const avatarBase64 = m.querySelector('#sellerAvatarBase64');
+
+  removeBtn.onclick = () => {
+    avatarBase64.value = '';
+    preview.innerHTML = existing ? avatarFor(existing) : 'VEND';
+    showToast('Foto removida!');
+  };
 
   fileInput.onchange = e => {
     const file = e.target.files[0];
@@ -1721,7 +1662,21 @@ function deleteMotoboy(id) {
 function renderBackupPage() {
   if (!hasAdminAccess(currentUser)) return;
 
-  appFrame('Backup & Importação de Dados', 'Exporte o banco de dados completo em JSON ou CSV/Excel e faça restaurações com confirmação prévia.', `
+  appFrame('Backup & Importação de Dados', 'Exporte o banco de dados completo em JSON ou baixe uma PLANILHA CONSOLIDADA ÚNICA (CSV/Excel) com estoque e vendas dos últimos 7 dias.', `
+    <div class="panel glass-panel p-6 rounded-2xl bg-emerald-950/5 border border-emerald-300 mb-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="p-3 bg-emerald-100 text-emerald-700 rounded-xl text-xl font-bold">📊</span>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-900">NOVO: Exportar Planilha Consolidada Completa (CSV / Excel)</h2>
+          <p class="text-xs text-slate-600">Gera UMA ÚNICA PLANILHA completa contendo o Estoque de Vendedores, Estoque de Supervisores, Vendas dos Últimos 7 Dias e Histórico de Baixas.</p>
+        </div>
+      </div>
+      
+      <button id="exportConsolidatedCsvBtn" class="primary-btn w-full text-xs py-3 flex items-center justify-center gap-2" style="background: #059669;">
+        ${icons.pdf} <span>📊 Baixar Planilha Geral Consolidada (.CSV)</span>
+      </button>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div class="panel glass-panel p-6 rounded-2xl bg-white/90 border border-slate-200 flex flex-col justify-between">
         <div>
@@ -1762,24 +1717,19 @@ function renderBackupPage() {
         </div>
       </div>
     </div>
-
-    <div class="panel glass-panel p-6 rounded-2xl bg-white">
-      <h2 class="text-base font-bold text-slate-900 mb-2">Exportar Relatórios Planilháveis (Excel / CSV)</h2>
-      <p class="text-xs text-slate-500 mb-4">Exporte tabelas específicas em formato CSV compatível com Microsoft Excel e Google Planilhas.</p>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <button id="exportSalesCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
-          📊 <span>Exportar Vendas (CSV)</span>
-        </button>
-        <button id="exportInventoryCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
-          📦 <span>Exportar Estoques (CSV)</span>
-        </button>
-        <button id="exportSellersCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
-          👥 <span>Exportar Vendedores (CSV)</span>
-        </button>
-      </div>
-    </div>
   `);
+
+  // BOTÃO DA PLANILHA CONSOLIDADA COMPLETA (TUDO NA MESMA PLANILHA)
+  document.getElementById('exportConsolidatedCsvBtn').onclick = () => {
+    confirmActionModal({
+      title: 'Gerar Planilha Consolidada Completa',
+      warningText: 'Deseja exportar a planilha unificada contendo o estoque de vendedores, estoque de supervisores, vendas dos últimos 7 dias e baixas efetuadas?',
+      confirmText: 'Exportar Planilha',
+      onConfirm: () => {
+        exportConsolidatedExcelCSV();
+      }
+    });
+  };
 
   document.getElementById('exportBackupJsonBtn').onclick = () => {
     confirmActionModal({
@@ -1788,7 +1738,7 @@ function renderBackupPage() {
       confirmText: 'Baixar Backup',
       onConfirm: () => {
         const backupData = {
-          systemVersion: 'v15',
+          systemVersion: 'v16',
           exportedAt: new Date().toISOString(),
           users: allUsers(),
           warehouses: warehouses(),
@@ -1852,39 +1802,92 @@ function renderBackupPage() {
     };
     reader.readAsText(file);
   };
+}
 
-  document.getElementById('exportSalesCsvBtn').onclick = () => {
-    const sList = sales();
-    const uList = allUsers();
-    let csv = 'ID Venda,Vendedor,ID Produto,Quantidade,Preco Unit (USD),Total (USD),Total (BRL),Total (USDT),Data\n';
-    sList.forEach(s => {
-      const seller = uList.find(u => u.id === s.sellerId);
-      const brl = s.total * exchangeRates.USD_BRL;
-      const usdt = brl / exchangeRates.USDT_BRL;
-      csv += `"${s.id}","${seller ? seller.name : s.sellerId}","${s.productId}",${s.quantity},${s.unitPrice},${s.total},${brl.toFixed(2)},${usdt.toFixed(2)},"${s.createdAt}"\n`;
-    });
-    downloadCSV(csv, `vendas-${new Date().toISOString().slice(0, 10)}.csv`);
-  };
+/* FUNÇÃO GERADORA DA PLANILHA CONSOLIDADA COMPLETA (NOVA) */
+function exportConsolidatedExcelCSV() {
+  const usersList = allUsers();
+  const sellersList = allSellers();
+  const supsList = allSupervisors();
+  const prodsList = products();
+  const salesList = sales();
+  const whList = warehouses();
+  const invList = warehouseInventory();
 
-  document.getElementById('exportInventoryCsvBtn').onclick = () => {
-    const inv = warehouseInventory();
-    const whs = warehouses();
-    let csv = 'ID Deposito,Nome Deposito,Produto,Marca,Estoque Disponivel\n';
-    inv.forEach(i => {
-      const w = whs.find(x => x.id === i.warehouseId);
-      csv += `"${i.warehouseId}","${w ? w.name : ''}","${i.productName}","${i.brand}",${i.stock}\n`;
-    });
-    downloadCSV(csv, `estoques-matriz-${new Date().toISOString().slice(0, 10)}.csv`);
-  };
+  let csv = '';
 
-  document.getElementById('exportSellersCsvBtn').onclick = () => {
-    const sellers = allSellers();
-    let csv = 'ID,Nome,Usuario,Supervisor,Cidade,UF,Itens em Posse\n';
-    sellers.forEach(s => {
-      csv += `"${s.id}","${s.name}","${s.user}","${s.supervisor}","${s.city}","${s.uf}",${stock(s.id)}\n`;
-    });
-    downloadCSV(csv, `vendedores-${new Date().toISOString().slice(0, 10)}.csv`);
-  };
+  // CABEÇALHO GERAL
+  csv += `NEWLIFE.SYSTEM - RELATORIO CONSOLIDADO COMPLETO EM REAIS (R$)\n`;
+  csv += `Data de Geracao: "${new Date().toLocaleString('pt-BR')}"\n\n`;
+
+  // SEÇÃO 1: ESTOQUE EM POSSE DOS VENDEDORES
+  csv += `=== 1. ESTOQUE EM POSSE DOS VENDEDORES ===\n`;
+  csv += `Vendedor,Supervisor Responsavel,Cidade/UF,Produto,Marca,Quantidade em Estoque,Preco Unitario (R$),Valor Total Em Posse (R$)\n`;
+
+  sellersList.forEach(s => {
+    const sProds = prodsList.filter(p => p.sellerId === s.id && p.stock > 0);
+    if (sProds.length) {
+      sProds.forEach(p => {
+        const totalVal = p.stock * p.price;
+        csv += `"${s.name} (@${s.user})","${s.supervisor}","${s.city}/${s.uf}","${p.name}","${p.brand}",${p.stock},${p.price.toFixed(2)},${totalVal.toFixed(2)}\n`;
+      });
+    } else {
+      csv += `"${s.name} (@${s.user})","${s.supervisor}","${s.city}/${s.uf}","Sem Estoque","—",0,0.00,0.00\n`;
+    }
+  });
+  csv += `\n`;
+
+  // SEÇÃO 2: ESTOQUE EM POSSE DOS SUPERVISORES
+  csv += `=== 2. ESTOQUE EM POSSE DOS SUPERVISORES ===\n`;
+  csv += `Supervisor,Cidade/UF,Produto,Marca,Quantidade em Estoque,Preco Unitario (R$),Valor Total Em Posse (R$)\n`;
+
+  supsList.forEach(sup => {
+    const supProds = prodsList.filter(p => p.sellerId === sup.id && p.stock > 0);
+    if (supProds.length) {
+      supProds.forEach(p => {
+        const totalVal = p.stock * p.price;
+        csv += `"${sup.name} (@${sup.user})","${sup.city}/${sup.uf}","${p.name}","${p.brand}",${p.stock},${p.price.toFixed(2)},${totalVal.toFixed(2)}\n`;
+      });
+    } else {
+      csv += `"${sup.name} (@${sup.user})","${sup.city}/${sup.uf}","Sem Estoque","—",0,0.00,0.00\n`;
+    }
+  });
+  csv += `\n`;
+
+  // SEÇÃO 3: DESEMPENHO E VENDAS DOS ÚLTIMOS 7 DIAS (CADA INTEGRANTE)
+  csv += `=== 3. RESUMO DE VENDAS E BAIXAS NOS ULTIMOS 7 DIAS (POR INTEGRANTE) ===\n`;
+  csv += `Nome Integrante,Cargo / Função,Supervisor,Cidade/UF,Qtd Vendas (Ultimos 7 Dias),Total Faturado em Reais (R$)\n`;
+
+  const allActiveTeam = [...supsList, ...sellersList];
+  allActiveTeam.forEach(u => {
+    const sales7d = periodSales(u.id, '7days');
+    const totalQty7d = sales7d.reduce((a, x) => a + x.quantity, 0);
+    const totalRev7d = sales7d.reduce((a, x) => a + x.total, 0);
+    csv += `"${u.name} (@${u.user})","${u.role}","${u.supervisor || 'Geral'}","${u.city}/${u.uf}",${totalQty7d},${totalRev7d.toFixed(2)}\n`;
+  });
+  csv += `\n`;
+
+  // SEÇÃO 4: HISTÓRICO COMPLETO DE BAIXAS E VENDAS
+  csv += `=== 4. HISTORICO COMPLETO DE BAIXAS REGISTRADAS ===\n`;
+  csv += `ID Venda,Data e Hora,Vendedor / Responsavel,Produto,Quantidade Vendida,Preco Unitario (R$),Total Faturado (R$)\n`;
+
+  salesList.slice().reverse().forEach(s => {
+    const seller = usersList.find(u => u.id === s.sellerId);
+    const prod = prodsList.find(p => p.id === s.productId);
+    csv += `"${s.id}","${new Date(s.createdAt).toLocaleString('pt-BR')}","${seller ? seller.name : s.sellerId}","${prod ? prod.name : 'Produto Registrado'}",${s.quantity},${s.unitPrice.toFixed(2)},${s.total.toFixed(2)}\n`;
+  });
+  csv += `\n`;
+
+  // SEÇÃO 5: ESTOQUE FISICO NOS DEPÓSITOS MATRIZ
+  csv += `=== 5. ESTOQUE FISICO NOS DEPOSITOS MATRIZ ===\n`;
+  csv += `Deposito,Localizacao,Produto,Marca,Estoque Fisico Disponivel\n`;
+
+  invList.forEach(i => {
+    const w = whList.find(x => x.id === i.warehouseId);
+    csv += `"${w ? w.name : i.warehouseId}","${w ? w.city : ''}/${w ? w.uf : ''}","${i.productName}","${i.brand}",${i.stock}\n`;
+  });
+
+  downloadCSV(csv, `newlife-planilha-consolidada-${new Date().toISOString().slice(0, 10)}.csv`);
 }
 
 function downloadCSV(csvContent, fileName) {
@@ -1896,7 +1899,7 @@ function downloadCSV(csvContent, fileName) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  showToast('Relatório CSV baixado!');
+  showToast('Planilha Consolidada baixada!');
 }
 
 /* TELA DE DAR BAIXA DO SUPERVISOR */
@@ -1911,8 +1914,8 @@ function renderSupervisorSalesPage() {
       </div>
       ${myProducts.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2.5fr 1.2fr 1.8fr; align-items: center;">
-            <span>Produto</span><span>Preço Unit. (USD / BRL / USDT)</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço Unitário (R$)</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${myProducts.map(p => `
             <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -1991,7 +1994,7 @@ function transferSupervisorStockModal() {
 
   const m = modal(`
     <h2>Enviar Produtos para Vendedor</h2>
-    <p class="text-xs text-slate-500 mb-3">Transfira itens do seu próprio estoque de supervisor diretamente para a sua equipe e defina o preço do vendedor em <b>Dólar (USD $)</b>.</p>
+    <p class="text-xs text-slate-500 mb-3">Transfira itens do seu próprio estoque de supervisor diretamente para a sua equipe e defina o preço de venda do vendedor em <b>Reais (R$)</b>.</p>
     <form id="supTransferForm" class="seller-form">
       <label>Selecione o Vendedor Destinatário
         <select name="targetId" class="control" required>
@@ -2009,8 +2012,8 @@ function transferSupervisorStockModal() {
         <label>Quantidade a Enviar
           <input name="quantity" type="number" min="1" value="1" class="control" required>
         </label>
-        <label>Preço de Venda do Vendedor em Dólar (USD $)
-          <input name="price" type="number" step="0.01" min="0" placeholder="50.00" class="control" required>
+        <label>Preço de Venda do Vendedor (R$)
+          <input name="price" type="number" step="0.01" min="0" placeholder="250.00" class="control" required>
         </label>
       </div>
 
@@ -2026,7 +2029,7 @@ function transferSupervisorStockModal() {
     const productId = f.get('productId');
     const targetId = f.get('targetId');
     const qty = Number(f.get('quantity'));
-    const priceUSD = Number(f.get('price'));
+    const priceBRL = Number(f.get('price'));
 
     const prods = products();
     const supItem = prods.find(p => p.id === productId);
@@ -2037,8 +2040,8 @@ function transferSupervisorStockModal() {
 
     confirmActionModal({
       title: 'Confirmar Envio ao Vendedor',
-      subtitle: `${qty}x ${supItem.name} → ${targetSeller.name} por ${moneySimple(priceUSD)}/un.`,
-      warningText: 'A quantidade será debitada do seu estoque e creditada ao vendedor com o preço em dólar informado.',
+      subtitle: `${qty}x ${supItem.name} → ${targetSeller.name} por ${moneySimple(priceBRL)}/un.`,
+      warningText: 'A quantidade será debitada do seu estoque e creditada ao vendedor com o preço informado.',
       confirmText: 'Enviar Agora',
       onConfirm: () => {
         supItem.stock -= qty;
@@ -2046,14 +2049,14 @@ function transferSupervisorStockModal() {
         let sellerItem = prods.find(p => p.sellerId === targetSeller.id && p.name === supItem.name);
         if (sellerItem) {
           sellerItem.stock += qty;
-          sellerItem.price = priceUSD;
+          sellerItem.price = priceBRL;
         } else {
           prods.push({
             id: uid(),
             sellerId: targetSeller.id,
             name: supItem.name,
             brand: supItem.brand,
-            price: priceUSD,
+            price: priceBRL,
             stock: qty
           });
         }
@@ -2070,7 +2073,7 @@ function transferSupervisorStockModal() {
           productName: supItem.name,
           brand: supItem.brand,
           quantity: qty,
-          price: priceUSD,
+          price: priceBRL,
           reverted: false,
           createdAt: new Date().toISOString()
         });
@@ -2176,14 +2179,14 @@ function renderMapPage() {
 function renderSummary() {
   const mySellers = allSellers().filter(s => s.supervisor === currentUser.user);
   const rows = mySellers.map(s => ({ s, xs: periodSales(s.id, 'day') }));
-  const revUSD = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.total, 0), 0);
+  const revBRL = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.total, 0), 0);
   const qty = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.quantity, 0), 0);
 
   appFrame('Resumo da Equipe', 'Visão geral das vendas do dia da equipe.', `
     <div class="stats-grid">
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Faturamento Hoje</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-        <div class="metric-value text-base md:text-lg font-black">${money(revUSD)}</div>
+        <div class="metric-value text-base md:text-lg font-black">${money(revBRL)}</div>
       </div>
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Itens Vendidos</span><span class="metric-icon green">${icons.check}</span></div>
@@ -2194,8 +2197,8 @@ function renderSummary() {
     <div class="panel glass-panel mt-6">
       <div class="panel-head mb-4"><h2>Desempenho da Equipe Hoje</h2></div>
       <div class="data-table flex flex-col gap-3">
-        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2.5fr; align-items: center;">
-          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (USD | BRL | USDT)</span>
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$)</span>
         </div>
         ${rows.map(r => `
           <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -2298,7 +2301,7 @@ function renderWarehousesPage() {
       ${transfers.length ? `
         <div class="data-table flex flex-col gap-3">
           <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.3fr 1.1fr 1.5fr 1.8fr 1fr 1.8fr auto; align-items: center;">
-            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span><span>Ações</span>
+            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (R$)</span><span>Ações</span>
           </div>
           ${transfers.slice().reverse().map(t => `
             <div class="table-row flex flex-col md:grid md:grid-cols-8 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -2369,9 +2372,7 @@ function renderStockPanel() {
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <div class="font-black text-sm tracking-tight text-slate-900 whitespace-nowrap mr-2 hidden md:block">
-            newlife<span class="text-sky-600">.system</span>
-          </div>
+          <button id="refreshStockScreen" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5 bg-sky-50 text-sky-700 font-bold border-sky-200">${icons.refresh} <span>Atualizar</span></button>
           <button id="stockLogout" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5">${icons.logout} <span>Sair</span></button>
         </div>
       </header>
@@ -2380,7 +2381,7 @@ function renderStockPanel() {
         <div class="p-5 glass-panel rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 class="text-lg font-bold text-slate-900">Enviar Produtos deste Estoque</h2>
-            <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e defina o preço de venda em Dólar (USD $).</p>
+            <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e defina o preço de venda em Reais (R$).</p>
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
             <button id="stockAddItemBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Adicionar Produtos</button>
@@ -2420,7 +2421,7 @@ function renderStockPanel() {
           ${myTransfers.length ? `
             <div class="data-table flex flex-col gap-3">
               <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 1.5fr 1.5fr 1fr 1.8fr auto; align-items: center;">
-                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span><span>Ações</span>
+                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (R$)</span><span>Ações</span>
               </div>
               ${myTransfers.slice().reverse().map(t => `
                 <div class="table-row flex flex-col md:grid md:grid-cols-7 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none text-xs">
@@ -2467,6 +2468,7 @@ function renderStockPanel() {
     </div>
   `;
 
+  document.getElementById('refreshStockScreen').onclick = () => { renderStockPanel(); showToast('Painel atualizado!'); };
   document.getElementById('stockLogout').onclick = logout;
   document.getElementById('stockAddItemBtn').onclick = () => addWarehouseItemModal(wh.id);
   document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
@@ -2572,7 +2574,7 @@ function transferStockModal(forcedWarehouseId = null) {
 
   const m = modal(`
     <h2>Enviar Produtos do Estoque Matriz</h2>
-    <p>Selecione o destinatário e defina o <b>preço de venda em Dólar (USD $)</b>.</p>
+    <p>Selecione o destinatário e defina o <b>preço de venda em Reais (R$)</b>.</p>
     <form id="entityForm" class="seller-form">
       <label>Estoque Origem
         <select name="warehouseId" id="whSelect" class="control" ${forcedWarehouseId ? 'disabled' : ''} required>
@@ -2601,8 +2603,8 @@ function transferStockModal(forcedWarehouseId = null) {
         <label>Quantidade a Enviar
           <input name="quantity" type="number" min="1" value="10" class="control" required>
         </label>
-        <label>Preço de Venda do Vendedor em Dólar (USD $)
-          <input name="price" type="number" step="0.01" min="0" placeholder="50.00" class="control" required>
+        <label>Preço de Venda do Vendedor (R$)
+          <input name="price" type="number" step="0.01" min="0" placeholder="250.00" class="control" required>
         </label>
       </div>
 
@@ -2645,7 +2647,7 @@ function transferStockModal(forcedWarehouseId = null) {
     const itemId = f.get('inventoryItemId');
     const invItem = currentInv.find(i => i.id === itemId);
     const qty = Number(f.get('quantity'));
-    const priceUSD = Number(f.get('price'));
+    const priceBRL = Number(f.get('price'));
 
     if (!invItem) return alert('Selecione um produto válido.');
     if (qty > invItem.stock) return alert(`Quantidade indisponível em estoque. Máximo disponível: ${invItem.stock}`);
@@ -2657,7 +2659,7 @@ function transferStockModal(forcedWarehouseId = null) {
 
     confirmActionModal({
       title: 'Confirmar Envio do Estoque',
-      subtitle: `${qty}x ${invItem.productName} → ${targetObj.name} por ${moneySimple(priceUSD)}/un.`,
+      subtitle: `${qty}x ${invItem.productName} → ${targetObj.name} por ${moneySimple(priceBRL)}/un.`,
       warningText: `A quantidade será debitada do estoque ${whObj.name} e creditada ao ${targetType === 'SUPERVISOR' ? 'supervisor' : 'vendedor'}.`,
       confirmText: 'Enviar Agora',
       onConfirm: () => {
@@ -2675,7 +2677,7 @@ function transferStockModal(forcedWarehouseId = null) {
           productName: invItem.productName,
           brand: invItem.brand,
           quantity: qty,
-          price: priceUSD,
+          price: priceBRL,
           reverted: false,
           createdAt: new Date().toISOString()
         });
@@ -2685,14 +2687,14 @@ function transferStockModal(forcedWarehouseId = null) {
         let p = prods.find(x => x.sellerId === targetObj.id && x.name === invItem.productName);
         if (p) {
           p.stock += qty;
-          p.price = priceUSD;
+          p.price = priceBRL;
         } else {
           prods.push({
             id: uid(),
             sellerId: targetObj.id,
             name: invItem.productName,
             brand: invItem.brand,
-            price: priceUSD,
+            price: priceBRL,
             stock: qty
           });
         }
@@ -2863,7 +2865,7 @@ function renderProductsPage() {
   const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
   const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
 
-  appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe com precificação em Dólar (USD).', `
+  appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe em Reais (R$).', `
     <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h3 class="font-extrabold text-slate-900 text-base">Seu Estoque de Supervisor</h3>
@@ -2895,7 +2897,7 @@ function renderProductsPage() {
                     </div>
                     <div class="flex items-center gap-2">
                       <b class="text-slate-800">${p.stock} un.</b>
-                      <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço USD</button>
+                      <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
                     </div>
                   </div>
                 `).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
@@ -2918,10 +2920,10 @@ function renderProductsPage() {
       if (!targetP) return;
 
       const m = modal(`
-        <h2>Ajustar Preço em Dólar (USD $)</h2>
+        <h2>Ajustar Preço de Venda (R$)</h2>
         <p class="text-xs text-slate-500 mb-3">Produto: <b>${esc(targetP.name)}</b></p>
         <form id="editPriceForm" class="seller-form">
-          <label>Preço Exclusivo deste Vendedor em Dólar (USD $)
+          <label>Preço Exclusivo deste Vendedor (R$)
             <input name="price" type="number" step="0.01" min="0" value="${targetP.price}" class="control" required>
           </label>
           <button type="submit" class="primary-btn w-full mt-3">${icons.check} Atualizar Preço</button>
@@ -2930,10 +2932,10 @@ function renderProductsPage() {
 
       m.querySelector('form').onsubmit = e => {
         e.preventDefault();
-        const newPriceUSD = Number(new FormData(e.target).get('price'));
-        targetP.price = newPriceUSD;
+        const newPriceBRL = Number(new FormData(e.target).get('price'));
+        targetP.price = newPriceBRL;
         write('atlasProducts', allP);
-        showToast('Preço do vendedor atualizado em dólar!');
+        showToast('Preço do vendedor atualizado em reais!');
         m.remove();
         renderProductsPage();
       };
@@ -2943,15 +2945,15 @@ function renderProductsPage() {
 
 function renderReportsPage() {
   const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
-  appFrame('Relatórios', 'Relatório operacional multi-moedas.', `
+  appFrame('Relatórios', 'Relatório operacional de faturamento e vendas.', `
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
       <b>Resumo de Vendas Mensal</b>
       <button id="downloadPdfBtn" class="primary-btn text-xs py-2 w-full sm:w-auto flex items-center justify-center gap-1">${icons.pdf} Baixar PDF</button>
     </div>
     <div class="panel glass-panel">
       <div class="data-table flex flex-col gap-3">
-        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2.5fr; align-items: center;">
-          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (USD | BRL | USDT)</span>
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$)</span>
         </div>
         ${ss.map(s => `
           <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -2982,8 +2984,8 @@ function renderReportsPage() {
 
   document.getElementById('downloadPdfBtn').onclick = () => {
     exportUniversalPDF({
-      title: 'Relatório Oficial de Vendas (Multi-Moedas)',
-      headers: ['Vendedor', 'Localizacao', 'Qtd Vendida', 'Faturamento (USD)'],
+      title: 'Relatório Oficial de Vendas em Reais (R$)',
+      headers: ['Vendedor', 'Localizacao', 'Qtd Vendida', 'Faturamento (R$)'],
       rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, moneySimple(sellerRevenue(s.id, 'month'))]),
       fileName: 'newlife-relatorio.pdf'
     });
@@ -3012,10 +3014,8 @@ function renderSeller() {
             </div>
 
             <div class="flex items-center gap-2 shrink-0 ml-auto">
-              <div class="md:hidden font-black text-sm tracking-tight text-slate-900 whitespace-nowrap">
-                newlife<span class="text-sky-600">.system</span>
-              </div>
-              <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex flex items-center gap-1">${icons.logout} <span>Sair</span></button>
+              <button id="refreshSellerScreen" class="outline-btn flex items-center gap-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 font-bold border-sky-200">${icons.refresh} <span>Atualizar</span></button>
+              <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex items-center gap-1">${icons.logout} <span>Sair</span></button>
             </div>
           </header>
 
@@ -3031,6 +3031,7 @@ function renderSeller() {
     </div>
   `;
 
+  document.getElementById('refreshSellerScreen').onclick = () => { renderSeller(); showToast('Painel do Vendedor atualizado!'); };
   document.querySelectorAll('.logoutSellerSideBtn').forEach(b => b.onclick = logout);
   document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
 
@@ -3062,8 +3063,8 @@ function renderSellerSalesTab(sellerProducts) {
       </div>
       ${sellerProducts.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2.5fr 1.2fr 1.8fr; align-items: center;">
-            <span>Produto</span><span>Preço (USD / BRL / USDT)</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço (R$)</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${sellerProducts.map(p => `
             <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
