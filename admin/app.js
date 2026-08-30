@@ -22,7 +22,10 @@ const icons = {
   menu: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
   flash: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   chart: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
-  clipboard: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`
+  clipboard: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
+  motoboy: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1 .4-1 1v7c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>`,
+  database: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`
 };
 
 // Coordenadas Geográficas
@@ -37,17 +40,23 @@ const cityCoordinates = {
 
 // Base de Usuários
 const defaultSystemUsers = [
-  { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR' },
-  { id: 'u_wg', user: 'wg', password: 'wgsystem2026@', name: 'Wg', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'u_pit', user: 'pit', password: 'pitsystem2026@', name: 'Pit', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'u_spcentro', user: 'spcentro', password: 'spcentrosystem2026@', name: 'SP / CENTRO', role: 'STOCK', warehouseId: 'wh_sp_centro', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'u_spoe', user: 'spoe', password: 'spoesystem2026@', name: 'SP / OE', role: 'STOCK', warehouseId: 'wh_sp_oe', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'u_ukstock', user: 'ukstock', password: 'ukstocksystem2026@', name: 'UK Stock', role: 'STOCK', warehouseId: 'wh_uk', city: 'Londres', uf: 'UK', country: 'UK' },
-  { id: 'u_b2bcotia', user: 'b2bcotia', password: 'b2bcotiasystem2026@', name: 'B2b Cotia', role: 'SELLER', supervisor: 'wg', city: 'Cotia', uf: 'SP', country: 'BR' },
-  { id: 'u_gbmaranhao', user: 'gbmaranhao', password: 'gbmaranhaosystem2026@', name: 'GB Maranhão', role: 'SELLER', supervisor: 'wg', city: 'São Luís', uf: 'MA', country: 'BR' },
-  { id: 'u_011barueri', user: '011barueri', password: '011baruerisystem2026@', name: '011 Barueri', role: 'SELLER', supervisor: 'pit', city: 'Barueri', uf: 'SP', country: 'BR' },
-  { id: 'u_emipiranga', user: 'emipiranga', password: 'emipirangasystem2026@', name: 'Em Ipiranga', role: 'SELLER', supervisor: 'pit', city: 'São Paulo', uf: 'SP', country: 'BR' }
+  { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR', active: true },
+  { id: 'u_wg', user: 'wg', password: 'wgsystem2026@', name: 'Wg', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_pit', user: 'pit', password: 'pitsystem2026@', name: 'Pit', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_spcentro', user: 'spcentro', password: 'spcentrosystem2026@', name: 'SP / CENTRO', role: 'STOCK', warehouseId: 'wh_sp_centro', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_spoe', user: 'spoe', password: 'spoesystem2026@', name: 'SP / OE', role: 'STOCK', warehouseId: 'wh_sp_oe', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_ukstock', user: 'ukstock', password: 'ukstocksystem2026@', name: 'UK Stock', role: 'STOCK', warehouseId: 'wh_uk', city: 'Londres', uf: 'UK', country: 'UK', active: true },
+  { id: 'u_b2bcotia', user: 'b2bcotia', password: 'b2bcotiasystem2026@', name: 'B2b Cotia', role: 'SELLER', supervisor: 'wg', city: 'Cotia', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_gbmaranhao', user: 'gbmaranhao', password: 'gbmaranhaosystem2026@', name: 'GB Maranhão', role: 'SELLER', supervisor: 'wg', city: 'São Luís', uf: 'MA', country: 'BR', active: true },
+  { id: 'u_011barueri', user: '011barueri', password: '011baruerisystem2026@', name: '011 Barueri', role: 'SELLER', supervisor: 'pit', city: 'Barueri', uf: 'SP', country: 'BR', active: true },
+  { id: 'u_emipiranga', user: 'emipiranga', password: 'emipirangasystem2026@', name: 'Em Ipiranga', role: 'SELLER', supervisor: 'pit', city: 'São Paulo', uf: 'SP', country: 'BR', active: true }
+];
+
+// Motoboys Padrão
+const defaultMotoboys = [
+  { id: 'mb_1', name: 'Carlos Motoboy SP', whatsapp: '11988887777', city: 'São Paulo', uf: 'SP', supervisor: 'wg' },
+  { id: 'mb_2', name: 'Lucas Express PR', whatsapp: '41999998888', city: 'Curitiba', uf: 'PR', supervisor: 'ik' }
 ];
 
 // Estoques Matriz
@@ -57,15 +66,62 @@ const defaultWarehouses = [
   { id: 'wh_uk', name: 'UK Stock', city: 'Londres', uf: 'UK', country: 'UK' }
 ];
 
+// Catálogo Oficial Expandido com Todas as Marcas Solicitiadas
 const catalog = [
-  ['Retatrutide 60mg', 'New Life'], ['Tirzepatide 120mg', 'NEW'], ['Tirzepatide 60mg', 'New Life'],
-  ['GHK-Cu 100mg', 'New Life'], ['GLOW 70mg', 'New Life'], ['KLOW 80mg', 'New Life'],
-  ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
-  ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'],
-  ['Selank 10mg', 'New Life'], ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'],
-  ['CBL-514 20mg', 'New Life'], ['Retatrutide 40mg', 'Usa Peptides'], ['Tirzepatide 120mg', 'Usa Peptides'],
-  ['Tirzepatide 60mg', 'Usa Peptides'], ['Tirzepatide 30mg', 'Usa Peptides'], ['Beauty Stack', 'Usa Peptides'],
-  ['GHK-Cu 100mg', 'Usa Peptides'], ['GLOW Stack', 'Usa Peptides'], ['KLOW Stack', 'Usa Peptides']
+  // --- NEW LIFE ---
+  ['Retatrutide 60mg', 'New Life'],
+  ['Tirzepatide 120mg', 'New Life'],
+  ['Tirzepatide 60mg', 'New Life'],
+  ['GHK-Cu 100mg', 'New Life'],
+  ['GLOW 70mg', 'New Life'],
+  ['KLOW 80mg', 'New Life'],
+  ['AOD-9604 5mg', 'New Life'],
+  ['NAD+ 500mg', 'New Life'],
+  ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
+  ['Tesamorelin 20mg', 'New Life'],
+  ['MOTS-c 40mg', 'New Life'],
+  ['Semax 10mg', 'New Life'],
+  ['Selank 10mg', 'New Life'],
+  ['Epithalon 50mg', 'New Life'],
+  ['SS-31 50mg', 'New Life'],
+  ['CBL-514 20mg', 'New Life'],
+
+  // --- USA PEPTIDES ---
+  ['Retatrutide 40mg', 'USA Peptides'],
+  ['Tirzepatide 120mg', 'USA Peptides'],
+  ['Tirzepatide 60mg', 'USA Peptides'],
+  ['Tirzepatide 30mg', 'USA Peptides'],
+  ['Beauty Stack', 'USA Peptides'],
+  ['GHK-Cu 100mg', 'USA Peptides'],
+  ['GLOW Stack', 'USA Peptides'],
+  ['KLOW Stack', 'USA Peptides'],
+  ['SLU-PP-332 10mg', 'USA Peptides'],
+  ['AOD-9604 10mg', 'USA Peptides'],
+  ['PT-141 10mg', 'USA Peptides'],
+  ['NAD+ 500mg', 'USA Peptides'],
+  ['HGH-FRAG 10mg', 'USA Peptides'],
+  ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'],
+  ['CJC-1295 + Ipamorelin', 'USA Peptides'],
+  ['Tesamorelin 10mg', 'USA Peptides'],
+  ['MOTS-c 10mg', 'USA Peptides'],
+  ['Semax 10mg', 'USA Peptides'],
+  ['Epithalon 10mg', 'USA Peptides'],
+  ['SS-31 10mg', 'USA Peptides'],
+  ['MT2 10mg', 'USA Peptides'],
+
+  // --- ZPHC ---
+  ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'],
+  ['Retatrutida 60mg', 'ZPHC'],
+
+  // --- TG ---
+  ['Tirzepatida 15mg — 4 ampolas', 'TG'],
+
+  // --- QUIMFA ---
+  ['Lispax 30mg', 'QUIMFA'],
+
+  // --- SYNEDICA ---
+  ['Retatrutide 40mg', 'SYNEDICA'],
+  ['GLOW GHK-Cu', 'SYNEDICA']
 ];
 
 const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
@@ -104,11 +160,12 @@ function getAppRoot() {
 
 // Sincronização Inicial
 function initSystemData() {
-  if (!localStorage.getItem('nl_v8_initialized')) {
+  if (!localStorage.getItem('nl_v11_initialized')) {
     localStorage.clear();
     write('nl_users', defaultSystemUsers);
     write('nl_warehouses', defaultWarehouses);
-    write('nl_v8_initialized', true);
+    write('nl_motoboys', defaultMotoboys);
+    write('nl_v11_initialized', true);
   }
 }
 initSystemData();
@@ -116,6 +173,7 @@ initSystemData();
 function allUsers() { return read('nl_users', defaultSystemUsers); }
 function allSellers() { return allUsers().filter(u => u.role === 'SELLER' || u.role === 'ADMIN_SELLER'); }
 function allSupervisors() { return allUsers().filter(u => u.role === 'SUPERVISOR' || u.role === 'ADMIN_SUPERVISOR'); }
+function allMotoboys() { return read('nl_motoboys', defaultMotoboys); }
 function products() { return read('atlasProducts'); }
 function sales() { return read('atlasSales'); }
 function orders() { return read('atlasOrders'); }
@@ -193,19 +251,20 @@ async function fetchCitiesForRegion(uf, citySelect, targetCity = '') {
   citySelect.disabled = false;
 }
 
+/* TELA DE CONFIRMAÇÃO UNIVERSAL */
 function confirmActionModal({ title, subtitle, warningText, confirmText = 'Confirmar e Salvar', cancelText = 'Cancelar', onConfirm }) {
   const m = modal(`
-    <div class="confirm-dialog-wrap">
-      <div class="confirm-icon">${icons.flash}</div>
-      <h2>${esc(title)}</h2>
-      ${subtitle ? `<p>${esc(subtitle)}</p>` : ''}
-      <div class="confirm-warning-box">
-        <strong>⚠️ Confirmação do Sistema:</strong>
-        <span>${esc(warningText || 'Confirme se todas as informações estão corretas.')}</span>
+    <div class="confirm-dialog-wrap p-2">
+      <div class="confirm-icon text-sky-600 mb-2">${icons.flash}</div>
+      <h2 class="text-lg font-black text-slate-900 mb-1">${esc(title)}</h2>
+      ${subtitle ? `<p class="text-xs text-slate-500 mb-3">${esc(subtitle)}</p>` : ''}
+      <div class="confirm-warning-box p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 mb-4">
+        <strong>⚠️ Confirmação Exigida pelo Sistema:</strong>
+        <span class="block mt-1">${esc(warningText || 'Confirme se todas as informações e dados fornecidos estão corretos antes de salvar.')}</span>
       </div>
-      <div class="confirm-dialog-actions flex justify-end gap-3 mt-6">
-        <button type="button" class="outline-btn cancel-dialog">${esc(cancelText)}</button>
-        <button type="button" class="primary-btn confirm-dialog">${icons.check} ${esc(confirmText)}</button>
+      <div class="confirm-dialog-actions flex justify-end gap-2 mt-4">
+        <button type="button" class="outline-btn text-xs py-2 px-4 cancel-dialog">${esc(cancelText)}</button>
+        <button type="button" class="primary-btn text-xs py-2 px-4 confirm-dialog">${icons.check} ${esc(confirmText)}</button>
       </div>
     </div>
   `);
@@ -272,6 +331,11 @@ function exportUniversalPDF({ title, subtitle, headers = [], rows = [], fileName
 
 /* Navegação e Sessão */
 function login(user) {
+  if (user.active === false) {
+    document.getElementById('loginError').textContent = 'Esta conta foi desativada pelo Administrador.';
+    return;
+  }
+
   currentUser = user;
   const loginScreen = document.getElementById('loginScreen');
   if (loginScreen) loginScreen.style.display = 'none';
@@ -327,15 +391,18 @@ function navContent() {
       <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques (SP/CENTRO, SP/OE, UK)</span></button>
       <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
       <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
+      <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
       <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
       <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
       <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+      <button class="side-link ${activeTab === 'backup' ? 'active' : ''}" data-admin-tab="backup">${icons.database} <span>Backup & Importação</span></button>
       <button class="side-link ${activeTab === 'adminReports' ? 'active' : ''}" data-admin-tab="adminReports">${icons.reports} <span>Relatórios Globais</span></button>
     ` : `
       <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
       <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
       <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
       <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>
+      <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>
       <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
       <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
       <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
@@ -527,8 +594,15 @@ function emergencyWipeModal() {
     e.preventDefault();
     const pwd = m.querySelector('#resetAdminPassword').value;
     if (pwd === currentUser.password || pwd === 'iksystem2026@') {
-      localStorage.clear();
-      location.reload();
+      confirmActionModal({
+        title: '⚠️ ZERAR SISTEMA COMPLETO',
+        warningText: 'Você está prestes a apagar todos os dados. Não haverá como desfazer esta operação.',
+        confirmText: 'ZERAR AGORA',
+        onConfirm: () => {
+          localStorage.clear();
+          location.reload();
+        }
+      });
     } else {
       m.querySelector('#resetErrorMsg').textContent = 'Senha incorreta! Operação cancelada.';
     }
@@ -540,6 +614,7 @@ function renderSupervisor() {
   if (activeTab === 'sales') return renderSupervisorSalesPage();
   if (activeTab === 'map') return renderMapPage();
   if (activeTab === 'sellers') return renderSellersPage();
+  if (activeTab === 'motoboys') return renderMotoboysPage();
   if (activeTab === 'orders') return renderSupervisorOrdersPage();
   if (activeTab === 'archived') return renderArchivedPage();
   if (activeTab === 'catalog') return renderCatalogPage();
@@ -555,11 +630,915 @@ function renderAdmin() {
   if (activeTab === 'warehouses') return renderWarehousesPage();
   if (activeTab === 'adminSupervisors') return renderAdminSupervisorsPage();
   if (activeTab === 'sellers') return renderSellersPage();
+  if (activeTab === 'motoboys') return renderMotoboysPage();
   if (activeTab === 'orders') return renderSupervisorOrdersPage();
   if (activeTab === 'catalog') return renderCatalogPage();
   if (activeTab === 'products') return renderProductsPage();
+  if (activeTab === 'backup') return renderBackupPage();
   if (activeTab === 'adminReports') return renderReportsPage();
   renderAdminHome();
+}
+
+/* VISÃO CONSOLIDADA - PAINEL ADM EXPANDIDO COM MAIS CONTROLE E DADOS */
+function renderAdminHome() {
+  const users = allUsers();
+  const allSalesList = sales();
+  const allProds = products();
+  const whInv = warehouseInventory();
+  
+  const totalRevenue = allSalesList.reduce((a, x) => a + x.total, 0);
+  const totalItemsSold = allSalesList.reduce((a, x) => a + x.quantity, 0);
+  const activeSellersCount = allSellers().filter(s => s.active !== false).length;
+  const activeSupCount = allSupervisors().filter(s => s.active !== false).length;
+  
+  // Cálculo do estoque global
+  const sellerStockValue = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+  const warehouseStockValue = whInv.filter(i => i.stock > 0).reduce((a, i) => a + (i.price * i.stock), 0);
+  const totalStockValue = sellerStockValue + warehouseStockValue;
+
+  appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento, auditoria global e estado do sistema.', `
+    <div class="stats-grid mb-6">
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
+        <div class="metric-value">${money(totalRevenue)}</div>
+        <small class="text-xs text-slate-500 mt-1 block">${totalItemsSold} unidades vendidas no total</small>
+      </div>
+
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Valor do Estoque Global</span><span class="metric-icon green">${icons.warehouse}</span></div>
+        <div class="metric-value">${money(totalStockValue)}</div>
+        <small class="text-xs text-slate-500 mt-1 block">Depósitos Matriz + Posse dos Vendedores</small>
+      </div>
+
+      <div class="metric-card glass-panel">
+        <div class="metric-top"><span>Equipe Ativa</span><span class="metric-icon orange">${icons.users}</span></div>
+        <div class="metric-value">${activeSupCount} Sup. / ${activeSellersCount} Vend.</div>
+        <small class="text-xs text-slate-500 mt-1 block">${allMotoboys().length} Motoboys cadastrados</small>
+      </div>
+    </div>
+
+    <!-- TABELA DE VENDAS E AUDITORIA RECENTE GLOBAL -->
+    <div class="panel glass-panel mb-6">
+      <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+        <div>
+          <h2>Auditoria Global de Vendas Registradas</h2>
+          <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores.</p>
+        </div>
+      </div>
+
+      ${allSalesList.length ? `
+        <div class="data-table flex flex-col gap-3">
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 1.2fr; align-items: center;">
+            <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (R$)</span>
+          </div>
+          ${allSalesList.slice().reverse().slice(0, 15).map(s => {
+            const seller = users.find(u => u.id === s.sellerId);
+            const prod = allProds.find(p => p.id === s.productId);
+            return `
+              <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                  <small class="text-slate-500">${new Date(s.createdAt).toLocaleString('pt-BR')}</small>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                  <b class="text-slate-900">${esc(seller ? seller.name : s.sellerId)}</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                  <span>${esc(prod ? prod.name : 'Produto Registrado')}</span>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
+                  <b>${s.quantity} un.</b>
+                </div>
+                <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Total</span>
+                  <strong class="highlight-val">${money(s.total)}</strong>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : '<div class="empty-state">Nenhuma venda registrada no sistema ainda.</div>'}
+    </div>
+  `);
+}
+
+/* SUPERVISORES E VENDEDORES CADASTRADOS (COM EDIÇÃO, EXCLUSÃO E TOGGLE ATIVO/DESATIVADO) */
+function renderAdminSupervisorsPage() {
+  if (!hasAdminAccess(currentUser)) {
+    return renderSellersPage();
+  }
+
+  const sups = allSupervisors();
+  const sellersList = allSellers();
+
+  appFrame('Supervisores & Vendedores', 'Gerencie, edite ou altere o status dos supervisores e vendedores do sistema.', `
+    <div class="page-toolbar flex justify-between items-center mb-6 gap-3 flex-wrap">
+      <div><b>Estrutura de Equipes da newlife.system</b></div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="addSupervisorBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Supervisor</button>
+        <button id="addSellerBtn" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Vendedor</button>
+      </div>
+    </div>
+
+    <div class="panel glass-panel">
+      <div class="panel-head mb-4"><h2>Supervisores e Suas Equipes</h2></div>
+
+      <div class="space-y-6">
+        ${sups.map(sup => {
+          const supSellers = sellersList.filter(s => s.supervisor.toLowerCase() === sup.user.toLowerCase());
+          const isSupActive = sup.active !== false;
+
+          return `
+            <div class="p-4 md:p-5 bg-white/90 border border-slate-200 rounded-2xl shadow-sm">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-slate-200 gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="avatar">${avatarFor(sup)}</div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-base font-extrabold text-slate-900">${esc(sup.name)}</h3>
+                      <span class="status-pill ${isSupActive ? 'style-green' : 'style-red'}">${isSupActive ? '🟢 Ativo' : '🔴 Desativado'}</span>
+                    </div>
+                    <small class="text-xs text-slate-500">Login: @${esc(sup.user)} · Local: ${esc(sup.city)}/${esc(sup.uf)}</small>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                  <button class="small-btn edit-sup-btn" data-id="${sup.id}">Editar</button>
+                  <button class="small-btn toggle-sup-status" data-id="${sup.id}" style="background: ${isSupActive ? '#fef2f2' : '#f0fdf4'}; color: ${isSupActive ? '#dc2626' : '#166534'};">
+                    ${isSupActive ? 'Desativar' : 'Ativar'}
+                  </button>
+                  <button class="delete-btn delete-sup-btn" data-id="${sup.id}">Excluir</button>
+                </div>
+              </div>
+
+              ${supSellers.length ? `
+                <div class="data-table flex flex-col gap-3">
+                  <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1fr 1.5fr 1.5fr 1fr auto; align-items: center;">
+                    <span>Vendedor</span><span>Status</span><span>Localização</span><span>Supervisor Destino</span><span>Estoque</span><span>Ações</span>
+                  </div>
+                  ${supSellers.map(s => {
+                    const isSellerActive = s.active !== false;
+                    return `
+                      <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-3 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                        <div class="flex justify-between items-center md:block">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                          <div>
+                            <b class="text-slate-900 font-bold">${esc(s.name)}</b>
+                            <small class="text-slate-500 block md:inline">(@${esc(s.user)})</small>
+                          </div>
+                        </div>
+
+                        <div class="flex justify-between items-center md:block">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                          <span class="status-pill ${isSellerActive ? 'style-green' : 'style-red'}">${isSellerActive ? 'Ativo' : 'Desativado'}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center md:block">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
+                          <span class="text-sm font-semibold text-slate-700">${esc(s.city)} / ${esc(s.uf)}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center md:block">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
+                          <select class="control compact change-supervisor-select w-36 md:w-full" data-seller-id="${s.id}">
+                            ${sups.map(sp => `<option value="${sp.user}" ${s.supervisor === sp.user ? 'selected' : ''}>${esc(sp.name)}</option>`).join('')}
+                          </select>
+                        </div>
+
+                        <div class="flex justify-between items-center md:block">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                          <span class="font-bold text-slate-900">${stock(s.id)} un.</span>
+                        </div>
+
+                        <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                          <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                          <div class="flex gap-1.5">
+                            <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
+                            <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : '<div class="text-xs text-slate-400 p-3 italic">Nenhum vendedor associado a este supervisor.</div>'}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `);
+
+  document.getElementById('addSupervisorBtn').onclick = () => supervisorModal();
+  document.getElementById('addSellerBtn').onclick = () => sellerModal();
+
+  document.querySelectorAll('.edit-sup-btn').forEach(b => b.onclick = () => supervisorModal(allUsers().find(u => u.id === b.dataset.id)));
+  document.querySelectorAll('.delete-sup-btn').forEach(b => b.onclick = () => deleteSupervisor(b.dataset.id));
+  
+  document.querySelectorAll('.toggle-sup-status').forEach(b => {
+    b.onclick = () => {
+      const sup = allUsers().find(u => u.id === b.dataset.id);
+      const newStatus = sup.active === false ? true : false;
+      confirmActionModal({
+        title: `${newStatus ? 'Ativar' : 'Desativar'} Supervisor`,
+        subtitle: `Supervisor: ${sup.name}`,
+        warningText: `Confirma ${newStatus ? 'a ativação' : 'a desativação'} da conta deste supervisor?`,
+        confirmText: 'Confirmar Status',
+        onConfirm: () => {
+          sup.active = newStatus;
+          write('nl_users', allUsers());
+          showToast('Status do supervisor atualizado!');
+          renderAdminSupervisorsPage();
+        }
+      });
+    };
+  });
+
+  document.querySelectorAll('.change-supervisor-select').forEach(sel => {
+    sel.onchange = e => {
+      const sellerId = e.target.dataset.sellerId;
+      const newSupUser = e.target.value;
+      const users = allUsers();
+      const s = users.find(u => u.id === sellerId);
+      if (s) {
+        confirmActionModal({
+          title: 'Alterar Supervisor Responsável',
+          subtitle: `Vendedor: ${s.name} → Novo Supervisor: @${newSupUser}`,
+          warningText: 'Confirmar a transferência de supervisão deste vendedor?',
+          confirmText: 'Transferir Supervisão',
+          onConfirm: () => {
+            s.supervisor = newSupUser;
+            write('nl_users', users);
+            showToast(`Supervisor do vendedor alterado!`);
+            renderAdminSupervisorsPage();
+          }
+        });
+      }
+    };
+  });
+
+  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
+  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
+}
+
+function supervisorModal(existing = null) {
+  if (!hasAdminAccess(currentUser)) return;
+
+  const m = modal(`
+    <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Supervisor</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nome do Supervisor<input name="name" class="control" value="${esc(existing?.name)}" required></label>
+      <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: carlos"></label>
+      <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: carlossystem2026@"></label>
+      
+      <label>Status da Conta
+        <select name="active" class="control" required>
+          <option value="true" ${existing?.active !== false ? 'selected' : ''}>🟢 Ativo</option>
+          <option value="false" ${existing?.active === false ? 'selected' : ''}>🔴 Desativado</option>
+        </select>
+      </label>
+
+      <div class="form-grid">
+        <label>Estado (UF)
+          <select name="uf" id="supUf" class="control" required>
+            <option value="">Selecione</option>
+            ${brazilStatesList.map(u => `<option value="${u}" ${existing?.uf === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </label>
+        <label>Cidade
+          <select name="city" id="supCity" class="control" required>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="button" id="triggerSaveSup" class="primary-btn w-full mt-3">${icons.check} Salvar Supervisor</button>
+    </form>
+  `);
+
+  const ufSelect = m.querySelector('#supUf');
+  const citySelect = m.querySelector('#supCity');
+  if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
+  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
+
+  m.querySelector('#triggerSaveSup').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    confirmActionModal({
+      title: existing ? 'Salvar Alterações do Supervisor' : 'Cadastrar Supervisor',
+      subtitle: `Supervisor: ${f.get('name')}`,
+      warningText: 'Confirmar os dados do supervisor?',
+      confirmText: 'Salvar Supervisor',
+      onConfirm: () => {
+        const users = allUsers();
+        let sup = existing || { id: uid(), role: 'SUPERVISOR', supervisor: 'ik' };
+        sup.name = f.get('name');
+        sup.user = String(f.get('user')).trim().toLowerCase();
+        sup.password = f.get('password');
+        sup.active = f.get('active') === 'true';
+        sup.uf = f.get('uf');
+        sup.city = f.get('city');
+
+        const pos = users.findIndex(u => u.id === sup.id);
+        pos >= 0 ? users[pos] = sup : users.push(sup);
+        write('nl_users', users);
+
+        m.remove();
+        showToast('Supervisor salvo com sucesso!');
+        renderAdminSupervisorsPage();
+      }
+    });
+  };
+}
+
+function deleteSupervisor(id) {
+  if (!hasAdminAccess(currentUser)) return;
+  const sup = allUsers().find(u => u.id === id);
+  if (!sup) return;
+
+  confirmActionModal({
+    title: `Excluir Supervisor: ${sup.name}`,
+    subtitle: `@${sup.user}`,
+    warningText: 'Atenção! Excluir este supervisor removerá seu cadastro do sistema. Os vendedores vinculados a ele continuarão no sistema.',
+    confirmText: 'Excluir Supervisor',
+    onConfirm: () => {
+      write('nl_users', allUsers().filter(u => u.id !== id));
+      showToast('Supervisor excluído com sucesso!');
+      renderAdminSupervisorsPage();
+    }
+  });
+}
+
+/* LISTA DE VENDEDORES */
+function renderSellersPage() {
+  const isAdm = hasAdminAccess(currentUser);
+  const sellersList = isAdm ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+
+  appFrame('Equipe de Vendedores', isAdm ? 'Gerencie a lista global de vendedores.' : 'Gerencie apenas a sua equipe direta de vendedores.', `
+    <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
+      <div><b>${sellersList.length} Vendedor(es) Ativo(s) ${isAdm ? '' : '(Sua Equipe)'}</b></div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="supSendStockSellersBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2 flex items-center justify-center gap-1">${icons.orders} Enviar do Meu Estoque</button>
+        <button id="addNewSellerGlobal" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Novo Vendedor</button>
+      </div>
+    </div>
+
+    <div class="panel glass-panel">
+      ${sellersList.length ? `
+        <div class="data-table flex flex-col gap-3">
+          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1fr 1.5fr 1.5fr 1.2fr 1.2fr auto' : '2fr 1.5fr 1.2fr 1.2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
+            <span>VENDEDOR & LOGIN</span>
+            ${isAdm ? '<span>STATUS</span>' : ''}
+            ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
+            <span>CIDADE / UF</span>
+            <span>ESTOQUE</span>
+            <span>VALOR POSSE</span>
+            <span>AÇÕES</span>
+          </div>
+          ${sellersList.map(s => {
+            const sStock = stock(s.id);
+            const sStockVal = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+            const isSellerActive = s.active !== false;
+
+            return `
+              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-7' : 'md:grid-cols-5'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
+                  <div class="flex flex-col">
+                    <b class="text-slate-900">${esc(s.name)}</b>
+                    <small class="text-slate-500">@${esc(s.user)}</small>
+                  </div>
+                </div>
+
+                ${isAdm ? `
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                    <span class="status-pill ${isSellerActive ? 'style-green' : 'style-red'}">${isSellerActive ? 'Ativo' : 'Desativado'}</span>
+                  </div>
+                ` : ''}
+
+                ${isAdm ? `
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
+                    <span class="catalog-badge">${esc(s.supervisor || 'Geral')}</span>
+                  </div>
+                ` : ''}
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Cidade/UF</span>
+                  <b>${esc(s.city)} / ${esc(s.uf)}</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
+                  <b>${sStock} un.</b>
+                </div>
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor</span>
+                  <strong class="highlight-val">${money(sStockVal)}</strong>
+                </div>
+                <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                  <div class="flex gap-2">
+                    <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
+                    <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : '<div class="empty-state"><strong>Nenhum vendedor encontrado para a sua supervisão.</strong></div>'}
+    </div>
+  `);
+
+  document.getElementById('supSendStockSellersBtn').onclick = transferSupervisorStockModal;
+  document.getElementById('addNewSellerGlobal').onclick = () => sellerModal();
+  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
+  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
+}
+
+function sellerModal(existing) {
+  const isAdm = hasAdminAccess(currentUser);
+  const sups = allSupervisors();
+
+  const m = modal(`
+    <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Vendedor</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nome Completo<input name="name" class="control" value="${esc(existing?.name)}" required></label>
+      <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: joaovendedor"></label>
+      <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: joaosystem2026@"></label>
+      
+      <label>Status da Conta
+        <select name="active" class="control" required>
+          <option value="true" ${existing?.active !== false ? 'selected' : ''}>🟢 Ativo</option>
+          <option value="false" ${existing?.active === false ? 'selected' : ''}>🔴 Desativado</option>
+        </select>
+      </label>
+
+      ${isAdm ? `
+        <label>Supervisor Responsável
+          <select name="supervisor" class="control" required>
+            ${sups.map(s => `<option value="${s.user}" ${existing ? (existing.supervisor === s.user ? 'selected' : '') : (s.user === currentUser.user ? 'selected' : '')}>${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
+          </select>
+        </label>
+      ` : `
+        <input type="hidden" name="supervisor" value="${esc(currentUser.user)}">
+      `}
+
+      <div class="form-grid">
+        <label>Estado (UF)
+          <select name="uf" id="ufSelect" class="control" required>
+            <option value="">Selecione</option>
+            ${brazilStatesList.map(u => `<option value="${u}" ${existing?.uf === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </label>
+        <label>Cidade
+          <select name="city" id="citySelect" class="control" required>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="button" id="triggerSaveSeller" class="primary-btn w-full mt-3">${icons.check} Salvar Vendedor</button>
+    </form>
+  `);
+
+  const ufSelect = m.querySelector('#ufSelect');
+  const citySelect = m.querySelector('#citySelect');
+
+  if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
+  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
+
+  m.querySelector('#triggerSaveSeller').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    confirmActionModal({
+      title: existing ? 'Salvar Alterações do Vendedor' : 'Cadastrar Vendedor',
+      subtitle: `Vendedor: ${f.get('name')}`,
+      warningText: 'Confirmar os dados do vendedor?',
+      confirmText: 'Salvar Cadastro',
+      onConfirm: () => {
+        const users = allUsers();
+        let seller = existing || { id: uid(), role: 'SELLER' };
+        seller.name = f.get('name');
+        seller.user = String(f.get('user')).trim().toLowerCase();
+        seller.password = f.get('password');
+        seller.active = f.get('active') === 'true';
+        seller.supervisor = isAdm ? f.get('supervisor') : currentUser.user;
+        seller.uf = f.get('uf');
+        seller.city = f.get('city');
+
+        const pos = users.findIndex(u => u.id === seller.id);
+        pos >= 0 ? users[pos] = seller : users.push(seller);
+        write('nl_users', users);
+
+        m.remove();
+        showToast('Vendedor salvo!');
+        isAdm && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
+      }
+    });
+  };
+}
+
+function deleteSeller(id) {
+  const s = allUsers().find(u => u.id === id);
+
+  if (!hasAdminAccess(currentUser) && s?.supervisor.toLowerCase() !== currentUser.user.toLowerCase()) {
+    showToast('Ação não permitida para este vendedor.');
+    return;
+  }
+
+  confirmActionModal({
+    title: `Excluir Vendedor: ${s?.name}`,
+    subtitle: 'Exclusão do cadastro',
+    warningText: 'Este vendedor e seus produtos vinculados serão removidos do sistema.',
+    confirmText: 'Excluir Vendedor',
+    onConfirm: () => {
+      write('nl_users', allUsers().filter(u => u.id !== id));
+      write('atlasProducts', products().filter(p => p.sellerId !== id));
+      showToast('Vendedor removido!');
+      hasAdminAccess(currentUser) && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
+    }
+  });
+}
+
+/* GESTÃO DE MOTOBOYS */
+function renderMotoboysPage() {
+  const isAdm = hasAdminAccess(currentUser);
+  const sups = allSupervisors();
+  const motoboysList = isAdm ? allMotoboys() : allMotoboys().filter(m => m.supervisor.toLowerCase() === currentUser.user.toLowerCase());
+
+  appFrame('Gestão de Motoboys', isAdm ? 'Cadastre entregadores e defina para qual Supervisor cada um ficará disponível.' : 'Motoboys vinculados ao seu perfil.', `
+    <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
+      <div><b>${motoboysList.length} Motoboy(s) ${isAdm ? 'Cadastrado(s)' : 'Atribuído(s) a Você'}</b></div>
+      ${isAdm ? `<button id="addNewMotoboyBtn" class="primary-btn text-xs py-2">+ Cadastrar Novo Motoboy</button>` : ''}
+    </div>
+
+    <div class="panel glass-panel">
+      ${motoboysList.length ? `
+        <div class="data-table flex flex-col gap-3">
+          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1.5fr 1.5fr 1.5fr auto' : '2fr 1.5fr 1.5fr'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
+            <span>NOME DO MOTOBOY</span>
+            <span>WHATSAPP DE CONTATO</span>
+            <span>LOCALIZAÇÃO (CIDADE/UF)</span>
+            ${isAdm ? '<span>SUPERVISOR ATRIBUÍDO</span>' : ''}
+            ${isAdm ? '<span>AÇÕES</span>' : ''}
+          </div>
+          ${motoboysList.map(mb => {
+            const cleanPhone = String(mb.whatsapp).replace(/\D/g, '');
+            const waUrl = cleanPhone ? `https://wa.me/55${cleanPhone}` : '#';
+
+            return `
+              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-5' : 'md:grid-cols-3'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Motoboy</span>
+                  <div class="flex items-center gap-2">
+                    <span class="p-1.5 rounded-lg bg-sky-100 text-sky-700">${icons.motoboy}</span>
+                    <b class="text-slate-900 font-bold">${esc(mb.name)}</b>
+                  </div>
+                </div>
+
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">WhatsApp</span>
+                  <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hover:bg-emerald-100 transition-all">
+                    ${icons.whatsapp} <span>${esc(mb.whatsapp)}</span>
+                  </a>
+                </div>
+
+                <div class="flex justify-between items-center md:block">
+                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
+                  <span class="text-sm font-semibold text-slate-700">📍 ${esc(mb.city)} / ${esc(mb.uf)}</span>
+                </div>
+
+                ${isAdm ? `
+                  <div class="flex justify-between items-center md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
+                    <select class="control compact change-motoboy-sup w-36 md:w-full" data-id="${mb.id}">
+                      ${sups.map(s => `<option value="${s.user}" ${mb.supervisor === s.user ? 'selected' : ''}>${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
+                    </select>
+                  </div>
+
+                  <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
+                    <div class="flex gap-2">
+                      <button class="small-btn edit-motoboy-btn" data-id="${mb.id}">Editar</button>
+                      <button class="delete-btn delete-motoboy-btn" data-id="${mb.id}">Excluir</button>
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : `<div class="empty-state"><strong>${isAdm ? 'Nenhum motoboy cadastrado.' : 'Nenhum motoboy foi atribuído a você pelo Administrador no momento.'}</strong></div>`}
+    </div>
+  `);
+
+  if (isAdm) {
+    const addBtn = document.getElementById('addNewMotoboyBtn');
+    if (addBtn) addBtn.onclick = () => motoboyModal();
+
+    document.querySelectorAll('.change-motoboy-sup').forEach(sel => {
+      sel.onchange = e => {
+        const mId = e.target.dataset.id;
+        const newSup = e.target.value;
+        const mList = allMotoboys();
+        const mb = mList.find(x => x.id === mId);
+        if (mb) {
+          confirmActionModal({
+            title: 'Reatribuir Motoboy',
+            subtitle: `Motoboy: ${mb.name} → Supervisor: @${newSup}`,
+            warningText: 'Confirmar a transferência do motoboy para este supervisor?',
+            confirmText: 'Reatribuir',
+            onConfirm: () => {
+              mb.supervisor = newSup;
+              write('nl_motoboys', mList);
+              showToast('Supervisor do Motoboy atualizado!');
+              renderMotoboysPage();
+            }
+          });
+        }
+      };
+    });
+
+    document.querySelectorAll('.edit-motoboy-btn').forEach(b => b.onclick = () => motoboyModal(allMotoboys().find(x => x.id === b.dataset.id)));
+    document.querySelectorAll('.delete-motoboy-btn').forEach(b => b.onclick = () => deleteMotoboy(b.dataset.id));
+  }
+}
+
+function motoboyModal(existing = null) {
+  const sups = allSupervisors();
+
+  const m = modal(`
+    <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Motoboy</h2>
+    <form id="entityForm" class="seller-form">
+      <label>Nome Completo do Motoboy
+        <input name="name" class="control" value="${esc(existing?.name)}" required placeholder="ex: João Silva Express">
+      </label>
+
+      <label>WhatsApp de Contato (com DDD)
+        <input name="whatsapp" class="control" value="${esc(existing?.whatsapp)}" required placeholder="ex: 41999998888">
+      </label>
+
+      <label>Supervisor Responsável pelo Motoboy
+        <select name="supervisor" class="control" required>
+          ${sups.map(s => `<option value="${s.user}" ${existing ? (existing.supervisor === s.user ? 'selected' : '') : ''}>${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
+        </select>
+      </label>
+
+      <div class="form-grid">
+        <label>Estado (UF)
+          <select name="uf" id="mbUf" class="control" required>
+            <option value="">Selecione</option>
+            ${brazilStatesList.map(u => `<option value="${u}" ${existing?.uf === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </label>
+        <label>Cidade / Região
+          <select name="city" id="mbCity" class="control" required>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="button" id="triggerSaveMotoboy" class="primary-btn w-full mt-3">${icons.check} Salvar Motoboy</button>
+    </form>
+  `);
+
+  const ufSelect = m.querySelector('#mbUf');
+  const citySelect = m.querySelector('#mbCity');
+
+  if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
+  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
+
+  m.querySelector('#triggerSaveMotoboy').onclick = () => {
+    const form = m.querySelector('form');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const f = new FormData(form);
+
+    confirmActionModal({
+      title: existing ? 'Salvar Alterações do Motoboy' : 'Cadastrar Motoboy',
+      subtitle: `Motoboy: ${f.get('name')}`,
+      warningText: 'Confirmar os dados do entregador?',
+      confirmText: 'Salvar Registro',
+      onConfirm: () => {
+        const list = allMotoboys();
+        let mb = existing || { id: uid() };
+        mb.name = f.get('name');
+        mb.whatsapp = String(f.get('whatsapp')).trim();
+        mb.supervisor = f.get('supervisor');
+        mb.uf = f.get('uf');
+        mb.city = f.get('city');
+
+        const idx = list.findIndex(x => x.id === mb.id);
+        idx >= 0 ? list[idx] = mb : list.push(mb);
+        write('nl_motoboys', list);
+
+        m.remove();
+        showToast('Motoboy salvo com sucesso!');
+        renderMotoboysPage();
+      }
+    });
+  };
+}
+
+function deleteMotoboy(id) {
+  const mb = allMotoboys().find(x => x.id === id);
+  confirmActionModal({
+    title: `Excluir Motoboy: ${mb?.name}`,
+    warningText: 'O motoboy deixará de ser visível para o supervisor responsável.',
+    confirmText: 'Excluir Motoboy',
+    onConfirm: () => {
+      write('nl_motoboys', allMotoboys().filter(x => x.id !== id));
+      showToast('Motoboy removido!');
+      renderMotoboysPage();
+    }
+  });
+}
+
+/* CENTRAL DE BACKUP E IMPORTAÇÃO DE DADOS */
+function renderBackupPage() {
+  if (!hasAdminAccess(currentUser)) return;
+
+  appFrame('Backup & Importação de Dados', 'Exporte o banco de dados completo em JSON ou CSV/Excel e faça restaurações com confirmação prévia.', `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="panel glass-panel p-6 rounded-2xl bg-white/90 border border-slate-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <span class="p-2.5 bg-sky-100 text-sky-600 rounded-xl">${icons.database}</span>
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Exportar Backup Completo (JSON)</h2>
+              <p class="text-xs text-slate-500">Gera um arquivo com todos os cadastros, estoques, vendas e motoboys do sistema.</p>
+            </div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl text-xs text-slate-600 mb-4 border border-slate-100">
+            • Inclui usuários, depósitos matriz, estoques de vendedores, histórico de baixas e pedidos de reposição.
+          </div>
+        </div>
+        <button id="exportBackupJsonBtn" class="primary-btn w-full flex items-center justify-center gap-2">
+          ${icons.pdf} <span>Baixar Backup Completo (.JSON)</span>
+        </button>
+      </div>
+
+      <div class="panel glass-panel p-6 rounded-2xl bg-white/90 border border-slate-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <span class="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl">${icons.refresh}</span>
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Importar / Restaurar Backup (JSON)</h2>
+              <p class="text-xs text-slate-500">Selecione um arquivo de backup para restaurar os dados no sistema.</p>
+            </div>
+          </div>
+          <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-800 mb-4 border border-amber-200">
+            ⚠️ <b>Atenção:</b> A importação substitui todos os dados atuais do sistema pelos dados do arquivo.
+          </div>
+        </div>
+        <div class="relative">
+          <input type="file" id="importJsonFileInput" accept=".json" class="hidden">
+          <button id="triggerImportJsonBtn" class="outline-btn w-full flex items-center justify-center gap-2" style="background: #0284c7; color: white; border: none;">
+            ${icons.check} <span>Selecionar Arquivo de Backup</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel glass-panel p-6 rounded-2xl bg-white">
+      <h2 class="text-base font-bold text-slate-900 mb-2">Exportar Relatórios Planilháveis (Excel / CSV)</h2>
+      <p class="text-xs text-slate-500 mb-4">Exporte tabelas específicas em formato CSV compatível com Microsoft Excel e Google Planilhas.</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button id="exportSalesCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
+          📊 <span>Exportar Vendas (CSV)</span>
+        </button>
+        <button id="exportInventoryCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
+          📦 <span>Exportar Estoques (CSV)</span>
+        </button>
+        <button id="exportSellersCsvBtn" class="outline-btn text-xs py-3 flex items-center justify-center gap-2">
+          👥 <span>Exportar Vendedores (CSV)</span>
+        </button>
+      </div>
+    </div>
+  `);
+
+  document.getElementById('exportBackupJsonBtn').onclick = () => {
+    confirmActionModal({
+      title: 'Gerar Backup Completo',
+      warningText: 'Deseja gerar e baixar o arquivo JSON com todo o banco de dados atual?',
+      confirmText: 'Baixar Backup',
+      onConfirm: () => {
+        const backupData = {
+          systemVersion: 'v11',
+          exportedAt: new Date().toISOString(),
+          users: allUsers(),
+          warehouses: warehouses(),
+          warehouseInventory: warehouseInventory(),
+          transfers: warehouseTransfers(),
+          products: products(),
+          sales: sales(),
+          orders: orders(),
+          motoboys: allMotoboys(),
+          customCatalog: read('atlasCustomCatalog')
+        };
+
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute('href', dataStr);
+        dlAnchorElem.setAttribute('download', `newlife-backup-${new Date().toISOString().slice(0, 10)}.json`);
+        document.body.appendChild(dlAnchorElem);
+        dlAnchorElem.click();
+        dlAnchorElem.remove();
+        showToast('Backup JSON gerado com sucesso!');
+      }
+    });
+  };
+
+  const fileInput = document.getElementById('importJsonFileInput');
+  document.getElementById('triggerImportJsonBtn').onclick = () => fileInput.click();
+
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        if (!data.users || !data.warehouses) throw new Error('Formato de arquivo inválido.');
+
+        confirmActionModal({
+          title: 'Restaurar Banco de Dados Completo',
+          subtitle: `Arquivo: ${file.name}`,
+          warningText: 'Esta operação irá sobrescrever permanentemente o banco de dados atual. Deseja prosseguir?',
+          confirmText: 'Sobrescrever e Restaurar',
+          onConfirm: () => {
+            write('nl_users', data.users || []);
+            write('nl_warehouses', data.warehouses || []);
+            write('nl_warehouse_inventory', data.warehouseInventory || []);
+            write('nl_transfers', data.transfers || []);
+            write('atlasProducts', data.products || []);
+            write('atlasSales', data.sales || []);
+            write('atlasOrders', data.orders || []);
+            write('nl_motoboys', data.motoboys || []);
+            if (data.customCatalog) write('atlasCustomCatalog', data.customCatalog);
+
+            showToast('Banco de dados restaurado!');
+            setTimeout(() => location.reload(), 1000);
+          }
+        });
+      } catch (err) {
+        alert('Erro ao carregar o arquivo. Certifique-se de escolher um backup JSON válido.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  document.getElementById('exportSalesCsvBtn').onclick = () => {
+    const sList = sales();
+    const uList = allUsers();
+    let csv = 'ID Venda,Vendedor,ID Produto,Quantidade,Preco Unitario,Total,Data\n';
+    sList.forEach(s => {
+      const seller = uList.find(u => u.id === s.sellerId);
+      csv += `"${s.id}","${seller ? seller.name : s.sellerId}","${s.productId}",${s.quantity},${s.unitPrice},${s.total},"${s.createdAt}"\n`;
+    });
+    downloadCSV(csv, `vendas-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  document.getElementById('exportInventoryCsvBtn').onclick = () => {
+    const inv = warehouseInventory();
+    const whs = warehouses();
+    let csv = 'ID Deposito,Nome Deposito,Produto,Marca,Estoque Disponivel,Preco Unitario\n';
+    inv.forEach(i => {
+      const w = whs.find(x => x.id === i.warehouseId);
+      csv += `"${i.warehouseId}","${w ? w.name : ''}","${i.productName}","${i.brand}",${i.stock},${i.price}\n`;
+    });
+    downloadCSV(csv, `estoques-matriz-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  document.getElementById('exportSellersCsvBtn').onclick = () => {
+    const sellers = allSellers();
+    let csv = 'ID,Nome,Usuario,Supervisor,Cidade,UF,Itens em Posse\n';
+    sellers.forEach(s => {
+      csv += `"${s.id}","${s.name}","${s.user}","${s.supervisor}","${s.city}","${s.uf}",${stock(s.id)}\n`;
+    });
+    downloadCSV(csv, `vendedores-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+}
+
+function downloadCSV(csvContent, fileName) {
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('Relatório CSV baixado!');
 }
 
 /* TELA DE DAR BAIXA DO SUPERVISOR */
@@ -612,27 +1591,34 @@ function renderSupervisorSalesPage() {
       const items = inputs.map(i => ({ p: myProducts.find(x => x.id === i.dataset.id), q: Number(i.value) })).filter(x => x.q > 0);
       if (!items.length) return alert('Informe a quantidade de vendas.');
 
-      const pl = products();
-      const sl = sales();
+      confirmActionModal({
+        title: 'Confirmar Baixa de Vendas',
+        warningText: `Deseja dar baixa em ${items.reduce((a,x)=>a+x.q,0)} unidade(s) de produtos do seu estoque de supervisor?`,
+        confirmText: 'Confirmar Vendas',
+        onConfirm: () => {
+          const pl = products();
+          const sl = sales();
 
-      items.forEach(x => {
-        const targetP = pl.find(p => p.id === x.p.id);
-        if (targetP) targetP.stock -= x.q;
-        sl.push({
-          id: uid(),
-          sellerId: currentUser.id,
-          productId: x.p.id,
-          quantity: x.q,
-          unitPrice: x.p.price,
-          total: x.q * x.p.price,
-          createdAt: new Date().toISOString()
-        });
+          items.forEach(x => {
+            const targetP = pl.find(p => p.id === x.p.id);
+            if (targetP) targetP.stock -= x.q;
+            sl.push({
+              id: uid(),
+              sellerId: currentUser.id,
+              productId: x.p.id,
+              quantity: x.q,
+              unitPrice: x.p.price,
+              total: x.q * x.p.price,
+              createdAt: new Date().toISOString()
+            });
+          });
+
+          write('atlasProducts', pl);
+          write('atlasSales', sl);
+          showToast('Vendas do supervisor registradas!');
+          renderSupervisorSalesPage();
+        }
       });
-
-      write('atlasProducts', pl);
-      write('atlasSales', sl);
-      showToast('Vendas do supervisor registradas!');
-      renderSupervisorSalesPage();
     };
   }
 }
@@ -990,7 +1976,7 @@ function renderWarehousesPage() {
   document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
 }
 
-/* PAINEL DE CADA ESTOQUE (PADRONIZADO COM O TEMA CLARO DO SISTEMA) */
+/* PAINEL DE CADA ESTOQUE */
 function renderStockPanel() {
   const wh = warehouses().find(w => w.id === currentUser.warehouseId) || warehouses()[0];
   const myInv = warehouseInventory().filter(i => i.warehouseId === wh.id);
@@ -1134,23 +2120,31 @@ function addWarehouseItemModal(warehouseId) {
     if (!form.checkValidity()) { form.reportValidity(); return; }
     const f = new FormData(form);
 
-    const idx = Number(f.get('catalogIndex'));
-    const item = sysCat[idx];
-    const inv = warehouseInventory();
+    confirmActionModal({
+      title: 'Adicionar Produto ao Depósito',
+      subtitle: `${f.get('stock')} un. → ${wh.name}`,
+      warningText: 'Confirmar inclusão do novo item no estoque?',
+      confirmText: 'Inspecionar e Adicionar',
+      onConfirm: () => {
+        const idx = Number(f.get('catalogIndex'));
+        const item = sysCat[idx];
+        const inv = warehouseInventory();
 
-    inv.push({
-      id: uid(),
-      warehouseId,
-      productName: item[0],
-      brand: item[1],
-      stock: Number(f.get('stock')),
-      price: Number(f.get('price'))
+        inv.push({
+          id: uid(),
+          warehouseId,
+          productName: item[0],
+          brand: item[1],
+          stock: Number(f.get('stock')),
+          price: Number(f.get('price'))
+        });
+        write('nl_warehouse_inventory', inv);
+
+        m.remove();
+        showToast('Produto adicionado ao estoque!');
+        currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+      }
     });
-    write('nl_warehouse_inventory', inv);
-
-    m.remove();
-    showToast('Produto adicionado ao estoque!');
-    currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
   };
 }
 
@@ -1176,13 +2170,21 @@ function editWarehouseItemModal(itemId) {
     if (!form.checkValidity()) { form.reportValidity(); return; }
     const f = new FormData(form);
 
-    item.stock = Number(f.get('stock'));
-    item.price = Number(f.get('price'));
-    write('nl_warehouse_inventory', inv);
+    confirmActionModal({
+      title: 'Ajustar Estoque do Item',
+      subtitle: `${item.productName}`,
+      warningText: `A quantidade será alterada de ${item.stock} para ${f.get('stock')} unidades.`,
+      confirmText: 'Atualizar Saldo',
+      onConfirm: () => {
+        item.stock = Number(f.get('stock'));
+        item.price = Number(f.get('price'));
+        write('nl_warehouse_inventory', inv);
 
-    m.remove();
-    showToast('Estoque atualizado!');
-    currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+        m.remove();
+        showToast('Estoque atualizado!');
+        currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
+      }
+    });
   };
 }
 
@@ -1323,344 +2325,6 @@ function transferStockModal(forcedWarehouseId = null) {
   };
 }
 
-/* SUPERVISORES E VENDEDORES CADASTRADOS (SOMENTE ADM) */
-function renderAdminSupervisorsPage() {
-  if (!hasAdminAccess(currentUser)) {
-    return renderSellersPage();
-  }
-
-  const sups = allSupervisors();
-  const sellersList = allSellers();
-
-  appFrame('Supervisores & Vendedores', 'Gerencie supervisores e reatribua a qual supervisor cada vendedor pertence.', `
-    <div class="page-toolbar flex justify-between items-center mb-6 gap-3 flex-wrap">
-      <div><b>Estrutura de Equipes da newlife.system</b></div>
-      <div class="flex gap-2 w-full sm:w-auto">
-        <button id="addSupervisorBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Supervisor</button>
-        <button id="addSellerBtn" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Vendedor</button>
-      </div>
-    </div>
-
-    <div class="panel glass-panel">
-      <div class="panel-head mb-4"><h2>Equipes por Supervisor</h2></div>
-
-      <div class="space-y-6">
-        ${sups.map(sup => {
-          const supSellers = sellersList.filter(s => s.supervisor.toLowerCase() === sup.user.toLowerCase());
-          return `
-            <div class="p-4 md:p-5 bg-white/90 border border-slate-200 rounded-2xl shadow-sm">
-              <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
-                <div class="flex items-center gap-3">
-                  <div class="avatar">${avatarFor(sup)}</div>
-                  <div>
-                    <h3 class="text-base font-extrabold text-slate-900">${esc(sup.name)}</h3>
-                    <small class="text-xs text-slate-500">Login: @${esc(sup.user)}</small>
-                  </div>
-                </div>
-                <span class="status-pill style-blue">${supSellers.length} Vendedor(es)</span>
-              </div>
-
-              ${supSellers.length ? `
-                <div class="data-table flex flex-col gap-3">
-                  <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1.8fr 1.2fr auto; align-items: center;">
-                    <span>Vendedor</span><span>Localização</span><span>Alterar Supervisor Responsável</span><span>Estoque</span><span>Ações</span>
-                  </div>
-                  ${supSellers.map(s => `
-                    <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-3 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
-                      <div class="flex justify-between items-center md:block">
-                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-                        <div>
-                          <b class="text-slate-900 font-bold">${esc(s.name)}</b>
-                          <small class="text-slate-500 block md:inline">(@${esc(s.user)})</small>
-                        </div>
-                      </div>
-
-                      <div class="flex justify-between items-center md:block">
-                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
-                        <span class="text-sm font-semibold text-slate-700">${esc(s.city)} / ${esc(s.uf)}</span>
-                      </div>
-
-                      <div class="flex justify-between items-center md:block">
-                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
-                        <select class="control compact change-supervisor-select w-36 md:w-full" data-seller-id="${s.id}">
-                          ${sups.map(sp => `<option value="${sp.user}" ${s.supervisor === sp.user ? 'selected' : ''}>${esc(sp.name)}</option>`).join('')}
-                        </select>
-                      </div>
-
-                      <div class="flex justify-between items-center md:block">
-                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
-                        <span class="font-bold text-slate-900">${stock(s.id)} un.</span>
-                      </div>
-
-                      <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                        <div class="flex gap-2">
-                          <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
-                          <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
-                        </div>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : '<div class="text-xs text-slate-400 p-3 italic">Nenhum vendedor associado a este supervisor.</div>'}
-            </div>
-          `;
-        }).join('')}
-      </div>
-    </div>
-  `);
-
-  document.getElementById('addSupervisorBtn').onclick = () => supervisorModal();
-  document.getElementById('addSellerBtn').onclick = () => sellerModal();
-
-  document.querySelectorAll('.change-supervisor-select').forEach(sel => {
-    sel.onchange = e => {
-      const sellerId = e.target.dataset.sellerId;
-      const newSupUser = e.target.value;
-      const users = allUsers();
-      const s = users.find(u => u.id === sellerId);
-      if (s) {
-        s.supervisor = newSupUser;
-        write('nl_users', users);
-        showToast(`Supervisor do vendedor alterado!`);
-        renderAdminSupervisorsPage();
-      }
-    };
-  });
-
-  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
-  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
-}
-
-/* LISTA DE VENDEDORES */
-function renderSellersPage() {
-  const isAdm = hasAdminAccess(currentUser);
-  const sellersList = isAdm ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
-
-  appFrame('Equipe de Vendedores', isAdm ? 'Gerencie a lista global de vendedores.' : 'Gerencie apenas a sua equipe direta de vendedores.', `
-    <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
-      <div><b>${sellersList.length} Vendedor(es) Ativo(s) ${isAdm ? '' : '(Sua Equipe)'}</b></div>
-      <div class="flex gap-2 w-full sm:w-auto">
-        <button id="supSendStockSellersBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2 flex items-center justify-center gap-1">${icons.orders} Enviar do Meu Estoque</button>
-        <button id="addNewSellerGlobal" class="primary-btn flex-1 sm:flex-none text-xs py-2">+ Cadastrar Novo Vendedor</button>
-      </div>
-    </div>
-
-    <div class="panel glass-panel">
-      ${sellersList.length ? `
-        <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1.5fr 1.5fr 1.2fr 1.2fr auto' : '2fr 1.5fr 1.2fr 1.2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
-            <span>VENDEDOR & LOGIN</span>
-            ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
-            <span>CIDADE / UF</span>
-            <span>ESTOQUE</span>
-            <span>VALOR POSSE</span>
-            <span>AÇÕES</span>
-          </div>
-          ${sellersList.map(s => {
-            const sStock = stock(s.id);
-            const sStockVal = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
-            return `
-              <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
-                <div class="flex justify-between items-center md:block">
-                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-                  <div class="flex flex-col">
-                    <b class="text-slate-900">${esc(s.name)}</b>
-                    <small class="text-slate-500">@${esc(s.user)}</small>
-                  </div>
-                </div>
-                ${isAdm ? `
-                  <div class="flex justify-between items-center md:block">
-                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
-                    <span class="catalog-badge">${esc(s.supervisor || 'Geral')}</span>
-                  </div>
-                ` : ''}
-                <div class="flex justify-between items-center md:block">
-                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Cidade/UF</span>
-                  <b>${esc(s.city)} / ${esc(s.uf)}</b>
-                </div>
-                <div class="flex justify-between items-center md:block">
-                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
-                  <b>${sStock} un.</b>
-                </div>
-                <div class="flex justify-between items-center md:block">
-                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor</span>
-                  <strong class="highlight-val">${money(sStockVal)}</strong>
-                </div>
-                <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
-                  <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                  <div class="flex gap-2">
-                    <button class="small-btn edit-seller-btn" data-id="${s.id}">Editar</button>
-                    <button class="delete-btn delete-seller-btn" data-id="${s.id}">Excluir</button>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      ` : '<div class="empty-state"><strong>Nenhum vendedor encontrado para a sua supervisão.</strong></div>'}
-    </div>
-  `);
-
-  document.getElementById('supSendStockSellersBtn').onclick = transferSupervisorStockModal;
-  document.getElementById('addNewSellerGlobal').onclick = () => sellerModal();
-  document.querySelectorAll('.edit-seller-btn').forEach(b => b.onclick = () => sellerModal(allUsers().find(u => u.id === b.dataset.id)));
-  document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
-}
-
-function sellerModal(existing) {
-  const isAdm = hasAdminAccess(currentUser);
-  const sups = allSupervisors();
-
-  const m = modal(`
-    <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Vendedor</h2>
-    <form id="entityForm" class="seller-form">
-      <label>Nome Completo<input name="name" class="control" value="${esc(existing?.name)}" required></label>
-      <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: joaovendedor"></label>
-      <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: joaosystem2026@"></label>
-      
-      ${isAdm ? `
-        <label>Supervisor Responsável
-          <select name="supervisor" class="control" required>
-            ${sups.map(s => `<option value="${s.user}" ${existing ? (existing.supervisor === s.user ? 'selected' : '') : (s.user === currentUser.user ? 'selected' : '')}>${esc(s.name)} (@${esc(s.user)})</option>`).join('')}
-          </select>
-        </label>
-      ` : `
-        <input type="hidden" name="supervisor" value="${esc(currentUser.user)}">
-      `}
-
-      <div class="form-grid">
-        <label>Estado (UF)
-          <select name="uf" id="ufSelect" class="control" required>
-            <option value="">Selecione</option>
-            ${brazilStatesList.map(u => `<option value="${u}" ${existing?.uf === u ? 'selected' : ''}>${u}</option>`).join('')}
-          </select>
-        </label>
-        <label>Cidade
-          <select name="city" id="citySelect" class="control" required>
-            <option value="">Selecione o estado primeiro</option>
-          </select>
-        </label>
-      </div>
-
-      <button type="button" id="triggerSaveSeller" class="primary-btn w-full mt-3">${icons.check} Salvar Vendedor</button>
-    </form>
-  `);
-
-  const ufSelect = m.querySelector('#ufSelect');
-  const citySelect = m.querySelector('#citySelect');
-
-  if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
-  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
-
-  m.querySelector('#triggerSaveSeller').onclick = () => {
-    const form = m.querySelector('form');
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    const f = new FormData(form);
-
-    confirmActionModal({
-      title: existing ? 'Salvar Vendedor' : 'Cadastrar Vendedor',
-      subtitle: `Vendedor: ${f.get('name')}`,
-      warningText: 'Confirmar os dados do vendedor?',
-      confirmText: 'Salvar Cadastro',
-      onConfirm: () => {
-        const users = allUsers();
-        let seller = existing || { id: uid(), role: 'SELLER' };
-        seller.name = f.get('name');
-        seller.user = String(f.get('user')).trim().toLowerCase();
-        seller.password = f.get('password');
-        seller.supervisor = isAdm ? f.get('supervisor') : currentUser.user;
-        seller.uf = f.get('uf');
-        seller.city = f.get('city');
-
-        const pos = users.findIndex(u => u.id === seller.id);
-        pos >= 0 ? users[pos] = seller : users.push(seller);
-        write('nl_users', users);
-
-        m.remove();
-        showToast('Vendedor salvo!');
-        isAdm && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
-      }
-    });
-  };
-}
-
-function supervisorModal() {
-  if (!hasAdminAccess(currentUser)) return;
-
-  const m = modal(`
-    <h2>Cadastrar Novo Supervisor</h2>
-    <form id="entityForm" class="seller-form">
-      <label>Nome do Supervisor<input name="name" class="control" required></label>
-      <label>Login<input name="user" class="control" required placeholder="ex: carlos"></label>
-      <label>Senha<input name="password" class="control" required placeholder="ex: carlossystem2026@"></label>
-      <div class="form-grid">
-        <label>Estado (UF)
-          <select name="uf" id="supUf" class="control" required>
-            <option value="">Selecione</option>
-            ${brazilStatesList.map(u => `<option value="${u}">${u}</option>`).join('')}
-          </select>
-        </label>
-        <label>Cidade
-          <select name="city" id="supCity" class="control" required>
-            <option value="">Selecione o estado primeiro</option>
-          </select>
-        </label>
-      </div>
-      <button type="button" id="triggerSaveSup" class="primary-btn w-full mt-3">${icons.check} Cadastrar Supervisor</button>
-    </form>
-  `);
-
-  const ufSelect = m.querySelector('#supUf');
-  const citySelect = m.querySelector('#supCity');
-  ufSelect.onchange = () => fetchCitiesForRegion(ufSelect.value, citySelect);
-
-  m.querySelector('#triggerSaveSup').onclick = () => {
-    const form = m.querySelector('form');
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    const f = new FormData(form);
-
-    const users = allUsers();
-    users.push({
-      id: uid(),
-      name: f.get('name'),
-      user: String(f.get('user')).trim().toLowerCase(),
-      password: f.get('password'),
-      role: 'SUPERVISOR',
-      supervisor: 'ik',
-      uf: f.get('uf'),
-      city: f.get('city')
-    });
-    write('nl_users', users);
-
-    m.remove();
-    showToast('Supervisor cadastrado!');
-    renderAdminSupervisorsPage();
-  };
-}
-
-function deleteSeller(id) {
-  const s = allUsers().find(u => u.id === id);
-
-  if (!hasAdminAccess(currentUser) && s?.supervisor.toLowerCase() !== currentUser.user.toLowerCase()) {
-    showToast('Ação não permitida para este vendedor.');
-    return;
-  }
-
-  confirmActionModal({
-    title: `Excluir Vendedor: ${s?.name}`,
-    subtitle: 'Exclusão do cadastro',
-    warningText: 'Este vendedor e seus dados serão removidos.',
-    confirmText: 'Excluir Vendedor',
-    onConfirm: () => {
-      write('nl_users', allUsers().filter(u => u.id !== id));
-      write('atlasProducts', products().filter(p => p.sellerId !== id));
-      showToast('Vendedor removido!');
-      hasAdminAccess(currentUser) && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
-    }
-  });
-}
-
 /* PEDIDOS EM REPOSIÇÃO */
 function renderSupervisorOrdersPage() {
   const mySellers = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor.toLowerCase() === currentUser.user.toLowerCase());
@@ -1710,17 +2374,50 @@ function renderSupervisorOrdersPage() {
     </div>
   `);
 
+  document.querySelectorAll('.status-select').forEach(sel => {
+    sel.onchange = e => {
+      const orderId = e.target.dataset.id;
+      const newStatus = e.target.value;
+      const allOrd = orders();
+      const targetOrd = allOrd.find(o => o.id === orderId);
+
+      confirmActionModal({
+        title: 'Atualizar Status do Pedido',
+        subtitle: `Pedido: ${targetOrd?.productName} (${targetOrd?.quantity} un) → Novo Status: ${newStatus}`,
+        warningText: 'Deseja confirmar a alteração do status deste pedido de reposição?',
+        confirmText: 'Atualizar Status',
+        onConfirm: () => {
+          if (targetOrd) {
+            targetOrd.status = newStatus;
+            write('atlasOrders', allOrd);
+            showToast('Status do pedido atualizado!');
+            renderSupervisorOrdersPage();
+          }
+        }
+      });
+    };
+  });
+
   document.querySelectorAll('.mark-delivered').forEach(b => {
     b.onclick = () => {
       const allOrd = orders();
-      const idx = allOrd.findIndex(o => o.id === b.dataset.id);
-      if (idx >= 0) {
-        allOrd[idx].status = 'Entregue';
-        allOrd[idx].deliveredAt = new Date().toISOString();
-        write('atlasOrders', allOrd);
-        showToast('Pedido entregue!');
-        renderSupervisorOrdersPage();
-      }
+      const targetOrd = allOrd.find(o => o.id === b.dataset.id);
+
+      confirmActionModal({
+        title: 'Marcar Pedido como Entregue',
+        subtitle: `Pedido: ${targetOrd?.productName}`,
+        warningText: 'O pedido será finalizado e movido para o histórico de arquivados.',
+        confirmText: 'Confirmar Entrega',
+        onConfirm: () => {
+          if (targetOrd) {
+            targetOrd.status = 'Entregue';
+            targetOrd.deliveredAt = new Date().toISOString();
+            write('atlasOrders', allOrd);
+            showToast('Pedido entregue e arquivado!');
+            renderSupervisorOrdersPage();
+          }
+        }
+      });
     };
   });
 }
@@ -1764,13 +2461,13 @@ function renderArchivedPage() {
 }
 
 function renderCatalogPage() {
-  appFrame('Catálogo do Sistema', 'Catálogo oficial.', `
+  appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas.', `
     <div class="panel glass-panel">
       <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         ${systemCatalog().map(p => `
           <div class="catalog-card p-4 bg-white/90 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-2">
-            <div class="catalog-badge self-start">${esc(p[1])}</div>
-            <h3 class="font-bold text-slate-900 text-sm">${esc(p[0])}</h3>
+            <div class="catalog-badge self-start font-bold uppercase text-[10px] tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md">${esc(p[1])}</div>
+            <h3 class="font-bold text-slate-900 text-sm mt-1">${esc(p[0])}</h3>
           </div>
         `).join('')}
       </div>
@@ -1858,21 +2555,6 @@ function renderReportsPage() {
       fileName: 'newlife-relatorio.pdf'
     });
   };
-}
-
-function renderAdminHome() {
-  appFrame('Visão Consolidada', 'Consolidado geral newlife.system.', `
-    <div class="stats-grid mb-6">
-      <div class="metric-card glass-panel">
-        <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-        <div class="metric-value">${money(sales().reduce((a, x) => a + x.total, 0))}</div>
-      </div>
-      <div class="metric-card glass-panel">
-        <div class="metric-top"><span>3 Estoques Ativos</span><span class="metric-icon orange">${icons.warehouse}</span></div>
-        <div class="metric-value">SP/CENTRO, SP/OE, UK</div>
-      </div>
-    </div>
-  `);
 }
 
 /* PAINEL DO VENDEDOR */
@@ -1983,26 +2665,33 @@ function setupSalesTabEvents(sellerProducts) {
       const items = inputs.map(i => ({ p: sellerProducts.find(x => x.id === i.dataset.id), q: Number(i.value) })).filter(x => x.q > 0);
       if (!items.length) return alert('Informe as vendas.');
 
-      const pl = products();
-      const sl = sales();
+      confirmActionModal({
+        title: 'Confirmar Lançamento de Baixas',
+        warningText: `Confirma o registro da venda de ${items.reduce((a,x)=>a+x.q,0)} unidade(s) do seu estoque?`,
+        confirmText: 'Registrar Vendas',
+        onConfirm: () => {
+          const pl = products();
+          const sl = sales();
 
-      items.forEach(x => {
-        pl[pl.findIndex(p => p.id === x.p.id)].stock -= x.q;
-        sl.push({
-          id: uid(),
-          sellerId: currentUser.id,
-          productId: x.p.id,
-          quantity: x.q,
-          unitPrice: x.p.price,
-          total: x.q * x.p.price,
-          createdAt: new Date().toISOString()
-        });
+          items.forEach(x => {
+            pl[pl.findIndex(p => p.id === x.p.id)].stock -= x.q;
+            sl.push({
+              id: uid(),
+              sellerId: currentUser.id,
+              productId: x.p.id,
+              quantity: x.q,
+              unitPrice: x.p.price,
+              total: x.q * x.p.price,
+              createdAt: new Date().toISOString()
+            });
+          });
+
+          write('atlasProducts', pl);
+          write('atlasSales', sl);
+          showToast('Vendas confirmadas!');
+          renderSeller();
+        }
       });
-
-      write('atlasProducts', pl);
-      write('atlasSales', sl);
-      showToast('Vendas confirmadas!');
-      renderSeller();
     };
   }
 }
@@ -2034,23 +2723,31 @@ function setupNewOrderEvents() {
       const f = new FormData(form);
       const item = systemCatalog()[Number(f.get('catIndex'))];
 
-      const ords = orders();
-      ords.push({
-        id: uid(),
-        sellerId: currentUser.id,
-        sellerName: currentUser.name,
-        supervisor: currentUser.supervisor,
-        deliveryDate: f.get('deliveryDate'),
-        productName: item[0],
-        brand: item[1],
-        quantity: Number(f.get('quantity')),
-        status: 'Em análise',
-        createdAt: new Date().toISOString()
+      confirmActionModal({
+        title: 'Solicitar Reposição de Estoque',
+        subtitle: `${f.get('quantity')}x ${item[0]}`,
+        warningText: 'Confirmar envio do pedido de reposição ao supervisor?',
+        confirmText: 'Enviar Pedido',
+        onConfirm: () => {
+          const ords = orders();
+          ords.push({
+            id: uid(),
+            sellerId: currentUser.id,
+            sellerName: currentUser.name,
+            supervisor: currentUser.supervisor,
+            deliveryDate: f.get('deliveryDate'),
+            productName: item[0],
+            brand: item[1],
+            quantity: Number(f.get('quantity')),
+            status: 'Em análise',
+            createdAt: new Date().toISOString()
+          });
+          write('atlasOrders', ords);
+          showToast('Pedido enviado!');
+          sellerActiveTab = 'myOrders';
+          renderSeller();
+        }
       });
-      write('atlasOrders', ords);
-      showToast('Pedido enviado!');
-      sellerActiveTab = 'myOrders';
-      renderSeller();
     };
   }
 }
