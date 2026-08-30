@@ -1,4 +1,90 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v14 - Câmbio Oficial USD/BRL + USDT Binance/CoinGecko) */
+
+// Estado e Cotações Globais Padrão (Fallback)
+let exchangeRates = {
+  USD_BRL: 5.45,
+  USDT_BRL: 5.48,
+  source: 'Carregando...',
+  lastUpdated: null
+};
+
+// Busca de Câmbio em Tempo Real via APIs Públicas de Alta Precisão
+async function fetchExchangeRates() {
+  let usdSuccess = false;
+  let usdtSuccess = false;
+
+  // 1. Cotação Oficial do Dólar Comercial (USD -> BRL) via ExchangeRate-API Open
+  try {
+    const resUSD = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (resUSD.ok) {
+      const dataUSD = await resUSD.json();
+      if (dataUSD && dataUSD.rates && dataUSD.rates.BRL) {
+        exchangeRates.USD_BRL = parseFloat(dataUSD.rates.BRL);
+        usdSuccess = true;
+      }
+    }
+  } catch (e) {
+    console.warn('[newlife.system] Falha na ExchangeRate-API para USD.', e);
+  }
+
+  // Backup para USD: Coinbase API Pública
+  if (!usdSuccess) {
+    try {
+      const resCB = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=USD');
+      if (resCB.ok) {
+        const dataCB = await resCB.json();
+        if (dataCB?.data?.rates?.BRL) {
+          exchangeRates.USD_BRL = parseFloat(dataCB.data.rates.BRL);
+          usdSuccess = true;
+        }
+      }
+    } catch (e) {
+      console.warn('[newlife.system] Falha na Coinbase API para USD.', e);
+    }
+  }
+
+  // 2. Cotação do Tether (USDT -> BRL) via Binance API Pública
+  try {
+    const resUSDT = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=USDTBRL');
+    if (resUSDT.ok) {
+      const dataUSDT = await resUSDT.json();
+      if (dataUSDT && dataUSDT.price) {
+        exchangeRates.USDT_BRL = parseFloat(dataUSDT.price);
+        usdtSuccess = true;
+      }
+    }
+  } catch (e) {
+    console.warn('[newlife.system] Falha na Binance API para USDT.', e);
+  }
+
+  // Backup para USDT: CoinGecko API Pública
+  if (!usdtSuccess) {
+    try {
+      const resCG = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=brl');
+      if (resCG.ok) {
+        const dataCG = await resCG.json();
+        if (dataCG?.tether?.brl) {
+          exchangeRates.USDT_BRL = parseFloat(dataCG.tether.brl);
+          usdtSuccess = true;
+        }
+      }
+    } catch (e) {
+      console.warn('[newlife.system] Falha na CoinGecko API para USDT.', e);
+    }
+  }
+
+  // Contingência caso a API de crypto falhe
+  if (!usdtSuccess && usdSuccess) {
+    exchangeRates.USDT_BRL = exchangeRates.USD_BRL * 1.003;
+  }
+
+  exchangeRates.lastUpdated = new Date();
+  exchangeRates.source = 'ExchangeRate-API + Binance OTC';
+  console.log(`[newlife.system] Cotações atualizadas: 1 USD = R$ ${exchangeRates.USD_BRL.toFixed(3)} | 1 USDT = R$ ${exchangeRates.USDT_BRL.toFixed(3)}`);
+}
+
+fetchExchangeRates();
+setInterval(fetchExchangeRates, 3 * 60 * 1000); // Atualização automática a cada 3 minutos
 
 // Biblioteca de Ícones SVG
 const icons = {
@@ -25,32 +111,33 @@ const icons = {
   clipboard: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
   motoboy: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1 .4-1 1v7c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>`,
   database: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
-  whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`
+  whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`,
+  camera: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
 };
 
-// Coordenadas Geográficas
+// Coordenadas Geográficas (Incluso Assunção - PY)
 const cityCoordinates = {
   'São Paulo': [-23.5505, -46.6333],
   'Curitiba': [-25.4284, -49.2733],
   'Cotia': [-23.6039, -46.9190],
   'São Luís': [-2.5307, -44.3068],
   'Barueri': [-23.5106, -46.8761],
-  'Londres': [51.5074, -0.1278]
+  'Assunção': [-25.2637, -57.5759]
 };
 
-// Base de Usuários
+// Base de Usuários (UK Stock alterado para ASU Stock)
 const defaultSystemUsers = [
-  { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR', active: true },
-  { id: 'u_wg', user: 'wg', password: 'wgsystem2026@', name: 'Wg', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_pit', user: 'pit', password: 'pitsystem2026@', name: 'Pit', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_spcentro', user: 'spcentro', password: 'spcentrosystem2026@', name: 'SP / CENTRO', role: 'STOCK', warehouseId: 'wh_sp_centro', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_spoe', user: 'spoe', password: 'spoesystem2026@', name: 'SP / OE', role: 'STOCK', warehouseId: 'wh_sp_oe', city: 'São Paulo', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_ukstock', user: 'ukstock', password: 'ukstocksystem2026@', name: 'UK Stock', role: 'STOCK', warehouseId: 'wh_uk', city: 'Londres', uf: 'UK', country: 'UK', active: true },
-  { id: 'u_b2bcotia', user: 'b2bcotia', password: 'b2bcotiasystem2026@', name: 'B2b Cotia', role: 'SELLER', supervisor: 'wg', city: 'Cotia', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_gbmaranhao', user: 'gbmaranhao', password: 'gbmaranhaosystem2026@', name: 'GB Maranhão', role: 'SELLER', supervisor: 'wg', city: 'São Luís', uf: 'MA', country: 'BR', active: true },
-  { id: 'u_011barueri', user: '011barueri', password: '011baruerisystem2026@', name: '011 Barueri', role: 'SELLER', supervisor: 'pit', city: 'Barueri', uf: 'SP', country: 'BR', active: true },
-  { id: 'u_emipiranga', user: 'emipiranga', password: 'emipirangasystem2026@', name: 'Em Ipiranga', role: 'SELLER', supervisor: 'pit', city: 'São Paulo', uf: 'SP', country: 'BR', active: true }
+  { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_wg', user: 'wg', password: 'wgsystem2026@', name: 'Wg', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_pit', user: 'pit', password: 'pitsystem2026@', name: 'Pit', role: 'SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_spcentro', user: 'spcentro', password: 'spcentrosystem2026@', name: 'SP / CENTRO', role: 'STOCK', warehouseId: 'wh_sp_centro', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_spoe', user: 'spoe', password: 'spoesystem2026@', name: 'SP / OE', role: 'STOCK', warehouseId: 'wh_sp_oe', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_asustock', user: 'asustock', password: 'asustocksystem2026@', name: 'ASU Stock', role: 'STOCK', warehouseId: 'wh_asu', city: 'Assunção', uf: 'ASU', country: 'PY', active: true, avatarUrl: '' },
+  { id: 'u_b2bcotia', user: 'b2bcotia', password: 'b2bcotiasystem2026@', name: 'B2b Cotia', role: 'SELLER', supervisor: 'wg', city: 'Cotia', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_gbmaranhao', user: 'gbmaranhao', password: 'gbmaranhaosystem2026@', name: 'GB Maranhão', role: 'SELLER', supervisor: 'wg', city: 'São Luís', uf: 'MA', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_011barueri', user: '011barueri', password: '011baruerisystem2026@', name: '011 Barueri', role: 'SELLER', supervisor: 'pit', city: 'Barueri', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
+  { id: 'u_emipiranga', user: 'emipiranga', password: 'emipirangasystem2026@', name: 'Em Ipiranga', role: 'SELLER', supervisor: 'pit', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' }
 ];
 
 // Motoboys Padrão
@@ -59,14 +146,14 @@ const defaultMotoboys = [
   { id: 'mb_2', name: 'Lucas Express PR', whatsapp: '41999998888', city: 'Curitiba', uf: 'PR', supervisor: 'ik' }
 ];
 
-// Estoques Matriz
+// Estoques Matriz (UK Stock alterado para ASU Stock)
 const defaultWarehouses = [
   { id: 'wh_sp_centro', name: 'SP / CENTRO', city: 'São Paulo', uf: 'SP', country: 'BR' },
   { id: 'wh_sp_oe', name: 'SP / OE', city: 'São Paulo', uf: 'SP', country: 'BR' },
-  { id: 'wh_uk', name: 'UK Stock', city: 'Londres', uf: 'UK', country: 'UK' }
+  { id: 'wh_asu', name: 'ASU Stock', city: 'Assunção', uf: 'ASU', country: 'PY' }
 ];
 
-// Catálogo Oficial Expandido com Todas as Marcas Solicitiadas
+// Catálogo Oficial Multi-Marcas
 const catalog = [
   // --- NEW LIFE ---
   ['Retatrutide 60mg', 'New Life'],
@@ -113,8 +200,9 @@ const catalog = [
   ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'],
   ['Retatrutida 60mg', 'ZPHC'],
 
-  // --- TG ---
+  // --- TG & TG ANTIGA ---
   ['Tirzepatida 15mg — 4 ampolas', 'TG'],
+  ['Tirzepatida 15mg — 4 ampolas', 'TG antiga'],
 
   // --- QUIMFA ---
   ['Lispax 30mg', 'QUIMFA'],
@@ -128,16 +216,54 @@ const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 
 const ibgeCitiesCache = {};
 
 let currentUser = null;
-let activeTab = 'summary';
+let activeTab = 'adminHome';
 let sellerActiveTab = 'sales';
 let drawerOpen = false;
 
-/* Utilitários */
+/* Utilitários e Formatação Tripla de Câmbio */
 const read = (k, d = []) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
-const write = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const write = (k, v) => {
+  localStorage.setItem(k, JSON.stringify(v));
+  window.dispatchEvent(new Event('storage'));
+};
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const money = n => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
+
+// Formatação Tripla de Câmbio em Tempo Real (USD / BRL / USDT)
+function money(usdVal) {
+  const usd = Number(usdVal || 0);
+  const brl = usd * exchangeRates.USD_BRL;
+  const usdt = (brl / (exchangeRates.USDT_BRL || exchangeRates.USD_BRL));
+
+  const usdFormatted = usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const brlFormatted = brl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const usdtFormatted = `${usdt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
+
+  return `${usdFormatted} <span class="text-xs font-normal text-slate-500">(${brlFormatted} | ${usdtFormatted})</span>`;
+}
+
+function moneySimple(usdVal) {
+  const usd = Number(usdVal || 0);
+  return usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+}
+
+// Sincronização em tempo real entre abas / usuários
+window.addEventListener('storage', () => {
+  if (currentUser) {
+    const updatedUser = allUsers().find(u => u.id === currentUser.id);
+    if (updatedUser) currentUser = updatedUser;
+
+    if (currentUser.role === 'STOCK') {
+      renderStockPanel();
+    } else if (hasAdminAccess(currentUser)) {
+      renderAdmin();
+    } else if (hasSupervisorAccess(currentUser)) {
+      renderSupervisor();
+    } else {
+      renderSeller();
+    }
+  }
+});
 
 // Container único de renderização
 function getAppRoot() {
@@ -158,14 +284,14 @@ function getAppRoot() {
   return root;
 }
 
-// Sincronização Inicial
+// Sincronização Inicial (v14 para aplicar ASU Stock e Câmbio de Precisão)
 function initSystemData() {
-  if (!localStorage.getItem('nl_v11_initialized')) {
+  if (!localStorage.getItem('nl_v14_initialized')) {
     localStorage.clear();
     write('nl_users', defaultSystemUsers);
     write('nl_warehouses', defaultWarehouses);
     write('nl_motoboys', defaultMotoboys);
-    write('nl_v11_initialized', true);
+    write('nl_v14_initialized', true);
   }
 }
 initSystemData();
@@ -201,7 +327,18 @@ function periodSales(sid, period) {
 
 function sellerRevenue(id, period = 'day') { return periodSales(id, period).reduce((a, x) => a + x.total, 0); }
 function stock(sid) { return products().filter(p => p.sellerId === sid).reduce((a, p) => a + Number(p.stock || 0), 0); }
-function avatarFor(u) { return String(u?.name || u?.user || 'NL').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase(); }
+
+// Renderizador de Avatar
+function avatarFor(u) {
+  return String(u?.name || u?.user || 'NL').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
+}
+
+function renderAvatarHTML(u, extraClasses = '') {
+  if (u && u.avatarUrl) {
+    return `<div class="avatar ${extraClasses}" style="padding:0; overflow:hidden; border-radius:9999px;"><img src="${esc(u.avatarUrl)}" style="width:100%; height:100%; object-fit:cover;" alt="${esc(u.name)}"></div>`;
+  }
+  return `<div class="avatar ${extraClasses}">${avatarFor(u)}</div>`;
+}
 
 // Leaflet.js
 function loadLeaflet(callback) {
@@ -355,8 +492,8 @@ function appFooter() {
   return `
     <footer class="app-footer">
       <div class="footer-container">
-        <div><b>newlife.system</b> &copy; 2026 — Gestão Integrada</div>
-        <div class="footer-links"><span>Estoques Sep.</span> · <span>Modo Vendedor + ADM</span></div>
+        <div><b>newlife.system</b> &copy; 2026 — Gestão Integrada Multi-Moedas (USD/BRL/USDT)</div>
+        <div class="footer-links"><span>Estoques Sep. (SP / ASU)</span> · <span>Modo Vendedor + ADM</span></div>
       </div>
     </footer>
   `;
@@ -388,7 +525,7 @@ function navContent() {
       <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
       <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
       <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
-      <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques (SP/CENTRO, SP/OE, UK)</span></button>
+      <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques (SP/CENTRO, SP/OE, ASU)</span></button>
       <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
       <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
       <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
@@ -415,8 +552,10 @@ function navContent() {
     ` : ''}
 
     <div class="side-account">
-      <div class="avatar small">${avatarFor(currentUser)}</div>
-      <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      <div class="editSelfAvatarTrigger flex items-center gap-2 cursor-pointer" title="Alterar Foto de Perfil">
+        ${renderAvatarHTML(currentUser, 'small')}
+        <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      </div>
       <button class="logoutSideBtn" title="Sair">${icons.logout}</button>
     </div>
   `;
@@ -446,9 +585,12 @@ function sellerNavContent() {
     <button class="side-link ${sellerActiveTab === 'newOrder' ? 'active' : ''}" data-seller-tab="newOrder">${icons.orders} <span>Pedido de Reposição</span></button>
     <button class="side-link ${sellerActiveTab === 'myOrders' ? 'active' : ''}" data-seller-tab="myOrders">${icons.clipboard} <span>Acompanhar Meus Pedidos</span></button>
     <button class="side-link ${sellerActiveTab === 'archived' ? 'active' : ''}" data-seller-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
+    
     <div class="side-account mt-auto">
-      <div class="avatar small">${avatarFor(currentUser)}</div>
-      <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      <div class="editSelfAvatarTrigger flex items-center gap-2 cursor-pointer" title="Alterar Foto de Perfil">
+        ${renderAvatarHTML(currentUser, 'small')}
+        <div class="min-w-0 flex-1"><b>${esc(currentUser.name)}</b><small>@${esc(currentUser.user)}</small></div>
+      </div>
       <button class="logoutSellerSideBtn" title="Sair">${icons.logout}</button>
     </div>
   `;
@@ -497,6 +639,14 @@ function appFrame(title, sub, body) {
               </div>
             </div>
 
+            <!-- BADGE DE CÂMBIO EM TEMPO REAL -->
+            <div class="hidden lg:flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700" title="Cotações obtidas via ExchangeRate-API e Binance OTC">
+              <span class="text-emerald-600 font-extrabold">💵 Câmbio Hoje:</span>
+              <span>1 USD = R$ ${exchangeRates.USD_BRL.toFixed(2)}</span>
+              <span class="text-slate-300">|</span>
+              <span>1 USDT = R$ ${exchangeRates.USDT_BRL.toFixed(2)}</span>
+            </div>
+
             <div class="flex items-center gap-2 shrink-0 ml-auto">
               <button id="refreshPage" class="outline-btn hidden md:flex items-center gap-1">${icons.refresh} <span>Atualizar</span></button>
               
@@ -504,7 +654,9 @@ function appFrame(title, sub, body) {
                 newlife<span class="text-sky-600">.system</span>
               </div>
               
-              <div class="avatar hidden md:flex">${avatarFor(currentUser)}</div>
+              <div class="editSelfAvatarTrigger cursor-pointer" title="Alterar Foto de Perfil">
+                ${renderAvatarHTML(currentUser, 'hidden md:flex')}
+              </div>
             </div>
           </header>
 
@@ -540,9 +692,14 @@ function appFrame(title, sub, body) {
 
   document.querySelectorAll('.logoutSideBtn').forEach(b => b.onclick = logout);
   document.querySelectorAll('.emergencyBtn').forEach(b => b.onclick = emergencyWipeModal);
+  document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
   
   const refreshBtn = document.getElementById('refreshPage');
-  if (refreshBtn) refreshBtn.onclick = () => { hasAdminAccess(currentUser) ? renderAdmin() : renderSupervisor(); showToast('Dados atualizados'); };
+  if (refreshBtn) refreshBtn.onclick = async () => { 
+    await fetchExchangeRates();
+    hasAdminAccess(currentUser) ? renderAdmin() : renderSupervisor(); 
+    showToast('Cotação do Câmbio Atualizada!'); 
+  };
 }
 
 function modal(content) {
@@ -564,6 +721,62 @@ function showToast(msg) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2600);
+}
+
+/* MODAL DE ALTERAÇÃO DA FOTO DO PRÓPRIO PERFIL */
+function editSelfAvatarModal() {
+  const m = modal(`
+    <h2>Alterar Foto de Perfil</h2>
+    <p class="text-xs text-slate-500 mb-3">Escolha uma foto em formato de imagem (PNG, JPG) para a sua conta <b>${esc(currentUser.name)}</b>.</p>
+    <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-200">
+      <div id="selfAvatarPreview" class="w-24 h-24 mb-3 rounded-full overflow-hidden border-2 border-sky-500 shadow-md flex items-center justify-center bg-white">
+        ${renderAvatarHTML(currentUser, 'w-full h-full')}
+      </div>
+      <input type="file" id="selfAvatarInput" accept="image/*" class="hidden">
+      <button type="button" id="triggerChooseSelfAvatar" class="outline-btn text-xs py-2 px-4 flex items-center gap-2">
+        ${icons.camera} <span>Selecionar Imagem</span>
+      </button>
+      <input type="hidden" id="selfAvatarBase64" value="${esc(currentUser.avatarUrl || '')}">
+    </div>
+    <div class="flex justify-end gap-2">
+      <button type="button" class="outline-btn cancel-avatar-btn">Cancelar</button>
+      <button type="button" id="saveSelfAvatarBtn" class="primary-btn">${icons.check} Salvar Foto</button>
+    </div>
+  `);
+
+  const fileInput = m.querySelector('#selfAvatarInput');
+  const triggerBtn = m.querySelector('#triggerChooseSelfAvatar');
+  const preview = m.querySelector('#selfAvatarPreview');
+  const base64Input = m.querySelector('#selfAvatarBase64');
+
+  triggerBtn.onclick = () => fileInput.click();
+
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) return alert('A foto deve ter no máximo 3MB.');
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        base64Input.value = ev.target.result;
+        preview.innerHTML = `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover;" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  m.querySelector('.cancel-avatar-btn').onclick = () => m.remove();
+
+  m.querySelector('#saveSelfAvatarBtn').onclick = () => {
+    const users = allUsers();
+    const u = users.find(x => x.id === currentUser.id);
+    if (u) {
+      u.avatarUrl = base64Input.value;
+      currentUser.avatarUrl = base64Input.value;
+      write('nl_users', users);
+      showToast('Foto de perfil atualizada!');
+      m.remove();
+    }
+  };
 }
 
 /* RESET DO SISTEMA */
@@ -639,40 +852,38 @@ function renderAdmin() {
   renderAdminHome();
 }
 
-/* VISÃO CONSOLIDADA - PAINEL ADM EXPANDIDO COM MAIS CONTROLE E DADOS */
+/* VISÃO CONSOLIDADA PAINEL ADM */
 function renderAdminHome() {
   const users = allUsers();
   const allSalesList = sales();
   const allProds = products();
-  const whInv = warehouseInventory();
   
-  const totalRevenue = allSalesList.reduce((a, x) => a + x.total, 0);
+  const totalRevenueUSD = allSalesList.reduce((a, x) => a + x.total, 0);
   const totalItemsSold = allSalesList.reduce((a, x) => a + x.quantity, 0);
   const activeSellersCount = allSellers().filter(s => s.active !== false).length;
   const activeSupCount = allSupervisors().filter(s => s.active !== false).length;
   
-  // Cálculo do estoque global
-  const sellerStockValue = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
-  const warehouseStockValue = whInv.filter(i => i.stock > 0).reduce((a, i) => a + (i.price * i.stock), 0);
-  const totalStockValue = sellerStockValue + warehouseStockValue;
+  // Cálculo do estoque dos vendedores em USD
+  const sellerStockValueUSD = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+  const warehouseTotalUnits = warehouseInventory().reduce((a, i) => a + Number(i.stock || 0), 0);
 
-  appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento, auditoria global e estado do sistema.', `
+  appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento em tempo real, conversão USD/BRL/USDT e auditoria global.', `
     <div class="stats-grid mb-6">
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-        <div class="metric-value">${money(totalRevenue)}</div>
+        <div class="metric-value text-base md:text-lg font-black">${money(totalRevenueUSD)}</div>
         <small class="text-xs text-slate-500 mt-1 block">${totalItemsSold} unidades vendidas no total</small>
       </div>
 
       <div class="metric-card glass-panel">
-        <div class="metric-top"><span>Valor do Estoque Global</span><span class="metric-icon green">${icons.warehouse}</span></div>
-        <div class="metric-value">${money(totalStockValue)}</div>
-        <small class="text-xs text-slate-500 mt-1 block">Depósitos Matriz + Posse dos Vendedores</small>
+        <div class="metric-top"><span>Estoque em Posse (Vendedores)</span><span class="metric-icon green">${icons.warehouse}</span></div>
+        <div class="metric-value text-base md:text-lg font-black">${money(sellerStockValueUSD)}</div>
+        <small class="text-xs text-slate-500 mt-1 block">${warehouseTotalUnits} un. armazenadas nos Depósitos Matriz</small>
       </div>
 
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Equipe Ativa</span><span class="metric-icon orange">${icons.users}</span></div>
-        <div class="metric-value">${activeSupCount} Sup. / ${activeSellersCount} Vend.</div>
+        <div class="metric-value text-base md:text-lg font-black">${activeSupCount} Sup. / ${activeSellersCount} Vend.</div>
         <small class="text-xs text-slate-500 mt-1 block">${allMotoboys().length} Motoboys cadastrados</small>
       </div>
     </div>
@@ -682,14 +893,14 @@ function renderAdminHome() {
       <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
         <div>
           <h2>Auditoria Global de Vendas Registradas</h2>
-          <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores.</p>
+          <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores (USD / BRL / USDT).</p>
         </div>
       </div>
 
       ${allSalesList.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 1.2fr; align-items: center;">
-            <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (R$)</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 2.5fr; align-items: center;">
+            <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (USD | BRL | USDT)</span>
           </div>
           ${allSalesList.slice().reverse().slice(0, 15).map(s => {
             const seller = users.find(u => u.id === s.sellerId);
@@ -725,7 +936,7 @@ function renderAdminHome() {
   `);
 }
 
-/* SUPERVISORES E VENDEDORES CADASTRADOS (COM EDIÇÃO, EXCLUSÃO E TOGGLE ATIVO/DESATIVADO) */
+/* SUPERVISORES E VENDEDORES CADASTRADOS */
 function renderAdminSupervisorsPage() {
   if (!hasAdminAccess(currentUser)) {
     return renderSellersPage();
@@ -755,7 +966,7 @@ function renderAdminSupervisorsPage() {
             <div class="p-4 md:p-5 bg-white/90 border border-slate-200 rounded-2xl shadow-sm">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-slate-200 gap-3">
                 <div class="flex items-center gap-3">
-                  <div class="avatar">${avatarFor(sup)}</div>
+                  ${renderAvatarHTML(sup)}
                   <div>
                     <div class="flex items-center gap-2">
                       <h3 class="text-base font-extrabold text-slate-900">${esc(sup.name)}</h3>
@@ -785,9 +996,12 @@ function renderAdminSupervisorsPage() {
                       <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-3 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                         <div class="flex justify-between items-center md:block">
                           <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-                          <div>
-                            <b class="text-slate-900 font-bold">${esc(s.name)}</b>
-                            <small class="text-slate-500 block md:inline">(@${esc(s.user)})</small>
+                          <div class="flex items-center gap-2">
+                            ${renderAvatarHTML(s, 'small')}
+                            <div>
+                              <b class="text-slate-900 font-bold">${esc(s.name)}</b>
+                              <small class="text-slate-500 block">(@${esc(s.user)})</small>
+                            </div>
                           </div>
                         </div>
 
@@ -890,6 +1104,17 @@ function supervisorModal(existing = null) {
   const m = modal(`
     <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Supervisor</h2>
     <form id="entityForm" class="seller-form">
+      <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl mb-3 border border-slate-200">
+        <div id="supAvatarPreview" class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-sky-100 text-sky-700 font-bold border border-sky-300 shrink-0">
+          ${existing?.avatarUrl ? `<img src="${esc(existing.avatarUrl)}" style="width:100%;height:100%;object-fit:cover;">` : (existing ? avatarFor(existing) : 'SUP')}
+        </div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Foto de Perfil (Avatar)</label>
+          <input type="file" id="supAvatarInput" accept="image/*" class="text-xs control">
+          <input type="hidden" name="avatarUrl" id="supAvatarBase64" value="${esc(existing?.avatarUrl || '')}">
+        </div>
+      </div>
+
       <label>Nome do Supervisor<input name="name" class="control" value="${esc(existing?.name)}" required></label>
       <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: carlos"></label>
       <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: carlossystem2026@"></label>
@@ -919,6 +1144,23 @@ function supervisorModal(existing = null) {
     </form>
   `);
 
+  const fileInput = m.querySelector('#supAvatarInput');
+  const preview = m.querySelector('#supAvatarPreview');
+  const avatarBase64 = m.querySelector('#supAvatarBase64');
+
+  fileInput.onchange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) return alert('Foto muito grande! Escolha até 3MB.');
+      const reader = new FileReader();
+      reader.onload = ev => {
+        avatarBase64.value = ev.target.result;
+        preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const ufSelect = m.querySelector('#supUf');
   const citySelect = m.querySelector('#supCity');
   if (existing?.uf) fetchCitiesForRegion(existing.uf, citySelect, existing.city);
@@ -941,6 +1183,7 @@ function supervisorModal(existing = null) {
         sup.user = String(f.get('user')).trim().toLowerCase();
         sup.password = f.get('password');
         sup.active = f.get('active') === 'true';
+        sup.avatarUrl = f.get('avatarUrl');
         sup.uf = f.get('uf');
         sup.city = f.get('city');
 
@@ -991,27 +1234,30 @@ function renderSellersPage() {
     <div class="panel glass-panel">
       ${sellersList.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1fr 1.5fr 1.5fr 1.2fr 1.2fr auto' : '2fr 1.5fr 1.2fr 1.2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
+          <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1fr 1.5fr 1.5fr 1fr 2fr auto' : '2fr 1.5fr 1fr 2fr auto'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
             <span>VENDEDOR & LOGIN</span>
             ${isAdm ? '<span>STATUS</span>' : ''}
             ${isAdm ? '<span>SUPERVISOR RESPONSÁVEL</span>' : ''}
             <span>CIDADE / UF</span>
             <span>ESTOQUE</span>
-            <span>VALOR POSSE</span>
+            <span>VALOR POSSE (USD / BRL / USDT)</span>
             <span>AÇÕES</span>
           </div>
           ${sellersList.map(s => {
             const sStock = stock(s.id);
-            const sStockVal = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
+            const sStockValUSD = products().filter(p => p.sellerId === s.id && p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
             const isSellerActive = s.active !== false;
 
             return `
               <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-7' : 'md:grid-cols-5'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-                  <div class="flex flex-col">
-                    <b class="text-slate-900">${esc(s.name)}</b>
-                    <small class="text-slate-500">@${esc(s.user)}</small>
+                  <div class="flex items-center gap-2">
+                    ${renderAvatarHTML(s, 'small')}
+                    <div class="flex flex-col">
+                      <b class="text-slate-900">${esc(s.name)}</b>
+                      <small class="text-slate-500">@${esc(s.user)}</small>
+                    </div>
                   </div>
                 </div>
 
@@ -1036,9 +1282,9 @@ function renderSellersPage() {
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
                   <b>${sStock} un.</b>
                 </div>
-                <div class="flex justify-between items-center md:block">
+                <div class="flex justify-between items-center md:block text-xs">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor</span>
-                  <strong class="highlight-val">${money(sStockVal)}</strong>
+                  <strong class="highlight-val">${money(sStockValUSD)}</strong>
                 </div>
                 <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
@@ -1061,13 +1307,24 @@ function renderSellersPage() {
   document.querySelectorAll('.delete-seller-btn').forEach(b => b.onclick = () => deleteSeller(b.dataset.id));
 }
 
-function sellerModal(existing) {
+function sellerModal(existing = null) {
   const isAdm = hasAdminAccess(currentUser);
   const sups = allSupervisors();
 
   const m = modal(`
     <h2>${existing ? 'Editar' : 'Cadastrar Novo'} Vendedor</h2>
-    <form id="entityForm" class="seller-form">
+    <form id="sellerEntityForm" class="seller-form">
+      <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl mb-3 border border-slate-200">
+        <div id="sellerAvatarPreview" class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-emerald-100 text-emerald-700 font-bold border border-emerald-300 shrink-0">
+          ${existing?.avatarUrl ? `<img src="${esc(existing.avatarUrl)}" style="width:100%;height:100%;object-fit:cover;">` : (existing ? avatarFor(existing) : 'VEND')}
+        </div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Foto de Perfil (Avatar)</label>
+          <input type="file" id="sellerAvatarInput" accept="image/*" class="text-xs control">
+          <input type="hidden" name="avatarUrl" id="sellerAvatarBase64" value="${esc(existing?.avatarUrl || '')}">
+        </div>
+      </div>
+
       <label>Nome Completo<input name="name" class="control" value="${esc(existing?.name)}" required></label>
       <label>Login<input name="user" class="control" value="${esc(existing?.user)}" ${existing ? 'readonly' : ''} required placeholder="ex: joaovendedor"></label>
       <label>Senha<input name="password" class="control" value="${esc(existing?.password || '')}" required placeholder="ex: joaosystem2026@"></label>
@@ -1107,6 +1364,23 @@ function sellerModal(existing) {
     </form>
   `);
 
+  const fileInput = m.querySelector('#sellerAvatarInput');
+  const preview = m.querySelector('#sellerAvatarPreview');
+  const avatarBase64 = m.querySelector('#sellerAvatarBase64');
+
+  fileInput.onchange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) return alert('Foto muito grande! Escolha até 3MB.');
+      const reader = new FileReader();
+      reader.onload = ev => {
+        avatarBase64.value = ev.target.result;
+        preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const ufSelect = m.querySelector('#ufSelect');
   const citySelect = m.querySelector('#citySelect');
 
@@ -1130,6 +1404,7 @@ function sellerModal(existing) {
         seller.user = String(f.get('user')).trim().toLowerCase();
         seller.password = f.get('password');
         seller.active = f.get('active') === 'true';
+        seller.avatarUrl = f.get('avatarUrl');
         seller.supervisor = isAdm ? f.get('supervisor') : currentUser.user;
         seller.uf = f.get('uf');
         seller.city = f.get('city');
@@ -1139,7 +1414,7 @@ function sellerModal(existing) {
         write('nl_users', users);
 
         m.remove();
-        showToast('Vendedor salvo!');
+        showToast('Vendedor salvo com sucesso!');
         isAdm && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
       }
     });
@@ -1432,7 +1707,7 @@ function renderBackupPage() {
       confirmText: 'Baixar Backup',
       onConfirm: () => {
         const backupData = {
-          systemVersion: 'v11',
+          systemVersion: 'v14',
           exportedAt: new Date().toISOString(),
           users: allUsers(),
           warehouses: warehouses(),
@@ -1500,10 +1775,12 @@ function renderBackupPage() {
   document.getElementById('exportSalesCsvBtn').onclick = () => {
     const sList = sales();
     const uList = allUsers();
-    let csv = 'ID Venda,Vendedor,ID Produto,Quantidade,Preco Unitario,Total,Data\n';
+    let csv = 'ID Venda,Vendedor,ID Produto,Quantidade,Preco Unit (USD),Total (USD),Total (BRL),Total (USDT),Data\n';
     sList.forEach(s => {
       const seller = uList.find(u => u.id === s.sellerId);
-      csv += `"${s.id}","${seller ? seller.name : s.sellerId}","${s.productId}",${s.quantity},${s.unitPrice},${s.total},"${s.createdAt}"\n`;
+      const brl = s.total * exchangeRates.USD_BRL;
+      const usdt = brl / exchangeRates.USDT_BRL;
+      csv += `"${s.id}","${seller ? seller.name : s.sellerId}","${s.productId}",${s.quantity},${s.unitPrice},${s.total},${brl.toFixed(2)},${usdt.toFixed(2)},"${s.createdAt}"\n`;
     });
     downloadCSV(csv, `vendas-${new Date().toISOString().slice(0, 10)}.csv`);
   };
@@ -1511,10 +1788,10 @@ function renderBackupPage() {
   document.getElementById('exportInventoryCsvBtn').onclick = () => {
     const inv = warehouseInventory();
     const whs = warehouses();
-    let csv = 'ID Deposito,Nome Deposito,Produto,Marca,Estoque Disponivel,Preco Unitario\n';
+    let csv = 'ID Deposito,Nome Deposito,Produto,Marca,Estoque Disponivel\n';
     inv.forEach(i => {
       const w = whs.find(x => x.id === i.warehouseId);
-      csv += `"${i.warehouseId}","${w ? w.name : ''}","${i.productName}","${i.brand}",${i.stock},${i.price}\n`;
+      csv += `"${i.warehouseId}","${w ? w.name : ''}","${i.productName}","${i.brand}",${i.stock}\n`;
     });
     downloadCSV(csv, `estoques-matriz-${new Date().toISOString().slice(0, 10)}.csv`);
   };
@@ -1553,11 +1830,11 @@ function renderSupervisorSalesPage() {
       </div>
       ${myProducts.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
-            <span>Produto</span><span>Preço Unit.</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2.5fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço Unit. (USD / BRL / USDT)</span><span>Seu Estoque Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${myProducts.map(p => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                 <div>
@@ -1633,7 +1910,7 @@ function transferSupervisorStockModal() {
 
   const m = modal(`
     <h2>Enviar Produtos para Vendedor</h2>
-    <p class="text-xs text-slate-500 mb-3">Transfira itens do seu próprio estoque de supervisor diretamente para a sua equipe.</p>
+    <p class="text-xs text-slate-500 mb-3">Transfira itens do seu próprio estoque de supervisor diretamente para a sua equipe e defina o preço do vendedor em <b>Dólar (USD $)</b>.</p>
     <form id="supTransferForm" class="seller-form">
       <label>Selecione o Vendedor Destinatário
         <select name="targetId" class="control" required>
@@ -1643,13 +1920,16 @@ function transferSupervisorStockModal() {
 
       <label>Produto Disponível em Seu Estoque
         <select name="productId" class="control" required>
-          ${myProds.map(p => `<option value="${p.id}">${esc(p.name)} (${esc(p.brand)}) — Disponível: ${p.stock} un. (R$ ${p.price})</option>`).join('')}
+          ${myProds.map(p => `<option value="${p.id}">${esc(p.name)} (${esc(p.brand)}) — Disponível: ${p.stock} un.</option>`).join('')}
         </select>
       </label>
 
       <div class="form-grid">
         <label>Quantidade a Enviar
           <input name="quantity" type="number" min="1" value="1" class="control" required>
+        </label>
+        <label>Preço de Venda do Vendedor em Dólar (USD $)
+          <input name="price" type="number" step="0.01" min="0" placeholder="50.00" class="control" required>
         </label>
       </div>
 
@@ -1665,6 +1945,7 @@ function transferSupervisorStockModal() {
     const productId = f.get('productId');
     const targetId = f.get('targetId');
     const qty = Number(f.get('quantity'));
+    const priceUSD = Number(f.get('price'));
 
     const prods = products();
     const supItem = prods.find(p => p.id === productId);
@@ -1675,8 +1956,8 @@ function transferSupervisorStockModal() {
 
     confirmActionModal({
       title: 'Confirmar Envio ao Vendedor',
-      subtitle: `${qty}x ${supItem.name} → ${targetSeller.name}`,
-      warningText: 'A quantidade será debitada do seu estoque e creditada ao vendedor selecionado.',
+      subtitle: `${qty}x ${supItem.name} → ${targetSeller.name} por ${moneySimple(priceUSD)}/un.`,
+      warningText: 'A quantidade será debitada do seu estoque e creditada ao vendedor com o preço em dólar informado.',
       confirmText: 'Enviar Agora',
       onConfirm: () => {
         supItem.stock -= qty;
@@ -1684,14 +1965,14 @@ function transferSupervisorStockModal() {
         let sellerItem = prods.find(p => p.sellerId === targetSeller.id && p.name === supItem.name);
         if (sellerItem) {
           sellerItem.stock += qty;
-          sellerItem.price = supItem.price;
+          sellerItem.price = priceUSD;
         } else {
           prods.push({
             id: uid(),
             sellerId: targetSeller.id,
             name: supItem.name,
             brand: supItem.brand,
-            price: supItem.price,
+            price: priceUSD,
             stock: qty
           });
         }
@@ -1708,7 +1989,7 @@ function transferSupervisorStockModal() {
           productName: supItem.name,
           brand: supItem.brand,
           quantity: qty,
-          price: supItem.price,
+          price: priceUSD,
           createdAt: new Date().toISOString()
         });
         write('nl_transfers', transfers);
@@ -1727,7 +2008,7 @@ function renderMapPage() {
   const isAdm = hasAdminAccess(currentUser);
   const filteredUsers = isAdm ? users : users.filter(u => u.role === 'STOCK' || u.user === currentUser.user || u.supervisor === currentUser.user);
 
-  appFrame('Mapa de Localizações da Equipe', 'Visualização geográfica de Vendedores, Supervisores e Depósitos no Brasil e Reino Unido.', `
+  appFrame('Mapa de Localizações da Equipe', 'Visualização geográfica de Vendedores, Supervisores e Depósitos no Brasil e Paraguai (ASU).', `
     <div class="stats-grid mb-6">
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Total Mapeados</span><span class="metric-icon cyan">${icons.map}</span></div>
@@ -1813,32 +2094,35 @@ function renderMapPage() {
 function renderSummary() {
   const mySellers = allSellers().filter(s => s.supervisor === currentUser.user);
   const rows = mySellers.map(s => ({ s, xs: periodSales(s.id, 'day') }));
-  const rev = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.total, 0), 0);
+  const revUSD = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.total, 0), 0);
   const qty = rows.reduce((a, r) => a + r.xs.reduce((x, v) => x + v.quantity, 0), 0);
 
   appFrame('Resumo da Equipe', 'Visão geral das vendas do dia da equipe.', `
     <div class="stats-grid">
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Faturamento Hoje</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-        <div class="metric-value">${money(rev)}</div>
+        <div class="metric-value text-base md:text-lg font-black">${money(revUSD)}</div>
       </div>
       <div class="metric-card glass-panel">
         <div class="metric-top"><span>Itens Vendidos</span><span class="metric-icon green">${icons.check}</span></div>
-        <div class="metric-value">${qty} un.</div>
+        <div class="metric-value text-lg font-black">${qty} un.</div>
       </div>
     </div>
 
     <div class="panel glass-panel mt-6">
       <div class="panel-head mb-4"><h2>Desempenho da Equipe Hoje</h2></div>
       <div class="data-table flex flex-col gap-3">
-        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
-          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2.5fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (USD | BRL | USDT)</span>
         </div>
         ${rows.map(r => `
-          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-              <b class="text-slate-900">${esc(r.s.name)}</b>
+              <div class="flex items-center gap-2">
+                ${renderAvatarHTML(r.s, 'small')}
+                <b class="text-slate-900">${esc(r.s.name)}</b>
+              </div>
             </div>
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
@@ -1859,13 +2143,13 @@ function renderSummary() {
   `);
 }
 
-/* GERENCIAMENTO DE ESTOQUES */
+/* GERENCIAMENTO DE ESTOQUES MATRIZ (SP/CENTRO, SP/OE, ASU) */
 function renderWarehousesPage() {
   const whList = warehouses();
   const inv = warehouseInventory();
   const transfers = warehouseTransfers();
 
-  appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie individualmente o estoque de cada localidade e envie produtos para Supervisores ou Vendedores.', `
+  appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie o estoque físico dos depósitos matriz (SP/CENTRO, SP/OE, ASU Stock) e envie produtos atribuindo preços em dólar para Supervisores ou Vendedores.', `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       ${whList.map(w => {
         const wItems = inv.filter(i => i.warehouseId === w.id);
@@ -1879,7 +2163,7 @@ function renderWarehousesPage() {
               </div>
               <p class="text-xs text-slate-500 mb-3">Localização: ${esc(w.city)} (${esc(w.country)})</p>
               <div class="p-3 bg-slate-100 rounded-xl mb-2">
-                <span class="text-[10px] font-bold text-slate-500 uppercase block">Estoque Cadastrado</span>
+                <span class="text-[10px] font-bold text-slate-500 uppercase block">Estoque Físico Registrado</span>
                 <strong class="text-lg text-slate-900 font-extrabold">${totalQty} unidades</strong>
                 <small class="block text-slate-500 mt-1">${wItems.length} tipo(s) de produtos</small>
               </div>
@@ -1895,16 +2179,16 @@ function renderWarehousesPage() {
 
     <div class="panel glass-panel mb-6">
       <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-        <div><h2>Produtos em Cada Estoque</h2><p>Listagem detalhada do inventário individual de cada depósito.</p></div>
+        <div><h2>Produtos nos Depósitos Matriz</h2><p>Listagem de inventário físico dos estoques centrais.</p></div>
       </div>
       <div class="data-table flex flex-col gap-3">
-        <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1fr 1fr auto; align-items: center;">
-          <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Disponível</span><span>Preço Unit.</span><span>Ações</span>
+        <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2.5fr 1.5fr auto; align-items: center;">
+          <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Físico Disponível</span><span>Ações</span>
         </div>
         ${inv.length ? inv.map(i => {
           const w = whList.find(x => x.id === i.warehouseId);
           return `
-            <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Depósito</span>
                 <b>${esc(w?.name || 'Desconhecido')}</b>
@@ -1916,10 +2200,6 @@ function renderWarehousesPage() {
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
                 <strong class="text-slate-800">${i.stock} un.</strong>
-              </div>
-              <div class="flex justify-between items-center md:block">
-                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
-                <span>${money(i.price)}</span>
               </div>
               <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
@@ -1935,11 +2215,11 @@ function renderWarehousesPage() {
       <div class="panel-head mb-4"><h2>Histórico Geral de Transferências dos Estoques</h2></div>
       ${transfers.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.5fr 1.2fr 1.8fr 2fr 1fr; align-items: center;">
-            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.5fr 1.2fr 1.8fr 2fr 1fr 2fr; align-items: center;">
+            <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span>
           </div>
           ${transfers.slice().reverse().map(t => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-7 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                 <small>${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -1960,9 +2240,13 @@ function renderWarehousesPage() {
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                 <span>${esc(t.productName)}</span>
               </div>
-              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+              <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                 <b>${t.quantity} un.</b>
+              </div>
+              <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                <span class="font-bold text-emerald-600">${money(t.price)}</span>
               </div>
             </div>
           `).join('')}
@@ -1976,7 +2260,7 @@ function renderWarehousesPage() {
   document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
 }
 
-/* PAINEL DE CADA ESTOQUE */
+/* PAINEL DE CADA ESTOQUE MATRIZ */
 function renderStockPanel() {
   const wh = warehouses().find(w => w.id === currentUser.warehouseId) || warehouses()[0];
   const myInv = warehouseInventory().filter(i => i.warehouseId === wh.id);
@@ -2005,7 +2289,7 @@ function renderStockPanel() {
         <div class="p-5 glass-panel rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 class="text-lg font-bold text-slate-900">Enviar Produtos deste Estoque</h2>
-            <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e a quantidade a transferir.</p>
+            <p class="text-xs text-slate-500">Escolha o destinatário (Supervisor ou Vendedor) e defina o preço de venda em Dólar (USD $).</p>
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
             <button id="stockAddItemBtn" class="outline-btn flex-1 sm:flex-none text-xs py-2">+ Adicionar Produtos</button>
@@ -2017,11 +2301,11 @@ function renderStockPanel() {
           <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Produtos Disponíveis neste Estoque (${myInv.length})</h3>
           ${myInv.length ? `
             <div class="data-table flex flex-col gap-3">
-              <div class="table-head hidden md:grid" style="grid-template-columns: 2.5fr 1fr 1fr auto; align-items: center;">
-                <span>Produto & Marca</span><span>Qtd em Estoque</span><span>Preço Unit.</span><span>Ações</span>
+              <div class="table-head hidden md:grid" style="grid-template-columns: 2.5fr 1fr auto; align-items: center;">
+                <span>Produto & Marca</span><span>Qtd Físico em Estoque</span><span>Ações</span>
               </div>
               ${myInv.map(i => `
-                <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                <div class="table-row flex flex-col md:grid md:grid-cols-3 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                     <span><b>${esc(i.productName)}</b> <small class="text-slate-500">(${esc(i.brand)})</small></span>
@@ -2029,10 +2313,6 @@ function renderStockPanel() {
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
                     <b class="text-emerald-600">${i.stock} un.</b>
-                  </div>
-                  <div class="flex justify-between items-center md:block">
-                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
-                    <span>${money(i.price)}</span>
                   </div>
                   <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
@@ -2048,11 +2328,11 @@ function renderStockPanel() {
           <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
           ${myTransfers.length ? `
             <div class="data-table flex flex-col gap-3">
-              <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 2fr 2fr 1fr; align-items: center;">
-                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd Enviada</span>
+              <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 1.8fr 1.8fr 1fr 2fr; align-items: center;">
+                <span>Data</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (USD/BRL/USDT)</span>
               </div>
               ${myTransfers.slice().reverse().map(t => `
-                <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none">
+                <div class="table-row flex flex-col md:grid md:grid-cols-6 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 bg-white rounded-xl md:rounded-none text-xs">
                   <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
                     <small class="text-slate-500">${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
@@ -2069,9 +2349,13 @@ function renderStockPanel() {
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                     <span>${esc(t.productName)}</span>
                   </div>
-                  <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                  <div class="flex justify-between items-center md:block">
                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
                     <b>${t.quantity} un.</b>
+                  </div>
+                  <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
+                    <b class="text-emerald-600">${money(t.price)}</b>
                   </div>
                 </div>
               `).join('')}
@@ -2090,7 +2374,7 @@ function renderStockPanel() {
   document.querySelectorAll('.edit-stock-item').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
 }
 
-/* MODAIS DE ESTOQUE */
+/* MODAIS DE ESTOQUE MATRIZ */
 function addWarehouseItemModal(warehouseId) {
   const wh = warehouses().find(w => w.id === warehouseId);
   const sysCat = systemCatalog();
@@ -2104,14 +2388,11 @@ function addWarehouseItemModal(warehouseId) {
         </select>
       </label>
       <div class="form-grid">
-        <label>Quantidade em Estoque
+        <label>Quantidade Física em Estoque
           <input name="stock" type="number" min="1" value="50" class="control" required>
         </label>
-        <label>Preço Unitário (R$)
-          <input name="price" type="number" step="0.01" min="0" placeholder="150.00" class="control" required>
-        </label>
       </div>
-      <button type="button" id="triggerAddInv" class="primary-btn w-full mt-3">${icons.check} Adicionar ao Estoque</button>
+      <button type="button" id="triggerAddInv" class="primary-btn w-full mt-3">${icons.check} Adicionar ao Estoque Matriz</button>
     </form>
   `);
 
@@ -2121,10 +2402,10 @@ function addWarehouseItemModal(warehouseId) {
     const f = new FormData(form);
 
     confirmActionModal({
-      title: 'Adicionar Produto ao Depósito',
+      title: 'Adicionar Produto ao Depósito Matriz',
       subtitle: `${f.get('stock')} un. → ${wh.name}`,
-      warningText: 'Confirmar inclusão do novo item no estoque?',
-      confirmText: 'Inspecionar e Adicionar',
+      warningText: 'Confirmar inclusão do novo item no estoque central?',
+      confirmText: 'Confirmar e Adicionar',
       onConfirm: () => {
         const idx = Number(f.get('catalogIndex'));
         const item = sysCat[idx];
@@ -2135,8 +2416,7 @@ function addWarehouseItemModal(warehouseId) {
           warehouseId,
           productName: item[0],
           brand: item[1],
-          stock: Number(f.get('stock')),
-          price: Number(f.get('price'))
+          stock: Number(f.get('stock'))
         });
         write('nl_warehouse_inventory', inv);
 
@@ -2155,11 +2435,8 @@ function editWarehouseItemModal(itemId) {
   const m = modal(`
     <h2>Ajustar Estoque: ${esc(item.productName)}</h2>
     <form id="entityForm" class="seller-form">
-      <label>Nova Quantidade em Estoque
+      <label>Nova Quantidade Física em Estoque
         <input name="stock" type="number" min="0" value="${item.stock}" class="control" required>
-      </label>
-      <label>Preço Unitário (R$)
-        <input name="price" type="number" step="0.01" min="0" value="${item.price}" class="control" required>
       </label>
       <button type="button" id="triggerEditInv" class="primary-btn w-full mt-3">${icons.check} Atualizar Estoque</button>
     </form>
@@ -2177,7 +2454,6 @@ function editWarehouseItemModal(itemId) {
       confirmText: 'Atualizar Saldo',
       onConfirm: () => {
         item.stock = Number(f.get('stock'));
-        item.price = Number(f.get('price'));
         write('nl_warehouse_inventory', inv);
 
         m.remove();
@@ -2196,7 +2472,7 @@ function transferStockModal(forcedWarehouseId = null) {
 
   const m = modal(`
     <h2>Enviar Produtos do Estoque Matriz</h2>
-    <p>Selecione se deseja enviar para um <b>Supervisor</b> ou diretamente para um <b>Vendedor</b>.</p>
+    <p>Selecione o destinatário e defina o <b>preço de venda em Dólar (USD $)</b>.</p>
     <form id="entityForm" class="seller-form">
       <label>Estoque Origem
         <select name="warehouseId" id="whSelect" class="control" ${forcedWarehouseId ? 'disabled' : ''} required>
@@ -2222,8 +2498,11 @@ function transferStockModal(forcedWarehouseId = null) {
       </label>
 
       <div class="form-grid">
-        <label>Quantidade Enviar
+        <label>Quantidade a Enviar
           <input name="quantity" type="number" min="1" value="10" class="control" required>
+        </label>
+        <label>Preço de Venda do Vendedor em Dólar (USD $)
+          <input name="price" type="number" step="0.01" min="0" placeholder="50.00" class="control" required>
         </label>
       </div>
 
@@ -2250,7 +2529,7 @@ function transferStockModal(forcedWarehouseId = null) {
       invItemSelect.disabled = true;
     } else {
       invItemSelect.disabled = false;
-      invItemSelect.innerHTML = items.map(i => `<option value="${i.id}">${esc(i.productName)} — Disp: ${i.stock} un. (R$ ${i.price})</option>`).join('');
+      invItemSelect.innerHTML = items.map(i => `<option value="${i.id}">${esc(i.productName)} — Disp: ${i.stock} un.</option>`).join('');
     }
   };
 
@@ -2266,6 +2545,7 @@ function transferStockModal(forcedWarehouseId = null) {
     const itemId = f.get('inventoryItemId');
     const invItem = currentInv.find(i => i.id === itemId);
     const qty = Number(f.get('quantity'));
+    const priceUSD = Number(f.get('price'));
 
     if (!invItem) return alert('Selecione um produto válido.');
     if (qty > invItem.stock) return alert(`Quantidade indisponível em estoque. Máximo disponível: ${invItem.stock}`);
@@ -2277,7 +2557,7 @@ function transferStockModal(forcedWarehouseId = null) {
 
     confirmActionModal({
       title: 'Confirmar Envio do Estoque',
-      subtitle: `${qty}x ${invItem.productName} → ${targetObj.name}`,
+      subtitle: `${qty}x ${invItem.productName} → ${targetObj.name} por ${moneySimple(priceUSD)}/un.`,
       warningText: `A quantidade será debitada do estoque ${whObj.name} e creditada ao ${targetType === 'SUPERVISOR' ? 'supervisor' : 'vendedor'}.`,
       confirmText: 'Enviar Agora',
       onConfirm: () => {
@@ -2295,7 +2575,7 @@ function transferStockModal(forcedWarehouseId = null) {
           productName: invItem.productName,
           brand: invItem.brand,
           quantity: qty,
-          price: invItem.price,
+          price: priceUSD,
           createdAt: new Date().toISOString()
         });
         write('nl_transfers', transfers);
@@ -2304,14 +2584,14 @@ function transferStockModal(forcedWarehouseId = null) {
         let p = prods.find(x => x.sellerId === targetObj.id && x.name === invItem.productName);
         if (p) {
           p.stock += qty;
-          p.price = invItem.price;
+          p.price = priceUSD;
         } else {
           prods.push({
             id: uid(),
             sellerId: targetObj.id,
             name: invItem.productName,
             brand: invItem.brand,
-            price: invItem.price,
+            price: priceUSD,
             stock: qty
           });
         }
@@ -2345,7 +2625,10 @@ function renderSupervisorOrdersPage() {
               <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-                  <b>${esc(seller?.name || o.sellerName)}</b>
+                  <div class="flex items-center gap-2">
+                    ${renderAvatarHTML(seller, 'small')}
+                    <b>${esc(seller?.name || o.sellerName)}</b>
+                  </div>
                 </div>
                 <div class="flex justify-between items-center md:block">
                   <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
@@ -2461,7 +2744,7 @@ function renderArchivedPage() {
 }
 
 function renderCatalogPage() {
-  appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas.', `
+  appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas (Incluso TG e TG antiga).', `
     <div class="panel glass-panel">
       <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         ${systemCatalog().map(p => `
@@ -2479,11 +2762,11 @@ function renderProductsPage() {
   const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
   const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
 
-  appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe.', `
+  appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque para a equipe com precificação em Dólar (USD).', `
     <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h3 class="font-extrabold text-slate-900 text-base">Seu Estoque de Supervisor</h3>
-        <p class="text-xs text-slate-600">Você possui <b>${mySupStock.reduce((a,p)=>a+p.stock,0)} unidades</b> de produtos no seu usuário para repassar aos vendedores ou dar baixa.</p>
+        <p class="text-xs text-slate-600">Você possui <b>${mySupStock.reduce((a,p)=>a+p.stock,0)} unidades</b> no seu usuário para repassar aos vendedores.</p>
       </div>
       <button id="supTransferStockBtn" class="primary-btn w-full sm:w-auto text-xs py-2 flex items-center justify-center gap-2">${icons.orders} Enviar do Meu Estoque para Vendedor</button>
     </div>
@@ -2494,11 +2777,27 @@ function renderProductsPage() {
         return `
           <div class="seller-card glass-panel p-5 rounded-2xl flex flex-col justify-between gap-3 bg-white/90 border border-slate-200 shadow-sm">
             <div>
-              <h3 class="text-base font-bold text-slate-900">${esc(s.name)}</h3>
-              <p class="text-xs text-slate-500 mb-3">@${esc(s.user)} · ${esc(s.city)}/${esc(s.uf)}</p>
+              <div class="flex items-center gap-2 mb-2">
+                ${renderAvatarHTML(s, 'small')}
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">${esc(s.name)}</h3>
+                  <p class="text-xs text-slate-500">@${esc(s.user)} · ${esc(s.city)}/${esc(s.uf)}</p>
+                </div>
+              </div>
               <strong class="highlight-val text-base block mb-3">${sProds.reduce((a, p) => a + p.stock, 0)} un. em posse</strong>
-              <div class="text-xs text-slate-600 space-y-1">
-                ${sProds.length ? sProds.map(p => `<div>• ${esc(p.name)}: <b>${p.stock} un.</b></div>`).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
+              <div class="text-xs text-slate-600 space-y-2">
+                ${sProds.length ? sProds.map(p => `
+                  <div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg border border-slate-100">
+                    <div>
+                      <b>${esc(p.name)}</b>
+                      <small class="block text-slate-500 font-bold">${money(p.price)}</small>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <b class="text-slate-800">${p.stock} un.</b>
+                      <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço USD</button>
+                    </div>
+                  </div>
+                `).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
               </div>
             </div>
           </div>
@@ -2509,25 +2808,58 @@ function renderProductsPage() {
 
   const trBtn = document.getElementById('supTransferStockBtn');
   if (trBtn) trBtn.onclick = transferSupervisorStockModal;
+
+  document.querySelectorAll('.edit-seller-price-btn').forEach(b => {
+    b.onclick = () => {
+      const prodId = b.dataset.id;
+      const allP = products();
+      const targetP = allP.find(p => p.id === prodId);
+      if (!targetP) return;
+
+      const m = modal(`
+        <h2>Ajustar Preço em Dólar (USD $)</h2>
+        <p class="text-xs text-slate-500 mb-3">Produto: <b>${esc(targetP.name)}</b></p>
+        <form id="editPriceForm" class="seller-form">
+          <label>Preço Exclusivo deste Vendedor em Dólar (USD $)
+            <input name="price" type="number" step="0.01" min="0" value="${targetP.price}" class="control" required>
+          </label>
+          <button type="submit" class="primary-btn w-full mt-3">${icons.check} Atualizar Preço</button>
+        </form>
+      `);
+
+      m.querySelector('form').onsubmit = e => {
+        e.preventDefault();
+        const newPriceUSD = Number(new FormData(e.target).get('price'));
+        targetP.price = newPriceUSD;
+        write('atlasProducts', allP);
+        showToast('Preço do vendedor atualizado em dólar!');
+        m.remove();
+        renderProductsPage();
+      };
+    };
+  });
 }
 
 function renderReportsPage() {
   const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
-  appFrame('Relatórios', 'Relatório operacional.', `
+  appFrame('Relatórios', 'Relatório operacional multi-moedas.', `
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-      <b>Resumo de Vendas</b>
+      <b>Resumo de Vendas Mensal</b>
       <button id="downloadPdfBtn" class="primary-btn text-xs py-2 w-full sm:w-auto flex items-center justify-center gap-1">${icons.pdf} Baixar PDF</button>
     </div>
     <div class="panel glass-panel">
       <div class="data-table flex flex-col gap-3">
-        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 1.2fr; align-items: center;">
-          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento</span>
+        <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2.5fr; align-items: center;">
+          <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (USD | BRL | USDT)</span>
         </div>
         ${ss.map(s => `
-          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+          <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Vendedor</span>
-              <b class="text-slate-900">${esc(s.name)}</b>
+              <div class="flex items-center gap-2">
+                ${renderAvatarHTML(s, 'small')}
+                <b class="text-slate-900">${esc(s.name)}</b>
+              </div>
             </div>
             <div class="flex justify-between items-center md:block">
               <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
@@ -2549,9 +2881,9 @@ function renderReportsPage() {
 
   document.getElementById('downloadPdfBtn').onclick = () => {
     exportUniversalPDF({
-      title: 'Relatório Oficial de Vendas',
-      headers: ['Vendedor', 'Localização', 'Qtd Vendida', 'Faturamento'],
-      rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, money(sellerRevenue(s.id, 'month'))]),
+      title: 'Relatório Oficial de Vendas (Multi-Moedas)',
+      headers: ['Vendedor', 'Localizacao', 'Qtd Vendida', 'Faturamento (USD)'],
+      rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, moneySimple(sellerRevenue(s.id, 'month'))]),
       fileName: 'newlife-relatorio.pdf'
     });
   };
@@ -2599,6 +2931,7 @@ function renderSeller() {
   `;
 
   document.querySelectorAll('.logoutSellerSideBtn').forEach(b => b.onclick = logout);
+  document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
 
   const hBtn = document.getElementById('hamburgerBtnSeller');
   const overlay = document.getElementById('appDrawerOverlay');
@@ -2628,11 +2961,11 @@ function renderSellerSalesTab(sellerProducts) {
       </div>
       ${sellerProducts.length ? `
         <div class="data-table flex flex-col gap-3">
-          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr; align-items: center;">
-            <span>Produto</span><span>Preço</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
+          <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 2.5fr 1.2fr 1.8fr; align-items: center;">
+            <span>Produto</span><span>Preço (USD / BRL / USDT)</span><span>Disponível</span><span>Qtd Vendida Hoje</span>
           </div>
           ${sellerProducts.map(p => `
-            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+            <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
               <div class="flex justify-between items-center md:block">
                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
                 <b class="text-slate-900">${esc(p.name)}</b>
