@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v16 - Exclusivo BRL R$, Remoção de Foto, Atualizar Mobile & Planilha Consolidada) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v17 - Persistência Total no F5 & Sessão Salva) */
 
 // Biblioteca de Ícones SVG
 const icons = {
@@ -41,7 +41,7 @@ const cityCoordinates = {
   'Assunção': [-25.2637, -57.5759]
 };
 
-// Base de Usuários (ASU Stock)
+// Base de Usuários
 const defaultSystemUsers = [
   { id: 'u_ik', user: 'ik', password: 'iksystem2026@', name: 'IK', role: 'ADMIN_SUPERVISOR', supervisor: 'ik', city: 'São Paulo', uf: 'SP', country: 'BR', active: true, avatarUrl: '' },
   { id: 'u_cw', user: 'cw', password: 'cwsystem2026@', name: 'Cw Curitiba', role: 'ADMIN_SELLER', supervisor: 'ik', city: 'Curitiba', uf: 'PR', country: 'BR', active: true, avatarUrl: '' },
@@ -131,7 +131,8 @@ const catalog = [
 const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 const ibgeCitiesCache = {};
 
-let currentUser = null;
+// RESTAURAR SESSÃO DO USUÁRIO LOGADO SE EXISTIR
+let currentUser = JSON.parse(localStorage.getItem('nl_current_user') || 'null');
 let activeTab = 'adminHome';
 let sellerActiveTab = 'sales';
 let drawerOpen = false;
@@ -159,8 +160,10 @@ function moneySimple(brlVal) {
 window.addEventListener('storage', () => {
   if (currentUser) {
     const updatedUser = allUsers().find(u => u.id === currentUser.id);
-    if (updatedUser) currentUser = updatedUser;
-
+    if (updatedUser) {
+      currentUser = updatedUser;
+      localStorage.setItem('nl_current_user', JSON.stringify(updatedUser));
+    }
     refreshCurrentScreen();
   }
 });
@@ -198,14 +201,16 @@ function getAppRoot() {
   return root;
 }
 
-// Sincronização Inicial
+// Sincronização Inicial SEGURA (Sem apagar dados existentes)
 function initSystemData() {
-  if (!localStorage.getItem('nl_v16_initialized')) {
-    localStorage.clear();
+  if (!localStorage.getItem('nl_users')) {
     write('nl_users', defaultSystemUsers);
+  }
+  if (!localStorage.getItem('nl_warehouses')) {
     write('nl_warehouses', defaultWarehouses);
+  }
+  if (!localStorage.getItem('nl_motoboys')) {
     write('nl_motoboys', defaultMotoboys);
-    write('nl_v16_initialized', true);
   }
 }
 initSystemData();
@@ -380,14 +385,17 @@ function exportUniversalPDF({ title, subtitle, headers = [], rows = [], fileName
   showToast('Relatório PDF baixado!');
 }
 
-/* Navegação e Sessão */
+/* Navegação e Sessão com Persistência Local */
 function login(user) {
   if (user.active === false) {
-    document.getElementById('loginError').textContent = 'Esta conta foi desativada pelo Administrador.';
+    const err = document.getElementById('loginError');
+    if (err) err.textContent = 'Esta conta foi desativada pelo Administrador.';
     return;
   }
 
   currentUser = user;
+  localStorage.setItem('nl_current_user', JSON.stringify(user));
+
   const loginScreen = document.getElementById('loginScreen');
   if (loginScreen) loginScreen.style.display = 'none';
 
@@ -399,6 +407,7 @@ function login(user) {
 
 function logout() {
   currentUser = null;
+  localStorage.removeItem('nl_current_user');
   location.reload();
 }
 
@@ -627,7 +636,7 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 2600);
 }
 
-/* FUNÇÃO PRINCIPAL: DESFAZER ENVIO DE ESTOQUE (ROLLBACK E REVERTER) */
+/* DESFAZER ENVIO DE ESTOQUE (ROLLBACK E REVERTER) */
 function undoTransferModal(transferId) {
   const transfers = warehouseTransfers();
   const t = transfers.find(x => x.id === transferId);
@@ -638,7 +647,6 @@ function undoTransferModal(transferId) {
   const prods = products();
   const currentInv = warehouseInventory();
   
-  // Buscar produto no destinatário para verificar saldo disponível
   const targetProduct = prods.find(p => p.sellerId === t.targetId && p.name === t.productName);
   const targetAvailable = targetProduct ? targetProduct.stock : 0;
 
@@ -653,12 +661,10 @@ function undoTransferModal(transferId) {
     warningText: `Os itens serão debitados de ${t.targetName} e retornados para o estoque de origem (${t.warehouseName}).`,
     confirmText: 'Confirmar e Reverter Envio',
     onConfirm: () => {
-      // 1. Debitar do destinatário
       if (targetProduct) {
         targetProduct.stock -= t.quantity;
       }
 
-      // 2. Recreditar no estoque de origem
       if (t.warehouseId.startsWith('sup_')) {
         const supId = t.warehouseId.replace('sup_', '');
         let supProd = prods.find(p => p.sellerId === supId && p.name === t.productName);
@@ -690,7 +696,6 @@ function undoTransferModal(transferId) {
         write('nl_warehouse_inventory', currentInv);
       }
 
-      // 3. Marcar transferência como desfeita
       t.reverted = true;
       t.revertedAt = new Date().toISOString();
 
@@ -772,6 +777,7 @@ function editSelfAvatarModal() {
       u.avatarUrl = base64Input.value;
       currentUser.avatarUrl = base64Input.value;
       write('nl_users', users);
+      localStorage.setItem('nl_current_user', JSON.stringify(currentUser));
       showToast('Perfil atualizado com sucesso!');
       m.remove();
       refreshCurrentScreen();
@@ -1667,7 +1673,7 @@ function renderBackupPage() {
       <div class="flex items-center gap-3 mb-3">
         <span class="p-3 bg-emerald-100 text-emerald-700 rounded-xl text-xl font-bold">📊</span>
         <div>
-          <h2 class="text-base font-extrabold text-slate-900">NOVO: Exportar Planilha Consolidada Completa (CSV / Excel)</h2>
+          <h2 class="text-base font-extrabold text-slate-900">Exportar Planilha Consolidada Completa (CSV / Excel)</h2>
           <p class="text-xs text-slate-600">Gera UMA ÚNICA PLANILHA completa contendo o Estoque de Vendedores, Estoque de Supervisores, Vendas dos Últimos 7 Dias e Histórico de Baixas.</p>
         </div>
       </div>
@@ -1719,7 +1725,6 @@ function renderBackupPage() {
     </div>
   `);
 
-  // BOTÃO DA PLANILHA CONSOLIDADA COMPLETA (TUDO NA MESMA PLANILHA)
   document.getElementById('exportConsolidatedCsvBtn').onclick = () => {
     confirmActionModal({
       title: 'Gerar Planilha Consolidada Completa',
@@ -1738,7 +1743,7 @@ function renderBackupPage() {
       confirmText: 'Baixar Backup',
       onConfirm: () => {
         const backupData = {
-          systemVersion: 'v16',
+          systemVersion: 'v17',
           exportedAt: new Date().toISOString(),
           users: allUsers(),
           warehouses: warehouses(),
@@ -1804,7 +1809,7 @@ function renderBackupPage() {
   };
 }
 
-/* FUNÇÃO GERADORA DA PLANILHA CONSOLIDADA COMPLETA (NOVA) */
+/* GERADOR DE PLANILHA CONSOLIDADA COMPLETA */
 function exportConsolidatedExcelCSV() {
   const usersList = allUsers();
   const sellersList = allSellers();
@@ -1816,11 +1821,9 @@ function exportConsolidatedExcelCSV() {
 
   let csv = '';
 
-  // CABEÇALHO GERAL
   csv += `NEWLIFE.SYSTEM - RELATORIO CONSOLIDADO COMPLETO EM REAIS (R$)\n`;
   csv += `Data de Geracao: "${new Date().toLocaleString('pt-BR')}"\n\n`;
 
-  // SEÇÃO 1: ESTOQUE EM POSSE DOS VENDEDORES
   csv += `=== 1. ESTOQUE EM POSSE DOS VENDEDORES ===\n`;
   csv += `Vendedor,Supervisor Responsavel,Cidade/UF,Produto,Marca,Quantidade em Estoque,Preco Unitario (R$),Valor Total Em Posse (R$)\n`;
 
@@ -1837,7 +1840,6 @@ function exportConsolidatedExcelCSV() {
   });
   csv += `\n`;
 
-  // SEÇÃO 2: ESTOQUE EM POSSE DOS SUPERVISORES
   csv += `=== 2. ESTOQUE EM POSSE DOS SUPERVISORES ===\n`;
   csv += `Supervisor,Cidade/UF,Produto,Marca,Quantidade em Estoque,Preco Unitario (R$),Valor Total Em Posse (R$)\n`;
 
@@ -1854,7 +1856,6 @@ function exportConsolidatedExcelCSV() {
   });
   csv += `\n`;
 
-  // SEÇÃO 3: DESEMPENHO E VENDAS DOS ÚLTIMOS 7 DIAS (CADA INTEGRANTE)
   csv += `=== 3. RESUMO DE VENDAS E BAIXAS NOS ULTIMOS 7 DIAS (POR INTEGRANTE) ===\n`;
   csv += `Nome Integrante,Cargo / Função,Supervisor,Cidade/UF,Qtd Vendas (Ultimos 7 Dias),Total Faturado em Reais (R$)\n`;
 
@@ -1867,7 +1868,6 @@ function exportConsolidatedExcelCSV() {
   });
   csv += `\n`;
 
-  // SEÇÃO 4: HISTÓRICO COMPLETO DE BAIXAS E VENDAS
   csv += `=== 4. HISTORICO COMPLETO DE BAIXAS REGISTRADAS ===\n`;
   csv += `ID Venda,Data e Hora,Vendedor / Responsavel,Produto,Quantidade Vendida,Preco Unitario (R$),Total Faturado (R$)\n`;
 
@@ -1878,7 +1878,6 @@ function exportConsolidatedExcelCSV() {
   });
   csv += `\n`;
 
-  // SEÇÃO 5: ESTOQUE FISICO NOS DEPÓSITOS MATRIZ
   csv += `=== 5. ESTOQUE FISICO NOS DEPOSITOS MATRIZ ===\n`;
   csv += `Deposito,Localizacao,Produto,Marca,Estoque Fisico Disponivel\n`;
 
@@ -3207,7 +3206,7 @@ function renderSellerArchivedTab() {
   `;
 }
 
-/* DOM Ready */
+/* DOM Ready & Auto-Reconexão de Sessão Salva */
 document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('loginPassword');
   if (passwordInput) {
@@ -3270,5 +3269,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       login(account);
     };
+  }
+
+  // RESTAURAR SESSÃO AO RECARREGAR A PÁGINA (F5)
+  if (currentUser) {
+    login(currentUser);
   }
 });
