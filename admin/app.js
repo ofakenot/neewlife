@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v20 - Supabase Username Fixed) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v22 - Full Supabase Real-Time Direct Push) */
 
 // CREDENCIAIS OFICIAIS DO SUPABASE
 const SUPABASE_URL = 'https://pgqbukhnfameinfrikjw.supabase.co';
@@ -13,7 +13,7 @@ try {
     console.error('Erro ao inicializar cliente Supabase:', e);
 }
 
-// CONSTANTES FIXAS DE INTERFACE (Ícones SVG, Coordenadas e Estados)
+// CONSTANTES FIXAS DE INTERFACE
 const icons = {
     brand: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
     summary: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
@@ -41,7 +41,8 @@ const icons = {
     database: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
     whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`,
     camera: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
-    trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`
+    trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+    upload: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`
 };
 
 const cityCoordinates = {
@@ -79,7 +80,7 @@ let activeTab = 'adminHome';
 let sellerActiveTab = 'sales';
 let drawerOpen = false;
 
-// CACHE LOCAL ZERADO (CARREGA DADOS EXCLUSIVAMENTE DO SUPABASE)
+// ESTADO DO BANCO DE DADOS EM MEMÓRIA
 let dbCache = {
     users: [],
     warehouses: [],
@@ -91,7 +92,122 @@ let dbCache = {
     transfers: []
 };
 
-// SINCRONIZAÇÃO TOTAL COM O SUPABASE (CORRIGIDO MAPEAMENTO DE USERNAME)
+// 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
+async function pushAllToSupabase() {
+    if (!supabaseClient) return alert('Cliente Supabase não inicializado.');
+    
+    try {
+        showToast('⏳ Enviando alterações para o Supabase...');
+
+        // 1. Enviar Usuários (System Users)
+        if (dbCache.users.length) {
+            await supabaseClient.from('system_users').upsert(dbCache.users.map(u => ({
+                id: u.id,
+                username: u.user,
+                password: u.password,
+                name: u.name,
+                role: u.role,
+                supervisor: u.supervisor,
+                city: u.city,
+                uf: u.uf,
+                country: 'BR',
+                active: u.active !== false,
+                avatar_url: u.avatarUrl || u.avatar_url
+            })));
+        }
+
+        // 2. Enviar Produtos dos Vendedores
+        if (dbCache.products.length) {
+            await supabaseClient.from('seller_products').upsert(dbCache.products.map(p => ({
+                id: p.id,
+                seller_id: p.sellerId,
+                name: p.name,
+                brand: p.brand,
+                price: Number(p.price || 0),
+                stock: Number(p.stock || 0)
+            })));
+        }
+
+        // 3. Enviar Inventário dos Depósitos Matriz
+        if (dbCache.warehouse_inventory.length) {
+            await supabaseClient.from('warehouse_inventory').upsert(dbCache.warehouse_inventory.map(i => ({
+                id: i.id,
+                warehouse_id: i.warehouseId,
+                product_name: i.productName,
+                brand: i.brand,
+                stock: Number(i.stock || 0)
+            })));
+        }
+
+        // 4. Enviar Histórico de Vendas
+        if (dbCache.sales.length) {
+            await supabaseClient.from('sales').upsert(dbCache.sales.map(s => ({
+                id: s.id,
+                seller_id: s.sellerId,
+                product_id: s.productId,
+                quantity: Number(s.quantity || 0),
+                unit_price: Number(s.unitPrice || 0),
+                total: Number(s.total || 0),
+                created_at: s.createdAt
+            })));
+        }
+
+        // 5. Enviar Pedidos de Reposição
+        if (dbCache.orders.length) {
+            await supabaseClient.from('orders').upsert(dbCache.orders.map(o => ({
+                id: o.id,
+                seller_id: o.sellerId,
+                seller_name: o.sellerName,
+                supervisor: o.supervisor,
+                delivery_date: o.deliveryDate,
+                product_name: o.productName,
+                brand: o.brand,
+                quantity: Number(o.quantity || 0),
+                status: o.status,
+                created_at: o.createdAt,
+                delivered_at: o.deliveredAt
+            })));
+        }
+
+        // 6. Enviar Transferências de Estoque
+        if (dbCache.transfers.length) {
+            await supabaseClient.from('transfers').upsert(dbCache.transfers.map(t => ({
+                id: t.id,
+                warehouse_id: t.warehouseId,
+                warehouse_name: t.warehouseName,
+                target_type: t.targetType,
+                target_id: t.targetId,
+                target_name: t.targetName,
+                product_name: t.productName,
+                brand: t.brand,
+                quantity: Number(t.quantity || 0),
+                price: Number(t.price || 0),
+                reverted: t.reverted || false,
+                created_at: t.createdAt,
+                reverted_at: t.revertedAt
+            })));
+        }
+
+        // 7. Enviar Motoboys
+        if (dbCache.motoboys.length) {
+            await supabaseClient.from('motoboys').upsert(dbCache.motoboys.map(m => ({
+                id: m.id,
+                name: m.name,
+                whatsapp: m.whatsapp,
+                supervisor: m.supervisor,
+                uf: m.uf,
+                city: m.city
+            })));
+        }
+
+        showToast('✅ Todas as alterações foram salvas no Supabase!');
+    } catch (err) {
+        console.error('Erro ao enviar dados para o Supabase:', err);
+        alert('Erro ao enviar as alterações para o Supabase. Verifique o console.');
+    }
+}
+
+// 2. BUSCA E MAPEAMENTO RIGOROSO DE DADOS DO SUPABASE (CARREGAMENTO INICIAL)
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
@@ -109,48 +225,131 @@ async function fetchSupabaseData() {
         if (uRes.data) {
             dbCache.users = uRes.data.map(u => ({
                 ...u,
-                user: String(u.username || u.user || '').trim().toLowerCase(), // Mapeia 'username' da coluna do Supabase para 'user' no JS
+                user: String(u.username || u.user || '').trim().toLowerCase(),
                 password: String(u.password || '').trim(),
                 avatarUrl: u.avatar_url || u.avatarUrl,
                 warehouseId: u.warehouse_id || u.warehouseId,
                 active: u.active !== false
             }));
-            console.log('✅ Usuários carregados do Supabase:', dbCache.users);
+            localStorage.setItem('nl_users', JSON.stringify(dbCache.users));
         }
 
-        if (wRes.data) dbCache.warehouses = wRes.data;
-        if (mRes.data) dbCache.motoboys = mRes.data;
-        if (pRes.data) dbCache.products = pRes.data.map(p => ({ ...p, sellerId: p.seller_id || p.sellerId }));
-        if (sRes.data) dbCache.sales = sRes.data.map(s => ({ ...s, sellerId: s.seller_id || s.sellerId, productId: s.product_id || s.productId, unitPrice: s.unit_price || s.unitPrice, createdAt: s.created_at || s.createdAt }));
-        if (oRes.data) dbCache.orders = oRes.data.map(o => ({ ...o, sellerId: o.seller_id || o.sellerId, sellerName: o.seller_name || o.sellerName, deliveryDate: o.delivery_date || o.deliveryDate, productName: o.product_name || o.productName, createdAt: o.created_at || o.createdAt, deliveredAt: o.delivered_at || o.deliveredAt }));
-        if (wiRes.data) dbCache.warehouse_inventory = wiRes.data.map(i => ({ ...i, warehouseId: i.warehouse_id || i.warehouseId, productName: i.product_name || i.productName }));
-        if (tRes.data) dbCache.transfers = tRes.data.map(t => ({ ...t, warehouseId: t.warehouse_id || t.warehouseId, warehouseName: t.warehouse_name || t.warehouseName, targetType: t.target_type || t.targetType, targetId: t.target_id || t.targetId, targetName: t.target_name || t.targetName, productName: t.product_name || t.productName, createdAt: t.created_at || t.createdAt, revertedAt: t.reverted_at || t.revertedAt }));
+        if (wRes.data) {
+            dbCache.warehouses = wRes.data;
+            localStorage.setItem('nl_warehouses', JSON.stringify(dbCache.warehouses));
+        }
+
+        if (mRes.data) {
+            dbCache.motoboys = mRes.data;
+            localStorage.setItem('nl_motoboys', JSON.stringify(dbCache.motoboys));
+        }
+
+        if (pRes.data) {
+            dbCache.products = pRes.data.map(p => ({
+                ...p,
+                sellerId: p.seller_id || p.sellerId,
+                price: Number(p.price || 0),
+                stock: Number(p.stock || 0)
+            }));
+            localStorage.setItem('atlasProducts', JSON.stringify(dbCache.products));
+        }
+
+        if (sRes.data) {
+            dbCache.sales = sRes.data.map(s => ({
+                ...s,
+                sellerId: s.seller_id || s.sellerId,
+                productId: s.product_id || s.productId,
+                unitPrice: Number(s.unit_price || s.unitPrice || 0),
+                total: Number(s.total || 0),
+                quantity: Number(s.quantity || 0),
+                createdAt: s.created_at || s.createdAt
+            }));
+            localStorage.setItem('atlasSales', JSON.stringify(dbCache.sales));
+        }
+
+        if (oRes.data) {
+            dbCache.orders = oRes.data.map(o => ({
+                ...o,
+                sellerId: o.seller_id || o.sellerId,
+                sellerName: o.seller_name || o.sellerName,
+                deliveryDate: o.delivery_date || o.deliveryDate,
+                productName: o.product_name || o.productName,
+                quantity: Number(o.quantity || 0),
+                createdAt: o.created_at || o.createdAt,
+                deliveredAt: o.delivered_at || o.deliveredAt
+            }));
+            localStorage.setItem('atlasOrders', JSON.stringify(dbCache.orders));
+        }
+
+        if (wiRes.data) {
+            dbCache.warehouse_inventory = wiRes.data.map(i => ({
+                ...i,
+                warehouseId: i.warehouse_id || i.warehouseId,
+                productName: i.product_name || i.productName,
+                stock: Number(i.stock || 0)
+            }));
+            localStorage.setItem('nl_warehouse_inventory', JSON.stringify(dbCache.warehouse_inventory));
+        }
+
+        if (tRes.data) {
+            dbCache.transfers = tRes.data.map(t => ({
+                ...t,
+                warehouseId: t.warehouse_id || t.warehouseId,
+                warehouseName: t.warehouse_name || t.warehouseName,
+                targetType: t.target_type || t.targetType,
+                targetId: t.target_id || t.targetId,
+                targetName: t.target_name || t.targetName,
+                productName: t.product_name || t.productName,
+                quantity: Number(t.quantity || 0),
+                price: Number(t.price || 0),
+                createdAt: t.created_at || t.createdAt,
+                revertedAt: t.reverted_at || t.revertedAt
+            }));
+            localStorage.setItem('nl_transfers', JSON.stringify(dbCache.transfers));
+        }
+
+        console.log('✅ Dados carregados do Supabase com sucesso!');
     } catch (err) {
-        console.error('Erro de sincronização com Supabase:', err);
+        console.error('⚠️ Erro de leitura no Supabase:', err);
     }
 }
 
-// PERSISTÊNCIA E AUXILIARES
-const read = (k, d = []) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
-const write = (k, v) => {
-    localStorage.setItem(k, JSON.stringify(v));
-    window.dispatchEvent(new Event('storage'));
+// CARREGAMENTO SEGURO DE DADOS COM FALLBACK
+const readStorage = (k, defaultVal = []) => {
+    try {
+        return JSON.parse(localStorage.getItem(k)) || defaultVal;
+    } catch (e) {
+        return defaultVal;
+    }
 };
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
 
-// FUNÇÕES DE ACESSO AO BANCO
-function allUsers() { return dbCache.users.length ? dbCache.users : read('nl_users', []); }
+function allUsers() { return dbCache.users.length ? dbCache.users : readStorage('nl_users', []); }
 function allSellers() { return allUsers().filter(u => u.role === 'SELLER' || u.role === 'ADMIN_SELLER'); }
 function allSupervisors() { return allUsers().filter(u => u.role === 'SUPERVISOR' || u.role === 'ADMIN_SUPERVISOR'); }
-function allMotoboys() { return dbCache.motoboys.length ? dbCache.motoboys : read('nl_motoboys', []); }
-function products() { return dbCache.products.length ? dbCache.products : read('atlasProducts', []); }
-function sales() { return dbCache.sales.length ? dbCache.sales : read('atlasSales', []); }
-function orders() { return dbCache.orders.length ? dbCache.orders : read('atlasOrders', []); }
-function warehouses() { return dbCache.warehouses.length ? dbCache.warehouses : read('nl_warehouses', []); }
-function warehouseInventory() { return dbCache.warehouse_inventory.length ? dbCache.warehouse_inventory : read('nl_warehouse_inventory', []); }
-function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transfers : read('nl_transfers', []); }
-function systemCatalog() { return [...catalog, ...read('atlasCustomCatalog', []).map(x => [x.name, x.brand])]; }
+function allMotoboys() { return dbCache.motoboys.length ? dbCache.motoboys : readStorage('nl_motoboys', []); }
+function products() { return dbCache.products.length ? dbCache.products : readStorage('atlasProducts', []); }
+function sales() { return dbCache.sales.length ? dbCache.sales : readStorage('atlasSales', []); }
+function orders() { return dbCache.orders.length ? dbCache.orders : readStorage('atlasOrders', []); }
+function warehouses() { return dbCache.warehouses.length ? dbCache.warehouses : readStorage('nl_warehouses', []); }
+function warehouseInventory() { return dbCache.warehouse_inventory.length ? dbCache.warehouse_inventory : readStorage('nl_warehouse_inventory', []); }
+function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transfers : readStorage('nl_transfers', []); }
+function systemCatalog() { return [...catalog, ...readStorage('atlasCustomCatalog', []).map(x => [x.name, x.brand])]; }
+
+// PERSISTÊNCIA EM MEMÓRIA E LOCALSTORAGE
+function write(key, val) {
+    localStorage.setItem(key, JSON.stringify(val));
+    if (key === 'nl_users') dbCache.users = val;
+    if (key === 'nl_warehouses') dbCache.warehouses = val;
+    if (key === 'nl_motoboys') dbCache.motoboys = val;
+    if (key === 'atlasProducts') dbCache.products = val;
+    if (key === 'atlasSales') dbCache.sales = val;
+    if (key === 'atlasOrders') dbCache.orders = val;
+    if (key === 'nl_warehouse_inventory') dbCache.warehouse_inventory = val;
+    if (key === 'nl_transfers') dbCache.transfers = val;
+}
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&#34;' }[c]));
 
 function money(brlVal) {
     const brl = Number(brlVal || 0);
@@ -526,8 +725,9 @@ function appFrame(title, sub, body) {
                         </div>
 
                         <div class="flex items-center gap-2 shrink-0 ml-auto">
-                            <button id="refreshPage" class="outline-btn flex items-center gap-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100 font-bold">
-                                ${icons.refresh} <span>Sincronizar Supabase</span>
+                            <!-- BOTÃO PUSH DEDICADO: ENVIAR ALTERAÇÕES AO SUPABASE -->
+                            <button id="pushToSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
+                                ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
                             </button>
                             <div class="editSelfAvatarTrigger cursor-pointer">${renderAvatarHTML(currentUser, 'flex')}</div>
                         </div>
@@ -552,12 +752,12 @@ function appFrame(title, sub, body) {
     document.querySelectorAll('.emergencyBtn').forEach(b => b.onclick = emergencyWipeModal);
     document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
 
-    const refreshBtn = document.getElementById('refreshPage');
-    if (refreshBtn) refreshBtn.onclick = async () => {
-        await fetchSupabaseData();
-        refreshCurrentScreen();
-        showToast('Sessão sincronizada com Supabase!');
-    };
+    const pushBtn = document.getElementById('pushToSupabaseBtn');
+    if (pushBtn) {
+        pushBtn.onclick = async () => {
+            await pushAllToSupabase();
+        };
+    }
 }
 
 function undoTransferModal(transferId) {
@@ -612,10 +812,13 @@ function undoTransferModal(transferId) {
             write('nl_transfers', transfers);
 
             if (supabaseClient) {
+                if (targetProduct) {
+                    await supabaseClient.from('seller_products').update({ stock: targetProduct.stock }).eq('id', targetProduct.id);
+                }
                 await supabaseClient.from('transfers').update({ reverted: true, reverted_at: t.revertedAt }).eq('id', t.id);
             }
 
-            showToast('Envio desfeito com sucesso! Estoque restaurado.');
+            showToast('Envio desfeito com sucesso! Estoque restaurado no Supabase.');
             currentUser.role === 'STOCK' ? renderStockPanel() : activeTab === 'warehouses' ? renderWarehousesPage() : renderAdmin();
         }
     });
@@ -679,7 +882,7 @@ function editSelfAvatarModal() {
             await supabaseClient.from('system_users').update({ avatar_url: newUrl }).eq('id', currentUser.id);
         }
 
-        showToast('Perfil atualizado com sucesso!');
+        showToast('Perfil atualizado e gravado no Supabase!');
         m.remove();
         refreshCurrentScreen();
     };
@@ -766,7 +969,7 @@ function renderAdminHome() {
     const sellerStockValueBRL = allProds.filter(p => p.stock > 0).reduce((a, p) => a + (p.price * p.stock), 0);
     const warehouseTotalUnits = warehouseInventory().reduce((a, i) => a + Number(i.stock || 0), 0);
 
-    appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento em tempo real e auditoria global via Supabase.', `
+    appFrame('Visão Consolidada & Controle Geral', 'Painel de controle com faturamento em tempo real e gravação direta no Supabase.', `
         <div class="stats-grid mb-6">
             <div class="metric-card glass-panel">
                 <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
@@ -984,7 +1187,7 @@ function renderAdminSupervisorsPage() {
                         if (supabaseClient) {
                             await supabaseClient.from('system_users').update({ supervisor: newSupUser }).eq('id', s.id);
                         }
-                        showToast(`Supervisor do vendedor alterado!`);
+                        showToast(`Supervisor do vendedor alterado e salvo no Supabase!`);
                         renderAdminSupervisorsPage();
                     }
                 });
@@ -1102,7 +1305,7 @@ function supervisorModal(existing = null) {
                 if (supabaseClient) {
                     await supabaseClient.from('system_users').upsert({
                         id: sup.id,
-                        username: sup.user, // Grava na coluna 'username' do Supabase
+                        username: sup.user,
                         password: sup.password,
                         name: sup.name,
                         role: sup.role,
@@ -1116,7 +1319,7 @@ function supervisorModal(existing = null) {
                 }
 
                 m.remove();
-                showToast('Supervisor salvo com sucesso!');
+                showToast('Supervisor salvo com sucesso no Supabase!');
                 renderAdminSupervisorsPage();
             }
         });
@@ -1351,7 +1554,7 @@ function sellerModal(existing = null) {
                 if (supabaseClient) {
                     await supabaseClient.from('system_users').upsert({
                         id: seller.id,
-                        username: seller.user, // Grava na coluna 'username' do Supabase
+                        username: seller.user,
                         password: seller.password,
                         name: seller.name,
                         role: seller.role,
@@ -1365,7 +1568,7 @@ function sellerModal(existing = null) {
                 }
 
                 m.remove();
-                showToast('Vendedor salvo com sucesso!');
+                showToast('Vendedor salvo com sucesso no Supabase!');
                 isAdm && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
             }
         });
@@ -1392,7 +1595,7 @@ function deleteSeller(id) {
                 await supabaseClient.from('seller_products').delete().eq('seller_id', id);
             }
 
-            showToast('Vendedor removido!');
+            showToast('Vendedor removido do Supabase!');
             hasAdminAccess(currentUser) && activeTab === 'adminSupervisors' ? renderAdminSupervisorsPage() : renderSellersPage();
         }
     });
@@ -1582,7 +1785,7 @@ function motoboyModal(existing = null) {
                 }
 
                 m.remove();
-                showToast('Motoboy salvo com sucesso!');
+                showToast('Motoboy salvo com sucesso no Supabase!');
                 renderMotoboysPage();
             }
         });
@@ -1609,7 +1812,7 @@ function deleteMotoboy(id) {
 function renderBackupPage() {
     if (!hasAdminAccess(currentUser)) return;
 
-    appFrame('Backup & Importação de Dados', 'Exporte o banco de dados completo em JSON ou baixe uma PLANILHA CONSOLIDADA ÚNICA (CSV/Excel) com estoque e vendas dos últimos 7 dias.', `
+    appFrame('Backup & Importação de Dados', 'Exporte o banco de dados completo em JSON ou baixe uma PLANILHA CONSOLIDADA ÚNICA (CSV/Excel) com estoque e vendas.', `
         <div class="panel glass-panel p-6 rounded-2xl bg-emerald-950/5 border border-emerald-300 mb-6">
             <div class="flex items-center gap-3 mb-3">
                 <span class="p-3 bg-emerald-100 text-emerald-700 rounded-xl text-xl font-bold">📊</span>
@@ -1675,7 +1878,7 @@ function renderBackupPage() {
             confirmText: 'Baixar Backup',
             onConfirm: () => {
                 const backupData = {
-                    systemVersion: 'v20',
+                    systemVersion: 'v22',
                     exportedAt: new Date().toISOString(),
                     users: allUsers(),
                     warehouses: warehouses(),
@@ -1685,7 +1888,7 @@ function renderBackupPage() {
                     sales: sales(),
                     orders: orders(),
                     motoboys: allMotoboys(),
-                    customCatalog: read('atlasCustomCatalog', [])
+                    customCatalog: readStorage('atlasCustomCatalog', [])
                 };
 
                 const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -1716,7 +1919,7 @@ function renderBackupPage() {
                     subtitle: `Arquivo: ${file.name}`,
                     warningText: 'Esta operação irá sobrescrever permanentemente os dados locais.',
                     confirmText: 'Sobrescrever e Restaurar',
-                    onConfirm: () => {
+                    onConfirm: async () => {
                         write('nl_users', data.users || []);
                         write('nl_warehouses', data.warehouses || []);
                         write('nl_warehouse_inventory', data.warehouseInventory || []);
@@ -1725,6 +1928,10 @@ function renderBackupPage() {
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
                         write('nl_motoboys', data.motoboys || []);
+                        
+                        // Sincroniza o backup restaurado direto no Supabase
+                        await pushAllToSupabase();
+                        
                         showToast('Banco de dados restaurado!');
                         setTimeout(() => location.reload(), 1000);
                     }
@@ -1891,7 +2098,7 @@ function renderSupervisorSalesPage() {
 
                     write('atlasProducts', pl);
                     write('atlasSales', sl);
-                    showToast('Vendas do supervisor registradas!');
+                    showToast('Vendas do supervisor registradas no Supabase!');
                     renderSupervisorSalesPage();
                 }
             });
@@ -2009,7 +2216,7 @@ function transferSupervisorStockModal() {
                 }
 
                 m.remove();
-                showToast('Produtos enviados ao vendedor com sucesso!');
+                showToast('Produtos enviados ao vendedor e salvos no Supabase!');
                 activeTab === 'products' ? renderProductsPage() : renderSellersPage();
             }
         });
@@ -2271,7 +2478,9 @@ function renderStockPanel() {
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button id="refreshStockScreen" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5 bg-sky-50 text-sky-700 font-bold border-sky-200">${icons.refresh} <span>Atualizar</span></button>
+                    <button id="pushStockSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
+                        ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
+                    </button>
                     <button id="stockLogout" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5">${icons.logout} <span>Sair</span></button>
                 </div>
             </header>
@@ -2363,7 +2572,7 @@ function renderStockPanel() {
         </div>
     `;
 
-    document.getElementById('refreshStockScreen').onclick = () => { renderStockPanel(); showToast('Painel atualizado!'); };
+    document.getElementById('pushStockSupabaseBtn').onclick = pushAllToSupabase;
     document.getElementById('stockLogout').onclick = logout;
     document.getElementById('stockAddItemBtn').onclick = () => addWarehouseItemModal(wh.id);
     document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
@@ -2422,7 +2631,7 @@ function addWarehouseItemModal(warehouseId) {
                 }
 
                 m.remove();
-                showToast('Produto adicionado ao estoque!');
+                showToast('Produto adicionado ao estoque e salvo no Supabase!');
                 currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
             }
         });
@@ -2462,7 +2671,7 @@ function editWarehouseItemModal(itemId) {
                 }
 
                 m.remove();
-                showToast('Estoque atualizado!');
+                showToast('Estoque atualizado no Supabase!');
                 currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
             }
         });
@@ -2619,7 +2828,7 @@ function transferStockModal(forcedWarehouseId = null) {
                 }
 
                 m.remove();
-                showToast('Produto enviado com sucesso!');
+                showToast('Produto enviado e registrado no Supabase!');
                 currentUser.role === 'STOCK' ? renderStockPanel() : renderWarehousesPage();
             }
         });
@@ -2693,7 +2902,7 @@ function renderSupervisorOrdersPage() {
                         if (supabaseClient) {
                             await supabaseClient.from('orders').update({ status: newStatus }).eq('id', targetOrd.id);
                         }
-                        showToast('Status do pedido atualizado!');
+                        showToast('Status do pedido atualizado no Supabase!');
                         renderSupervisorOrdersPage();
                     }
                 }
@@ -2719,7 +2928,7 @@ function renderSupervisorOrdersPage() {
                         if (supabaseClient) {
                             await supabaseClient.from('orders').update({ status: 'Entregue', delivered_at: targetOrd.deliveredAt }).eq('id', targetOrd.id);
                         }
-                        showToast('Pedido entregue e arquivado!');
+                        showToast('Pedido entregue e arquivado no Supabase!');
                         renderSupervisorOrdersPage();
                     }
                 }
@@ -2857,7 +3066,7 @@ function renderProductsPage() {
                     await supabaseClient.from('seller_products').update({ price: newPriceBRL }).eq('id', targetP.id);
                 }
 
-                showToast('Preço do vendedor atualizado!');
+                showToast('Preço do vendedor atualizado no Supabase!');
                 m.remove();
                 renderProductsPage();
             };
@@ -2931,7 +3140,9 @@ function renderSeller() {
                             <h1 class="text-xs md:text-xl font-black text-slate-900 truncate">${currentUser.name} (Painel Vendedor)</h1>
                         </div>
                         <div class="flex items-center gap-2 shrink-0 ml-auto">
-                            <button id="refreshSellerScreen" class="outline-btn flex items-center gap-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 font-bold border-sky-200">${icons.refresh} <span>Sincronizar Supabase</span></button>
+                            <button id="pushSellerSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
+                                ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
+                            </button>
                             <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex items-center gap-1">${icons.logout} <span>Sair</span></button>
                         </div>
                     </header>
@@ -2947,11 +3158,7 @@ function renderSeller() {
         </div>
     `;
 
-    document.getElementById('refreshSellerScreen').onclick = async () => {
-        await fetchSupabaseData();
-        renderSeller();
-        showToast('Painel do Vendedor sincronizado!');
-    };
+    document.getElementById('pushSellerSupabaseBtn').onclick = pushAllToSupabase;
     document.querySelectorAll('.logoutSellerSideBtn').forEach(b => b.onclick = logout);
     document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
 
@@ -3053,7 +3260,7 @@ function setupSalesTabEvents(sellerProducts) {
 
                     write('atlasProducts', pl);
                     write('atlasSales', sl);
-                    showToast('Vendas confirmadas!');
+                    showToast('Vendas confirmadas e salvas no Supabase!');
                     renderSeller();
                 }
             });
@@ -3126,7 +3333,7 @@ function setupNewOrderEvents() {
                         });
                     }
 
-                    showToast('Pedido enviado!');
+                    showToast('Pedido enviado e gravado no Supabase!');
                     sellerActiveTab = 'myOrders';
                     renderSeller();
                 }
@@ -3186,19 +3393,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 usersList = allUsers();
             }
 
-            console.log("Tentando login no frontend com:", { u, p });
-            console.log("Array de usuários carregados:", usersList);
-
+            console.log("Tentando login com:", { u, p });
             const account = usersList.find(x => (x.user || '').toLowerCase() === u && String(x.password).trim() === p);
 
             if (!account) {
-                console.warn('Login recusado: Usuário ou senha não batem.');
                 const errDiv = document.getElementById('loginError');
                 if (errDiv) errDiv.textContent = 'Usuário ou senha incorretos.';
                 return;
             }
 
-            console.log("✅ Login bem-sucedido:", account);
             await login(account);
         };
     }
