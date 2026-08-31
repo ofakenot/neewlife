@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v19 - Otimizado sem dados duplicados) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v20 - Supabase Username Fixed) */
 
 // CREDENCIAIS OFICIAIS DO SUPABASE
 const SUPABASE_URL = 'https://pgqbukhnfameinfrikjw.supabase.co';
@@ -91,7 +91,7 @@ let dbCache = {
     transfers: []
 };
 
-// SINCRONIZAÇÃO TOTAL COM O SUPABASE
+// SINCRONIZAÇÃO TOTAL COM O SUPABASE (CORRIGIDO MAPEAMENTO DE USERNAME)
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
@@ -106,7 +106,18 @@ async function fetchSupabaseData() {
             supabaseClient.from('transfers').select('*')
         ]);
 
-        if (uRes.data) dbCache.users = uRes.data.map(u => ({ ...u, avatarUrl: u.avatar_url || u.avatarUrl, warehouseId: u.warehouse_id || u.warehouseId }));
+        if (uRes.data) {
+            dbCache.users = uRes.data.map(u => ({
+                ...u,
+                user: String(u.username || u.user || '').trim().toLowerCase(), // Mapeia 'username' da coluna do Supabase para 'user' no JS
+                password: String(u.password || '').trim(),
+                avatarUrl: u.avatar_url || u.avatarUrl,
+                warehouseId: u.warehouse_id || u.warehouseId,
+                active: u.active !== false
+            }));
+            console.log('✅ Usuários carregados do Supabase:', dbCache.users);
+        }
+
         if (wRes.data) dbCache.warehouses = wRes.data;
         if (mRes.data) dbCache.motoboys = mRes.data;
         if (pRes.data) dbCache.products = pRes.data.map(p => ({ ...p, sellerId: p.seller_id || p.sellerId }));
@@ -168,7 +179,7 @@ function sellerRevenue(id, period = 'day') { return periodSales(id, period).redu
 function stock(sid) { return products().filter(p => p.sellerId === sid).reduce((a, p) => a + Number(p.stock || 0), 0); }
 
 function avatarFor(u) {
-    return String(u?.name || u?.user || 'NL').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
+    return String(u?.name || u?.user || u?.username || 'NL').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
 }
 
 function renderAvatarHTML(u, extraClasses = '') {
@@ -1091,7 +1102,7 @@ function supervisorModal(existing = null) {
                 if (supabaseClient) {
                     await supabaseClient.from('system_users').upsert({
                         id: sup.id,
-                        user: sup.user,
+                        username: sup.user, // Grava na coluna 'username' do Supabase
                         password: sup.password,
                         name: sup.name,
                         role: sup.role,
@@ -1340,7 +1351,7 @@ function sellerModal(existing = null) {
                 if (supabaseClient) {
                     await supabaseClient.from('system_users').upsert({
                         id: seller.id,
-                        user: seller.user,
+                        username: seller.user, // Grava na coluna 'username' do Supabase
                         password: seller.password,
                         name: seller.name,
                         role: seller.role,
@@ -1664,7 +1675,7 @@ function renderBackupPage() {
             confirmText: 'Baixar Backup',
             onConfirm: () => {
                 const backupData = {
-                    systemVersion: 'v19',
+                    systemVersion: 'v20',
                     exportedAt: new Date().toISOString(),
                     users: allUsers(),
                     warehouses: warehouses(),
@@ -3152,7 +3163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const passwordInput = document.getElementById('loginPassword');
     if (passwordInput) {
-        const toggleBtn = document.getElementById('toggleLoginPasswordBtn');
+        const toggleBtn = document.getElementById('toggleLoginPasswordBtn') || document.getElementById('togglePassword');
         if (toggleBtn) {
             toggleBtn.onclick = () => {
                 const isPwd = passwordInput.type === 'password';
@@ -3167,7 +3178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loginForm.onsubmit = async e => {
             e.preventDefault();
             const u = document.getElementById('loginUser').value.trim().toLowerCase();
-            const p = document.getElementById('loginPassword').value;
+            const p = document.getElementById('loginPassword').value.trim();
 
             let usersList = allUsers();
             if (!usersList.length && supabaseClient) {
@@ -3175,11 +3186,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 usersList = allUsers();
             }
 
-            const account = usersList.find(x => (x.user || '').toLowerCase() === u && x.password === p);
+            console.log("Tentando login no frontend com:", { u, p });
+            console.log("Array de usuários carregados:", usersList);
+
+            const account = usersList.find(x => (x.user || '').toLowerCase() === u && String(x.password).trim() === p);
+
             if (!account) {
-                document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.';
+                console.warn('Login recusado: Usuário ou senha não batem.');
+                const errDiv = document.getElementById('loginError');
+                if (errDiv) errDiv.textContent = 'Usuário ou senha incorretos.';
                 return;
             }
+
+            console.log("✅ Login bem-sucedido:", account);
             await login(account);
         };
     }
