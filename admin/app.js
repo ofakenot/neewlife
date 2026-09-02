@@ -91,32 +91,94 @@ const cityCoordinates = {
 
 // CATÁLOGO EXPANDIDO COM NOVOS PRODUTOS DA FOTO E REQUISIÇÕES
 const catalog = [
-    ['Retatrutide 80mg', 'New Life'], ['Retatrutide 60mg', 'New Life'], ['Retatrutide 40mg', 'New Life'], ['Retatrutide 20mg', 'New Life'],
-    ['Tirzepatide 120mg', 'New Life'], ['Tirzepatide 60mg', 'New Life'], ['Tirzepatide 30mg', 'New Life'],
-    ['GHK-Cu 100mg', 'New Life'], ['GLOW 70mg', 'New Life'], ['KLOW 80mg', 'New Life'],
-    ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'], ['CJC-1295 DAC 5mg', 'New Life'],
-    ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'], ['Selank 10mg', 'New Life'],
-    ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'], ['CBL-514 20mg', 'New Life'],
-    ['Semaglutide 5mg', 'New Life'], ['BPC-157 10mg', 'New Life'], ['TB-500 10mg', 'New Life'], ['BPC-157 10mg + TB-500 10mg', 'New Life'],
-    ['Ipamorelin 5mg', 'New Life'], ['PT-141 10mg', 'New Life'], ['Melanotan II 10mg', 'New Life'],
-    ['Mazdutide 10mg', 'New Life'], ['Cagrilintide 5mg', 'New Life'], ['Survodutide 10mg', 'New Life'],
-    ['Sermorelin 10mg', 'New Life'], ['GHRP-2 10mg', 'New Life'], ['GHRP-6 10mg', 'New Life'], ['Follistatin 344 1mg', 'New Life'],
-    ['IGF-1 LR3 1mg', 'New Life'], ['Thymosin Alpha-1 10mg', 'New Life'], ['5-Amino-1MQ 50mg', 'New Life'], ['SLU-PP-332 25mg', 'New Life'],
+    // --- NEW LIFE ---
+    ['Retatrutide 60mg', 'New Life'],
+    ['Tirzepatide 120mg', 'New Life'],
+    ['Tirzepatide 60mg', 'New Life'],
+    ['GHK-Cu 100mg', 'New Life'],
+    ['GLOW 70mg', 'New Life'],
+    ['KLOW 80mg', 'New Life'],
+    ['AOD-9604 5mg', 'New Life'],
+    ['NAD+ 500mg', 'New Life'],
+    ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
+    ['Tesamorelin 20mg', 'New Life'],
+    ['MOTS-c 40mg', 'New Life'],
+    ['Semax 10mg', 'New Life'],
+    ['Selank 10mg', 'New Life'],
+    ['Epithalon 50mg', 'New Life'],
+    ['SS-31 50mg', 'New Life'],
+    ['CBL-514 20mg', 'New Life'],
 
-    ['Retatrutide 40mg', 'USA Peptides'], ['Tirzepatide 120mg', 'USA Peptides'], ['Tirzepatide 60mg', 'USA Peptides'],
-    ['Tirzepatide 30mg', 'USA Peptides'], ['Beauty Stack', 'USA Peptides'], ['GHK-Cu 100mg', 'USA Peptides'],
-    ['GLOW Stack', 'USA Peptides'], ['KLOW Stack', 'USA Peptides'], ['SLU-PP-332 10mg', 'USA Peptides'],
-    ['AOD-9604 10mg', 'USA Peptides'], ['PT-141 10mg', 'USA Peptides'], ['NAD+ 500mg', 'USA Peptides'],
-    ['HGH-FRAG 10mg', 'USA Peptides'], ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'], ['BPC-157 5mg', 'USA Peptides'], ['TB-500 5mg', 'USA Peptides'],
-    ['CJC-1295 + Ipamorelin', 'USA Peptides'], ['Tesamorelin 10mg', 'USA Peptides'], ['MOTS-c 10mg', 'USA Peptides'],
-    ['Semax 10mg', 'USA Peptides'], ['Epithalon 10mg', 'USA Peptides'], ['SS-31 10mg', 'USA Peptides'], ['MT2 10mg', 'USA Peptides'],
-    ['Semaglutide 10mg', 'USA Peptides'],
+    // --- USA PEPTIDES ---
+    ['Retatrutide 40mg', 'USA Peptides'],
+    ['Tirzepatide 120mg', 'USA Peptides'],
+    ['Tirzepatide 60mg', 'USA Peptides'],
+    ['Tirzepatide 30mg', 'USA Peptides'],
+    ['Beauty Stack', 'USA Peptides'],
+    ['GHK-Cu 100mg', 'USA Peptides'],
+    ['GLOW Stack', 'USA Peptides'],
+    ['KLOW Stack', 'USA Peptides'],
+    ['SLU-PP-332 10mg', 'USA Peptides'],
+    ['AOD-9604 10mg', 'USA Peptides'],
+    ['PT-141 10mg', 'USA Peptides'],
+    ['NAD+ 500mg', 'USA Peptides'],
+    ['HGH-FRAG 10mg', 'USA Peptides'],
+    ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'],
+    ['CJC-1295 + Ipamorelin', 'USA Peptides'],
+    ['Tesamorelin 10mg', 'USA Peptides'],
+    ['MOTS-c 10mg', 'USA Peptides'],
+    ['Semax 10mg', 'USA Peptides'],
+    ['Epithalon 10mg', 'USA Peptides'],
+    ['SS-31 10mg', 'USA Peptides'],
+    ['MT2 10mg', 'USA Peptides'],
 
-    ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'], ['Retatrutida 60mg', 'ZPHC'], ['Retatrutida 30mg', 'ZPHC'], ['Somatropina 100UI', 'ZPHC'],
-    ['Tirzepatida 15mg — 4 ampolas', 'TG'], ['Tirzepatida 15mg — 4 ampolas', 'TG antiga'],
-    ['Lispax 30mg', 'QUIMFA'], ['Lispax 60mg', 'QUIMFA'],
-    ['Retatrutide 40mg', 'SYNEDICA'], ['Retatrutide 60mg', 'SYNEDICA'], ['Tirzepatida 30mg', 'SYNEDICA'], ['Tirzepatida 60mg', 'SYNEDICA'], ['GLOW GHK-Cu', 'SYNEDICA'],
-    ['Sérum Elevia', 'ELEVIA'], ['Jelly Cream', 'ELEVIA'], ['Necessaire', 'ELEVIA'], ['Kit Elevia', 'ELEVIA'], ['Sérum Facial PDRN Elevia', 'ELEVIA'], ['Creme Anti-Idade Elevia', 'ELEVIA']
+    // --- ZPHC ---
+    ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'],
+    ['Retatrutida 60mg', 'ZPHC'],
+    ['CYT3', 'ZPHC'],
+    ['NAD+ 1.000MG 1 VIAL', 'ZPHC'],
+    ['HGH FRAGMENT 10MG X 5 VIALS 50MG', 'ZPHC'],
+    ['STANO COMP 10MG', 'ZPHC'],
+    ['OXIMETALONA 50MG', 'ZPHC'],
+    ['METHANDIENONE', 'ZPHC'],
+    ['NANDROLONA', 'ZPHC'],
+    ['TESTO ENANTATO 400MG 10ML', 'ZPHC'],
+
+    // --- TG / QUIMFA / SYNEDICA ---
+    ['Tirzepatida 15mg — 4 ampolas', 'TG'],
+    ['Tirzepatida 15mg — 4 ampolas', 'TG antiga'],
+    ['Lispax 30mg', 'QUIMFA'],
+    ['Retatrutide 40mg', 'SYNEDICA'],
+    ['GLOW GHK-Cu', 'SYNEDICA'],
+
+    // --- ELEVIA ---
+    ['Sérum Elevia', 'ELEVIA'],
+    ['Jelly Cream', 'ELEVIA'],
+    ['Kit Elevia', 'ELEVIA'],
+
+    // --- TIRZEC ---
+    ['TIRZEC 15MG 4 VIALS', 'TIRZEC'],
+    ['TIRZEC 15MG MD', 'TIRZEC'],
+
+    // --- LIPOLESS ---
+    ['LIPOLESS 15MG MD', 'LIPOLESS'],
+    ['LIPOLESS 15MG 4 VIALS', 'LIPOLESS'],
+
+    // --- GLUCONEX ---
+    ['GLUCONEX 15MG 4 VIALS', 'GLUCONEX'],
+
+    // --- T36 ---
+    ['T36 15MG 4 VIALS', 'T36'],
+    ['T36 15MG MD', 'T36'],
+
+    // --- LANDER GOLD ---
+    ['DURATESTON 250MG 10ML', 'LANDER GOLD'],
+    ['TESTENAT', 'LANDER GOLD'],
+    ['OXANDROLONA 5MG', 'LANDER GOLD'],
+    ['CLEMBUTEROL', 'LANDER GOLD'],
+
+    // --- LANDER ---
+    ['LANDERTROPIN 100UI', 'LANDER']
 ];
 
 const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
