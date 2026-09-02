@@ -89,22 +89,34 @@ const cityCoordinates = {
     'Assunção': [-25.2637, -57.5759]
 };
 
+// CATÁLOGO EXPANDIDO COM NOVOS PRODUTOS DA FOTO E REQUISIÇÕES
 const catalog = [
-    ['Retatrutide 60mg', 'New Life'], ['Tirzepatide 120mg', 'New Life'], ['Tirzepatide 60mg', 'New Life'],
+    ['Retatrutide 80mg', 'New Life'], ['Retatrutide 60mg', 'New Life'], ['Retatrutide 40mg', 'New Life'], ['Retatrutide 20mg', 'New Life'],
+    ['Tirzepatide 120mg', 'New Life'], ['Tirzepatide 60mg', 'New Life'], ['Tirzepatide 30mg', 'New Life'],
     ['GHK-Cu 100mg', 'New Life'], ['GLOW 70mg', 'New Life'], ['KLOW 80mg', 'New Life'],
-    ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
-    ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'],
-    ['Selank 10mg', 'New Life'], ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'], ['CBL-514 20mg', 'New Life'],
+    ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'], ['CJC-1295 DAC 5mg', 'New Life'],
+    ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'], ['Selank 10mg', 'New Life'],
+    ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'], ['CBL-514 20mg', 'New Life'],
+    ['Semaglutide 5mg', 'New Life'], ['BPC-157 10mg', 'New Life'], ['TB-500 10mg', 'New Life'], ['BPC-157 10mg + TB-500 10mg', 'New Life'],
+    ['Ipamorelin 5mg', 'New Life'], ['PT-141 10mg', 'New Life'], ['Melanotan II 10mg', 'New Life'],
+    ['Mazdutide 10mg', 'New Life'], ['Cagrilintide 5mg', 'New Life'], ['Survodutide 10mg', 'New Life'],
+    ['Sermorelin 10mg', 'New Life'], ['GHRP-2 10mg', 'New Life'], ['GHRP-6 10mg', 'New Life'], ['Follistatin 344 1mg', 'New Life'],
+    ['IGF-1 LR3 1mg', 'New Life'], ['Thymosin Alpha-1 10mg', 'New Life'], ['5-Amino-1MQ 50mg', 'New Life'], ['SLU-PP-332 25mg', 'New Life'],
+
     ['Retatrutide 40mg', 'USA Peptides'], ['Tirzepatide 120mg', 'USA Peptides'], ['Tirzepatide 60mg', 'USA Peptides'],
     ['Tirzepatide 30mg', 'USA Peptides'], ['Beauty Stack', 'USA Peptides'], ['GHK-Cu 100mg', 'USA Peptides'],
     ['GLOW Stack', 'USA Peptides'], ['KLOW Stack', 'USA Peptides'], ['SLU-PP-332 10mg', 'USA Peptides'],
     ['AOD-9604 10mg', 'USA Peptides'], ['PT-141 10mg', 'USA Peptides'], ['NAD+ 500mg', 'USA Peptides'],
-    ['HGH-FRAG 10mg', 'USA Peptides'], ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'], ['CJC-1295 + Ipamorelin', 'USA Peptides'],
-    ['Tesamorelin 10mg', 'USA Peptides'], ['MOTS-c 10mg', 'USA Peptides'], ['Semax 10mg', 'USA Peptides'],
-    ['Epithalon 10mg', 'USA Peptides'], ['SS-31 10mg', 'USA Peptides'], ['MT2 10mg', 'USA Peptides'],
-    ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'], ['Retatrutida 60mg', 'ZPHC'],
+    ['HGH-FRAG 10mg', 'USA Peptides'], ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'], ['BPC-157 5mg', 'USA Peptides'], ['TB-500 5mg', 'USA Peptides'],
+    ['CJC-1295 + Ipamorelin', 'USA Peptides'], ['Tesamorelin 10mg', 'USA Peptides'], ['MOTS-c 10mg', 'USA Peptides'],
+    ['Semax 10mg', 'USA Peptides'], ['Epithalon 10mg', 'USA Peptides'], ['SS-31 10mg', 'USA Peptides'], ['MT2 10mg', 'USA Peptides'],
+    ['Semaglutide 10mg', 'USA Peptides'],
+
+    ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'], ['Retatrutida 60mg', 'ZPHC'], ['Retatrutida 30mg', 'ZPHC'], ['Somatropina 100UI', 'ZPHC'],
     ['Tirzepatida 15mg — 4 ampolas', 'TG'], ['Tirzepatida 15mg — 4 ampolas', 'TG antiga'],
-    ['Lispax 30mg', 'QUIMFA'], ['Retatrutide 40mg', 'SYNEDICA'], ['GLOW GHK-Cu', 'SYNEDICA']
+    ['Lispax 30mg', 'QUIMFA'], ['Lispax 60mg', 'QUIMFA'],
+    ['Retatrutide 40mg', 'SYNEDICA'], ['Retatrutide 60mg', 'SYNEDICA'], ['Tirzepatida 30mg', 'SYNEDICA'], ['Tirzepatida 60mg', 'SYNEDICA'], ['GLOW GHK-Cu', 'SYNEDICA'],
+    ['Sérum Elevia', 'ELEVIA'], ['Jelly Cream', 'ELEVIA'], ['Necessaire', 'ELEVIA'], ['Kit Elevia', 'ELEVIA'], ['Sérum Facial PDRN Elevia', 'ELEVIA'], ['Creme Anti-Idade Elevia', 'ELEVIA']
 ];
 
 const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
@@ -2385,7 +2397,7 @@ function renderSummary() {
                         </div>
                         <div class="flex justify-between items-center md:block">
                             <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Localização</span>
-                            <span class="text-slate-700">${esc(r.s.city || 'N/A')} / ${esc(r.s.uf || 'N/A')}</span>
+                            <span class="text-slate-700">${esc(r.s.city || 'N/A')}/${esc(r.s.uf || 'N/A')}</span>
                         </div>
                         <div class="flex justify-between items-center md:block">
                             <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
@@ -2402,7 +2414,7 @@ function renderSummary() {
     `);
 }
 
-// ABA: 3 ESTOQUES (WAREHOUSES)
+// ABA: 3 ESTOQUES (WAREHOUSES) - COM BOTÕES DE EXCLUIR LOGS E EXCLUIR ITEM
 function renderWarehousesPage() {
     const whList = warehouses();
     const inv = warehouseInventory();
@@ -2437,8 +2449,16 @@ function renderWarehousesPage() {
         </div>
 
         <div class="panel glass-panel mb-6">
-            <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                <div><h2>Produtos nos Depósitos Matriz</h2><p>Listagem de inventário físico dos estoques centrais.</p></div>
+            <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                <div>
+                    <h2>Produtos nos Depósitos Matriz</h2>
+                    <p class="text-xs text-slate-500">Listagem de inventário físico dos estoques centrais.</p>
+                </div>
+                ${inv.length ? `
+                    <button id="clearInventoryLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
+                        ${icons.trash} <span>Excluir Logs do Inventário Matriz</span>
+                    </button>
+                ` : ''}
             </div>
             <div class="data-table flex flex-col gap-3">
                 <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2.5fr 1.5fr auto; align-items: center;">
@@ -2462,7 +2482,10 @@ function renderWarehousesPage() {
                             </div>
                             <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                                <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
+                                <div class="flex gap-1.5">
+                                    <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
+                                    <button class="delete-btn delete-inv-btn text-xs py-1 px-2.5" data-id="${i.id}">Excluir</button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -2476,7 +2499,6 @@ function renderWarehousesPage() {
                     <h2>Histórico Geral de Transferências (Com opção de Desfazer)</h2>
                     <p class="text-xs text-slate-500">Histórico de saídas dos depósitos centrais para vendedores e supervisores.</p>
                 </div>
-                <!-- BOTÃO DE LIMPAR LOGS DE TRANSFERÊNCIA -->
                 ${transfers.length ? `
                     <button id="clearTransferLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
                         ${icons.trash} <span>Limpar Logs de Transferências</span>
@@ -2533,6 +2555,55 @@ function renderWarehousesPage() {
     document.querySelectorAll('.send-from-wh').forEach(b => b.onclick = () => transferStockModal(b.dataset.id));
     document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
+
+    // EVENTO DE EXCLUSÃO INDIVIDUAL DO INVENTÁRIO FÍSICO
+    document.querySelectorAll('.delete-inv-btn').forEach(b => {
+        b.onclick = () => {
+            const itemId = b.dataset.id;
+            const currentInv = warehouseInventory();
+            const item = currentInv.find(i => i.id === itemId);
+            if (!item) return;
+
+            confirmActionModal({
+                title: '🗑️ Excluir Item do Estoque Matriz',
+                subtitle: `${item.productName} (${item.brand})`,
+                warningText: 'Confirmar a remoção permanente deste produto do inventário do depósito?',
+                confirmText: 'Excluir Item',
+                onConfirm: async () => {
+                    const updatedInv = currentInv.filter(i => i.id !== itemId);
+                    write('nl_warehouse_inventory', updatedInv);
+
+                    if (supabaseClient) {
+                        await supabaseClient.from('warehouse_inventory').delete().eq('id', itemId);
+                    }
+
+                    showToast('Item removido do inventário matriz!');
+                    renderWarehousesPage();
+                }
+            });
+        };
+    });
+
+    // EVENTO DE LIMPAR LOGS DO INVENTÁRIO FÍSICO MATRIZ
+    const clearInvBtn = document.getElementById('clearInventoryLogsBtn');
+    if (clearInvBtn) {
+        clearInvBtn.onclick = () => {
+            confirmActionModal({
+                title: '🗑️ Excluir Todos os Logs do Inventário Matriz',
+                subtitle: 'Estoque Físico dos Depósitos Centrais',
+                warningText: 'Atenção! Esta ação apaga permanentemente todos os registros de produtos do inventário físico dos estoques centrais.',
+                confirmText: 'Confirmar e Apagar Inventário',
+                onConfirm: async () => {
+                    write('nl_warehouse_inventory', []);
+                    if (supabaseClient) {
+                        await supabaseClient.from('warehouse_inventory').delete().neq('id', '0');
+                    }
+                    showToast('Logs do inventário físico apagados!');
+                    renderWarehousesPage();
+                }
+            });
+        };
+    }
 
     const clearTrBtn = document.getElementById('clearTransferLogsBtn');
     if (clearTrBtn) {
@@ -2610,7 +2681,10 @@ function renderStockPanel() {
                                     </div>
                                     <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                         <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                                        <button class="small-btn edit-stock-item" data-id="${i.id}">Ajustar Qtd</button>
+                                        <div class="flex gap-1.5">
+                                            <button class="small-btn edit-stock-item" data-id="${i.id}">Ajustar Qtd</button>
+                                            <button class="delete-btn delete-inv-btn text-xs py-1 px-2.5" data-id="${i.id}">Excluir</button>
+                                        </div>
                                     </div>
                                 </div>
                             `).join('')}
@@ -2679,6 +2753,33 @@ function renderStockPanel() {
     document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
     document.querySelectorAll('.edit-stock-item').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
+
+    document.querySelectorAll('.delete-inv-btn').forEach(b => {
+        b.onclick = () => {
+            const itemId = b.dataset.id;
+            const currentInv = warehouseInventory();
+            const item = currentInv.find(i => i.id === itemId);
+            if (!item) return;
+
+            confirmActionModal({
+                title: '🗑️ Excluir Item do Estoque Matriz',
+                subtitle: `${item.productName} (${item.brand})`,
+                warningText: 'Confirmar a remoção permanente deste produto do inventário do depósito?',
+                confirmText: 'Excluir Item',
+                onConfirm: async () => {
+                    const updatedInv = currentInv.filter(i => i.id !== itemId);
+                    write('nl_warehouse_inventory', updatedInv);
+
+                    if (supabaseClient) {
+                        await supabaseClient.from('warehouse_inventory').delete().eq('id', itemId);
+                    }
+
+                    showToast('Item removido do inventário matriz!');
+                    renderStockPanel();
+                }
+            });
+        };
+    });
 
     const clStockTrBtn = document.getElementById('clearStockTransfersBtn');
     if (clStockTrBtn) {
@@ -3155,7 +3256,6 @@ function renderCatalogPage() {
                         customCat.push({ name: pName, brand: pBrand });
                         write('atlasCustomCatalog', customCat);
 
-                        // Envia para o Supabase
                         await pushAllToSupabase();
 
                         showToast('Novo produto cadastrado no Catálogo!');
@@ -3168,7 +3268,7 @@ function renderCatalogPage() {
     }
 }
 
-// ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
+// ABA: ATRIBUIR / ENVIAR ESTOQUE (COM BOTÃO DE EXCLUIR PRODUTO DO VENDEDOR/SUPERVISOR POR ADMIN E SUPERVISOR)
 function renderProductsPage() {
     const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
     const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
@@ -3206,7 +3306,6 @@ function renderProductsPage() {
                                         <p class="text-xs text-slate-500">@${esc(s.user)} · ${esc(s.city || 'N/A')}/${esc(s.uf || 'N/A')}</p>
                                     </div>
                                 </div>
-                                <!-- TOTAL VENDIDO NO DIA EM VERMELHO -->
                                 <div class="text-right" title="Total Vendido Hoje">
                                     <span class="text-xs font-black px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-200 block" style="color: #ef4444; font-weight: 800;">
                                         ${formattedSoldToday}
@@ -3214,7 +3313,6 @@ function renderProductsPage() {
                                 </div>
                             </div>
 
-                            <!-- SUBTOTAL DA SOMA DE TODOS OS PRODUTOS DO CARD -->
                             <div class="p-3 bg-slate-100/80 rounded-xl mb-3 border border-slate-200/60">
                                 <span class="text-[10px] font-bold text-slate-500 uppercase block">Subtotal em Posse (Soma)</span>
                                 <strong class="text-base text-slate-900 font-black">${money(sSubtotalBRL)}</strong>
@@ -3225,14 +3323,16 @@ function renderProductsPage() {
                                 ${sProds.length ? sProds.map(p => {
                                     const itemTotalValBRL = p.stock * p.price;
                                     return `
-                                        <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                                            <div>
-                                                <b class="text-slate-900 block">${esc(p.name)}</b>
-                                                <small class="text-slate-500 font-semibold">${money(p.price)}/un · <span class="text-emerald-700 font-extrabold">Total: ${money(itemTotalValBRL)}</span></small>
+                                        <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-100 gap-2">
+                                            <div class="min-w-0 flex-1">
+                                                <b class="text-slate-900 block truncate">${esc(p.name)}</b>
+                                                <small class="text-slate-500 font-semibold block">${money(p.price)}/un · <span class="text-emerald-700 font-extrabold">Total: ${money(itemTotalValBRL)}</span></small>
                                             </div>
-                                            <div class="flex items-center gap-2">
-                                                <b class="text-slate-800 text-sm font-black">${p.stock} un.</b>
+                                            <div class="flex items-center gap-1.5 shrink-0">
+                                                <b class="text-slate-800 text-sm font-black mr-1">${p.stock} un.</b>
                                                 <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
+                                                <!-- BOTÃO DE EXCLUIR PRODUTO EM NOME DO VENDEDOR/SUPERVISOR -->
+                                                <button class="delete-btn delete-seller-product-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Excluir</button>
                                             </div>
                                         </div>
                                     `;
@@ -3247,6 +3347,37 @@ function renderProductsPage() {
 
     const trBtn = document.getElementById('supTransferStockBtn');
     if (trBtn) trBtn.onclick = transferSupervisorStockModal;
+
+    // EVENTO DE EXCLUSÃO DE PRODUTO ATRIBUÍDO A OUTRA PESSOA (ADMIN / SUPERVISOR)
+    document.querySelectorAll('.delete-seller-product-btn').forEach(b => {
+        b.onclick = () => {
+            const prodId = b.dataset.id;
+            const allP = products();
+            const targetP = allP.find(p => p.id === prodId);
+            if (!targetP) return;
+
+            const targetUser = allUsers().find(u => u.id === targetP.sellerId);
+            const personName = targetUser ? targetUser.name : 'Vendedor/Supervisor';
+
+            confirmActionModal({
+                title: '🗑️ Remover Produto em Nome de Outra Pessoa',
+                subtitle: `Produto: ${targetP.name} (${targetP.brand}) · Possuidor: ${personName}`,
+                warningText: `Atenção! Esta ação removerá ${targetP.stock} unidade(s) do estoque em posse de ${personName}.`,
+                confirmText: 'Remover Produto',
+                onConfirm: async () => {
+                    const updatedP = allP.filter(p => p.id !== prodId);
+                    write('atlasProducts', updatedP);
+
+                    if (supabaseClient) {
+                        await supabaseClient.from('seller_products').delete().eq('id', prodId);
+                    }
+
+                    showToast(`Produto removido do estoque de ${personName}!`);
+                    renderProductsPage();
+                }
+            });
+        };
+    });
 
     document.querySelectorAll('.edit-seller-price-btn').forEach(b => {
         b.onclick = () => {
@@ -3433,7 +3564,7 @@ function setupSalesTabEvents(sellerProducts) {
 
             confirmActionModal({
                 title: 'Confirmar Lançamento de Baixas',
-                warningText: `Confirma o registro da venda de ${items.reduce((a,x)=>a+x.q,0)} unidade(s) do seu estoque?`,
+                warningText: `Confirms o registro da venda de ${items.reduce((a,x)=>a+x.q,0)} unidade(s) do seu estoque?`,
                 confirmText: 'Registrar Vendas',
                 onConfirm: async () => {
                     const pl = products();
@@ -3470,7 +3601,7 @@ function setupSalesTabEvents(sellerProducts) {
 
                     write('atlasProducts', pl);
                     write('atlasSales', sl);
-                    showToast('Vendas confirmadas e salvas no Supabase!');
+                    showToast('Vendas registradas no Supabase!');
                     renderSeller();
                 }
             });
@@ -3482,16 +3613,22 @@ function renderSellerNewOrderTab() {
     const sysCat = systemCatalog();
     return `
         <div class="panel glass-panel">
-            <h2>Solicitar Reposição de Estoque</h2>
-            <form id="newOrderForm" class="seller-form">
-                <label>Data Desejada<input type="date" name="deliveryDate" class="control" required></label>
-                <label>Produto
-                    <select name="catIndex" class="control" required>
+            <div class="panel-head mb-4"><h2>Fazer Novo Pedido de Reposição</h2></div>
+            <form id="newOrderForm" class="seller-form space-y-4">
+                <label>Selecione o Produto Desejado
+                    <select name="catalogIndex" class="control" required>
                         ${sysCat.map((c, i) => `<option value="${i}">${esc(c[0])} · ${esc(c[1])}</option>`).join('')}
                     </select>
                 </label>
-                <label>Quantidade<input name="quantity" type="number" min="1" value="10" class="control" required></label>
-                <button type="submit" class="primary-btn mt-3 w-full sm:w-auto">${icons.check} Enviar Pedido</button>
+                <div class="form-grid">
+                    <label>Quantidade Solicitada
+                        <input name="quantity" type="number" min="1" value="10" class="control" required>
+                    </label>
+                    <label>Data Desejada para Entrega
+                        <input name="deliveryDate" type="date" class="control" required>
+                    </label>
+                </div>
+                <button type="submit" class="primary-btn w-full mt-3">${icons.check} Enviar Pedido para o Supervisor</button>
             </form>
         </div>
     `;
@@ -3500,33 +3637,35 @@ function renderSellerNewOrderTab() {
 function setupNewOrderEvents() {
     const form = document.getElementById('newOrderForm');
     if (form) {
-        form.onsubmit = e => {
+        form.onsubmit = async e => {
             e.preventDefault();
             const f = new FormData(form);
-            const item = systemCatalog()[Number(f.get('catIndex'))];
+            const idx = Number(f.get('catalogIndex'));
+            const sysCat = systemCatalog();
+            const catItem = sysCat[idx];
 
             confirmActionModal({
-                title: 'Solicitar Reposição de Estoque',
-                subtitle: `${f.get('quantity')}x ${item[0]}`,
-                warningText: 'Confirmar envio do pedido de reposição ao supervisor?',
+                title: 'Confirmar Pedido de Reposição',
+                subtitle: `${f.get('quantity')}x ${catItem[0]} (${catItem[1]})`,
+                warningText: 'Confirmar a solicitação de reposição para o seu supervisor?',
                 confirmText: 'Enviar Pedido',
                 onConfirm: async () => {
-                    const ords = orders();
                     const newOrd = {
                         id: uid(),
                         sellerId: currentUser.id,
                         sellerName: currentUser.name,
-                        supervisor: currentUser.supervisor,
+                        supervisor: currentUser.supervisor || 'ik',
                         deliveryDate: f.get('deliveryDate'),
-                        productName: item[0],
-                        brand: item[1],
+                        productName: catItem[0],
+                        brand: catItem[1],
                         quantity: Number(f.get('quantity')),
                         status: 'Em análise',
                         createdAt: new Date().toISOString()
                     };
 
-                    ords.push(newOrd);
-                    write('atlasOrders', ords);
+                    const allOrd = orders();
+                    allOrd.push(newOrd);
+                    write('atlasOrders', allOrd);
 
                     if (supabaseClient) {
                         await supabaseClient.from('orders').insert({
@@ -3543,7 +3682,7 @@ function setupNewOrderEvents() {
                         });
                     }
 
-                    showToast('Pedido enviado e gravado no Supabase!');
+                    showToast('Pedido de reposição enviado ao supervisor!');
                     sellerActiveTab = 'myOrders';
                     renderSeller();
                 }
@@ -3553,48 +3692,80 @@ function setupNewOrderEvents() {
 }
 
 function renderSellerMyOrdersTab() {
-    const myOrd = orders().filter(o => o.sellerId === currentUser.id && o.status !== 'Entregue');
+    const myOrders = orders().filter(o => o.sellerId === currentUser.id && o.status !== 'Entregue');
     return `
         <div class="panel glass-panel">
-            <h2 class="mb-3">Pedidos em Andamento</h2>
-            ${myOrd.length ? myOrd.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800 flex justify-between items-center text-sm"><span>${esc(o.productName)} (${o.quantity} un)</span><span class="text-sky-600 font-bold">${esc(o.status)}</span></div>`).join('') : '<div class="empty-state">Sem pedidos pendentes.</div>'}
+            <div class="panel-head mb-4"><h2>Meus Pedidos em Andamento (${myOrders.length})</h2></div>
+            ${myOrders.length ? `
+                <div class="data-table flex flex-col gap-3">
+                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr; align-items: center;">
+                        <span>Data Solicitada</span><span>Data Previsão</span><span>Produto</span><span>Status Atual</span>
+                    </div>
+                    ${myOrders.slice().reverse().map(o => `
+                        <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Solicitado</span>
+                                <small>${new Date(o.createdAt).toLocaleDateString('pt-BR')}</small>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Previsão</span>
+                                <strong class="text-sky-600">${o.deliveryDate ? new Date(o.deliveryDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}</strong>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                                <b>${esc(o.productName)} (${o.quantity} un)</b>
+                            </div>
+                            <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                                <span class="status-pill style-blue">${esc(o.status)}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '<div class="empty-state">Você não possui pedidos em andamento.</div>'}
         </div>
     `;
 }
 
 function renderSellerArchivedTab() {
-    const myDelivered = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
+    const myArchived = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
     return `
         <div class="panel glass-panel">
-            <h2 class="mb-3">Pedidos Concluídos</h2>
-            ${myDelivered.length ? myDelivered.map(o => `<div class="p-3 bg-white rounded-lg border border-slate-200 mb-2 font-semibold text-slate-800 flex justify-between items-center text-sm"><span>${esc(o.productName)} (${o.quantity} un)</span><span class="text-emerald-600 font-bold">Entregue</span></div>`).join('') : '<div class="empty-state">Nenhum histórico.</div>'}
+            <div class="panel-head mb-4"><h2>Histórico de Pedidos Concluídos (${myArchived.length})</h2></div>
+            ${myArchived.length ? `
+                <div class="data-table flex flex-col gap-3">
+                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2.5fr 1.5fr; align-items: center;">
+                        <span>Data Entrega</span><span>Produto Entregue</span><span>Status</span>
+                    </div>
+                    ${myArchived.slice().reverse().map(o => `
+                        <div class="table-row flex flex-col md:grid md:grid-cols-3 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                                <small>${o.deliveredAt ? new Date(o.deliveredAt).toLocaleDateString('pt-BR') : '—'}</small>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
+                                <b>${esc(o.productName)} (${o.quantity} un)</b>
+                            </div>
+                            <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
+                                <span class="status-pill style-green">Entregue</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '<div class="empty-state">Nenhum pedido entregue no histórico.</div>'}
         </div>
     `;
 }
 
-/* CARREGAMENTO INICIAL E EVENTOS DOM */
-document.addEventListener('DOMContentLoaded', async () => {
-    // Busca cotação de Câmbio ao vivo
+// INICIALIZAÇÃO AUTOMÁTICA
+window.addEventListener('DOMContentLoaded', async () => {
     fetchExchangeRate();
-    setInterval(fetchExchangeRate, 60000); // Atualiza a cada 60s
-
-    if (supabaseClient) {
-        await fetchSupabaseData();
-    }
-
-    const passwordInput = document.getElementById('loginPassword');
-    if (passwordInput) {
-        const toggleBtn = document.getElementById('toggleLoginPasswordBtn') || document.getElementById('togglePassword');
-        if (toggleBtn) {
-            toggleBtn.onclick = () => {
-                const isPwd = passwordInput.type === 'password';
-                passwordInput.type = isPwd ? 'text' : 'password';
-                toggleBtn.textContent = isPwd ? 'Ocultar' : 'Mostrar';
-            };
-        }
-    }
+    setInterval(fetchExchangeRate, 60000);
 
     if (currentUser) {
+        await fetchSupabaseData();
         refreshCurrentScreen();
     }
 });
