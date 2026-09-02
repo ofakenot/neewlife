@@ -5,13 +5,18 @@ const SUPABASE_URL = 'https://pgqbukhnfameinfrikjw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_QyguyGPK_owHafXhuOtKgw_0ZGdmPoB';
 
 let supabaseClient = null;
-try {
-    if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function initializeSupabaseClient() {
+    try {
+        if (!supabaseClient && window.supabase && typeof window.supabase.createClient === 'function') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+    } catch (e) {
+        console.error('Erro ao inicializar cliente Supabase:', e);
+        supabaseClient = null;
     }
-} catch (e) {
-    console.error('Erro ao inicializar cliente Supabase:', e);
+    return supabaseClient;
 }
+initializeSupabaseClient();
 
 // ESTADO GLOBAL DO CÂMBIO (USD/BRL)
 let currentExchangeRate = { bid: 0, high: 0, ask: 0, pctChange: '0', updated: '' };
@@ -601,6 +606,105 @@ async function login(user) {
     localStorage.setItem('nl_current_user', JSON.stringify(user));
     await fetchSupabaseData();
     refreshCurrentScreen();
+}
+
+function setLoginError(message) {
+    const errorElements = [
+        document.getElementById('loginError'),
+        document.querySelector('[data-login-error]')
+    ].filter(Boolean);
+    errorElements.forEach(el => { el.textContent = message || ''; });
+}
+
+function findLoginForm() {
+    return document.getElementById('loginForm') ||
+        document.querySelector('form[data-login-form]') ||
+        document.getElementById('loginUsername')?.form ||
+        document.getElementById('loginUser')?.form ||
+        document.querySelector('input[name="username"]')?.form ||
+        document.querySelector('input[name="user"]')?.form;
+}
+
+function getLoginField(form, selectors) {
+    for (const selector of selectors) {
+        const field = form.querySelector(selector);
+        if (field) return field;
+    }
+    return null;
+}
+
+async function authenticateLogin(username, password) {
+    const normalizedUsername = String(username || '').trim().toLowerCase();
+    const normalizedPassword = String(password || '').trim();
+    if (!normalizedUsername || !normalizedPassword) {
+        return { error: 'Informe o usuário e a senha.' };
+    }
+
+    let users = allUsers();
+    let user = users.find(u => String(u.user || u.username || '').trim().toLowerCase() === normalizedUsername && String(u.password || '').trim() === normalizedPassword);
+
+    // If local data is empty or stale, query only the matching user directly.
+    if (!user && supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('system_users')
+                .select('*')
+                .or(`username.eq.${normalizedUsername},user.eq.${normalizedUsername}`)
+                .limit(1);
+            if (error) throw error;
+            const remote = data?.[0];
+            if (remote && String(remote.password || '').trim() === normalizedPassword) {
+                user = {
+                    ...remote,
+                    user: String(remote.username || remote.user || '').trim().toLowerCase(),
+                    password: String(remote.password || '').trim(),
+                    avatarUrl: remote.avatar_url || remote.avatarUrl,
+                    warehouseId: remote.warehouse_id || remote.warehouseId,
+                    active: remote.active !== false
+                };
+                dbCache.users = [...users.filter(u => u.id !== user.id), user];
+                localStorage.setItem('nl_users', JSON.stringify(dbCache.users));
+            }
+        } catch (error) {
+            console.error('Erro ao consultar usuário no Supabase:', error);
+        }
+    }
+
+    if (!user) return { error: 'Usuário ou senha inválidos.' };
+    if (user.active === false) return { error: 'Esta conta foi desativada pelo Administrador.' };
+    return { user };
+}
+
+function setupLoginEvents() {
+    const form = findLoginForm();
+    if (!form || form.dataset.loginEventsReady === 'true') return;
+    form.dataset.loginEventsReady = 'true';
+
+    const usernameField = getLoginField(form, ['#loginUsername', '#loginUser', 'input[name="username"]', 'input[name="user"]', 'input[type="text"]']);
+    const passwordField = getLoginField(form, ['#loginPassword', 'input[name="password"]', 'input[type="password"]']);
+    if (!usernameField || !passwordField) return;
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        event.stopPropagation();
+        setLoginError('');
+        const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (submitButton) submitButton.disabled = true;
+        try {
+            initializeSupabaseClient();
+            const result = await authenticateLogin(usernameField.value, passwordField.value);
+            if (result.error) {
+                setLoginError(result.error);
+                return;
+            }
+            await login(result.user);
+        } catch (error) {
+            console.error('Erro ao realizar login:', error);
+            setLoginError('Não foi possível realizar o login. Tente novamente.');
+        } finally {
+            if (submitButton) submitButton.disabled = false;
+        }
+    }, true);
 }
 
 function logout() {
@@ -3727,6 +3831,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Busca cotação de Câmbio ao vivo
     fetchExchangeRate();
     setInterval(fetchExchangeRate, 60000); // Atualiza a cada 60s
+
+    // Conecta o formulário existente na página ao fluxo de autenticação.
+    setupLoginEvents();
 
     if (supabaseClient) {
         await fetchSupabaseData();
