@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v22 - Full Supabase Real-Time Direct Push) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v22 - Full Supabase Real-Time Direct Push & Câmbio) */
 
 // CREDENCIAIS OFICIAIS DO SUPABASE
 const SUPABASE_URL = 'https://pgqbukhnfameinfrikjw.supabase.co';
@@ -11,6 +11,41 @@ try {
     }
 } catch (e) {
     console.error('Erro ao inicializar cliente Supabase:', e);
+}
+
+// ESTADO GLOBAL DO CÂMBIO (USD/BRL)
+let currentExchangeRate = { bid: 0, high: 0, ask: 0, pctChange: '0', updated: '' };
+
+async function fetchExchangeRate() {
+    try {
+        const res = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
+        const data = await res.json();
+        if (data && data.USDBRL) {
+            currentExchangeRate = {
+                bid: Number(data.USDBRL.bid || 0),
+                high: Number(data.USDBRL.high || 0),
+                ask: Number(data.USDBRL.ask || 0),
+                pctChange: data.USDBRL.pctChange || '0',
+                updated: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+            };
+            updateExchangeRateUI();
+        }
+    } catch (e) {
+        console.error('Erro ao buscar cotação de câmbio:', e);
+    }
+}
+
+function updateExchangeRateUI() {
+    const el = document.getElementById('exchangeRateWidget');
+    if (el) {
+        el.innerHTML = `
+            <div class="flex items-center gap-2 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
+                <span class="text-amber-400">💵 <b>USD/BRL:</b> R$ ${currentExchangeRate.bid ? currentExchangeRate.bid.toFixed(2) : '—'}</span>
+                <span class="text-emerald-400 font-extrabold">(Máx: R$ ${currentExchangeRate.high ? currentExchangeRate.high.toFixed(2) : '—'})</span>
+                <small class="text-slate-400 text-[10px]">(${currentExchangeRate.updated || 'Ao vivo'})</small>
+            </div>
+        `;
+    }
 }
 
 // CONSTANTES FIXAS DE INTERFACE
@@ -99,7 +134,6 @@ async function pushAllToSupabase() {
     try {
         showToast('⏳ Enviando alterações para o Supabase...');
 
-        // 1. Enviar Usuários (System Users)
         if (dbCache.users.length) {
             await supabaseClient.from('system_users').upsert(dbCache.users.map(u => ({
                 id: u.id,
@@ -116,7 +150,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 2. Enviar Produtos dos Vendedores
         if (dbCache.products.length) {
             await supabaseClient.from('seller_products').upsert(dbCache.products.map(p => ({
                 id: p.id,
@@ -128,7 +161,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 3. Enviar Inventário dos Depósitos Matriz
         if (dbCache.warehouse_inventory.length) {
             await supabaseClient.from('warehouse_inventory').upsert(dbCache.warehouse_inventory.map(i => ({
                 id: i.id,
@@ -139,7 +171,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 4. Enviar Histórico de Vendas
         if (dbCache.sales.length) {
             await supabaseClient.from('sales').upsert(dbCache.sales.map(s => ({
                 id: s.id,
@@ -152,7 +183,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 5. Enviar Pedidos de Reposição
         if (dbCache.orders.length) {
             await supabaseClient.from('orders').upsert(dbCache.orders.map(o => ({
                 id: o.id,
@@ -169,7 +199,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 6. Enviar Transferências de Estoque
         if (dbCache.transfers.length) {
             await supabaseClient.from('transfers').upsert(dbCache.transfers.map(t => ({
                 id: t.id,
@@ -188,7 +217,6 @@ async function pushAllToSupabase() {
             })));
         }
 
-        // 7. Enviar Motoboys
         if (dbCache.motoboys.length) {
             await supabaseClient.from('motoboys').upsert(dbCache.motoboys.map(m => ({
                 id: m.id,
@@ -207,7 +235,7 @@ async function pushAllToSupabase() {
     }
 }
 
-// 2. BUSCA E MAPEAMENTO RIGOROSO DE DADOS DO SUPABASE (CARREGAMENTO INICIAL)
+// 2. BUSCA E MAPEAMENTO RIGOROSO DE DADOS DO SUPABASE
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
@@ -724,8 +752,15 @@ function appFrame(title, sub, body) {
                             <div class="md:hidden font-extrabold text-xs text-slate-800 truncate">${title}</div>
                         </div>
 
+                        <!-- WIDGET CÂMBIO DÓLAR / REAL -->
+                        <div id="exchangeRateWidget" class="hidden sm:block shrink-0">
+                            <div class="flex items-center gap-2 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
+                                <span class="text-amber-400">💵 <b>USD/BRL:</b> R$ ${currentExchangeRate.bid ? currentExchangeRate.bid.toFixed(2) : '—'}</span>
+                                <span class="text-emerald-400 font-extrabold">(Máx: R$ ${currentExchangeRate.high ? currentExchangeRate.high.toFixed(2) : '—'})</span>
+                            </div>
+                        </div>
+
                         <div class="flex items-center gap-2 shrink-0 ml-auto">
-                            <!-- BOTÃO PUSH DEDICADO: ENVIAR ALTERAÇÕES AO SUPABASE -->
                             <button id="pushToSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
                                 ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
                             </button>
@@ -957,6 +992,7 @@ function renderAdmin() {
     renderAdminHome();
 }
 
+// ABA: VISÃO CONSOLIDADA
 function renderAdminHome() {
     const users = allUsers();
     const allSalesList = sales();
@@ -989,21 +1025,28 @@ function renderAdminHome() {
         </div>
 
         <div class="panel glass-panel mb-6">
-            <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+            <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <div>
                     <h2>Auditoria Global de Vendas Registradas</h2>
                     <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores.</p>
                 </div>
+                <!-- BOTÃO DE LIMPAR DADOS DOS LOGS DE VENDAS -->
+                ${allSalesList.length ? `
+                    <button id="clearSalesLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
+                        ${icons.trash} <span>Limpar Logs de Vendas</span>
+                    </button>
+                ` : ''}
             </div>
 
             ${allSalesList.length ? `
                 <div class="data-table flex flex-col gap-3">
-                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.5fr 1fr 2fr; align-items: center;">
-                        <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto</span><span>Qtd</span><span>Total (R$)</span>
+                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2fr 1.8fr 1fr 1.8fr; align-items: center;">
+                        <span>Data e Hora</span><span>Vendedor / Responsável</span><span>Produto Lançado</span><span>Qtd Vendida</span><span>Valor Total (R$)</span>
                     </div>
-                    ${allSalesList.slice().reverse().slice(0, 15).map(s => {
+                    ${allSalesList.slice().reverse().map(s => {
                         const seller = users.find(u => u.id === s.sellerId);
                         const prod = allProds.find(p => p.id === s.productId);
+                        const prodName = prod ? `${prod.name} (${prod.brand})` : 'Produto Registrado';
                         return `
                             <div class="table-row flex flex-col md:grid md:grid-cols-5 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
                                 <div class="flex justify-between items-center md:block">
@@ -1016,7 +1059,7 @@ function renderAdminHome() {
                                 </div>
                                 <div class="flex justify-between items-center md:block">
                                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                                    <span>${esc(prod ? prod.name : 'Produto Registrado')}</span>
+                                    <span class="font-bold text-slate-700">${esc(prodName)}</span>
                                 </div>
                                 <div class="flex justify-between items-center md:block">
                                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
@@ -1024,7 +1067,7 @@ function renderAdminHome() {
                                 </div>
                                 <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Total</span>
-                                    <strong class="highlight-val">${money(s.total)}</strong>
+                                    <strong class="highlight-val text-emerald-600">${money(s.total)}</strong>
                                 </div>
                             </div>
                         `;
@@ -1033,6 +1076,26 @@ function renderAdminHome() {
             ` : '<div class="empty-state">Nenhuma venda registrada no sistema ainda.</div>'}
         </div>
     `);
+
+    const clearBtn = document.getElementById('clearSalesLogsBtn');
+    if (clearBtn) {
+        clearBtn.onclick = () => {
+            confirmActionModal({
+                title: '🗑️ Limpar Logs de Vendas',
+                subtitle: 'Aba Visão Consolidada',
+                warningText: 'Atenção! Esta ação apaga permanentemente o histórico de vendas registradas no sistema local e no Supabase.',
+                confirmText: 'Confirmar e Limpar Vendas',
+                onConfirm: async () => {
+                    write('atlasSales', []);
+                    if (supabaseClient) {
+                        await supabaseClient.from('sales').delete().neq('id', '0');
+                    }
+                    showToast('Logs de vendas zerados com sucesso!');
+                    renderAdminHome();
+                }
+            });
+        };
+    }
 }
 
 function renderAdminSupervisorsPage() {
@@ -1929,7 +1992,6 @@ function renderBackupPage() {
                         write('atlasOrders', data.orders || []);
                         write('nl_motoboys', data.motoboys || []);
                         
-                        // Sincroniza o backup restaurado direto no Supabase
                         await pushAllToSupabase();
                         
                         showToast('Banco de dados restaurado!');
@@ -2340,6 +2402,7 @@ function renderSummary() {
     `);
 }
 
+// ABA: 3 ESTOQUES (WAREHOUSES)
 function renderWarehousesPage() {
     const whList = warehouses();
     const inv = warehouseInventory();
@@ -2408,7 +2471,18 @@ function renderWarehousesPage() {
         </div>
 
         <div class="panel glass-panel">
-            <div class="panel-head mb-4"><h2>Histórico Geral de Transferências (Com opção de Desfazer)</h2></div>
+            <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                <div>
+                    <h2>Histórico Geral de Transferências (Com opção de Desfazer)</h2>
+                    <p class="text-xs text-slate-500">Histórico de saídas dos depósitos centrais para vendedores e supervisores.</p>
+                </div>
+                <!-- BOTÃO DE LIMPAR LOGS DE TRANSFERÊNCIA -->
+                ${transfers.length ? `
+                    <button id="clearTransferLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
+                        ${icons.trash} <span>Limpar Logs de Transferências</span>
+                    </button>
+                ` : ''}
+            </div>
             ${transfers.length ? `
                 <div class="data-table flex flex-col gap-3">
                     <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.3fr 1.1fr 1.5fr 1.8fr 1fr 1.8fr auto; align-items: center;">
@@ -2459,6 +2533,26 @@ function renderWarehousesPage() {
     document.querySelectorAll('.send-from-wh').forEach(b => b.onclick = () => transferStockModal(b.dataset.id));
     document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
+
+    const clearTrBtn = document.getElementById('clearTransferLogsBtn');
+    if (clearTrBtn) {
+        clearTrBtn.onclick = () => {
+            confirmActionModal({
+                title: '🗑️ Limpar Logs de Transferências',
+                subtitle: 'Aba Estoque',
+                warningText: 'Deseja apagar permanentemente o histórico de transferências de estoque do sistema local e do Supabase?',
+                confirmText: 'Confirmar e Limpar Transferências',
+                onConfirm: async () => {
+                    write('nl_transfers', []);
+                    if (supabaseClient) {
+                        await supabaseClient.from('transfers').delete().neq('id', '0');
+                    }
+                    showToast('Logs de transferências limpos com sucesso!');
+                    renderWarehousesPage();
+                }
+            });
+        };
+    }
 }
 
 function renderStockPanel() {
@@ -2525,7 +2619,14 @@ function renderStockPanel() {
                 </div>
 
                 <div class="panel glass-panel p-4 md:p-6 rounded-2xl">
-                    <h3 class="text-sm font-bold mb-4 text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-bold text-sky-600 uppercase tracking-wider">Histórico de Saídas / Envios</h3>
+                        ${myTransfers.length ? `
+                            <button id="clearStockTransfersBtn" class="delete-btn text-xs py-1.5 px-3 flex items-center gap-1" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
+                                ${icons.trash} <span>Limpar Logs</span>
+                            </button>
+                        ` : ''}
+                    </div>
                     ${myTransfers.length ? `
                         <div class="data-table flex flex-col gap-3">
                             <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.2fr 1.5fr 1.5fr 1fr 1.8fr auto; align-items: center;">
@@ -2578,6 +2679,26 @@ function renderStockPanel() {
     document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
     document.querySelectorAll('.edit-stock-item').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
+
+    const clStockTrBtn = document.getElementById('clearStockTransfersBtn');
+    if (clStockTrBtn) {
+        clStockTrBtn.onclick = () => {
+            confirmActionModal({
+                title: '🗑️ Limpar Logs de Transferência',
+                warningText: 'Deseja apagar todos os registros de transferências deste depósito?',
+                confirmText: 'Limpar Registros',
+                onConfirm: async () => {
+                    const remainingTransfers = warehouseTransfers().filter(t => t.warehouseId !== wh.id);
+                    write('nl_transfers', remainingTransfers);
+                    if (supabaseClient) {
+                        await supabaseClient.from('transfers').delete().eq('warehouse_id', wh.id);
+                    }
+                    showToast('Logs de transferências zerados!');
+                    renderStockPanel();
+                }
+            });
+        };
+    }
 }
 
 function addWarehouseItemModal(warehouseId) {
@@ -2975,11 +3096,21 @@ function renderArchivedPage() {
     `);
 }
 
+// ABA: CATÁLOGO DO SISTEMA (COM BOTÃO ADICIONAR PRODUTO)
 function renderCatalogPage() {
-    appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas (Incluso TG e TG antiga).', `
+    const sysCat = systemCatalog();
+
+    appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas. Adicione novos produtos que serão atualizados no Supabase.', `
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+            <b>${sysCat.length} Produtos Registrados no Catálogo</b>
+            <button id="addCatalogProductBtn" class="primary-btn text-xs py-2.5 px-4 flex items-center justify-center gap-1.5 w-full sm:w-auto">
+                + Adicionar Novo Produto ao Catálogo
+            </button>
+        </div>
+
         <div class="panel glass-panel">
             <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                ${systemCatalog().map(p => `
+                ${sysCat.map(p => `
                     <div class="catalog-card p-4 bg-white/90 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-2">
                         <div class="catalog-badge self-start font-bold uppercase text-[10px] tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md">${esc(p[1])}</div>
                         <h3 class="font-bold text-slate-900 text-sm mt-1">${esc(p[0])}</h3>
@@ -2988,8 +3119,56 @@ function renderCatalogPage() {
             </div>
         </div>
     `);
+
+    const addCatBtn = document.getElementById('addCatalogProductBtn');
+    if (addCatBtn) {
+        addCatBtn.onclick = () => {
+            const m = modal(`
+                <h2>+ Adicionar Produto ao Catálogo</h2>
+                <p class="text-xs text-slate-500 mb-3">O novo produto ficará disponível em todo o sistema para atribuição e reposições.</p>
+                <form id="addCatalogForm" class="seller-form">
+                    <label>Nome do Produto
+                        <input name="name" class="control" required placeholder="ex: Retatrutide 80mg">
+                    </label>
+                    <label>Marca / Fabricante
+                        <input name="brand" class="control" required placeholder="ex: New Life">
+                    </label>
+                    <button type="submit" class="primary-btn w-full mt-3">${icons.check} Salvar no Catálogo e Supabase</button>
+                </form>
+            `);
+
+            m.querySelector('#addCatalogForm').onsubmit = async e => {
+                e.preventDefault();
+                const f = new FormData(e.target);
+                const pName = f.get('name').trim();
+                const pBrand = f.get('brand').trim();
+
+                if (!pName || !pBrand) return alert('Informe o nome e a marca do produto.');
+
+                confirmActionModal({
+                    title: 'Adicionar Produto ao Catálogo',
+                    subtitle: `${pName} (${pBrand})`,
+                    warningText: 'Deseja cadastrar este novo produto no catálogo do sistema?',
+                    confirmText: 'Confirmar Cadastro',
+                    onConfirm: async () => {
+                        const customCat = readStorage('atlasCustomCatalog', []);
+                        customCat.push({ name: pName, brand: pBrand });
+                        write('atlasCustomCatalog', customCat);
+
+                        // Envia para o Supabase
+                        await pushAllToSupabase();
+
+                        showToast('Novo produto cadastrado no Catálogo!');
+                        m.remove();
+                        renderCatalogPage();
+                    }
+                });
+            };
+        };
+    }
 }
 
+// ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
 function renderProductsPage() {
     const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
     const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
@@ -3006,27 +3185,58 @@ function renderProductsPage() {
         <div class="seller-attribution-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             ${ss.map(s => {
                 const sProds = products().filter(p => p.sellerId === s.id && p.stock > 0);
+                
+                // Cálculo de Vendas do Dia (Total em vermelho ex: -4.000)
+                const sSalesToday = periodSales(s.id, 'day');
+                const sTotalSoldTodayBRL = sSalesToday.reduce((a, x) => a + Number(x.total || 0), 0);
+                const formattedSoldToday = sTotalSoldTodayBRL > 0 ? `-${sTotalSoldTodayBRL.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : '0';
+
+                // Subtotal da soma de todos os produtos do vendedor
+                const sSubtotalBRL = sProds.reduce((a, p) => a + (p.stock * p.price), 0);
+                const sTotalUnits = sProds.reduce((a, p) => a + p.stock, 0);
+
                 return `
                     <div class="seller-card glass-panel p-5 rounded-2xl flex flex-col justify-between gap-3 bg-white/90 border border-slate-200 shadow-sm">
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
-                                ${renderAvatarHTML(s, 'small')}
-                                <div>
-                                    <h3 class="text-base font-bold text-slate-900">${esc(s.name)}</h3>
-                                    <p class="text-xs text-slate-500">@${esc(s.user)} · ${esc(s.city || 'N/A')}/${esc(s.uf || 'N/A')}</p>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    ${renderAvatarHTML(s, 'small')}
+                                    <div>
+                                        <h3 class="text-base font-bold text-slate-900 leading-tight">${esc(s.name)}</h3>
+                                        <p class="text-xs text-slate-500">@${esc(s.user)} · ${esc(s.city || 'N/A')}/${esc(s.uf || 'N/A')}</p>
+                                    </div>
+                                </div>
+                                <!-- TOTAL VENDIDO NO DIA EM VERMELHO -->
+                                <div class="text-right" title="Total Vendido Hoje">
+                                    <span class="text-xs font-black px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-200 block" style="color: #ef4444; font-weight: 800;">
+                                        ${formattedSoldToday}
+                                    </span>
                                 </div>
                             </div>
-                            <strong class="highlight-val text-base block mb-3">${sProds.reduce((a, p) => a + p.stock, 0)} un. em posse</strong>
+
+                            <!-- SUBTOTAL DA SOMA DE TODOS OS PRODUTOS DO CARD -->
+                            <div class="p-3 bg-slate-100/80 rounded-xl mb-3 border border-slate-200/60">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase block">Subtotal em Posse (Soma)</span>
+                                <strong class="text-base text-slate-900 font-black">${money(sSubtotalBRL)}</strong>
+                                <small class="block text-slate-500 text-[11px] font-semibold">${sTotalUnits} un. totais em estoque</small>
+                            </div>
+
                             <div class="text-xs text-slate-600 space-y-2">
-                                ${sProds.length ? sProds.map(p => `
-                                    <div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg border border-slate-100">
-                                        <div><b>${esc(p.name)}</b> <small class="block text-slate-500 font-bold">${money(p.price)}</small></div>
-                                        <div class="flex items-center gap-2">
-                                            <b class="text-slate-800">${p.stock} un.</b>
-                                            <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
+                                ${sProds.length ? sProds.map(p => {
+                                    const itemTotalValBRL = p.stock * p.price;
+                                    return `
+                                        <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                                            <div>
+                                                <b class="text-slate-900 block">${esc(p.name)}</b>
+                                                <small class="text-slate-500 font-semibold">${money(p.price)}/un · <span class="text-emerald-700 font-extrabold">Total: ${money(itemTotalValBRL)}</span></small>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <b class="text-slate-800 text-sm font-black">${p.stock} un.</b>
+                                                <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                `).join('') : '<i class="text-slate-400">Sem produtos no momento</i>'}
+                                    `;
+                                }).join('') : '<i class="text-slate-400 block p-2">Sem produtos no momento</i>'}
                             </div>
                         </div>
                     </div>
@@ -3364,6 +3574,10 @@ function renderSellerArchivedTab() {
 
 /* CARREGAMENTO INICIAL E EVENTOS DOM */
 document.addEventListener('DOMContentLoaded', async () => {
+    // Busca cotação de Câmbio ao vivo
+    fetchExchangeRate();
+    setInterval(fetchExchangeRate, 60000); // Atualiza a cada 60s
+
     if (supabaseClient) {
         await fetchSupabaseData();
     }
@@ -3380,33 +3594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.onsubmit = async e => {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim().toLowerCase();
-            const p = document.getElementById('loginPassword').value.trim();
-
-            let usersList = allUsers();
-            if (!usersList.length && supabaseClient) {
-                await fetchSupabaseData();
-                usersList = allUsers();
-            }
-
-            console.log("Tentando login com:", { u, p });
-            const account = usersList.find(x => (x.user || '').toLowerCase() === u && String(x.password).trim() === p);
-
-            if (!account) {
-                const errDiv = document.getElementById('loginError');
-                if (errDiv) errDiv.textContent = 'Usuário ou senha incorretos.';
-                return;
-            }
-
-            await login(account);
-        };
-    }
-
     if (currentUser) {
-        await login(currentUser);
+        refreshCurrentScreen();
     }
 });
