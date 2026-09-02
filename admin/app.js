@@ -675,7 +675,7 @@ function logout() {
 }
 
 function refreshCurrentScreen() {
-    if (!currentUser) return;
+    if (!currentUser) return renderLogin();
     if (currentUser.role === 'STOCK') {
         renderStockPanel();
     } else if (hasAdminAccess(currentUser)) {
@@ -1104,7 +1104,6 @@ function renderAdminHome() {
                     <h2>Auditoria Global de Vendas Registradas</h2>
                     <p class="text-xs text-slate-500">Histórico completo de saídas de mercadorias lançadas por vendedores e supervisores.</p>
                 </div>
-                <!-- BOTÃO DE LIMPAR DADOS DOS LOGS DE VENDAS -->
                 ${allSalesList.length ? `
                     <button id="clearSalesLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
                         ${icons.trash} <span>Limpar Logs de Vendas</span>
@@ -2476,7 +2475,7 @@ function renderSummary() {
     `);
 }
 
-// ABA: 3 ESTOQUES (WAREHOUSES) - COM BOTÕES DE EXCLUIR LOGS E EXCLUIR ITEM
+// ABA: 3 ESTOQUES (WAREHOUSES)
 function renderWarehousesPage() {
     const whList = warehouses();
     const inv = warehouseInventory();
@@ -2618,7 +2617,6 @@ function renderWarehousesPage() {
     document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
 
-    // EVENTO DE EXCLUSÃO INDIVIDUAL DO INVENTÁRIO FÍSICO
     document.querySelectorAll('.delete-inv-btn').forEach(b => {
         b.onclick = () => {
             const itemId = b.dataset.id;
@@ -2646,7 +2644,6 @@ function renderWarehousesPage() {
         };
     });
 
-    // EVENTO DE LIMPAR LOGS DO INVENTÁRIO FÍSICO MATRIZ
     const clearInvBtn = document.getElementById('clearInventoryLogsBtn');
     if (clearInvBtn) {
         clearInvBtn.onclick = () => {
@@ -3259,7 +3256,7 @@ function renderArchivedPage() {
     `);
 }
 
-// ABA: CATÁLOGO DO SISTEMA (COM BOTÃO ADICIONAR PRODUTO)
+// ABA: CATÁLOGO DO SISTEMA
 function renderCatalogPage() {
     const sysCat = systemCatalog();
 
@@ -3330,7 +3327,7 @@ function renderCatalogPage() {
     }
 }
 
-// ABA: ATRIBUIR / ENVIAR ESTOQUE (COM BOTÃO DE EXCLUIR PRODUTO DO VENDEDOR/SUPERVISOR POR ADMIN E SUPERVISOR)
+// ABA: ATRIBUIR / ENVIAR ESTOQUE
 function renderProductsPage() {
     const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
     const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
@@ -3348,12 +3345,10 @@ function renderProductsPage() {
             ${ss.map(s => {
                 const sProds = products().filter(p => p.sellerId === s.id && p.stock > 0);
                 
-                // Cálculo de Vendas do Dia (Total em vermelho ex: -4.000)
                 const sSalesToday = periodSales(s.id, 'day');
                 const sTotalSoldTodayBRL = sSalesToday.reduce((a, x) => a + Number(x.total || 0), 0);
                 const formattedSoldToday = sTotalSoldTodayBRL > 0 ? `-${sTotalSoldTodayBRL.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : '0';
 
-                // Subtotal da soma de todos os produtos do vendedor
                 const sSubtotalBRL = sProds.reduce((a, p) => a + (p.stock * p.price), 0);
                 const sTotalUnits = sProds.reduce((a, p) => a + p.stock, 0);
 
@@ -3393,7 +3388,6 @@ function renderProductsPage() {
                                             <div class="flex items-center gap-1.5 shrink-0">
                                                 <b class="text-slate-800 text-sm font-black mr-1">${p.stock} un.</b>
                                                 <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
-                                                <!-- BOTÃO DE EXCLUIR PRODUTO EM NOME DO VENDEDOR/SUPERVISOR -->
                                                 <button class="delete-btn delete-seller-product-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Excluir</button>
                                             </div>
                                         </div>
@@ -3410,7 +3404,6 @@ function renderProductsPage() {
     const trBtn = document.getElementById('supTransferStockBtn');
     if (trBtn) trBtn.onclick = transferSupervisorStockModal;
 
-    // EVENTO DE EXCLUSÃO DE PRODUTO ATRIBUÍDO A OUTRA PESSOA (ADMIN / SUPERVISOR)
     document.querySelectorAll('.delete-seller-product-btn').forEach(b => {
         b.onclick = () => {
             const prodId = b.dataset.id;
@@ -3626,7 +3619,7 @@ function setupSalesTabEvents(sellerProducts) {
 
             confirmActionModal({
                 title: 'Confirmar Lançamento de Baixas',
-                warningText: `Confirms o registro da venda de ${items.reduce((a,x)=>a+x.q,0)} unidade(s) do seu estoque?`,
+                warningText: `Confirma o registro da venda de ${items.reduce((a,x)=>a+x.q,0)} unidade(s) do seu estoque?`,
                 confirmText: 'Registrar Vendas',
                 onConfirm: async () => {
                     const pl = products();
@@ -3648,7 +3641,9 @@ function setupSalesTabEvents(sellerProducts) {
                         sl.push(newSale);
 
                         if (supabaseClient) {
-                            await supabaseClient.from('seller_products').update({ stock: pl[idx].stock }).eq('id', x.p.id);
+                            if (idx >= 0) {
+                                await supabaseClient.from('seller_products').update({ stock: pl[idx].stock }).eq('id', x.p.id);
+                            }
                             await supabaseClient.from('sales').insert({
                                 id: newSale.id,
                                 seller_id: newSale.sellerId,
@@ -3663,7 +3658,7 @@ function setupSalesTabEvents(sellerProducts) {
 
                     write('atlasProducts', pl);
                     write('atlasSales', sl);
-                    showToast('Vendas registradas no Supabase!');
+                    showToast('Vendas registradas com sucesso no Supabase!');
                     renderSeller();
                 }
             });
@@ -3674,140 +3669,164 @@ function setupSalesTabEvents(sellerProducts) {
 function renderSellerNewOrderTab() {
     const sysCat = systemCatalog();
     return `
-        <div class="panel glass-panel">
-            <div class="panel-head mb-4"><h2>Fazer Novo Pedido de Reposição</h2></div>
-            <form id="newOrderForm" class="seller-form space-y-4">
-                <label>Selecione o Produto Desejado
-                    <select name="catalogIndex" class="control" required>
-                        ${sysCat.map((c, i) => `<option value="${i}">${esc(c[0])} · ${esc(c[1])}</option>`).join('')}
+        <div class="panel glass-panel max-w-2xl mx-auto p-6 rounded-2xl bg-white shadow-sm border border-slate-200">
+            <h2 class="text-lg font-black text-slate-900 mb-1">Novo Pedido de Reposição</h2>
+            <p class="text-xs text-slate-500 mb-4">Solicite produtos diretamente ao seu supervisor responsável (@${esc(currentUser.supervisor || 'geral')}).</p>
+
+            <form id="sellerOrderForm" class="seller-form space-y-4">
+                <label class="block text-xs font-bold text-slate-700">Selecione o Produto do Catálogo
+                    <select name="catalogIndex" class="control w-full mt-1" required>
+                        <option value="">Selecione um produto...</option>
+                        ${sysCat.map((c, i) => `<option value="${i}">${esc(c[0])} (${esc(c[1])})</option>`).join('')}
                     </select>
                 </label>
-                <div class="form-grid">
-                    <label>Quantidade Solicitada
-                        <input name="quantity" type="number" min="1" value="10" class="control" required>
+
+                <div class="form-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="block text-xs font-bold text-slate-700">Quantidade Solicitada
+                        <input name="quantity" type="number" min="1" value="10" class="control w-full mt-1" required>
                     </label>
-                    <label>Data Desejada para Entrega
-                        <input name="deliveryDate" type="date" class="control" required>
+                    <label class="block text-xs font-bold text-slate-700">Data Desejada para Entrega
+                        <input name="deliveryDate" type="date" class="control w-full mt-1" required>
                     </label>
                 </div>
-                <button type="submit" class="primary-btn w-full mt-3">${icons.check} Enviar Pedido para o Supervisor</button>
+
+                <button type="submit" class="primary-btn w-full text-xs py-3 font-bold mt-2 flex items-center justify-center gap-2">
+                    ${icons.check} Enviar Pedido ao Supervisor
+                </button>
             </form>
         </div>
     `;
 }
 
 function setupNewOrderEvents() {
-    const form = document.getElementById('newOrderForm');
-    if (form) {
-        form.onsubmit = async e => {
-            e.preventDefault();
-            const f = new FormData(form);
-            const idx = Number(f.get('catalogIndex'));
-            const sysCat = systemCatalog();
-            const catItem = sysCat[idx];
+    const form = document.getElementById('sellerOrderForm');
+    if (!form) return;
 
-            confirmActionModal({
-                title: 'Confirmar Pedido de Reposição',
-                subtitle: `${f.get('quantity')}x ${catItem[0]} (${catItem[1]})`,
-                warningText: 'Confirmar a solicitação de reposição para o seu supervisor?',
-                confirmText: 'Enviar Pedido',
-                onConfirm: async () => {
-                    const newOrd = {
-                        id: uid(),
-                        sellerId: currentUser.id,
-                        sellerName: currentUser.name,
-                        supervisor: currentUser.supervisor || 'ik',
-                        deliveryDate: f.get('deliveryDate'),
-                        productName: catItem[0],
-                        brand: catItem[1],
-                        quantity: Number(f.get('quantity')),
-                        status: 'Em análise',
-                        createdAt: new Date().toISOString()
-                    };
+    form.onsubmit = e => {
+        e.preventDefault();
+        const f = new FormData(form);
+        const catIdx = f.get('catalogIndex');
+        if (catIdx === '' || catIdx === null) return alert('Selecione um produto.');
 
-                    const allOrd = orders();
-                    allOrd.push(newOrd);
-                    write('atlasOrders', allOrd);
+        const sysCat = systemCatalog();
+        const item = sysCat[Number(catIdx)];
+        const qty = Number(f.get('quantity'));
+        const deliveryDate = f.get('deliveryDate');
 
-                    if (supabaseClient) {
-                        await supabaseClient.from('orders').insert({
-                            id: newOrd.id,
-                            seller_id: newOrd.sellerId,
-                            seller_name: newOrd.sellerName,
-                            supervisor: newOrd.supervisor,
-                            delivery_date: newOrd.deliveryDate,
-                            product_name: newOrd.productName,
-                            brand: newOrd.brand,
-                            quantity: newOrd.quantity,
-                            status: newOrd.status,
-                            created_at: newOrd.createdAt
-                        });
-                    }
+        confirmActionModal({
+            title: 'Confirmar Pedido de Reposição',
+            subtitle: `${qty}x ${item[0]} (${item[1]})`,
+            warningText: `O pedido será enviado para a fila do seu supervisor (@${currentUser.supervisor || 'geral'}).`,
+            confirmText: 'Enviar Pedido',
+            onConfirm: async () => {
+                const newOrd = {
+                    id: uid(),
+                    sellerId: currentUser.id,
+                    sellerName: currentUser.name,
+                    supervisor: currentUser.supervisor || 'ik',
+                    deliveryDate: deliveryDate,
+                    productName: item[0],
+                    brand: item[1],
+                    quantity: qty,
+                    status: 'Em análise',
+                    createdAt: new Date().toISOString(),
+                    deliveredAt: null
+                };
 
-                    showToast('Pedido de reposição enviado ao supervisor!');
-                    sellerActiveTab = 'myOrders';
-                    renderSeller();
+                const allOrd = orders();
+                allOrd.push(newOrd);
+                write('atlasOrders', allOrd);
+
+                if (supabaseClient) {
+                    await supabaseClient.from('orders').insert({
+                        id: newOrd.id,
+                        seller_id: newOrd.sellerId,
+                        seller_name: newOrd.sellerName,
+                        supervisor: newOrd.supervisor,
+                        delivery_date: newOrd.deliveryDate,
+                        product_name: newOrd.productName,
+                        brand: newOrd.brand,
+                        quantity: newOrd.quantity,
+                        status: newOrd.status,
+                        created_at: newOrd.createdAt,
+                        delivered_at: null
+                    });
                 }
-            });
-        };
-    }
+
+                showToast('Pedido de reposição enviado ao supervisor!');
+                sellerActiveTab = 'myOrders';
+                renderSeller();
+            }
+        });
+    };
 }
 
 function renderSellerMyOrdersTab() {
     const myOrders = orders().filter(o => o.sellerId === currentUser.id && o.status !== 'Entregue');
+
     return `
         <div class="panel glass-panel">
-            <div class="panel-head mb-4"><h2>Meus Pedidos em Andamento (${myOrders.length})</h2></div>
+            <div class="panel-head mb-4">
+                <h2 class="text-base font-extrabold text-slate-900">Meus Pedidos de Reposição Solicitados (${myOrders.length})</h2>
+                <p class="text-xs text-slate-500">Acompanhe o andamento das suas solicitações junto ao supervisor.</p>
+            </div>
             ${myOrders.length ? `
                 <div class="data-table flex flex-col gap-3">
-                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr; align-items: center;">
-                        <span>Data Solicitada</span><span>Data Previsão</span><span>Produto</span><span>Status Atual</span>
+                    <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1.2fr 1.5fr; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; font-size: 11px;">
+                        <span>PRODUTO & MARCA</span><span>QUANTIDADE SOLICITADA</span><span>DATA DE ENTREGA</span><span>STATUS DO PEDIDO</span>
                     </div>
                     ${myOrders.slice().reverse().map(o => `
                         <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
                             <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Solicitado</span>
-                                <small>${new Date(o.createdAt).toLocaleDateString('pt-BR')}</small>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Previsão</span>
-                                <strong class="text-sky-600">${o.deliveryDate ? new Date(o.deliveryDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}</strong>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                                <b>${esc(o.productName)} (${o.quantity} un)</b>
+                                <b class="text-slate-900">${esc(o.productName)}</b> <small class="text-slate-500">(${esc(o.brand)})</small>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd Solicitada</span>
+                                <b>${o.quantity} un.</b>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data Entrega</span>
+                                <strong class="text-sky-600">${o.deliveryDate ? new Date(o.deliveryDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}</strong>
                             </div>
                             <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
-                                <span class="status-pill style-blue">${esc(o.status)}</span>
+                                <span class="status-pill ${o.status === 'Em análise' ? 'style-orange' : 'style-blue'}">${esc(o.status)}</span>
                             </div>
                         </div>
                     `).join('')}
                 </div>
-            ` : '<div class="empty-state">Você não possui pedidos em andamento.</div>'}
+            ` : '<div class="empty-state">Nenhum pedido de reposição em andamento.</div>'}
         </div>
     `;
 }
 
 function renderSellerArchivedTab() {
-    const myArchived = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
+    const archived = orders().filter(o => o.sellerId === currentUser.id && o.status === 'Entregue');
+
     return `
         <div class="panel glass-panel">
-            <div class="panel-head mb-4"><h2>Histórico de Pedidos Concluídos (${myArchived.length})</h2></div>
-            ${myArchived.length ? `
+            <div class="panel-head mb-4">
+                <h2 class="text-base font-extrabold text-slate-900">Histórico de Pedidos Entregues (${archived.length})</h2>
+            </div>
+            ${archived.length ? `
                 <div class="data-table flex flex-col gap-3">
-                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2.5fr 1.5fr; align-items: center;">
-                        <span>Data Entrega</span><span>Produto Entregue</span><span>Status</span>
+                    <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; font-size: 11px;">
+                        <span>PRODUTO & MARCA</span><span>QUANTIDADE</span><span>DATA DE SOLICITAÇÃO</span><span>STATUS</span>
                     </div>
-                    ${myArchived.slice().reverse().map(o => `
-                        <div class="table-row flex flex-col md:grid md:grid-cols-3 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
-                                <small>${o.deliveredAt ? new Date(o.deliveredAt).toLocaleDateString('pt-BR') : '—'}</small>
-                            </div>
+                    ${archived.map(o => `
+                        <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
                             <div class="flex justify-between items-center md:block">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                                <b>${esc(o.productName)} (${o.quantity} un)</b>
+                                <b class="text-slate-900">${esc(o.productName)}</b> <small class="text-slate-500">(${esc(o.brand)})</small>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
+                                <b>${o.quantity} un.</b>
+                            </div>
+                            <div class="flex justify-between items-center md:block">
+                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
+                                <small>${new Date(o.createdAt).toLocaleDateString('pt-BR')}</small>
                             </div>
                             <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Status</span>
@@ -3816,18 +3835,71 @@ function renderSellerArchivedTab() {
                         </div>
                     `).join('')}
                 </div>
-            ` : '<div class="empty-state">Nenhum pedido entregue no histórico.</div>'}
+            ` : '<div class="empty-state">Nenhum pedido arquivado.</div>'}
         </div>
     `;
 }
 
-// INICIALIZAÇÃO AUTOMÁTICA
-window.addEventListener('DOMContentLoaded', async () => {
+function renderLogin() {
+    const container = getAppRoot();
+    container.innerHTML = `
+        <div class="min-h-screen w-full flex items-center justify-center p-4 bg-slate-900 text-slate-100">
+            <div class="glass-panel w-full max-w-md p-8 rounded-3xl bg-slate-800/80 border border-slate-700 shadow-2xl">
+                <div class="flex flex-col items-center mb-8">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-600 flex items-center justify-center text-white mb-4 shadow-lg shadow-sky-600/30">
+                        ${icons.brand}
+                    </div>
+                    <h1 class="text-2xl font-black text-white">newlife<span class="text-sky-400">.system</span></h1>
+                    <p class="text-xs text-slate-400 mt-1">Sistema de Gestão, Estoque e Vendas</p>
+                </div>
+
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Usuário</label>
+                        <input type="text" id="loginUser" class="control w-full bg-slate-900 border-slate-700 text-white rounded-xl p-3" placeholder="Digite seu usuário" required autocomplete="username">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha</label>
+                        <input type="password" id="loginPassword" class="control w-full bg-slate-900 border-slate-700 text-white rounded-xl p-3" placeholder="Digite sua senha" required autocomplete="current-password">
+                    </div>
+                    <div id="loginError" class="text-red-400 text-xs font-bold min-h-[16px]"></div>
+                    <button type="submit" class="primary-btn w-full py-3.5 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-white transition-all shadow-lg shadow-sky-600/20">
+                        Entrar no Sistema
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('loginForm').onsubmit = e => {
+        e.preventDefault();
+        const uInput = document.getElementById('loginUser').value.trim().toLowerCase();
+        const pInput = document.getElementById('loginPassword').value.trim();
+        const errEl = document.getElementById('loginError');
+
+        const users = allUsers();
+        const found = users.find(u => u.user.toLowerCase() === uInput && u.password === pInput);
+
+        if (found) {
+            login(found);
+        } else {
+            errEl.textContent = 'Usuário ou senha incorretos.';
+        }
+    };
+}
+
+// INICIALIZAÇÃO DO SISTEMA
+async function initApp() {
     fetchExchangeRate();
     setInterval(fetchExchangeRate, 60000);
 
+    await fetchSupabaseData();
+
     if (currentUser) {
-        await fetchSupabaseData();
         refreshCurrentScreen();
+    } else {
+        renderLogin();
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
