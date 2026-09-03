@@ -481,6 +481,12 @@ function moneyUSD(brlVal) {
     return rate > 0 ? (brl / rate).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : 'US$ —';
 }
 function moneyPair(brlVal) { return `${money(brlVal)} · ${moneyUSD(brlVal)}`; }
+function moneyPairSigned(brlVal) {
+    const value = Number(brlVal || 0);
+    const sign = value < 0 ? '-' : '';
+    const absolute = Math.abs(value);
+    return `${sign}${money(absolute)} · ${sign}${moneyUSD(absolute)}`;
+}
 function moneySimple(brlVal) { return money(brlVal); }
 
 function hasAdminAccess(user) { return user?.role === 'ADMIN_SUPERVISOR' || user?.role === 'ADMIN_SELLER' || user?.role === 'ADMIN'; }
@@ -1233,7 +1239,7 @@ function renderAdminHome() {
         <div class="stats-grid mb-6">
             <div class="metric-card glass-panel">
                 <div class="metric-top"><span>Faturamento Global</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-                <div class="metric-value text-base md:text-lg font-black">${money(totalRevenueBRL)}</div>
+                <div class="metric-value text-base md:text-lg font-black">${moneyPair(totalRevenueBRL)}</div>
                 <small class="text-xs text-slate-500 mt-1 block">${totalItemsSold} unidades vendidas no total</small>
             </div>
             <div class="metric-card glass-panel">
@@ -2249,19 +2255,19 @@ function exportConsolidatedExcelCSV() {
         }
     });
 
-    csv += `\n=== 3. RESUMO DE VENDAS E BAIXAS NOS ULTIMOS 7 DIAS ===\nNome Integrante,Cargo / Função,Supervisor,Cidade/UF,Qtd Vendas (Ultimos 7 Dias),Total Faturado em Reais (R$)\n`;
+    csv += `\n=== 3. RESUMO DE VENDAS E BAIXAS NOS ULTIMOS 7 DIAS ===\nNome Integrante,Cargo / Função,Supervisor,Cidade/UF,Qtd Vendas (Ultimos 7 Dias),Total Faturado (R$ / US$)\n`;
     [...supsList, ...sellersList].forEach(u => {
         const sales7d = periodSales(u.id, '7days');
         const totalQty7d = sales7d.reduce((a, x) => a + x.quantity, 0);
         const totalRev7d = sales7d.reduce((a, x) => a + x.total, 0);
-        csv += `"${u.name} (@${u.user})","${u.role}","${u.supervisor || 'Geral'}","${u.city}/${u.uf}",${totalQty7d},${totalRev7d.toFixed(2)}\n`;
+        csv += `"${u.name} (@${u.user})","${u.role}","${u.supervisor || 'Geral'}","${u.city}/${u.uf}",${totalQty7d},${totalRev7d.toFixed(2)},${currentExchangeRate.ask > 0 ? (totalRev7d / currentExchangeRate.ask).toFixed(2) : '0.00'}\n`;
     });
 
-    csv += `\n=== 4. HISTORICO COMPLETO DE BAIXAS REGISTRADAS ===\nID Venda,Data e Hora,Vendedor / Responsavel,Produto,Quantidade Vendida,Preco Unitario (R$),Total Faturado (R$)\n`;
+    csv += `\n=== 4. HISTORICO COMPLETO DE BAIXAS REGISTRADAS ===\nID Venda,Data e Hora,Vendedor / Responsavel,Produto,Quantidade Vendida,Preço Unitario (R$ / US$),Total Faturado (R$ / US$)\n`;
     salesList.slice().reverse().forEach(s => {
         const seller = usersList.find(u => u.id === s.sellerId);
         const prod = prodsList.find(p => p.id === s.productId);
-        csv += `"${s.id}","${new Date(s.createdAt).toLocaleString('pt-BR')}","${seller ? seller.name : s.sellerId}","${prod ? prod.name : 'Produto Registrado'}",${s.quantity},${(s.unitPrice || 0).toFixed(2)},${s.total.toFixed(2)}\n`;
+        csv += `"${s.id}","${new Date(s.createdAt).toLocaleString('pt-BR')}","${seller ? seller.name : s.sellerId}","${prod ? prod.name : 'Produto Registrado'}",${s.quantity},${(s.unitPrice || 0).toFixed(2)},${s.total.toFixed(2)},${currentExchangeRate.ask > 0 ? (s.total / currentExchangeRate.ask).toFixed(2) : '0.00'}\n`;
     });
 
     csv += `\n=== 5. ESTOQUE FISICO NOS DEPOSITOS MATRIZ ===\nDeposito,Localizacao,Produto,Marca,Estoque Fisico Disponivel\n`;
@@ -2664,7 +2670,7 @@ function renderSummary() {
         <div class="stats-grid">
             <div class="metric-card glass-panel">
                 <div class="metric-top"><span>Faturamento Hoje</span><span class="metric-icon cyan">${icons.dollar}</span></div>
-                <div class="metric-value text-base md:text-lg font-black">${money(revBRL)}</div>
+                <div class="metric-value text-base md:text-lg font-black">${moneyPair(revBRL)}</div>
             </div>
             <div class="metric-card glass-panel">
                 <div class="metric-top"><span>Itens Vendidos</span><span class="metric-icon green">${icons.check}</span></div>
@@ -2676,7 +2682,7 @@ function renderSummary() {
             <div class="panel-head mb-4"><h2>Desempenho da Equipe Hoje</h2></div>
             <div class="data-table flex flex-col gap-3">
                 <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2fr; align-items: center;">
-                    <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$)</span>
+                    <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$ / US$)</span>
                 </div>
                 ${rows.map(r => `
                     <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -2694,7 +2700,7 @@ function renderSummary() {
                         </div>
                         <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                             <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
-                            <strong class="highlight-val">${money(r.xs.reduce((a, x) => a + x.total, 0))}</strong>
+                            <strong class="highlight-val">${moneyPair(r.xs.reduce((a, x) => a + x.total, 0))}</strong>
                         </div>
                     </div>
                 `).join('')}
@@ -3694,7 +3700,7 @@ function renderProductsPage() {
                 // Cálculo de Vendas do Dia (Total em vermelho ex: -4.000)
                 const sSalesToday = periodSales(s.id, 'day');
                 const sTotalSoldTodayBRL = sSalesToday.reduce((a, x) => a + Number(x.total || 0), 0);
-                const formattedSoldToday = sTotalSoldTodayBRL > 0 ? `-${sTotalSoldTodayBRL.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : '0';
+                const formattedSoldToday = moneyPairSigned(-sTotalSoldTodayBRL);
 
                 // Subtotal da soma de todos os produtos do vendedor
                 const sSubtotalBRL = sProds.reduce((a, p) => a + (p.stock * p.price), 0);
@@ -3804,7 +3810,7 @@ function renderReportsPage() {
         <div class="panel glass-panel">
             <div class="data-table flex flex-col gap-3">
                 <div class="table-head hidden md:grid" style="grid-template-columns: 2fr 1.5fr 1fr 2fr; align-items: center;">
-                    <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$)</span>
+                    <span>Vendedor</span><span>Localização</span><span>Qtd Vendida</span><span>Faturamento (R$ / US$)</span>
                 </div>
                 ${ss.map(s => `
                     <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
@@ -3822,7 +3828,7 @@ function renderReportsPage() {
                         </div>
                         <div class="flex justify-between items-center md:block pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                             <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Faturamento</span>
-                            <strong class="highlight-val">${money(sellerRevenue(s.id, 'month'))}</strong>
+                            <strong class="highlight-val">${moneyPair(sellerRevenue(s.id, 'month'))}</strong>
                         </div>
                     </div>
                 `).join('')}
@@ -3832,9 +3838,9 @@ function renderReportsPage() {
 
     document.getElementById('downloadPdfBtn').onclick = () => {
         exportUniversalPDF({
-            title: 'Relatório Oficial de Vendas em Reais (R$)',
-            headers: ['Vendedor', 'Localizacao', 'Qtd Vendida', 'Faturamento (R$)'],
-            rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, moneySimple(sellerRevenue(s.id, 'month'))]),
+            title: 'Relatório Oficial de Vendas em Reais (R$) e Dólares (US$)',
+            headers: ['Vendedor', 'Localizacao', 'Qtd Vendida', 'Faturamento (R$ / US$)'],
+            rows: ss.map(s => [s.name, `${s.city}/${s.uf}`, `${periodSales(s.id, 'month').reduce((a, x) => a + x.quantity, 0)} un.`, moneyPair(sellerRevenue(s.id, 'month'))]),
             fileName: 'newlife-relatorio.pdf'
         });
     };
