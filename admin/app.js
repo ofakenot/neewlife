@@ -219,9 +219,7 @@ let dbCache = {
     transfers: [],
     wg_ik_shipments: [],
     ik_seller_allocations: [],
-    seller_payment_ledger: [],
-    seller_payment_sheets: [],
-    seller_payment_sheet_lines: []
+    seller_payment_ledger: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -333,22 +331,6 @@ async function pushAllToSupabase() {
                 created_at: x.createdAt, updated_at: x.updatedAt
             })));
         }
-        if (dbCache.seller_payment_sheet_lines.length) {
-            await supabaseClient.from('seller_payment_sheet_lines').upsert(dbCache.seller_payment_sheet_lines.map(x => ({
-                id:x.id, sheet_id:x.sheetId, seller_id:x.sellerId, row_number:Number(x.rowNumber), product_name:x.productName || '', brand:x.brand || '',
-                total_value_brl:Number(x.totalValueBRL || 0), paid_value_brl:Number(x.paidValueBRL || 0), balance_brl:Number(x.balanceBRL || 0), status:x.status || 'OPEN', notes:x.notes || null,
-                updated_by:x.updatedBy || currentUser?.id, created_at:x.createdAt, updated_at:x.updatedAt
-            })));
-        }
-        if (dbCache.seller_payment_sheets.length) {
-            await supabaseClient.from('seller_payment_sheets').upsert(dbCache.seller_payment_sheets.map(x => ({
-                id: x.id, wg_id: x.wgId, ik_id: x.ikId, seller_id: x.sellerId,
-                product_name: x.productName, brand: x.brand || '',
-                total_value_brl: Number(x.totalValueBRL || 0), paid_value_brl: Number(x.paidValueBRL || 0),
-                balance_brl: Number(x.balanceBRL || 0), status: x.status || 'OPEN', notes: x.notes || null,
-                created_at: x.createdAt, closed_at: x.closedAt || null, updated_at: x.updatedAt
-            })));
-        }
         if (dbCache.seller_payment_ledger.length) {
             await supabaseClient.from('seller_payment_ledger').upsert(dbCache.seller_payment_ledger.map(x => ({
                 id: x.id, allocation_id: x.allocationId, seller_id: x.sellerId, ik_id: x.ikId,
@@ -379,7 +361,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -390,9 +372,7 @@ async function fetchSupabaseData() {
             supabaseClient.from('transfers').select('*'),
             supabaseClient.from('wg_ik_shipments').select('*'),
             supabaseClient.from('ik_seller_allocations').select('*'),
-            supabaseClient.from('seller_payment_ledger').select('*'),
-            supabaseClient.from('seller_payment_sheets').select('*'),
-            supabaseClient.from('seller_payment_sheet_lines').select('*')
+            supabaseClient.from('seller_payment_ledger').select('*')
         ]);
 
         if (uRes.data) {
@@ -425,18 +405,6 @@ async function fetchSupabaseData() {
                 unitCostBRL: Number(x.unit_cost_brl || 0), salePriceBRL: Number(x.sale_price_brl || 0), totalValueBRL: Number(x.total_value_brl || 0), remainingValueBRL: Number(x.remaining_value_brl || 0),
                 createdAt: x.created_at, updatedAt: x.updated_at }));
             localStorage.setItem('nl_ik_seller_allocations', JSON.stringify(dbCache.ik_seller_allocations));
-        }
-        if (lineRes?.data) {
-            dbCache.seller_payment_sheet_lines = lineRes.data.map(x => ({...x, sheetId:x.sheet_id, sellerId:x.seller_id, rowNumber:Number(x.row_number), productName:x.product_name || '', totalValueBRL:Number(x.total_value_brl || 0), paidValueBRL:Number(x.paid_value_brl || 0), balanceBRL:Number(x.balance_brl || 0), updatedBy:x.updated_by, createdAt:x.created_at, updatedAt:x.updated_at}));
-            localStorage.setItem('nl_seller_payment_sheet_lines', JSON.stringify(dbCache.seller_payment_sheet_lines));
-        }
-        if (sheetRes?.data) {
-            dbCache.seller_payment_sheets = sheetRes.data.map(x => ({ ...x,
-                wgId: x.wg_id, ikId: x.ik_id, sellerId: x.seller_id, productName: x.product_name,
-                totalValueBRL: Number(x.total_value_brl || 0), paidValueBRL: Number(x.paid_value_brl || 0),
-                balanceBRL: Number(x.balance_brl || 0), createdAt: x.created_at, closedAt: x.closed_at, updatedAt: x.updated_at
-            }));
-            localStorage.setItem('nl_seller_payment_sheets', JSON.stringify(dbCache.seller_payment_sheets));
         }
         if (payRes?.data) {
             dbCache.seller_payment_ledger = payRes.data.map(x => ({ ...x, allocationId: x.allocation_id, sellerId: x.seller_id, ikId: x.ik_id,
@@ -541,9 +509,6 @@ function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transf
 function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik_shipments : readStorage('nl_wg_ik_shipments', []); }
 function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
 function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? dbCache.seller_payment_ledger : readStorage('nl_seller_payment_ledger', []); }
-function sellerPaymentSheets() { return dbCache.seller_payment_sheets.length ? dbCache.seller_payment_sheets : readStorage('nl_seller_payment_sheets', []); }
-function sellerPaymentSheetLines() { return dbCache.seller_payment_sheet_lines.length ? dbCache.seller_payment_sheet_lines : readStorage('nl_seller_payment_sheet_lines', []); }
-function activeSellerSheetFor(sellerId) { return sellerPaymentSheets().find(x => x.sellerId === sellerId && x.status === 'OPEN'); }
 function isWGAccount(u = currentUser) { return u?.id === 'u_wg' || String(u?.user || u?.username || '').toLowerCase() === 'wg'; }
 function isIKAccount(u = currentUser) { return u?.id === 'ik' || u?.id === 'u_ik' || String(u?.user || u?.username || '').toLowerCase() === 'ik'; }
 function canEditWgIk(u = currentUser) { return isWGAccount(u) || isIKAccount(u) || hasAdminAccess(u); }
@@ -570,8 +535,6 @@ function write(key, val) {
     if (key === 'nl_wg_ik_shipments') dbCache.wg_ik_shipments = val;
     if (key === 'nl_ik_seller_allocations') dbCache.ik_seller_allocations = val;
     if (key === 'nl_seller_payment_ledger') dbCache.seller_payment_ledger = val;
-    if (key === 'nl_seller_payment_sheets') dbCache.seller_payment_sheets = val;
-    if (key === 'nl_seller_payment_sheet_lines') dbCache.seller_payment_sheet_lines = val;
 }
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -2276,8 +2239,6 @@ function renderBackupPage() {
                     wgIkShipments: wgIkShipments(),
                     ikSellerAllocations: ikSellerAllocations(),
                     sellerPaymentLedger: sellerPaymentLedger(),
-                    sellerPaymentSheets: sellerPaymentSheets(),
-                    sellerPaymentSheetLines: sellerPaymentSheetLines(),
                     products: products(),
                     sales: sales(),
                     orders: orders(),
@@ -2321,8 +2282,6 @@ function renderBackupPage() {
                         write('nl_wg_ik_shipments', data.wgIkShipments || []);
                         write('nl_ik_seller_allocations', data.ikSellerAllocations || []);
                         write('nl_seller_payment_ledger', data.sellerPaymentLedger || []);
-                        write('nl_seller_payment_sheets', data.sellerPaymentSheets || []);
-                        write('nl_seller_payment_sheet_lines', data.sellerPaymentSheetLines || []);
                         write('atlasProducts', data.products || []);
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
@@ -3748,66 +3707,11 @@ function renderWgIkStockPage() {
     document.getElementById('newWgShipmentBtn')?.addEventListener('click', openWgShipmentModal); document.getElementById('newIkAllocationBtn')?.addEventListener('click', openIkAllocationModal); document.getElementById('openSellerSheetsBtn')?.addEventListener('click', () => { activeTab='sellerSheets'; renderWgIkStockPage(); });
 }
 
-function openSellerPaymentSheetModal(sheetId) {
-    if (!canEditWgIk()) return showToast('Apenas WG e IK podem editar as planilhas.');
-    const sheet = sellerPaymentSheets().find(x => x.id === sheetId);
-    if (!sheet || sheet.status === 'CLOSED') return alert('Esta planilha está fechada. Crie uma nova para o vendedor.');
-    const seller = allSellers().find(x => x.id === sheet.sellerId);
-    const balance = Math.max(Number(sheet.totalValueBRL || 0) - Number(sheet.paidValueBRL || 0), 0);
-    const m = modal(`<h2>Atualizar Planilha de ${esc(seller?.name || sheet.sellerId)}</h2><p class="text-xs text-slate-500 mb-3">Produto: <b>${esc(sheet.productName)}</b> · Valor total: <b>${money(sheet.totalValueBRL)}</b><br>Já pago: <b>${money(sheet.paidValueBRL)}</b> · Saldo: <b>${money(balance)}</b></p><form id="sheetPaymentForm" class="seller-form"><label>Valor pago agora (R$)<input name="amount" type="number" min="0.01" max="${balance.toFixed(2)}" step="0.01" class="control" required></label><label>Periodicidade<select name="frequency" class="control"><option value="DAILY">Diário</option><option value="WEEKLY">Semanal</option><option value="MONTHLY">Mensal</option><option value="OTHER">Outro</option></select></label><label>Data<input name="paymentDate" type="date" value="${new Date().toISOString().slice(0,10)}" class="control" required></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Salvar pagamento</button></form>`);
-    m.querySelector('form').onsubmit = async e => {
-        e.preventDefault(); const f = new FormData(e.target); const amount = Number(f.get('amount'));
-        if (!(amount > 0) || amount > balance + 0.001) return alert(`Valor inválido. Saldo: ${money(balance)}.`);
-        const now = new Date().toISOString(); const newPaid = Number((Number(sheet.paidValueBRL || 0) + amount).toFixed(2)); const newBalance = Math.max(Number(sheet.totalValueBRL || 0) - newPaid, 0); const closed = newBalance <= 0;
-        const payment = { id: uid(), sheetId: sheet.id, sellerId: sheet.sellerId, ikId: sheet.ikId, amountBRL: Number(amount.toFixed(2)), paymentDate: f.get('paymentDate'), frequency: f.get('frequency'), notes: String(f.get('notes') || ''), createdBy: currentUser.id, createdAt: now };
-        const sheetUpdate = { paid_value_brl: newPaid, balance_brl: newBalance, status: closed ? 'CLOSED' : 'OPEN', closed_at: closed ? now : null, updated_at: now };
-        const sRes = await supabaseClient.from('seller_payment_sheets').update(sheetUpdate).eq('id', sheet.id).eq('status', 'OPEN'); if (sRes.error) return alert(`Não foi possível atualizar a planilha: ${sRes.error.message}`);
-        const pRes = await supabaseClient.from('seller_payment_ledger').insert({ id:payment.id, sheet_id:payment.sheetId, allocation_id:null, seller_id:payment.sellerId, ik_id:payment.ikId, amount_brl:payment.amountBRL, payment_date:payment.paymentDate, frequency:payment.frequency, notes:payment.notes, created_by:payment.createdBy, created_at:payment.createdAt });
-        if (pRes.error) { await supabaseClient.from('seller_payment_sheets').update({ paid_value_brl:sheet.paidValueBRL, balance_brl:balance, status:'OPEN', closed_at:null }).eq('id',sheet.id); return alert(`Não foi possível registrar o pagamento: ${pRes.error.message}`); }
-        sheet.paidValueBRL = newPaid; sheet.balanceBRL = newBalance; sheet.status = closed ? 'CLOSED' : 'OPEN'; sheet.closedAt = closed ? now : null; sheet.updatedAt = now; const payments = sellerPaymentLedger(); payments.push(payment); write('nl_seller_payment_sheets', sellerPaymentSheets()); write('nl_seller_payment_ledger', payments); m.remove(); showToast(closed ? 'Planilha quitada e fechada. Agora você pode criar uma nova.' : 'Pagamento salvo e abatido do saldo.'); renderSellerSheetsPage();
-    };
-}
-
-function openNewSellerSheetModal() {
-    if (!canEditWgIk()) return showToast('Apenas WG e IK podem criar planilhas.'); const sellers = allSellers(); if (!sellers.length) return alert('Nenhum vendedor cadastrado.');
-    const m = modal(`<h2>Nova Planilha de Acerto</h2><p class="text-xs text-slate-500 mb-3">O WG informa o produto, o vendedor responsável e o valor total. A planilha permanece aberta até a quitação completa.</p><form id="newSheetForm" class="seller-form"><label>Vendedor<select name="sellerId" class="control" required>${sellers.map(x => `<option value="${x.id}">${esc(x.name)} (@${esc(x.user)})</option>`).join('')}</select></label><label>Nome do produto<input name="productName" class="control" required></label><label>Marca<input name="brand" class="control"></label><label>Valor total devido (R$)<input name="totalValue" type="number" min="0.01" step="0.01" class="control" required></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Criar planilha</button></form>`);
-    m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target); const seller = sellers.find(x => x.id === f.get('sellerId')); const value = Number(f.get('totalValue')); if (!seller || !(value > 0)) return alert('Informe vendedor e valor total válido.'); if (activeSellerSheetFor(seller.id)) return alert('Este vendedor já possui uma planilha aberta. Finalize-a antes de criar outra.'); const now = new Date().toISOString(); const sheet = { id:uid(), wgId:'u_wg', ikId:'u_ik', sellerId:seller.id, productName:String(f.get('productName')).trim(), brand:String(f.get('brand')||'').trim(), totalValueBRL:Number(value.toFixed(2)), paidValueBRL:0, balanceBRL:Number(value.toFixed(2)), status:'OPEN', notes:String(f.get('notes')||''), createdAt:now, closedAt:null, updatedAt:now }; const {error}=await supabaseClient.from('seller_payment_sheets').insert({id:sheet.id,wg_id:sheet.wgId,ik_id:sheet.ikId,seller_id:sheet.sellerId,product_name:sheet.productName,brand:sheet.brand,total_value_brl:sheet.totalValueBRL,paid_value_brl:0,balance_brl:sheet.balanceBRL,status:'OPEN',notes:sheet.notes,created_at:now,updated_at:now}); if(error)return alert(`Não foi possível criar a planilha: ${error.message}`); const list=sellerPaymentSheets(); list.push(sheet); write('nl_seller_payment_sheets',list); m.remove(); showToast('Nova planilha criada para o vendedor.'); renderSellerSheetsPage(); };
-}
-
-async function ensureManualSheet(sellerId) {
-    let sheet=activeSellerSheetFor(sellerId);
-    if (sheet) return sheet;
-    const now=new Date().toISOString(); sheet={id:uid(),wgId:'u_wg',ikId:'u_ik',sellerId,productName:'Planilha manual',brand:'',totalValueBRL:0,paidValueBRL:0,balanceBRL:0,status:'OPEN',notes:'Planilha com 20 linhas editáveis',createdAt:now,closedAt:null,updatedAt:now};
-    const {error}=await supabaseClient.from('seller_payment_sheets').insert({id:sheet.id,wg_id:sheet.wgId,ik_id:sheet.ikId,seller_id:sheet.sellerId,product_name:sheet.productName,brand:'',total_value_brl:0,paid_value_brl:0,balance_brl:0,status:'OPEN',notes:sheet.notes,created_at:now,updated_at:now});
-    if(error) throw error; const list=sellerPaymentSheets(); list.push(sheet); write('nl_seller_payment_sheets',list); return sheet;
-}
-
-async function saveManualSheetLine(sellerId,rowNumber,card) {
-    if(!canEditWgIk()) return showToast('Apenas WG e IK podem editar esta planilha.');
-    const get = field => card.querySelector(`[data-sheet-field="${field}-${sellerId}-${rowNumber}"]`);
-    const productName=(get('product')?.value||'').trim();
-    const total=Number(get('total')?.value||0);
-    const paid=Number(get('paid')?.value||0);
-    const notes=(get('notes')?.value||'').trim();
-    if(!productName && !total && !paid && !notes) return showToast('Linha vazia: preencha o produto e o valor total debitado.');
-    if(!productName) return alert('Informe o nome do produto.');
-    if(!(total>0) || paid<0 || paid>total) return alert('Informe um valor total debitado maior que zero e um valor pago entre zero e o total.');
-    const sheet=await ensureManualSheet(sellerId); const existing=sellerPaymentSheetLines().find(x=>x.sheetId===sheet.id && Number(x.rowNumber)===rowNumber); const now=new Date().toISOString(); const line={id:existing?.id||uid(),sheetId:sheet.id,sellerId,rowNumber,productName,brand:'',totalValueBRL:Number(total.toFixed(2)),paidValueBRL:Number(paid.toFixed(2)),balanceBRL:Number(Math.max(total-paid,0).toFixed(2)),status:paid>=total?'CLOSED':'OPEN',notes,updatedBy:currentUser.id,createdAt:existing?.createdAt||now,updatedAt:now};
-    const payload={id:line.id,sheet_id:line.sheetId,seller_id:line.sellerId,row_number:line.rowNumber,product_name:line.productName,brand:'',total_value_brl:line.totalValueBRL,paid_value_brl:line.paidValueBRL,balance_brl:line.balanceBRL,status:line.status,notes:line.notes,updated_by:line.updatedBy,created_at:line.createdAt,updated_at:now}; const {error}=await supabaseClient.from('seller_payment_sheet_lines').upsert(payload); if(error)return alert(`Não foi possível salvar a linha: ${error.message}`);
-    const rows=sellerPaymentSheetLines(); const idx=rows.findIndex(x=>x.id===line.id); if(idx>=0)rows[idx]=line;else rows.push(line); write('nl_seller_payment_sheet_lines',rows); const filled=rows.filter(x=>x.sheetId===sheet.id&&x.productName&&Number(x.totalValueBRL)>0); await supabaseClient.from('seller_payment_sheets').update({total_value_brl:filled.reduce((n,x)=>n+x.totalValueBRL,0),paid_value_brl:filled.reduce((n,x)=>n+x.paidValueBRL,0),balance_brl:filled.reduce((n,x)=>n+x.balanceBRL,0),status:'OPEN',closed_at:null,updated_at:now}).eq('id',sheet.id); showToast(line.status==='CLOSED'?'Linha quitada e salva.':'Linha salva no Supabase.'); renderSellerSheetsPage();
-}
-
-function addManualSheetRow(sellerId) {
-    if(!canEditWgIk()) return showToast('Apenas WG e IK podem editar esta planilha.');
-    window.manualSheetExtraRows=window.manualSheetExtraRows||{}; window.manualSheetExtraRows[sellerId]=(window.manualSheetExtraRows[sellerId]||0)+1; renderSellerSheetsPage();
-}
-
 function renderSellerSheetsPage() {
-    if(!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const sellers=allSellers(); const sheets=sellerPaymentSheets(); const lines=sellerPaymentSheetLines(); window.manualSheetExtraRows=window.manualSheetExtraRows||{};
-    appFrame('Planilhas manuais — WG e IK','Escreva diretamente no card. Cada vendedor começa com uma linha e você pode adicionar quantas linhas precisar.',`<div class="flex flex-wrap gap-2 mb-5"><button id="backWgIkStockBtn" class="small-btn">Voltar ao Estoque WG ↔ IK</button></div><div class="grid grid-cols-1 xl:grid-cols-2 gap-5">${sellers.map(seller=>{const sheet=activeSellerSheetFor(seller.id);const saved=lines.filter(x=>x.sheetId===sheet?.id).sort((a,b)=>Number(a.rowNumber)-Number(b.rowNumber));const extra=window.manualSheetExtraRows[seller.id]||0;const rowCount=Math.max(1,saved.length+extra+1);const rows=Array.from({length:rowCount},(_,i)=>saved.find(x=>Number(x.rowNumber)===i+1)||{rowNumber:i+1,productName:'',totalValueBRL:0,paidValueBRL:0,balanceBRL:0,status:'OPEN',notes:''});const total=saved.reduce((n,x)=>n+Number(x.totalValueBRL||0),0),paid=saved.reduce((n,x)=>n+Number(x.paidValueBRL||0),0),balance=Math.max(total-paid,0);return `<section class="panel glass-panel p-4" data-seller-card="${seller.id}"><div class="flex justify-between items-center mb-3"><div><h2>${esc(seller.name)}</h2><p class="text-xs text-slate-500">Planilha compartilhada · WG + IK</p></div><div class="text-right text-xs"><b>Total debitado: ${money(total)}</b><span class="block text-emerald-700">Total pago: ${money(paid)}</span><span class="block text-amber-700">Saldo: ${money(balance)}</span></div></div><div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr><th class="text-left">#</th><th class="text-left">Produto</th><th class="text-left">Valor total debitado (R$)</th><th class="text-left">Pago acumulado (R$)</th><th class="text-left">Saldo</th><th class="text-left">Observação</th><th></th></tr></thead><tbody>${rows.map(x=>{const disabled=x.status==='CLOSED'?'disabled':'';return `<tr class="border-b border-slate-100"><td class="font-bold text-slate-400 pr-2">${x.rowNumber}</td><td class="pr-2"><input ${disabled} class="control text-xs min-w-[130px]" data-sheet-field="product-${seller.id}-${x.rowNumber}" value="${esc(x.productName)}" placeholder="Nome do produto"></td><td class="pr-2"><input ${disabled} class="control text-xs w-32" data-sheet-field="total-${seller.id}-${x.rowNumber}" type="number" min="0" step="0.01" value="${Number(x.totalValueBRL||0)||''}" placeholder="0,00"></td><td class="pr-2"><input ${disabled} class="control text-xs w-32" data-sheet-field="paid-${seller.id}-${x.rowNumber}" type="number" min="0" step="0.01" value="${Number(x.paidValueBRL||0)||''}" placeholder="0,00"></td><td class="font-bold pr-2 ${x.balanceBRL<=0&&x.totalValueBRL>0?'text-emerald-700':'text-amber-700'}">${x.totalValueBRL?money(x.balanceBRL):'—'}</td><td class="pr-2"><input ${disabled} class="control text-xs min-w-[120px]" data-sheet-field="notes-${seller.id}-${x.rowNumber}" value="${esc(x.notes||'')}" placeholder="Observação"></td><td>${x.status==='CLOSED'?'<span class="text-emerald-700 font-bold">OK</span>':`<button class="small-btn save-sheet-line" data-seller="${seller.id}" data-row="${x.rowNumber}">Salvar</button>`}</td></tr>`;}).join('')}</tbody></table></div><button class="small-btn add-sheet-row mt-3" data-seller="${seller.id}">+ Adicionar mais uma linha</button></section>`;}).join('')}</div>`);
-    document.getElementById('backWgIkStockBtn')?.addEventListener('click',()=>{activeTab='wgIkStock';renderWgIkStockPage();}); document.querySelectorAll('.save-sheet-line').forEach(btn=>btn.addEventListener('click',()=>saveManualSheetLine(btn.dataset.seller,Number(btn.dataset.row),btn.closest('[data-seller-card]')))); document.querySelectorAll('.add-sheet-row').forEach(btn=>btn.addEventListener('click',()=>addManualSheetRow(btn.dataset.seller)));
+    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const grouped = allSellers().map(s => ({seller:s, rows:ikSellerAllocations().filter(a=>a.sellerId===s.id)})).filter(x=>x.rows.length);
+    appFrame('Planilhas de Acerto dos Vendedores', 'Cada vendedor possui uma planilha própria com produtos, valor enviado, pagamentos e saldo pendente.', `<div class="flex flex-wrap gap-2 mb-5"><button id="backWgIkStockBtn" class="small-btn">Voltar ao Estoque WG ↔ IK</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5">${grouped.length ? grouped.map(({seller,rows}) => {const total=rows.reduce((n,a)=>n+Number(a.totalValueBRL||0),0);const paid=rows.reduce((n,a)=>n+allocationPaidValue(a.id),0);const balance=Math.max(total-paid,0);return `<section class="panel glass-panel p-4"><div class="flex justify-between items-start gap-3 mb-3"><div><h2>${esc(seller.name)}</h2><p class="text-xs text-slate-500">@${esc(seller.user)} · ${esc(seller.city||'')}/${esc(seller.uf||'')}</p></div><div class="text-right text-xs"><b class="block">Total: ${money(total)}</b><span class="text-emerald-700">Pago: ${money(paid)}</span><span class="text-amber-700 block">Saldo: ${money(balance)}</span></div></div><div class="space-y-2">${rows.map(a=>{const paidRow=allocationPaidValue(a.id);const bal=Math.max(Number(a.totalValueBRL||0)-paidRow,0);return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200"><div class="flex justify-between gap-2"><b>${esc(a.productName)}</b><span class="text-xs font-bold ${bal<=0?'text-emerald-700':'text-amber-700'}">${bal<=0?'QUITADO':'ABERTO'}</span></div><div class="text-xs mt-1">${a.quantitySent} un. · Custo total: ${money(a.totalValueBRL)} · Pago: ${money(paidRow)} · Saldo: <b>${money(bal)}</b></div>${bal>0?`<button class="small-btn payment-btn mt-2" data-id="${a.id}">Registrar pagamento</button>`:'<small class="text-emerald-700 block mt-2">Planilha zerada.</small>'}</div>`;}).join('')}</div></section>`;}).join('') : '<div class="empty-state col-span-full">Ainda não existem repasses para montar as planilhas.</div>'}</div>`);
+    document.getElementById('backWgIkStockBtn')?.addEventListener('click', () => { activeTab='wgIkStock'; renderWgIkStockPage(); }); document.querySelectorAll('.payment-btn').forEach(b=>b.addEventListener('click',()=>openSellerPaymentModal(b.dataset.id)));
 }
-
 
 // ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
 async function adminRegisterSellerSale(productId) {
@@ -3919,14 +3823,6 @@ function setupSupabaseRealtimeSync() {
             refreshCurrentScreen();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'ik_seller_allocations' }, async () => {
-            await fetchSupabaseData();
-            refreshCurrentScreen();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheet_lines' }, async () => {
-            await fetchSupabaseData();
-            refreshCurrentScreen();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheets' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
