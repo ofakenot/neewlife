@@ -3744,7 +3744,7 @@ function renderProductsPage() {
                                             <div class="flex items-center gap-2">
                                                 <b class="text-slate-800 text-sm font-black">${p.stock} un.</b>
                                                 <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço</button>
-                                                        ${hasAdminAccess(currentUser) ? `<button class="small-btn edit-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Qtd.</button><button class="primary-btn admin-writeoff-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.check} Baixa</button><button class="delete-btn delete-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.trash}</button>` : ''}
+                                                        ${hasAdminAccess(currentUser) ? `<button class="small-btn edit-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Qtd.</button><button class="small-btn admin-writeoff-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Baixa</button><button class="delete-btn delete-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.trash}</button>` : ''}
                                             </div>
                                         </div>
                                     `;
