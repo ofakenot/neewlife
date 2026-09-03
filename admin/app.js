@@ -37,19 +37,21 @@ class CambioParaguai {
 
     async getCambio() {
         if (this.cache && this._cacheValido()) return this.cache;
-        const response = await fetch('https://www.cambioschaco.com.py/', {
+        // API oficial do Cambios Chaco: filial 32 = Ciudad del Este — Km7.
+        const response = await fetch('https://www.cambioschaco.com.py/api/branch_office/32/exchange', {
             cache: 'no-store',
-            mode: 'cors'
+            mode: 'cors',
+            headers: { Accept: 'application/json' }
         });
-        if (!response.ok) throw new Error(`Cambios Chaco HTTP ${response.status}`);
-        const html = await response.text();
-        const row = html.match(/id=["']arb-exchange-brl["'][\s\S]*?<span[^>]*class=["'][^"']*purchase[^"']*["'][^>]*>([^<]+)<\/span>[\s\S]*?<span[^>]*class=["'][^"']*sale[^"']*["'][^>]*>([^<]+)<\/span>/i);
-        if (!row) throw new Error('Arbitragem USD x Real não encontrada no Cambios Chaco.');
+        if (!response.ok) throw new Error(`Cambios Chaco Km7 HTTP ${response.status}`);
+        const data = await response.json();
+        const real = data?.items?.find(item => item.isoCode === 'BRL');
+        if (!real) throw new Error('Cotação BRL não encontrada na filial Ciudad del Este — Km7.');
 
-        const parse = value => Number(String(value).trim().replace(/\./g, '').replace(',', '.')) || 0;
-        const compra = parse(row[1]);
-        const venda = parse(row[2]);
-        if (!(compra > 0) || !(venda > 0)) throw new Error('Cotação USD/BRL inválida no Cambios Chaco.');
+        // O endpoint paraguaio entrega purchaseArbitrage/saleArbitrage diretamente em USD/BRL.
+        const compra = Number(real.purchaseArbitrage);
+        const venda = Number(real.saleArbitrage);
+        if (!(compra > 0) || !(venda > 0)) throw new Error('Cotação USD/BRL inválida no Cambios Chaco Km7.');
 
         this.cache = {
             compra,
@@ -86,11 +88,11 @@ class CambioParaguai {
 
 const cambio = new CambioParaguai();
 let currentExchangeRate = {
-    // Última referência local confirmada: Cambios Chaco — compra R$ 5,15 / venda R$ 5,35.
-    bid: 5.15,
-    high: 5.35,
-    ask: 5.35,
-    brlRate: 5.25,
+    // Última referência confirmada da filial Km7: compra R$ 5,14 / venda R$ 5,22.
+    bid: 5.14,
+    high: 5.22,
+    ask: 5.22,
+    brlRate: 5.18,
     pctChange: '0',
     updated: 'Referência local',
     source: 'Cambios Chaco — Paraguai — USD/BRL'
@@ -106,7 +108,7 @@ async function fetchExchangeRate() {
             high: quote.venda,
             brlRate: quote.taxa,
             updated: new Date(quote.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-            source: 'Cambios Chaco — Paraguai — USD/BRL'
+            source: 'Cambios Chaco — Ciudad del Este Km7 — USD/BRL'
         };
         updateExchangeRateUI();
     } catch (e) {
@@ -123,7 +125,7 @@ function updateExchangeRateUI() {
             <div class="flex items-center gap-2 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
                 <span class="text-amber-400">💵 <b>USD/BRL:</b> ${currentExchangeRate.bid ? money(currentExchangeRate.bid) : '—'}–${currentExchangeRate.ask ? money(currentExchangeRate.ask) : '—'}</span>
                 <span class="text-emerald-400 font-extrabold">Média: ${currentExchangeRate.brlRate ? money(currentExchangeRate.brlRate) : '—'}</span>
-                <small class="text-slate-400 text-[10px]">(${currentExchangeRate.updated || 'Aguardando atualização'})</small>
+                <small class="text-slate-400 text-[10px]">Km7 · ${currentExchangeRate.updated || 'Aguardando atualização'}</small>
             </div>
         `;
     }
@@ -721,6 +723,7 @@ async function login(user) {
     currentUser = user;
     localStorage.setItem('nl_current_user', JSON.stringify(user));
     await fetchSupabaseData();
+    setupSupabaseRealtimeSync();
     refreshCurrentScreen();
 }
 
@@ -3564,6 +3567,113 @@ function deleteSellerStockProduct(productId) {
 }
 
 // ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
+async function adminRegisterSellerSale(productId) {
+    if (!hasAdminAccess(currentUser)) {
+        return showToast('Apenas o administrador pode dar baixa diretamente nesta tela.');
+    }
+    if (!supabaseClient) {
+        return alert('Supabase não está conectado. A baixa não foi realizada.');
+    }
+
+    const product = products().find(p => p.id === productId);
+    const seller = allSellers().find(u => u.id === product?.sellerId);
+    const available = Number(product?.stock || 0);
+    if (!product || !seller || available < 1) return alert('Produto sem estoque disponível ou não encontrado.');
+
+    const m = modal(`
+        <h2>Dar Baixa no Estoque</h2>
+        <p class="text-xs text-slate-500 mb-3">Vendedor: <b>${esc(seller.name)}</b><br>Produto: <b>${esc(product.name)}</b> (${esc(product.brand)})</p>
+        <form id="adminSaleForm" class="seller-form">
+            <label>Quantidade vendida/baixada
+                <input name="quantity" type="number" min="1" max="${available}" value="1" class="control" required>
+            </label>
+            <p class="text-xs text-slate-500 mt-2">Disponível: <b>${available}</b> unidade(s). A operação será registrada no histórico de vendas.</p>
+            <button type="submit" class="primary-btn w-full mt-3">${icons.check} Confirmar Baixa</button>
+        </form>
+    `);
+
+    m.querySelector('form').onsubmit = async e => {
+        e.preventDefault();
+        const qty = Number(new FormData(e.target).get('quantity'));
+        if (!Number.isInteger(qty) || qty < 1 || qty > available) {
+            return alert(`Quantidade inválida. Disponível: ${available} unidade(s).`);
+        }
+
+        const beforeStock = Number(product.stock || 0);
+        const afterStock = beforeStock - qty;
+        const saleId = uid();
+        const createdAt = new Date().toISOString();
+        const sale = {
+            id: saleId,
+            sellerId: seller.id,
+            productId: product.id,
+            quantity: qty,
+            unitPrice: Number(product.price || 0),
+            total: Number((qty * Number(product.price || 0)).toFixed(2)),
+            type: 'ADMIN_SELLER_STOCK_WRITE_OFF',
+            removedBy: currentUser.id,
+            removedByName: currentUser.name,
+            createdAt
+        };
+
+        const submit = e.target.querySelector('button[type="submit"]');
+        if (submit) submit.disabled = true;
+        try {
+            const updateResult = await supabaseClient
+                .from('seller_products')
+                .update({ stock: afterStock })
+                .eq('id', product.id)
+                .eq('stock', beforeStock)
+                .select('id, stock');
+            if (updateResult.error) throw updateResult.error;
+            if (!updateResult.data?.length) throw new Error('O estoque mudou antes da baixa. Atualize a tela e tente novamente.');
+
+            const insertResult = await supabaseClient.from('sales').insert({
+                id: sale.id,
+                seller_id: sale.sellerId,
+                product_id: sale.productId,
+                quantity: sale.quantity,
+                unit_price: sale.unitPrice,
+                total: sale.total,
+                created_at: sale.createdAt
+            });
+            if (insertResult.error) {
+                await supabaseClient.from('seller_products').update({ stock: beforeStock }).eq('id', product.id).eq('stock', afterStock);
+                throw insertResult.error;
+            }
+
+            product.stock = afterStock;
+            const localSales = sales();
+            localSales.push(sale);
+            write('atlasProducts', products());
+            write('atlasSales', localSales);
+            await fetchSupabaseData();
+            m.remove();
+            showToast(`Baixa realizada. ${seller.name} agora possui ${afterStock} unidade(s).`);
+            refreshCurrentScreen();
+        } catch (error) {
+            console.error('Erro ao registrar baixa do vendedor:', error);
+            if (submit) submit.disabled = false;
+            alert(`Não foi possível registrar a baixa: ${error.message || error}`);
+        }
+    };
+}
+
+function setupSupabaseRealtimeSync() {
+    if (!supabaseClient || window.newlifeRealtimeChannel) return;
+    window.newlifeRealtimeChannel = supabaseClient
+        .channel('newlife-stock-sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_products' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .subscribe(status => console.log('Sincronização de estoque:', status));
+}
+
 function renderProductsPage() {
     const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
     const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
@@ -3628,7 +3738,7 @@ function renderProductsPage() {
                                             <div class="flex items-center gap-2">
                                                 <b class="text-slate-800 text-sm font-black">${p.stock} un.</b>
                                                 <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço</button>
-                                                        ${hasAdminAccess(currentUser) ? `<button class="small-btn edit-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Qtd.</button><button class="delete-btn delete-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.trash}</button>` : ''}
+                                                        ${hasAdminAccess(currentUser) ? `<button class="small-btn edit-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Qtd.</button><button class="primary-btn admin-writeoff-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.check} Baixa</button><button class="delete-btn delete-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.trash}</button>` : ''}
                                             </div>
                                         </div>
                                     `;
@@ -3645,6 +3755,7 @@ function renderProductsPage() {
     if (trBtn) trBtn.onclick = transferSupervisorStockModal;
 
     document.querySelectorAll('.edit-seller-stock-btn').forEach(b => b.onclick = () => editSellerStockModal(b.dataset.id));
+    document.querySelectorAll('.admin-writeoff-btn').forEach(b => b.onclick = () => adminRegisterSellerSale(b.dataset.id));
     document.querySelectorAll('.delete-seller-stock-btn').forEach(b => b.onclick = () => deleteSellerStockProduct(b.dataset.id));
 
     document.querySelectorAll('.edit-seller-price-btn').forEach(b => {
@@ -3982,6 +4093,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (supabaseClient) {
         await fetchSupabaseData();
+        setupSupabaseRealtimeSync();
     }
 
     const passwordInput = document.getElementById('loginPassword');
