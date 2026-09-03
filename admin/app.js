@@ -219,7 +219,9 @@ let dbCache = {
     transfers: [],
     wg_ik_shipments: [],
     ik_seller_allocations: [],
-    seller_payment_ledger: []
+    seller_payment_ledger: [],
+    seller_payment_sheets: [],
+    seller_payment_sheet_lines: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -331,6 +333,22 @@ async function pushAllToSupabase() {
                 created_at: x.createdAt, updated_at: x.updatedAt
             })));
         }
+        if (dbCache.seller_payment_sheet_lines.length) {
+            await supabaseClient.from('seller_payment_sheet_lines').upsert(dbCache.seller_payment_sheet_lines.map(x => ({
+                id:x.id, sheet_id:x.sheetId, seller_id:x.sellerId, row_number:Number(x.rowNumber), product_name:x.productName || '', brand:x.brand || '',
+                total_value_brl:Number(x.totalValueBRL || 0), paid_value_brl:Number(x.paidValueBRL || 0), balance_brl:Number(x.balanceBRL || 0), status:x.status || 'OPEN', notes:x.notes || null,
+                updated_by:x.updatedBy || currentUser?.id, created_at:x.createdAt, updated_at:x.updatedAt
+            })));
+        }
+        if (dbCache.seller_payment_sheets.length) {
+            await supabaseClient.from('seller_payment_sheets').upsert(dbCache.seller_payment_sheets.map(x => ({
+                id: x.id, wg_id: x.wgId, ik_id: x.ikId, seller_id: x.sellerId,
+                product_name: x.productName, brand: x.brand || '',
+                total_value_brl: Number(x.totalValueBRL || 0), paid_value_brl: Number(x.paidValueBRL || 0),
+                balance_brl: Number(x.balanceBRL || 0), status: x.status || 'OPEN', notes: x.notes || null,
+                created_at: x.createdAt, closed_at: x.closedAt || null, updated_at: x.updatedAt
+            })));
+        }
         if (dbCache.seller_payment_ledger.length) {
             await supabaseClient.from('seller_payment_ledger').upsert(dbCache.seller_payment_ledger.map(x => ({
                 id: x.id, allocation_id: x.allocationId, seller_id: x.sellerId, ik_id: x.ikId,
@@ -361,7 +379,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -372,7 +390,9 @@ async function fetchSupabaseData() {
             supabaseClient.from('transfers').select('*'),
             supabaseClient.from('wg_ik_shipments').select('*'),
             supabaseClient.from('ik_seller_allocations').select('*'),
-            supabaseClient.from('seller_payment_ledger').select('*')
+            supabaseClient.from('seller_payment_ledger').select('*'),
+            supabaseClient.from('seller_payment_sheets').select('*'),
+            supabaseClient.from('seller_payment_sheet_lines').select('*')
         ]);
 
         if (uRes.data) {
@@ -405,6 +425,18 @@ async function fetchSupabaseData() {
                 unitCostBRL: Number(x.unit_cost_brl || 0), salePriceBRL: Number(x.sale_price_brl || 0), totalValueBRL: Number(x.total_value_brl || 0), remainingValueBRL: Number(x.remaining_value_brl || 0),
                 createdAt: x.created_at, updatedAt: x.updated_at }));
             localStorage.setItem('nl_ik_seller_allocations', JSON.stringify(dbCache.ik_seller_allocations));
+        }
+        if (lineRes?.data) {
+            dbCache.seller_payment_sheet_lines = lineRes.data.map(x => ({...x, sheetId:x.sheet_id, sellerId:x.seller_id, rowNumber:Number(x.row_number), productName:x.product_name || '', totalValueBRL:Number(x.total_value_brl || 0), paidValueBRL:Number(x.paid_value_brl || 0), balanceBRL:Number(x.balance_brl || 0), updatedBy:x.updated_by, createdAt:x.created_at, updatedAt:x.updated_at}));
+            localStorage.setItem('nl_seller_payment_sheet_lines', JSON.stringify(dbCache.seller_payment_sheet_lines));
+        }
+        if (sheetRes?.data) {
+            dbCache.seller_payment_sheets = sheetRes.data.map(x => ({ ...x,
+                wgId: x.wg_id, ikId: x.ik_id, sellerId: x.seller_id, productName: x.product_name,
+                totalValueBRL: Number(x.total_value_brl || 0), paidValueBRL: Number(x.paid_value_brl || 0),
+                balanceBRL: Number(x.balance_brl || 0), createdAt: x.created_at, closedAt: x.closed_at, updatedAt: x.updated_at
+            }));
+            localStorage.setItem('nl_seller_payment_sheets', JSON.stringify(dbCache.seller_payment_sheets));
         }
         if (payRes?.data) {
             dbCache.seller_payment_ledger = payRes.data.map(x => ({ ...x, allocationId: x.allocation_id, sellerId: x.seller_id, ikId: x.ik_id,
@@ -509,6 +541,9 @@ function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transf
 function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik_shipments : readStorage('nl_wg_ik_shipments', []); }
 function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
 function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? dbCache.seller_payment_ledger : readStorage('nl_seller_payment_ledger', []); }
+function sellerPaymentSheets() { return dbCache.seller_payment_sheets.length ? dbCache.seller_payment_sheets : readStorage('nl_seller_payment_sheets', []); }
+function sellerPaymentSheetLines() { return dbCache.seller_payment_sheet_lines.length ? dbCache.seller_payment_sheet_lines : readStorage('nl_seller_payment_sheet_lines', []); }
+function activeSellerSheetFor(sellerId) { return sellerPaymentSheets().find(x => x.sellerId === sellerId && x.status === 'OPEN'); }
 function isWGAccount(u = currentUser) { return u?.id === 'u_wg' || String(u?.user || u?.username || '').toLowerCase() === 'wg'; }
 function isIKAccount(u = currentUser) { return u?.id === 'ik' || u?.id === 'u_ik' || String(u?.user || u?.username || '').toLowerCase() === 'ik'; }
 function canEditWgIk(u = currentUser) { return isWGAccount(u) || isIKAccount(u) || hasAdminAccess(u); }
@@ -535,6 +570,8 @@ function write(key, val) {
     if (key === 'nl_wg_ik_shipments') dbCache.wg_ik_shipments = val;
     if (key === 'nl_ik_seller_allocations') dbCache.ik_seller_allocations = val;
     if (key === 'nl_seller_payment_ledger') dbCache.seller_payment_ledger = val;
+    if (key === 'nl_seller_payment_sheets') dbCache.seller_payment_sheets = val;
+    if (key === 'nl_seller_payment_sheet_lines') dbCache.seller_payment_sheet_lines = val;
 }
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -948,7 +985,7 @@ function navContent() {
         <div class="side-label">${isAdmin ? 'ADMINISTRAÇÃO GERAL' : 'SUPERVISÃO OPERACIONAL'}</div>
         ${isAdmin ? `
             <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>
-            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+            ${!isWGAccount(currentUser) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>` : ''}
             ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkStock' ? 'active' : ''}" data-admin-tab="wgIkStock">${icons.warehouse} <span>Estoque WG ↔ IK</span></button><button class="side-link ${activeTab === 'sellerSheets' ? 'active' : ''}" data-admin-tab="sellerSheets">${icons.chart} <span>Planilhas de Vendedores</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
@@ -1281,6 +1318,7 @@ function renderSupervisor() {
 }
 
 function renderAdmin() {
+    if (isWGAccount(currentUser) && activeTab === 'products') activeTab = 'warehouses';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'warehouses') return renderWarehousesPage();
@@ -1917,6 +1955,9 @@ function sellerModal(existing = null) {
                         active: seller.active,
                         avatar_url: seller.avatarUrl
                     });
+                    if (!existing) {
+                        try { await createInitialSheetForSeller(seller.id); } catch (sheetError) { console.error('Vendedor salvo, mas a planilha inicial não foi criada:', sheetError); }
+                    }
                 }
 
                 m.remove();
@@ -2239,6 +2280,8 @@ function renderBackupPage() {
                     wgIkShipments: wgIkShipments(),
                     ikSellerAllocations: ikSellerAllocations(),
                     sellerPaymentLedger: sellerPaymentLedger(),
+                    sellerPaymentSheets: sellerPaymentSheets(),
+                    sellerPaymentSheetLines: sellerPaymentSheetLines(),
                     products: products(),
                     sales: sales(),
                     orders: orders(),
@@ -2282,6 +2325,8 @@ function renderBackupPage() {
                         write('nl_wg_ik_shipments', data.wgIkShipments || []);
                         write('nl_ik_seller_allocations', data.ikSellerAllocations || []);
                         write('nl_seller_payment_ledger', data.sellerPaymentLedger || []);
+                        write('nl_seller_payment_sheets', data.sellerPaymentSheets || []);
+                        write('nl_seller_payment_sheet_lines', data.sellerPaymentSheetLines || []);
                         write('atlasProducts', data.products || []);
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
@@ -3657,20 +3702,22 @@ function deleteSellerStockProduct(productId) {
 // OPERAÇÃO WG → IK → VENDEDORES (tabelas normalizadas no Supabase)
 function openWgShipmentModal() {
     if (!canEditWgIk() || (!isWGAccount() && !isIKAccount() && !hasAdminAccess())) return showToast('Apenas WG ou IK podem registrar estoque.');
-    const m = modal(`<h2>WG: Enviar Estoque para IK</h2><p class="text-xs text-slate-500 mb-3">O valor informado é o custo do produto enviado ao IK.</p><form id="wgShipmentForm" class="seller-form">
-        <label>Produto<input name="productName" class="control" required></label><label>Marca<input name="brand" class="control"></label>
-        <label>Quantidade<input name="quantity" type="number" min="1" class="control" required></label><label>Valor unitário para IK (R$)<input name="unitCost" type="number" min="0" step="0.01" class="control" required></label>
-        <label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Registrar envio para IK</button></form>`);
-    m.querySelector('form').onsubmit = async e => {
-        e.preventDefault(); const f = new FormData(e.target); const qty = Number(f.get('quantity')); const unit = Number(f.get('unitCost'));
-        if (!Number.isInteger(qty) || qty < 1 || unit < 0) return alert('Informe quantidade inteira e valor válido.');
-        const now = new Date().toISOString(); const item = { id: uid(), wgId: 'u_wg', ikId: 'u_ik', productName: String(f.get('productName')).trim(), brand: String(f.get('brand') || '').trim(), quantitySent: qty, quantityRemaining: qty, unitCostBRL: unit, totalValueBRL: qty * unit, remainingValueBRL: qty * unit, status: 'OPEN', notes: String(f.get('notes') || '').trim(), createdAt: now, updatedAt: now };
-        if (!item.productName) return alert('Informe o nome do produto.');
-        const { error } = await supabaseClient.from('wg_ik_shipments').insert({ id:item.id, wg_id:item.wgId, ik_id:item.ikId, product_name:item.productName, brand:item.brand, quantity_sent:item.quantitySent, quantity_remaining:item.quantityRemaining, unit_cost_brl:item.unitCostBRL, total_value_brl:item.totalValueBRL, remaining_value_brl:item.remainingValueBRL, status:item.status, notes:item.notes, created_at:now, updated_at:now });
-        if (error) return alert(`Não foi possível registrar: ${error.message}`);
-        const list = wgIkShipments(); list.push(item); write('nl_wg_ik_shipments', list); m.remove(); showToast('Estoque enviado pelo WG e disponível para o IK.'); renderWgIkStockPage();
-    };
+    const catalogItems=[...new Map(systemCatalog().map(([name,brand])=>[`${name}::${brand}`,{name,brand}])).values()];
+    const options='<option value="">Selecione um produto do catálogo</option>'+catalogItems.map(item=>`<option value="${esc(item.name)}" data-brand="${esc(item.brand)}">${esc(item.name)}${item.brand?` — ${esc(item.brand)}`:''}</option>`).join('');
+    const m=modal(`<h2>WG: Cadastrar Estoque para IK</h2><p class="text-xs text-slate-500 mb-3">Selecione o produto cadastrado e informe manualmente o valor que o WG passou para o IK.</p><form id="wgShipmentForm" class="seller-form"><label>Produto do catálogo<select name="productName" id="wgProductSelect" class="control" required>${options}</select></label><input type="hidden" name="brand" id="wgProductBrand"><label>Quantidade<input name="quantity" type="number" min="1" class="control" required></label><label>Valor unitário passado ao IK (R$)<input name="unitCost" type="number" min="0" step="0.01" class="control" required placeholder="Digite o valor manualmente"></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Salvar estoque para IK</button></form>`);
+    const productSelect=m.querySelector('#wgProductSelect'); productSelect.onchange=()=>{m.querySelector('#wgProductBrand').value=productSelect.selectedOptions[0]?.dataset.brand||'';};
+    m.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);const qty=Number(f.get('quantity'));const unit=Number(f.get('unitCost'));const productName=String(f.get('productName')||'').trim();if(!productName||!Number.isInteger(qty)||qty<1||!(unit>=0))return alert('Selecione um produto e informe quantidade e valor válidos.');const now=new Date().toISOString();const item={id:uid(),wgId:'u_wg',ikId:'u_ik',productName,brand:String(f.get('brand')||''),quantitySent:qty,quantityRemaining:qty,unitCostBRL:Number(unit.toFixed(2)),totalValueBRL:Number((qty*unit).toFixed(2)),remainingValueBRL:Number((qty*unit).toFixed(2)),status:'OPEN',notes:String(f.get('notes')||'').trim(),createdAt:now,updatedAt:now};const existing=wgIkShipments().filter(x=>x.status!=='CLOSED'&&x.productName===item.productName&&String(x.brand||'')===item.brand).sort((a,b)=>new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt))[0];
+        let error=null; let list=wgIkShipments();
+        if(existing){
+            const newRemainingQty=Number(existing.quantityRemaining)+qty; const newSentQty=Number(existing.quantitySent)+qty; const newTotal=Number((newRemainingQty*unit).toFixed(2));
+            const result=await supabaseClient.from('wg_ik_shipments').update({quantity_sent:newSentQty,quantity_remaining:newRemainingQty,unit_cost_brl:item.unitCostBRL,total_value_brl:Number((newSentQty*unit).toFixed(2)),remaining_value_brl:newTotal,updated_at:now,notes:item.notes||existing.notes}).eq('id',existing.id); error=result.error;
+            if(!error){existing.quantitySent=newSentQty;existing.quantityRemaining=newRemainingQty;existing.unitCostBRL=item.unitCostBRL;existing.totalValueBRL=Number((newSentQty*unit).toFixed(2));existing.remainingValueBRL=newTotal;existing.updatedAt=now;existing.notes=item.notes||existing.notes;}
+        } else {
+            const result=await supabaseClient.from('wg_ik_shipments').insert({id:item.id,wg_id:item.wgId,ik_id:item.ikId,product_name:item.productName,brand:item.brand,quantity_sent:item.quantitySent,quantity_remaining:item.quantityRemaining,unit_cost_brl:item.unitCostBRL,total_value_brl:item.totalValueBRL,remaining_value_brl:item.remainingValueBRL,status:item.status,notes:item.notes,created_at:now,updated_at:now}); error=result.error; if(!error)list.push(item);
+        }
+        if(error)return alert(`Não foi possível registrar: ${error.message}`);write('nl_wg_ik_shipments',list);m.remove();showToast(existing?'Valor do produto atualizado para o IK.':'Produto cadastrado no estoque do IK.');renderWgIkStockPage();};
 }
+
 
 function openIkAllocationModal() {
     if (!isIKAccount() && !hasAdminAccess()) return showToast('Somente IK pode repassar estoque aos vendedores.');
@@ -3701,17 +3748,116 @@ function openSellerPaymentModal(allocationId) {
     m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target); const amount = Number(f.get('amount')); if (!(amount > 0) || amount > balance + 0.001) return alert(`Valor inválido. Saldo disponível: ${money(balance)}.`); const p = {id:uid(),allocationId:a.id,sellerId:a.sellerId,ikId:a.ikId,amountBRL:Number(amount.toFixed(2)),paymentDate:f.get('paymentDate'),frequency:f.get('frequency'),notes:String(f.get('notes')||''),createdBy:currentUser.id,createdAt:new Date().toISOString()}; const {error}=await supabaseClient.from('seller_payment_ledger').insert({id:p.id,allocation_id:p.allocationId,seller_id:p.sellerId,ik_id:p.ikId,amount_brl:p.amountBRL,payment_date:p.paymentDate,frequency:p.frequency,notes:p.notes,created_by:p.createdBy,created_at:p.createdAt}); if(error)return alert(`Não foi possível registrar o pagamento: ${error.message}`); const list=sellerPaymentLedger(); list.push(p); write('nl_seller_payment_ledger',list); m.remove(); showToast('Pagamento registrado e abatido da planilha.'); renderSellerSheetsPage(); };
 }
 
-function renderWgIkStockPage() {
-    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const shipments = wgIkShipments().filter(x => isWGAccount() ? x.wgId === currentUser.id || x.wgId === 'u_wg' : true); const allocations = ikSellerAllocations();
-    appFrame('Estoque WG ↔ IK', 'Estoque recebido do WG, valores de custo e repasses autorizados para vendedores.', `<div class="flex flex-wrap gap-2 mb-5">${isWGAccount() || hasAdminAccess() ? '<button id="newWgShipmentBtn" class="primary-btn">+ WG Enviar Estoque</button>' : ''}${isIKAccount() || hasAdminAccess() ? '<button id="newIkAllocationBtn" class="primary-btn">Enviar Estoque para Vendedor</button>' : ''}<button id="openSellerSheetsBtn" class="small-btn">Planilhas de Vendedores</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5"><section class="panel glass-panel p-4"><h2 class="mb-3">${isWGAccount() ? 'Meus envios ao IK' : 'Estoque recebido do WG para o IK'}</h2><div class="space-y-3">${shipments.length ? shipments.map(x => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200"><div class="flex justify-between gap-2"><b>${esc(x.productName)}</b><span class="text-xs font-bold ${x.status==='CLOSED'?'text-slate-400':'text-emerald-700'}">${x.status}</span></div><small>${esc(x.brand)} · ${x.quantityRemaining}/${x.quantitySent} un. disponíveis · Custo total: ${money(x.totalValueBRL)}</small><div class="text-xs text-slate-500 mt-1">Valor restante: <b>${money(x.remainingValueBRL)}</b> · Unitário: ${money(x.unitCostBRL)}</div></div>`).join('') : '<div class="empty-state">Nenhum envio WG→IK registrado.</div>'}</div></section><section class="panel glass-panel p-4"><h2 class="mb-3">Repasses do IK aos vendedores</h2><div class="space-y-3">${allocations.length ? allocations.map(a => {const seller=allSellers().find(x=>x.id===a.sellerId); return `<div class="p-3 rounded-xl bg-white border border-slate-200"><div class="flex justify-between"><b>${esc(a.productName)}</b><span class="text-xs">${esc(seller?.name||a.sellerId)}</span></div><small>${a.quantitySent} un. · Custo WG: ${money(a.totalValueBRL)} · Preço vendedor: ${money(a.salePriceBRL)}/un.</small><div class="text-xs mt-1">Saldo da planilha: <b>${money(allocationBalance(a))}</b></div></div>`;}).join('') : '<div class="empty-state">Nenhum repasse IK→vendedor registrado.</div>'}</div></section></div>`);
-    document.getElementById('newWgShipmentBtn')?.addEventListener('click', openWgShipmentModal); document.getElementById('newIkAllocationBtn')?.addEventListener('click', openIkAllocationModal); document.getElementById('openSellerSheetsBtn')?.addEventListener('click', () => { activeTab='sellerSheets'; renderWgIkStockPage(); });
+async function clearWgIkTransferLogs() {
+    if(!canEditWgIk()) return showToast('Apenas WG e IK podem apagar logs.');
+    confirmActionModal({title:'Apagar logs de transferência',subtitle:'WG ↔ IK',warningText:'Isso apaga somente o histórico de transferências. O estoque atual e os produtos dos vendedores não serão alterados.',confirmText:'Apagar logs',onConfirm:async()=>{write('nl_transfers',[]);if(supabaseClient){const {error}=await supabaseClient.from('transfers').delete().neq('id','__none__');if(error)return alert(`Não foi possível apagar os logs: ${error.message}`);}showToast('Logs de transferência apagados.');renderWgIkStockPage();}});
 }
 
-function renderSellerSheetsPage() {
-    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const grouped = allSellers().map(s => ({seller:s, rows:ikSellerAllocations().filter(a=>a.sellerId===s.id)})).filter(x=>x.rows.length);
-    appFrame('Planilhas de Acerto dos Vendedores', 'Cada vendedor possui uma planilha própria com produtos, valor enviado, pagamentos e saldo pendente.', `<div class="flex flex-wrap gap-2 mb-5"><button id="backWgIkStockBtn" class="small-btn">Voltar ao Estoque WG ↔ IK</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5">${grouped.length ? grouped.map(({seller,rows}) => {const total=rows.reduce((n,a)=>n+Number(a.totalValueBRL||0),0);const paid=rows.reduce((n,a)=>n+allocationPaidValue(a.id),0);const balance=Math.max(total-paid,0);return `<section class="panel glass-panel p-4"><div class="flex justify-between items-start gap-3 mb-3"><div><h2>${esc(seller.name)}</h2><p class="text-xs text-slate-500">@${esc(seller.user)} · ${esc(seller.city||'')}/${esc(seller.uf||'')}</p></div><div class="text-right text-xs"><b class="block">Total: ${money(total)}</b><span class="text-emerald-700">Pago: ${money(paid)}</span><span class="text-amber-700 block">Saldo: ${money(balance)}</span></div></div><div class="space-y-2">${rows.map(a=>{const paidRow=allocationPaidValue(a.id);const bal=Math.max(Number(a.totalValueBRL||0)-paidRow,0);return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200"><div class="flex justify-between gap-2"><b>${esc(a.productName)}</b><span class="text-xs font-bold ${bal<=0?'text-emerald-700':'text-amber-700'}">${bal<=0?'QUITADO':'ABERTO'}</span></div><div class="text-xs mt-1">${a.quantitySent} un. · Custo total: ${money(a.totalValueBRL)} · Pago: ${money(paidRow)} · Saldo: <b>${money(bal)}</b></div>${bal>0?`<button class="small-btn payment-btn mt-2" data-id="${a.id}">Registrar pagamento</button>`:'<small class="text-emerald-700 block mt-2">Planilha zerada.</small>'}</div>`;}).join('')}</div></section>`;}).join('') : '<div class="empty-state col-span-full">Ainda não existem repasses para montar as planilhas.</div>'}</div>`);
-    document.getElementById('backWgIkStockBtn')?.addEventListener('click', () => { activeTab='wgIkStock'; renderWgIkStockPage(); }); document.querySelectorAll('.payment-btn').forEach(b=>b.addEventListener('click',()=>openSellerPaymentModal(b.dataset.id)));
+function renderWgIkStockPage() {
+    if(!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const shipments=wgIkShipments().filter(x=>isWGAccount()?(x.wgId===currentUser.id||x.wgId==='u_wg'):true), allocations=ikSellerAllocations();
+    const shipmentCards=shipments.length?shipments.map(x=>`<article class="ik-stock-card"><div class="ik-stock-card-top"><div><span class="ik-stock-label">Produto recebido</span><h3>${esc(x.productName)}</h3><p>${esc(x.brand||'Sem marca')}</p></div><span class="stock-status ${x.status==='CLOSED'?'closed':'open'}">${x.status==='CLOSED'?'ENCERRADO':'DISPONÍVEL'}</span></div><div class="ik-stock-metrics"><div><small>Disponível</small><b>${x.quantityRemaining} / ${x.quantitySent}</b></div><div><small>Valor unitário WG</small><b>${money(x.unitCostBRL)}</b></div><div><small>Total restante</small><b>${money(x.remainingValueBRL)}</b></div></div>${x.notes?`<p class="ik-stock-note">${esc(x.notes)}</p>`:''}</article>`).join(''):'<div class="empty-state">Nenhum produto enviado pelo WG.</div>';
+    const allocationCards=allocations.length?allocations.map(a=>{const seller=allSellers().find(x=>x.id===a.sellerId);return `<article class="ik-stock-card allocation"><div class="ik-stock-card-top"><div><span class="ik-stock-label">Repassado ao vendedor</span><h3>${esc(a.productName)}</h3><p>${esc(seller?.name||a.sellerId)}</p></div><span class="stock-status open">${a.status||'OPEN'}</span></div><div class="ik-stock-metrics"><div><small>Quantidade</small><b>${a.quantitySent}</b></div><div><small>Custo WG</small><b>${money(a.totalValueBRL)}</b></div><div><small>Preço de revenda</small><b>${money(a.salePriceBRL)} / un.</b></div></div></article>`;}).join(''):'<div class="empty-state">Nenhum repasse para vendedor.</div>';
+    appFrame('Estoque do IK','O WG cadastra produtos do catálogo e informa o valor manual. O IK só pode repassar o estoque disponível.',`<style>.ik-stock-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}.ik-stock-layout{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}.ik-stock-panel{background:rgba(255,255,255,.9);border:1px solid #e2e8f0;border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(15,23,42,.06)}.ik-panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.ik-stock-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#64748b}.ik-panel-heading h2{margin:3px 0 0;font-size:17px}.ik-count{font-size:11px;font-weight:700;color:#0f766e;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:999px;padding:4px 8px}.ik-stock-list{display:grid;gap:10px}.ik-stock-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px}.ik-stock-card-top{display:flex;justify-content:space-between;gap:10px}.ik-stock-card h3{margin:4px 0 2px;font-size:15px;color:#0f172a}.ik-stock-card p{margin:0;color:#64748b;font-size:12px}.stock-status{font-size:10px;font-weight:800;padding:4px 7px;border-radius:999px;white-space:nowrap}.stock-status.open{color:#047857;background:#d1fae5}.stock-status.closed{color:#64748b;background:#e2e8f0}.ik-stock-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.ik-stock-metrics div{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:8px}.ik-stock-metrics small{display:block;color:#64748b;font-size:10px}.ik-stock-metrics b{display:block;margin-top:2px;font-size:12px;color:#0f172a}.ik-stock-note{margin-top:10px!important;padding-top:9px;border-top:1px solid #e2e8f0}.danger-outline{color:#b91c1c!important;border:1px solid #fecaca!important;background:#fff5f5!important}@media(max-width:640px){.ik-stock-metrics{grid-template-columns:1fr}.ik-stock-panel{padding:13px}}</style><div class="ik-stock-actions">${isWGAccount()||hasAdminAccess()?'<button id="newWgShipmentBtn" class="primary-btn">+ Cadastrar produto para IK</button>':''}${isIKAccount()||hasAdminAccess()?'<button id="newIkAllocationBtn" class="primary-btn">Repassar para vendedor</button>':''}<button id="openSellerSheetsBtn" class="small-btn">Planilhas</button><button id="clearWgIkLogsBtn" class="small-btn danger-outline">Apagar log</button></div><div class="ik-stock-layout"><section class="ik-stock-panel"><div class="ik-panel-heading"><div><span class="ik-stock-label">Entrada WG → IK</span><h2>Produtos disponíveis para o IK</h2></div><span class="ik-count">${shipments.filter(x=>x.status!=='CLOSED').length} ativos</span></div><div class="ik-stock-list">${shipmentCards}</div></section><section class="ik-stock-panel"><div class="ik-panel-heading"><div><span class="ik-stock-label">Saída IK → vendedores</span><h2>Produtos repassados</h2></div><span class="ik-count">${allocations.length} registros</span></div><div class="ik-stock-list">${allocationCards}</div></section></div>`);
+    document.getElementById('newWgShipmentBtn')?.addEventListener('click',openWgShipmentModal);document.getElementById('newIkAllocationBtn')?.addEventListener('click',openIkAllocationModal);document.getElementById('openSellerSheetsBtn')?.addEventListener('click',()=>{activeTab='sellerSheets';renderSellerSheetsPage();});document.getElementById('clearWgIkLogsBtn')?.addEventListener('click',clearWgIkTransferLogs);
 }
+function openSellerPaymentSheetModal(sheetId) {
+    if (!canEditWgIk()) return showToast('Apenas WG e IK podem editar as planilhas.');
+    const sheet = sellerPaymentSheets().find(x => x.id === sheetId);
+    if (!sheet || sheet.status === 'CLOSED') return alert('Esta planilha está fechada. Crie uma nova para o vendedor.');
+    const seller = allSellers().find(x => x.id === sheet.sellerId);
+    const balance = Math.max(Number(sheet.totalValueBRL || 0) - Number(sheet.paidValueBRL || 0), 0);
+    const m = modal(`<h2>Atualizar Planilha de ${esc(seller?.name || sheet.sellerId)}</h2><p class="text-xs text-slate-500 mb-3">Produto: <b>${esc(sheet.productName)}</b> · Valor total: <b>${money(sheet.totalValueBRL)}</b><br>Já pago: <b>${money(sheet.paidValueBRL)}</b> · Saldo: <b>${money(balance)}</b></p><form id="sheetPaymentForm" class="seller-form"><label>Valor pago agora (R$)<input name="amount" type="number" min="0.01" max="${balance.toFixed(2)}" step="0.01" class="control" required></label><label>Periodicidade<select name="frequency" class="control"><option value="DAILY">Diário</option><option value="WEEKLY">Semanal</option><option value="MONTHLY">Mensal</option><option value="OTHER">Outro</option></select></label><label>Data<input name="paymentDate" type="date" value="${new Date().toISOString().slice(0,10)}" class="control" required></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Salvar pagamento</button></form>`);
+    m.querySelector('form').onsubmit = async e => {
+        e.preventDefault(); const f = new FormData(e.target); const amount = Number(f.get('amount'));
+        if (!(amount > 0) || amount > balance + 0.001) return alert(`Valor inválido. Saldo: ${money(balance)}.`);
+        const now = new Date().toISOString(); const newPaid = Number((Number(sheet.paidValueBRL || 0) + amount).toFixed(2)); const newBalance = Math.max(Number(sheet.totalValueBRL || 0) - newPaid, 0); const closed = newBalance <= 0;
+        const payment = { id: uid(), sheetId: sheet.id, sellerId: sheet.sellerId, ikId: sheet.ikId, amountBRL: Number(amount.toFixed(2)), paymentDate: f.get('paymentDate'), frequency: f.get('frequency'), notes: String(f.get('notes') || ''), createdBy: currentUser.id, createdAt: now };
+        const sheetUpdate = { paid_value_brl: newPaid, balance_brl: newBalance, status: closed ? 'CLOSED' : 'OPEN', closed_at: closed ? now : null, updated_at: now };
+        const sRes = await supabaseClient.from('seller_payment_sheets').update(sheetUpdate).eq('id', sheet.id).eq('status', 'OPEN'); if (sRes.error) return alert(`Não foi possível atualizar a planilha: ${sRes.error.message}`);
+        const pRes = await supabaseClient.from('seller_payment_ledger').insert({ id:payment.id, sheet_id:payment.sheetId, allocation_id:null, seller_id:payment.sellerId, ik_id:payment.ikId, amount_brl:payment.amountBRL, payment_date:payment.paymentDate, frequency:payment.frequency, notes:payment.notes, created_by:payment.createdBy, created_at:payment.createdAt });
+        if (pRes.error) { await supabaseClient.from('seller_payment_sheets').update({ paid_value_brl:sheet.paidValueBRL, balance_brl:balance, status:'OPEN', closed_at:null }).eq('id',sheet.id); return alert(`Não foi possível registrar o pagamento: ${pRes.error.message}`); }
+        sheet.paidValueBRL = newPaid; sheet.balanceBRL = newBalance; sheet.status = closed ? 'CLOSED' : 'OPEN'; sheet.closedAt = closed ? now : null; sheet.updatedAt = now; const payments = sellerPaymentLedger(); payments.push(payment); write('nl_seller_payment_sheets', sellerPaymentSheets()); write('nl_seller_payment_ledger', payments); m.remove(); showToast(closed ? 'Planilha quitada e fechada. Agora você pode criar uma nova.' : 'Pagamento salvo e abatido do saldo.'); renderSellerSheetsPage();
+    };
+}
+
+function openNewSellerSheetModal() {
+    if (!canEditWgIk()) return showToast('Apenas WG e IK podem criar planilhas.'); const sellers = allSellers(); if (!sellers.length) return alert('Nenhum vendedor cadastrado.');
+    const m = modal(`<h2>Nova Planilha de Acerto</h2><p class="text-xs text-slate-500 mb-3">O WG informa o produto, o vendedor responsável e o valor total. A planilha permanece aberta até a quitação completa.</p><form id="newSheetForm" class="seller-form"><label>Vendedor<select name="sellerId" class="control" required>${sellers.map(x => `<option value="${x.id}">${esc(x.name)} (@${esc(x.user)})</option>`).join('')}</select></label><label>Nome do produto<input name="productName" class="control" required></label><label>Marca<input name="brand" class="control"></label><label>Valor total devido (R$)<input name="totalValue" type="number" min="0.01" step="0.01" class="control" required></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Criar planilha</button></form>`);
+    m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target); const seller = sellers.find(x => x.id === f.get('sellerId')); const value = Number(f.get('totalValue')); if (!seller || !(value > 0)) return alert('Informe vendedor e valor total válido.'); if (activeSellerSheetFor(seller.id)) return alert('Este vendedor já possui uma planilha aberta. Finalize-a antes de criar outra.'); const now = new Date().toISOString(); const sheet = { id:uid(), wgId:'u_wg', ikId:'u_ik', sellerId:seller.id, productName:String(f.get('productName')).trim(), brand:String(f.get('brand')||'').trim(), totalValueBRL:Number(value.toFixed(2)), paidValueBRL:0, balanceBRL:Number(value.toFixed(2)), status:'OPEN', notes:String(f.get('notes')||''), createdAt:now, closedAt:null, updatedAt:now }; const {error}=await supabaseClient.from('seller_payment_sheets').insert({id:sheet.id,wg_id:sheet.wgId,ik_id:sheet.ikId,seller_id:sheet.sellerId,product_name:sheet.productName,brand:sheet.brand,total_value_brl:sheet.totalValueBRL,paid_value_brl:0,balance_brl:sheet.balanceBRL,status:'OPEN',notes:sheet.notes,created_at:now,updated_at:now}); if(error)return alert(`Não foi possível criar a planilha: ${error.message}`); const list=sellerPaymentSheets(); list.push(sheet); write('nl_seller_payment_sheets',list); m.remove(); showToast('Nova planilha criada para o vendedor.'); renderSellerSheetsPage(); };
+}
+
+async function createInitialSheetForSeller(sellerId) {
+    if (!supabaseClient || activeSellerSheetFor(sellerId)) return activeSellerSheetFor(sellerId);
+    const now=new Date().toISOString(); const sheet={id:uid(),wgId:'u_wg',ikId:'u_ik',sellerId,productName:'Planilha manual',brand:'',totalValueBRL:0,paidValueBRL:0,balanceBRL:0,status:'OPEN',notes:'Planilha criada automaticamente para o vendedor',createdAt:now,closedAt:null,updatedAt:now};
+    const {error}=await supabaseClient.from('seller_payment_sheets').insert({id:sheet.id,wg_id:sheet.wgId,ik_id:sheet.ikId,seller_id:sheet.sellerId,product_name:sheet.productName,brand:'',total_value_brl:0,paid_value_brl:0,balance_brl:0,status:'OPEN',notes:sheet.notes,created_at:now,updated_at:now});
+    if(error) throw error; const list=sellerPaymentSheets(); list.push(sheet); write('nl_seller_payment_sheets',list); return sheet;
+}
+
+async function ensureManualSheet(sellerId) {
+    let sheet=activeSellerSheetFor(sellerId);
+    if (sheet) return sheet;
+    const now=new Date().toISOString(); sheet={id:uid(),wgId:'u_wg',ikId:'u_ik',sellerId,productName:'Planilha manual',brand:'',totalValueBRL:0,paidValueBRL:0,balanceBRL:0,status:'OPEN',notes:'Planilha com 20 linhas editáveis',createdAt:now,closedAt:null,updatedAt:now};
+    const {error}=await supabaseClient.from('seller_payment_sheets').insert({id:sheet.id,wg_id:sheet.wgId,ik_id:sheet.ikId,seller_id:sheet.sellerId,product_name:sheet.productName,brand:'',total_value_brl:0,paid_value_brl:0,balance_brl:0,status:'OPEN',notes:sheet.notes,created_at:now,updated_at:now});
+    if(error) throw error; const list=sellerPaymentSheets(); list.push(sheet); write('nl_seller_payment_sheets',list); return sheet;
+}
+
+async function saveManualSheetTotal(sellerId,card) {
+    if(!canEditWgIk()) return showToast('Apenas WG e IK podem editar esta planilha.');
+    const total=Number(card.querySelector('[data-sheet-total]')?.value||0); const paid=Number(card.querySelector('[data-sheet-paid]')?.value||0);
+    if(!(total>0) || paid<0 || paid>total) return alert('Informe o valor total da planilha e um valor pago entre zero e o total.');
+    const sheet=await ensureManualSheet(sellerId); const now=new Date().toISOString(); const balance=Number(Math.max(total-paid,0).toFixed(2)); const {error}=await supabaseClient.from('seller_payment_sheets').update({total_value_brl:Number(total.toFixed(2)),paid_value_brl:Number(paid.toFixed(2)),balance_brl:balance,status:'OPEN',closed_at:null,updated_at:now}).eq('id',sheet.id); if(error)return alert(`Não foi possível salvar o total da planilha: ${error.message}`);
+    sheet.totalValueBRL=Number(total.toFixed(2)); sheet.paidValueBRL=Number(paid.toFixed(2)); sheet.balanceBRL=balance; sheet.updatedAt=now; write('nl_seller_payment_sheets',sellerPaymentSheets()); showToast('Total geral e pagamento acumulado salvos.'); renderSellerSheetsPage();
+}
+
+async function saveManualProductLine(sellerId,rowNumber,card) {
+    if(!canEditWgIk()) return showToast('Apenas WG e IK podem editar esta planilha.');
+    const productSelect=card.querySelector(`[data-product-line="${sellerId}-${rowNumber}"]`); const productName=productSelect?.value||''; const brand=productSelect?.selectedOptions?.[0]?.dataset.brand||''; const notes=(card.querySelector(`[data-notes-line="${sellerId}-${rowNumber}"]`)?.value||'').trim(); const quantity=Number(card.querySelector(`[data-quantity-line="${sellerId}-${rowNumber}"]`)?.value||0); const unitPrice=Number(card.querySelector(`[data-unit-line="${sellerId}-${rowNumber}"]`)?.value||0); const lineTotal=Number((quantity*unitPrice).toFixed(2));
+    if(!productName) return alert('Selecione um produto da lista.'); if(!Number.isInteger(quantity)||quantity<1) return alert('Informe uma quantidade inteira maior que zero.'); if(!(unitPrice>=0)) return alert('Informe um valor unitário válido.');
+    const sheet=await ensureManualSheet(sellerId); const existing=sellerPaymentSheetLines().find(x=>x.sheetId===sheet.id&&Number(x.rowNumber)===rowNumber); const now=new Date().toISOString(); const line={id:existing?.id||uid(),sheetId:sheet.id,sellerId,rowNumber,productName,brand,quantity,unitPriceBRL:Number(unitPrice.toFixed(2)),lineTotalBRL:lineTotal,totalValueBRL:lineTotal,paidValueBRL:0,balanceBRL:lineTotal,status:'OPEN',notes,updatedBy:currentUser.id,createdAt:existing?.createdAt||now,updatedAt:now}; const {error}=await supabaseClient.from('seller_payment_sheet_lines').upsert({id:line.id,sheet_id:line.sheetId,seller_id:line.sellerId,row_number:line.rowNumber,product_name:line.productName,brand:line.brand,quantity:line.quantity,unit_price_brl:line.unitPriceBRL,line_total_brl:line.lineTotalBRL,total_value_brl:line.lineTotalBRL,paid_value_brl:0,balance_brl:line.lineTotalBRL,status:'OPEN',notes:line.notes,updated_by:line.updatedBy,created_at:line.createdAt,updated_at:now}); if(error)return alert(`Não foi possível salvar o produto: ${error.message}`);
+    const rows=sellerPaymentSheetLines(); const idx=rows.findIndex(x=>x.id===line.id); if(idx>=0)rows[idx]=line;else rows.push(line); write('nl_seller_payment_sheet_lines',rows); const filled=rows.filter(x=>x.sheetId===sheet.id&&x.productName&&Number(x.lineTotalBRL||x.totalValueBRL)>0); await supabaseClient.from('seller_payment_sheets').update({total_value_brl:filled.reduce((n,x)=>n+Number(x.lineTotalBRL||x.totalValueBRL||0),0),paid_value_brl:filled.reduce((n,x)=>n+Number(x.paidValueBRL||0),0),balance_brl:filled.reduce((n,x)=>n+Number(x.lineTotalBRL||x.totalValueBRL||0),0),updated_at:now}).eq('id',sheet.id); showToast('Produto e total da linha salvos.'); renderSellerSheetsPage();
+}
+
+async function resetSellerSheet(sellerId) {
+    if(!canEditWgIk()) return showToast('Apenas WG e IK podem fechar a planilha.');
+    const sheet=activeSellerSheetFor(sellerId); if(!sheet) return alert('Nenhuma planilha aberta para este vendedor.'); const total=Number(sheet.totalValueBRL||0), paid=Number(sheet.paidValueBRL||0); if(!(total>0) || paid<total) return alert('Só é possível zerar a planilha depois que o total estiver totalmente pago.');
+    const now=new Date().toISOString(); const {error}=await supabaseClient.from('seller_payment_sheets').update({status:'CLOSED',closed_at:now,balance_brl:0,updated_at:now}).eq('id',sheet.id).eq('status','OPEN'); if(error)return alert(`Não foi possível fechar a planilha: ${error.message}`); sheet.status='CLOSED';sheet.closedAt=now;sheet.balanceBRL=0;sheet.updatedAt=now; write('nl_seller_payment_sheets',sellerPaymentSheets()); try { await createInitialSheetForSeller(sellerId); } catch(e) { console.error('Planilha fechada, mas a nova não foi criada:',e); } showToast('Planilha zerada e nova planilha criada para o vendedor.'); renderSellerSheetsPage();
+}
+
+function addManualSheetRow(sellerId) { if(!canEditWgIk()) return showToast('Apenas WG e IK podem editar esta planilha.'); window.manualSheetExtraRows=window.manualSheetExtraRows||{}; window.manualSheetExtraRows[sellerId]=(window.manualSheetExtraRows[sellerId]||0)+1; renderSellerSheetsPage(); }
+
+function recalcSheetLineTotal(row) { const q=Number(row.querySelector('[data-calc-quantity]')?.value||0); const u=Number(row.querySelector('[data-calc-unit]')?.value||0); const total=Number((q*u).toFixed(2)); const target=row.querySelector('[data-line-total]'); if(target)target.textContent=total?money(total):'—'; }
+
+function renderSellerSheetsPage() {
+    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.');
+    const sellers=allSellers(), sheets=sellerPaymentSheets(), lines=sellerPaymentSheetLines();
+    window.manualSheetExtraRows=window.manualSheetExtraRows||{};
+    const catalogItems=[...new Map(systemCatalog().map(([name,brand])=>[`${name}::${brand}`,{name,brand}])).values()];
+    const cards=sellers.map(seller=>{
+        const sheet=activeSellerSheetFor(seller.id);
+        const saved=lines.filter(x=>x.sheetId===sheet?.id).sort((a,b)=>Number(a.rowNumber)-Number(b.rowNumber));
+        const extra=window.manualSheetExtraRows[seller.id]||0;
+        const rows=Array.from({length:Math.max(1,saved.length+extra+1)},(_,i)=>saved.find(x=>Number(x.rowNumber)===i+1)||{rowNumber:i+1,productName:'',quantity:1,unitPriceBRL:0,lineTotalBRL:0,notes:''});
+        const total=Number(sheet?.totalValueBRL||0), paid=Number(sheet?.paidValueBRL||0), balance=Math.max(total-paid,0);
+        const productRows=rows.map(x=>{
+            const options='<option value="">Selecionar produto</option>'+catalogItems.map(item=>`<option value="${esc(item.name)}" data-brand="${esc(item.brand)}" ${item.name===x.productName?'selected':''}>${esc(item.name)}${item.brand?` — ${esc(item.brand)}`:''}</option>`).join('');
+            return `<tr data-sheet-row="${seller.id}-${x.rowNumber}"><td class="sheet-row-number">${x.rowNumber}</td><td><select class="control sheet-product-select" data-product-line="${seller.id}-${x.rowNumber}">${options}</select></td><td><input class="control sheet-quantity sheet-calc" data-calc-quantity data-quantity-line="${seller.id}-${x.rowNumber}" type="number" min="1" step="1" value="${Number(x.quantity||1)}"></td><td><input class="control sheet-unit sheet-calc" data-calc-unit data-unit-line="${seller.id}-${x.rowNumber}" type="number" min="0" step="0.01" value="${Number(x.unitPriceBRL||0)||''}" placeholder="0,00"></td><td class="sheet-line-total" data-line-total>${x.lineTotalBRL?money(x.lineTotalBRL):'—'}</td><td><input class="control sheet-note" data-notes-line="${seller.id}-${x.rowNumber}" value="${esc(x.notes||'')}" placeholder="Observação"></td><td><button class="small-btn save-product-line" data-seller="${seller.id}" data-row="${x.rowNumber}">Salvar</button></td></tr>`;
+        }).join('');
+        return `<section class="panel glass-panel p-4 sheet-card" data-seller-card="${seller.id}">
+            <div class="sheet-card-header"><div><h2 class="m-0">${esc(seller.name)}</h2><p class="text-xs text-slate-500 mt-1">Planilha compartilhada entre WG e IK</p></div><div class="sheet-summary"><div><span>Valor total</span><strong>${money(total)}</strong></div><div><span>Valor pago</span><strong class="text-emerald-700">${money(paid)}</strong></div></div></div>
+            <div class="sheet-payment-bar"><label>Total pago acumulado (R$)<input data-sheet-paid class="control" type="number" min="0" max="${total.toFixed(2)}" step="0.01" value="${paid||''}" placeholder="0,00"></label><button class="primary-btn save-sheet-total" data-seller="${seller.id}">Salvar pagamento</button>${total>0&&balance<=0?`<button class="small-btn reset-sheet-btn" data-seller="${seller.id}">Zerar e começar outra</button>`:''}</div>
+            <div class="sheet-table-wrap"><table class="sheet-table"><thead><tr><th>#</th><th>Produto</th><th>Qtd.</th><th>Valor unitário</th><th>Total da linha</th><th>Observação</th><th></th></tr></thead><tbody>${productRows}</tbody></table></div>
+            <button class="small-btn add-sheet-row mt-3" data-seller="${seller.id}">+ Adicionar linha</button>
+        </section>`;
+    }).join('');
+    appFrame('Planilhas dos Vendedores','Escolha o produto, informe quantidade e valor unitário. O total geral é a soma das linhas; o pagamento abate somente o total da planilha.',`<style>.sheet-cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:20px}.sheet-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px!important;box-shadow:0 8px 24px rgba(15,23,42,.06)}.sheet-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:15px;border-bottom:1px solid #e2e8f0}.sheet-card-header h2{font-size:18px}.sheet-summary{display:flex;gap:12px;text-align:right}.sheet-summary span{display:block;color:#64748b;font-size:10px}.sheet-summary strong{display:block;color:#0f172a;font-size:13px;margin-top:3px}.sheet-payment-bar{display:flex;align-items:end;flex-wrap:wrap;gap:10px;padding:15px 0}.sheet-payment-bar label{font-size:11px;font-weight:700;color:#475569}.sheet-payment-bar input{display:block;width:170px;margin-top:5px}.sheet-table-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px}.sheet-table{width:100%;min-width:720px;border-collapse:collapse;font-size:11px}.sheet-table th{padding:10px 8px;background:#f8fafc;color:#64748b;text-transform:uppercase;font-size:9px;letter-spacing:.04em}.sheet-table td{padding:8px;border-top:1px solid #f1f5f9;vertical-align:middle}.sheet-table .control{font-size:11px;padding:7px 8px}.sheet-row-number{width:25px;color:#94a3b8;font-weight:800}.sheet-line-total{font-weight:800;color:#334155;white-space:nowrap}.sheet-card .primary-btn,.sheet-card .small-btn{white-space:nowrap}@media(max-width:640px){.sheet-cards-grid{grid-template-columns:1fr}.sheet-card-header{display:block}.sheet-summary{justify-content:space-between;text-align:left;margin-top:12px}.sheet-payment-bar{display:block}.sheet-payment-bar label{display:block;margin-bottom:9px}.sheet-payment-bar input{width:100%}.sheet-payment-bar button{margin:4px 4px 0 0}}</style><div class="flex flex-wrap gap-2 mb-5"><button id="backWgIkStockBtn" class="small-btn">Voltar ao Estoque WG ↔ IK</button></div><div class="sheet-cards-grid">${cards}</div>`);
+    document.getElementById('backWgIkStockBtn')?.addEventListener('click',()=>{activeTab='wgIkStock';renderWgIkStockPage();});
+    document.querySelectorAll('.save-sheet-total').forEach(btn=>btn.addEventListener('click',()=>saveManualSheetTotal(btn.dataset.seller,btn.closest('[data-seller-card]'))));
+    document.querySelectorAll('.save-product-line').forEach(btn=>btn.addEventListener('click',()=>saveManualProductLine(btn.dataset.seller,Number(btn.dataset.row),btn.closest('[data-seller-card]'))));
+    document.querySelectorAll('.add-sheet-row').forEach(btn=>btn.addEventListener('click',()=>addManualSheetRow(btn.dataset.seller)));
+    document.querySelectorAll('.reset-sheet-btn').forEach(btn=>btn.addEventListener('click',()=>resetSellerSheet(btn.dataset.seller)));
+    document.querySelectorAll('[data-sheet-row]').forEach(row=>row.querySelectorAll('.sheet-calc').forEach(input=>input.addEventListener('input',()=>recalcSheetLineTotal(row))));
+}
+
 
 // ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
 async function adminRegisterSellerSale(productId) {
@@ -3818,11 +3964,22 @@ function setupSupabaseRealtimeSync() {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'wg_ik_shipments' }, async () => {
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'wg_ik_shipments' }, async (payload) => {
+            const before=wgIkShipments().find(x=>x.id===payload?.new?.id);
+            const changed=before&&payload?.new&&Number(before.unit_cost_brl??before.unitCostBRL)!==Number(payload.new.unit_cost_brl);
             await fetchSupabaseData();
+            if(isIKAccount()&&changed) showToast(`WG atualizou o valor de ${payload.new.product_name||'um produto'}. O novo valor já está ativo.`);
             refreshCurrentScreen();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'ik_seller_allocations' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheet_lines' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheets' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
