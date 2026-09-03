@@ -216,7 +216,10 @@ let dbCache = {
     sales: [],
     orders: [],
     warehouse_inventory: [],
-    transfers: []
+    transfers: [],
+    wg_ik_shipments: [],
+    ik_seller_allocations: [],
+    seller_payment_ledger: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -309,6 +312,33 @@ async function pushAllToSupabase() {
             })));
         }
 
+        if (dbCache.wg_ik_shipments.length) {
+            await supabaseClient.from('wg_ik_shipments').upsert(dbCache.wg_ik_shipments.map(x => ({
+                id: x.id, wg_id: x.wgId, ik_id: x.ikId, product_name: x.productName, brand: x.brand,
+                quantity_sent: Number(x.quantitySent || 0), quantity_remaining: Number(x.quantityRemaining || 0),
+                unit_cost_brl: Number(x.unitCostBRL || 0), total_value_brl: Number(x.totalValueBRL || 0),
+                remaining_value_brl: Number(x.remainingValueBRL || 0), status: x.status || 'OPEN', notes: x.notes || null,
+                created_at: x.createdAt, updated_at: x.updatedAt
+            })));
+        }
+        if (dbCache.ik_seller_allocations.length) {
+            await supabaseClient.from('ik_seller_allocations').upsert(dbCache.ik_seller_allocations.map(x => ({
+                id: x.id, shipment_id: x.shipmentId || null, ik_id: x.ikId, seller_id: x.sellerId,
+                product_name: x.productName, brand: x.brand, quantity_sent: Number(x.quantitySent || 0),
+                quantity_remaining: Number(x.quantityRemaining || 0), unit_cost_brl: Number(x.unitCostBRL || 0),
+                sale_price_brl: Number(x.salePriceBRL || 0), total_value_brl: Number(x.totalValueBRL || 0),
+                remaining_value_brl: Number(x.remainingValueBRL || 0), status: x.status || 'OPEN',
+                created_at: x.createdAt, updated_at: x.updatedAt
+            })));
+        }
+        if (dbCache.seller_payment_ledger.length) {
+            await supabaseClient.from('seller_payment_ledger').upsert(dbCache.seller_payment_ledger.map(x => ({
+                id: x.id, allocation_id: x.allocationId, seller_id: x.sellerId, ik_id: x.ikId,
+                amount_brl: Number(x.amountBRL || 0), payment_date: x.paymentDate, frequency: x.frequency || 'DAILY',
+                notes: x.notes || null, created_by: x.createdBy, created_at: x.createdAt
+            })));
+        }
+
         if (dbCache.motoboys.length) {
             await supabaseClient.from('motoboys').upsert(dbCache.motoboys.map(m => ({
                 id: m.id,
@@ -331,7 +361,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -339,7 +369,10 @@ async function fetchSupabaseData() {
             supabaseClient.from('sales').select('*'),
             supabaseClient.from('orders').select('*'),
             supabaseClient.from('warehouse_inventory').select('*'),
-            supabaseClient.from('transfers').select('*')
+            supabaseClient.from('transfers').select('*'),
+            supabaseClient.from('wg_ik_shipments').select('*'),
+            supabaseClient.from('ik_seller_allocations').select('*'),
+            supabaseClient.from('seller_payment_ledger').select('*')
         ]);
 
         if (uRes.data) {
@@ -357,6 +390,26 @@ async function fetchSupabaseData() {
         if (wRes.data) {
             dbCache.warehouses = wRes.data;
             localStorage.setItem('nl_warehouses', JSON.stringify(dbCache.warehouses));
+        }
+
+        if (wsRes?.data) {
+            dbCache.wg_ik_shipments = wsRes.data.map(x => ({ ...x, wgId: x.wg_id, ikId: x.ik_id,
+                productName: x.product_name, quantitySent: Number(x.quantity_sent || 0), quantityRemaining: Number(x.quantity_remaining || 0),
+                unitCostBRL: Number(x.unit_cost_brl || 0), totalValueBRL: Number(x.total_value_brl || 0), remainingValueBRL: Number(x.remaining_value_brl || 0),
+                createdAt: x.created_at, updatedAt: x.updated_at }));
+            localStorage.setItem('nl_wg_ik_shipments', JSON.stringify(dbCache.wg_ik_shipments));
+        }
+        if (iaRes?.data) {
+            dbCache.ik_seller_allocations = iaRes.data.map(x => ({ ...x, shipmentId: x.shipment_id, ikId: x.ik_id, sellerId: x.seller_id,
+                productName: x.product_name, quantitySent: Number(x.quantity_sent || 0), quantityRemaining: Number(x.quantity_remaining || 0),
+                unitCostBRL: Number(x.unit_cost_brl || 0), salePriceBRL: Number(x.sale_price_brl || 0), totalValueBRL: Number(x.total_value_brl || 0), remainingValueBRL: Number(x.remaining_value_brl || 0),
+                createdAt: x.created_at, updatedAt: x.updated_at }));
+            localStorage.setItem('nl_ik_seller_allocations', JSON.stringify(dbCache.ik_seller_allocations));
+        }
+        if (payRes?.data) {
+            dbCache.seller_payment_ledger = payRes.data.map(x => ({ ...x, allocationId: x.allocation_id, sellerId: x.seller_id, ikId: x.ik_id,
+                amountBRL: Number(x.amount_brl || 0), paymentDate: x.payment_date, createdBy: x.created_by, createdAt: x.created_at }));
+            localStorage.setItem('nl_seller_payment_ledger', JSON.stringify(dbCache.seller_payment_ledger));
         }
 
         if (mRes.data) {
@@ -453,6 +506,19 @@ function orders() { return dbCache.orders.length ? dbCache.orders : readStorage(
 function warehouses() { return dbCache.warehouses.length ? dbCache.warehouses : readStorage('nl_warehouses', []); }
 function warehouseInventory() { return dbCache.warehouse_inventory.length ? dbCache.warehouse_inventory : readStorage('nl_warehouse_inventory', []); }
 function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transfers : readStorage('nl_transfers', []); }
+function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik_shipments : readStorage('nl_wg_ik_shipments', []); }
+function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
+function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? dbCache.seller_payment_ledger : readStorage('nl_seller_payment_ledger', []); }
+function isWGAccount(u = currentUser) { return u?.id === 'u_wg' || String(u?.user || u?.username || '').toLowerCase() === 'wg'; }
+function isIKAccount(u = currentUser) { return u?.id === 'ik' || u?.id === 'u_ik' || String(u?.user || u?.username || '').toLowerCase() === 'ik'; }
+function canEditWgIk(u = currentUser) { return isWGAccount(u) || isIKAccount(u) || hasAdminAccess(u); }
+function allocationPaidValue(allocationId) { return sellerPaymentLedger().filter(p => p.allocationId === allocationId).reduce((sum, p) => sum + Number(p.amountBRL || 0), 0); }
+function allocationBalance(a) { return Math.max(Number(a.totalValueBRL || 0) - allocationPaidValue(a.id), 0); }
+function writeWgIkCaches() {
+    localStorage.setItem('nl_wg_ik_shipments', JSON.stringify(wgIkShipments()));
+    localStorage.setItem('nl_ik_seller_allocations', JSON.stringify(ikSellerAllocations()));
+    localStorage.setItem('nl_seller_payment_ledger', JSON.stringify(sellerPaymentLedger()));
+}
 function systemCatalog() { return [...catalog, ...readStorage('atlasCustomCatalog', []).map(x => [x.name, x.brand])]; }
 
 // PERSISTÊNCIA EM MEMÓRIA E LOCALSTORAGE
@@ -466,6 +532,9 @@ function write(key, val) {
     if (key === 'atlasOrders') dbCache.orders = val;
     if (key === 'nl_warehouse_inventory') dbCache.warehouse_inventory = val;
     if (key === 'nl_transfers') dbCache.transfers = val;
+    if (key === 'nl_wg_ik_shipments') dbCache.wg_ik_shipments = val;
+    if (key === 'nl_ik_seller_allocations') dbCache.ik_seller_allocations = val;
+    if (key === 'nl_seller_payment_ledger') dbCache.seller_payment_ledger = val;
 }
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -844,7 +913,7 @@ function refreshCurrentScreen() {
         renderStockPanel();
     } else if (hasAdminAccess(currentUser)) {
         renderAdmin();
-    } else if (hasSupervisorAccess(currentUser)) {
+    } else if (hasSupervisorAccess(currentUser) || isWGAccount(currentUser)) {
         renderSupervisor();
     } else {
         renderSeller();
@@ -880,6 +949,7 @@ function navContent() {
         ${isAdmin ? `
             <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkStock' ? 'active' : ''}" data-admin-tab="wgIkStock">${icons.warehouse} <span>Estoque WG ↔ IK</span></button><button class="side-link ${activeTab === 'sellerSheets' ? 'active' : ''}" data-admin-tab="sellerSheets">${icons.chart} <span>Planilhas de Vendedores</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
@@ -900,6 +970,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkStock' ? 'active' : ''}" data-tab="wgIkStock">${icons.warehouse} <span>Estoque WG ↔ IK</span></button><button class="side-link ${activeTab === 'sellerSheets' ? 'active' : ''}" data-tab="sellerSheets">${icons.chart} <span>Planilhas de Vendedores</span></button>` : ''}
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
         `}
 
@@ -1203,6 +1274,8 @@ function renderSupervisor() {
     if (activeTab === 'archived') return renderArchivedPage();
     if (activeTab === 'catalog') return renderCatalogPage();
     if (activeTab === 'products') return renderProductsPage();
+    if (activeTab === 'wgIkStock') return renderWgIkStockPage();
+    if (activeTab === 'sellerSheets') return renderSellerSheetsPage();
     if (activeTab === 'reports') return renderReportsPage();
     renderSummary();
 }
@@ -1217,6 +1290,8 @@ function renderAdmin() {
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'catalog') return renderCatalogPage();
     if (activeTab === 'products') return renderProductsPage();
+    if (activeTab === 'wgIkStock') return renderWgIkStockPage();
+    if (activeTab === 'sellerSheets') return renderSellerSheetsPage();
     if (activeTab === 'backup') return renderBackupPage();
     if (activeTab === 'adminReports') return renderReportsPage();
     renderAdminHome();
@@ -2161,6 +2236,9 @@ function renderBackupPage() {
                     warehouses: warehouses(),
                     warehouseInventory: warehouseInventory(),
                     transfers: warehouseTransfers(),
+                    wgIkShipments: wgIkShipments(),
+                    ikSellerAllocations: ikSellerAllocations(),
+                    sellerPaymentLedger: sellerPaymentLedger(),
                     products: products(),
                     sales: sales(),
                     orders: orders(),
@@ -2201,6 +2279,9 @@ function renderBackupPage() {
                         write('nl_warehouses', data.warehouses || []);
                         write('nl_warehouse_inventory', data.warehouseInventory || []);
                         write('nl_transfers', data.transfers || []);
+                        write('nl_wg_ik_shipments', data.wgIkShipments || []);
+                        write('nl_ik_seller_allocations', data.ikSellerAllocations || []);
+                        write('nl_seller_payment_ledger', data.sellerPaymentLedger || []);
                         write('atlasProducts', data.products || []);
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
@@ -3572,6 +3653,66 @@ function deleteSellerStockProduct(productId) {
     });
 }
 
+
+// OPERAÇÃO WG → IK → VENDEDORES (tabelas normalizadas no Supabase)
+function openWgShipmentModal() {
+    if (!canEditWgIk() || (!isWGAccount() && !isIKAccount() && !hasAdminAccess())) return showToast('Apenas WG ou IK podem registrar estoque.');
+    const m = modal(`<h2>WG: Enviar Estoque para IK</h2><p class="text-xs text-slate-500 mb-3">O valor informado é o custo do produto enviado ao IK.</p><form id="wgShipmentForm" class="seller-form">
+        <label>Produto<input name="productName" class="control" required></label><label>Marca<input name="brand" class="control"></label>
+        <label>Quantidade<input name="quantity" type="number" min="1" class="control" required></label><label>Valor unitário para IK (R$)<input name="unitCost" type="number" min="0" step="0.01" class="control" required></label>
+        <label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Registrar envio para IK</button></form>`);
+    m.querySelector('form').onsubmit = async e => {
+        e.preventDefault(); const f = new FormData(e.target); const qty = Number(f.get('quantity')); const unit = Number(f.get('unitCost'));
+        if (!Number.isInteger(qty) || qty < 1 || unit < 0) return alert('Informe quantidade inteira e valor válido.');
+        const now = new Date().toISOString(); const item = { id: uid(), wgId: 'u_wg', ikId: 'u_ik', productName: String(f.get('productName')).trim(), brand: String(f.get('brand') || '').trim(), quantitySent: qty, quantityRemaining: qty, unitCostBRL: unit, totalValueBRL: qty * unit, remainingValueBRL: qty * unit, status: 'OPEN', notes: String(f.get('notes') || '').trim(), createdAt: now, updatedAt: now };
+        if (!item.productName) return alert('Informe o nome do produto.');
+        const { error } = await supabaseClient.from('wg_ik_shipments').insert({ id:item.id, wg_id:item.wgId, ik_id:item.ikId, product_name:item.productName, brand:item.brand, quantity_sent:item.quantitySent, quantity_remaining:item.quantityRemaining, unit_cost_brl:item.unitCostBRL, total_value_brl:item.totalValueBRL, remaining_value_brl:item.remainingValueBRL, status:item.status, notes:item.notes, created_at:now, updated_at:now });
+        if (error) return alert(`Não foi possível registrar: ${error.message}`);
+        const list = wgIkShipments(); list.push(item); write('nl_wg_ik_shipments', list); m.remove(); showToast('Estoque enviado pelo WG e disponível para o IK.'); renderWgIkStockPage();
+    };
+}
+
+function openIkAllocationModal() {
+    if (!isIKAccount() && !hasAdminAccess()) return showToast('Somente IK pode repassar estoque aos vendedores.');
+    const available = wgIkShipments().filter(x => Number(x.quantityRemaining) > 0 && x.status !== 'CLOSED'); const sellers = allSellers();
+    if (!available.length) return alert('Não há estoque recebido do WG disponível para repasse.'); if (!sellers.length) return alert('Nenhum vendedor cadastrado.');
+    const m = modal(`<h2>IK: Repassar Estoque para Vendedor</h2><p class="text-xs text-slate-500 mb-3">Só é permitido repassar o saldo cadastrado pelo WG.</p><form id="ikAllocationForm" class="seller-form">
+        <label>Lote recebido do WG<select name="shipmentId" id="ikShipmentSelect" class="control" required>${available.map(x => `<option value="${x.id}" data-max="${x.quantityRemaining}" data-cost="${x.unitCostBRL}" data-name="${esc(x.productName)}" data-brand="${esc(x.brand)}">${esc(x.productName)} (${esc(x.brand)}) — ${x.quantityRemaining} un. · ${money(x.unitCostBRL)}/un.</option>`).join('')}</select></label>
+        <label>Vendedor<select name="sellerId" class="control" required>${sellers.map(x => `<option value="${x.id}">${esc(x.name)} (@${esc(x.user)})</option>`).join('')}</select></label>
+        <label>Quantidade<input name="quantity" type="number" min="1" class="control" required></label><label>Preço de revenda para este vendedor (R$)<input name="salePrice" type="number" min="0" step="0.01" class="control" required></label>
+        <button class="primary-btn w-full mt-3" type="submit">Enviar ao Vendedor</button></form>`);
+    const select = m.querySelector('#ikShipmentSelect'); const qtyInput = m.querySelector('[name="quantity"]'); const syncMax = () => { qtyInput.max = select.selectedOptions[0]?.dataset.max || 0; }; select.onchange = syncMax; syncMax();
+    m.querySelector('form').onsubmit = async e => {
+        e.preventDefault(); const f = new FormData(e.target); const shipment = available.find(x => x.id === f.get('shipmentId')); const seller = sellers.find(x => x.id === f.get('sellerId')); const qty = Number(f.get('quantity')); const salePrice = Number(f.get('salePrice'));
+        if (!shipment || !seller || !Number.isInteger(qty) || qty < 1 || qty > shipment.quantityRemaining || salePrice < 0) return alert('Dados inválidos ou quantidade superior ao saldo do WG.');
+        const now = new Date().toISOString(); const allocation = { id: uid(), shipmentId: shipment.id, ikId: 'u_ik', sellerId: seller.id, productName: shipment.productName, brand: shipment.brand, quantitySent: qty, quantityRemaining: qty, unitCostBRL: Number(shipment.unitCostBRL), salePriceBRL: salePrice, totalValueBRL: qty * Number(shipment.unitCostBRL), remainingValueBRL: qty * Number(shipment.unitCostBRL), status: 'OPEN', createdAt: now, updatedAt: now };
+        const newShipmentQty = Number(shipment.quantityRemaining) - qty; const shipmentStatus = newShipmentQty === 0 ? 'CLOSED' : 'PARTIAL';
+        const sRes = await supabaseClient.from('wg_ik_shipments').update({ quantity_remaining:newShipmentQty, remaining_value_brl:newShipmentQty * Number(shipment.unitCostBRL), status:shipmentStatus, updated_at:now }).eq('id', shipment.id).eq('quantity_remaining', shipment.quantityRemaining); if (sRes.error || !sRes.data?.length) return alert('O lote mudou. Atualize a tela e tente novamente.');
+        const aRes = await supabaseClient.from('ik_seller_allocations').insert({ id:allocation.id, shipment_id:allocation.shipmentId, ik_id:allocation.ikId, seller_id:allocation.sellerId, product_name:allocation.productName, brand:allocation.brand, quantity_sent:allocation.quantitySent, quantity_remaining:allocation.quantityRemaining, unit_cost_brl:allocation.unitCostBRL, sale_price_brl:allocation.salePriceBRL, total_value_brl:allocation.totalValueBRL, remaining_value_brl:allocation.remainingValueBRL, status:allocation.status, created_at:now, updated_at:now });
+        if (aRes.error) { await supabaseClient.from('wg_ik_shipments').update({quantity_remaining:shipment.quantityRemaining, remaining_value_brl:shipment.remainingValueBRL, status:shipment.status, updated_at:shipment.updatedAt}).eq('id', shipment.id); return alert(`Não foi possível criar o repasse: ${aRes.error.message}`); }
+        const existing = products().find(p => p.sellerId === seller.id && p.name === allocation.productName && p.brand === allocation.brand); const productId = existing?.id || uid(); const stock = Number(existing?.stock || 0) + qty; const pData = {id:productId, seller_id:seller.id, name:allocation.productName, brand:allocation.brand, price:salePrice, stock}; const pRes = existing ? await supabaseClient.from('seller_products').update({price:salePrice, stock}).eq('id',productId) : await supabaseClient.from('seller_products').insert(pData); if (pRes.error) return alert(`Repasse criado, mas o estoque do vendedor falhou: ${pRes.error.message}`);
+        shipment.quantityRemaining = newShipmentQty; shipment.remainingValueBRL = newShipmentQty * Number(shipment.unitCostBRL); shipment.status = shipmentStatus; shipment.updatedAt = now; const sl = ikSellerAllocations(); sl.push(allocation); const pl = products(); if (existing) existing.stock = stock, existing.price = salePrice; else pl.push({id:productId,sellerId:seller.id,name:allocation.productName,brand:allocation.brand,price:salePrice,stock}); write('nl_wg_ik_shipments', wgIkShipments()); write('nl_ik_seller_allocations', sl); write('atlasProducts', pl); m.remove(); showToast(`Estoque enviado para ${seller.name}.`); renderWgIkStockPage();
+    };
+}
+
+function openSellerPaymentModal(allocationId) {
+    if (!canEditWgIk()) return showToast('Apenas WG e IK podem registrar pagamentos.'); const a = ikSellerAllocations().find(x => x.id === allocationId); const seller = allSellers().find(x => x.id === a?.sellerId); if (!a || !seller) return alert('Planilha não encontrada.'); const balance = allocationBalance(a); if (balance <= 0) return showToast('Esta planilha já está quitada.');
+    const m = modal(`<h2>Registrar Pagamento</h2><p class="text-xs text-slate-500 mb-3">${esc(seller.name)} · ${esc(a.productName)}<br>Saldo atual: <b>${money(balance)}</b></p><form id="sellerPaymentForm" class="seller-form"><label>Valor pago (R$)<input name="amount" type="number" min="0.01" max="${balance.toFixed(2)}" step="0.01" class="control" required></label><label>Periodicidade<select name="frequency" class="control"><option value="DAILY">Diário</option><option value="WEEKLY">Semanal</option><option value="MONTHLY">Mensal</option><option value="OTHER">Outro</option></select></label><label>Data<input name="paymentDate" type="date" value="${new Date().toISOString().slice(0,10)}" class="control" required></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Registrar e Abater Saldo</button></form>`);
+    m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target); const amount = Number(f.get('amount')); if (!(amount > 0) || amount > balance + 0.001) return alert(`Valor inválido. Saldo disponível: ${money(balance)}.`); const p = {id:uid(),allocationId:a.id,sellerId:a.sellerId,ikId:a.ikId,amountBRL:Number(amount.toFixed(2)),paymentDate:f.get('paymentDate'),frequency:f.get('frequency'),notes:String(f.get('notes')||''),createdBy:currentUser.id,createdAt:new Date().toISOString()}; const {error}=await supabaseClient.from('seller_payment_ledger').insert({id:p.id,allocation_id:p.allocationId,seller_id:p.sellerId,ik_id:p.ikId,amount_brl:p.amountBRL,payment_date:p.paymentDate,frequency:p.frequency,notes:p.notes,created_by:p.createdBy,created_at:p.createdAt}); if(error)return alert(`Não foi possível registrar o pagamento: ${error.message}`); const list=sellerPaymentLedger(); list.push(p); write('nl_seller_payment_ledger',list); m.remove(); showToast('Pagamento registrado e abatido da planilha.'); renderSellerSheetsPage(); };
+}
+
+function renderWgIkStockPage() {
+    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const shipments = wgIkShipments().filter(x => isWGAccount() ? x.wgId === currentUser.id || x.wgId === 'u_wg' : true); const allocations = ikSellerAllocations();
+    appFrame('Estoque WG ↔ IK', 'Estoque recebido do WG, valores de custo e repasses autorizados para vendedores.', `<div class="flex flex-wrap gap-2 mb-5">${isWGAccount() || hasAdminAccess() ? '<button id="newWgShipmentBtn" class="primary-btn">+ WG Enviar Estoque</button>' : ''}${isIKAccount() || hasAdminAccess() ? '<button id="newIkAllocationBtn" class="primary-btn">Enviar Estoque para Vendedor</button>' : ''}<button id="openSellerSheetsBtn" class="small-btn">Planilhas de Vendedores</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5"><section class="panel glass-panel p-4"><h2 class="mb-3">${isWGAccount() ? 'Meus envios ao IK' : 'Estoque recebido do WG para o IK'}</h2><div class="space-y-3">${shipments.length ? shipments.map(x => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200"><div class="flex justify-between gap-2"><b>${esc(x.productName)}</b><span class="text-xs font-bold ${x.status==='CLOSED'?'text-slate-400':'text-emerald-700'}">${x.status}</span></div><small>${esc(x.brand)} · ${x.quantityRemaining}/${x.quantitySent} un. disponíveis · Custo total: ${money(x.totalValueBRL)}</small><div class="text-xs text-slate-500 mt-1">Valor restante: <b>${money(x.remainingValueBRL)}</b> · Unitário: ${money(x.unitCostBRL)}</div></div>`).join('') : '<div class="empty-state">Nenhum envio WG→IK registrado.</div>'}</div></section><section class="panel glass-panel p-4"><h2 class="mb-3">Repasses do IK aos vendedores</h2><div class="space-y-3">${allocations.length ? allocations.map(a => {const seller=allSellers().find(x=>x.id===a.sellerId); return `<div class="p-3 rounded-xl bg-white border border-slate-200"><div class="flex justify-between"><b>${esc(a.productName)}</b><span class="text-xs">${esc(seller?.name||a.sellerId)}</span></div><small>${a.quantitySent} un. · Custo WG: ${money(a.totalValueBRL)} · Preço vendedor: ${money(a.salePriceBRL)}/un.</small><div class="text-xs mt-1">Saldo da planilha: <b>${money(allocationBalance(a))}</b></div></div>`;}).join('') : '<div class="empty-state">Nenhum repasse IK→vendedor registrado.</div>'}</div></section></div>`);
+    document.getElementById('newWgShipmentBtn')?.addEventListener('click', openWgShipmentModal); document.getElementById('newIkAllocationBtn')?.addEventListener('click', openIkAllocationModal); document.getElementById('openSellerSheetsBtn')?.addEventListener('click', () => { activeTab='sellerSheets'; renderWgIkStockPage(); });
+}
+
+function renderSellerSheetsPage() {
+    if (!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.'); const grouped = allSellers().map(s => ({seller:s, rows:ikSellerAllocations().filter(a=>a.sellerId===s.id)})).filter(x=>x.rows.length);
+    appFrame('Planilhas de Acerto dos Vendedores', 'Cada vendedor possui uma planilha própria com produtos, valor enviado, pagamentos e saldo pendente.', `<div class="flex flex-wrap gap-2 mb-5"><button id="backWgIkStockBtn" class="small-btn">Voltar ao Estoque WG ↔ IK</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5">${grouped.length ? grouped.map(({seller,rows}) => {const total=rows.reduce((n,a)=>n+Number(a.totalValueBRL||0),0);const paid=rows.reduce((n,a)=>n+allocationPaidValue(a.id),0);const balance=Math.max(total-paid,0);return `<section class="panel glass-panel p-4"><div class="flex justify-between items-start gap-3 mb-3"><div><h2>${esc(seller.name)}</h2><p class="text-xs text-slate-500">@${esc(seller.user)} · ${esc(seller.city||'')}/${esc(seller.uf||'')}</p></div><div class="text-right text-xs"><b class="block">Total: ${money(total)}</b><span class="text-emerald-700">Pago: ${money(paid)}</span><span class="text-amber-700 block">Saldo: ${money(balance)}</span></div></div><div class="space-y-2">${rows.map(a=>{const paidRow=allocationPaidValue(a.id);const bal=Math.max(Number(a.totalValueBRL||0)-paidRow,0);return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200"><div class="flex justify-between gap-2"><b>${esc(a.productName)}</b><span class="text-xs font-bold ${bal<=0?'text-emerald-700':'text-amber-700'}">${bal<=0?'QUITADO':'ABERTO'}</span></div><div class="text-xs mt-1">${a.quantitySent} un. · Custo total: ${money(a.totalValueBRL)} · Pago: ${money(paidRow)} · Saldo: <b>${money(bal)}</b></div>${bal>0?`<button class="small-btn payment-btn mt-2" data-id="${a.id}">Registrar pagamento</button>`:'<small class="text-emerald-700 block mt-2">Planilha zerada.</small>'}</div>`;}).join('')}</div></section>`;}).join('') : '<div class="empty-state col-span-full">Ainda não existem repasses para montar as planilhas.</div>'}</div>`);
+    document.getElementById('backWgIkStockBtn')?.addEventListener('click', () => { activeTab='wgIkStock'; renderWgIkStockPage(); }); document.querySelectorAll('.payment-btn').forEach(b=>b.addEventListener('click',()=>openSellerPaymentModal(b.dataset.id)));
+}
+
 // ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
 async function adminRegisterSellerSale(productId) {
     if (!hasAdminAccess(currentUser)) {
@@ -3677,6 +3818,18 @@ function setupSupabaseRealtimeSync() {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'wg_ik_shipments' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'ik_seller_allocations' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_ledger' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
         .subscribe(status => console.log('Sincronização de estoque:', status));
 }
 
@@ -3705,6 +3858,12 @@ function renderProductsPage() {
                 // Subtotal da soma de todos os produtos do vendedor
                 const sSubtotalBRL = sProds.reduce((a, p) => a + (p.stock * p.price), 0);
                 const sTotalUnits = sProds.reduce((a, p) => a + p.stock, 0);
+                const sAllocations = ikSellerAllocations().filter(a => a.sellerId === s.id);
+                const sSentQty = sAllocations.reduce((n, a) => n + Number(a.quantitySent || 0), 0);
+                const sRemainingQty = sAllocations.reduce((n, a) => n + Number(a.quantityRemaining || 0), 0);
+                const sSentValue = sAllocations.reduce((n, a) => n + Number(a.totalValueBRL || 0), 0);
+                const sPaidValue = sAllocations.reduce((n, a) => n + allocationPaidValue(a.id), 0);
+                const sOpenValue = Math.max(sSentValue - sPaidValue, 0);
 
                 return `
                     <div class="seller-card glass-panel p-5 rounded-2xl flex flex-col justify-between gap-3 bg-white/90 border border-slate-200 shadow-sm">
@@ -3730,6 +3889,11 @@ function renderProductsPage() {
                                 <span class="text-[10px] font-bold text-slate-500 uppercase block">Subtotal em Posse (Soma)</span>
                                 <strong class="text-base text-slate-900 font-black">${moneyPair(sSubtotalBRL)}</strong>
                                 <small class="block text-slate-500 text-[11px] font-semibold">${sTotalUnits} un. totais em estoque</small>
+                            </div>
+                            <div class="p-3 bg-indigo-50/70 rounded-xl mb-3 border border-indigo-100 text-xs">
+                                <div class="flex justify-between gap-2"><span class="text-slate-500 font-semibold">Enviado pelo IK</span><b class="text-slate-800">${sRemainingQty}/${sSentQty || sTotalUnits} un.</b></div>
+                                <div class="flex justify-between gap-2 mt-1"><span class="text-slate-500 font-semibold">Valor enviado</span><b class="text-slate-800">${moneyPair(sSentValue)}</b></div>
+                                <div class="flex justify-between gap-2 mt-1"><span class="text-slate-500 font-semibold">Saldo em aberto</span><b class="text-amber-700">${moneyPair(sOpenValue)}</b></div>
                             </div>
 
                             <div class="text-xs text-slate-600 space-y-2">
