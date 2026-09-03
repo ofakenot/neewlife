@@ -18,25 +18,101 @@ function initializeSupabaseClient() {
 }
 initializeSupabaseClient();
 
-// ESTADO GLOBAL DO CÂMBIO (USD/BRL)
-let currentExchangeRate = { bid: 0, high: 0, ask: 0, pctChange: '0', updated: '' };
+// CÂMBIO USD/BRL — ARBITRAGEM PARAGUAIA DO CAMBIOS CHACO
+class CambioParaguai {
+    constructor() {
+        this.cache = null;
+        this.ultimaAtualizacao = null;
+        this.tempoCache = 24 * 60 * 60 * 1000;
+        try {
+            const salvo = JSON.parse(localStorage.getItem('nl_exchange_rate_paraguay') || 'null');
+            if (salvo?.compra > 0 && salvo?.venda > 0 && salvo?.timestamp) {
+                this.cache = salvo;
+                this.ultimaAtualizacao = new Date(salvo.timestamp).getTime();
+            }
+        } catch (erro) {
+            console.warn('Não foi possível carregar o cache da cotação:', erro);
+        }
+    }
+
+    async getCambio() {
+        if (this.cache && this._cacheValido()) return this.cache;
+        const response = await fetch('https://www.cambioschaco.com.py/', {
+            cache: 'no-store',
+            mode: 'cors'
+        });
+        if (!response.ok) throw new Error(`Cambios Chaco HTTP ${response.status}`);
+        const html = await response.text();
+        const row = html.match(/id=["']arb-exchange-brl["'][\s\S]*?<span[^>]*class=["'][^"']*purchase[^"']*["'][^>]*>([^<]+)<\/span>[\s\S]*?<span[^>]*class=["'][^"']*sale[^"']*["'][^>]*>([^<]+)<\/span>/i);
+        if (!row) throw new Error('Arbitragem USD x Real não encontrada no Cambios Chaco.');
+
+        const parse = value => Number(String(value).trim().replace(/\./g, '').replace(',', '.')) || 0;
+        const compra = parse(row[1]);
+        const venda = parse(row[2]);
+        if (!(compra > 0) || !(venda > 0)) throw new Error('Cotação USD/BRL inválida no Cambios Chaco.');
+
+        this.cache = {
+            compra,
+            venda,
+            taxa: Number(((compra + venda) / 2).toFixed(4)),
+            timestamp: new Date().toISOString(),
+            proxima_atualizacao: this._getProximaAtualizacao()
+        };
+        this.ultimaAtualizacao = Date.now();
+        try {
+            localStorage.setItem('nl_exchange_rate_paraguay', JSON.stringify(this.cache));
+        } catch (erro) {
+            console.warn('Não foi possível salvar o cache da cotação:', erro);
+        }
+        return this.cache;
+    }
+
+    _cacheValido() {
+        return Boolean(this.ultimaAtualizacao && Date.now() - this.ultimaAtualizacao < this.tempoCache);
+    }
+
+    _getProximaAtualizacao() {
+        const amanha = new Date();
+        amanha.setDate(amanha.getDate() + 1);
+        amanha.setHours(0, 0, 0, 0);
+        return amanha.toISOString();
+    }
+
+    limparCache() {
+        this.cache = null;
+        this.ultimaAtualizacao = null;
+    }
+}
+
+const cambio = new CambioParaguai();
+let currentExchangeRate = {
+    // Última referência local confirmada: Cambios Chaco — compra R$ 5,15 / venda R$ 5,35.
+    bid: 5.15,
+    high: 5.35,
+    ask: 5.35,
+    brlRate: 5.25,
+    pctChange: '0',
+    updated: 'Referência local',
+    source: 'Cambios Chaco — Paraguai — USD/BRL'
+};
 
 async function fetchExchangeRate() {
     try {
-        const res = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
-        const data = await res.json();
-        if (data && data.USDBRL) {
-            currentExchangeRate = {
-                bid: Number(data.USDBRL.bid || 0),
-                high: Number(data.USDBRL.high || 0),
-                ask: Number(data.USDBRL.ask || 0),
-                pctChange: data.USDBRL.pctChange || '0',
-                updated: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-            };
-            updateExchangeRateUI();
-        }
+        const quote = await cambio.getCambio();
+        currentExchangeRate = {
+            ...currentExchangeRate,
+            bid: quote.compra,
+            ask: quote.venda,
+            high: quote.venda,
+            brlRate: quote.taxa,
+            updated: new Date(quote.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+            source: 'Cambios Chaco — Paraguai — USD/BRL'
+        };
+        updateExchangeRateUI();
     } catch (e) {
-        console.error('Erro ao buscar cotação de câmbio:', e);
+        // Mantém a última cotação válida (ou a referência local inicial) para não deixar o widget vazio.
+        console.error('Erro ao buscar arbitragem USD/BRL no Cambios Chaco:', e);
+        updateExchangeRateUI();
     }
 }
 
@@ -45,9 +121,9 @@ function updateExchangeRateUI() {
     if (el) {
         el.innerHTML = `
             <div class="flex items-center gap-2 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
-                <span class="text-amber-400">💵 <b>USD/BRL:</b> R$ ${currentExchangeRate.bid ? currentExchangeRate.bid.toFixed(2) : '—'}</span>
-                <span class="text-emerald-400 font-extrabold">(Máx: R$ ${currentExchangeRate.high ? currentExchangeRate.high.toFixed(2) : '—'})</span>
-                <small class="text-slate-400 text-[10px]">(${currentExchangeRate.updated || 'Ao vivo'})</small>
+                <span class="text-amber-400">💵 <b>USD/BRL:</b> ${currentExchangeRate.bid ? money(currentExchangeRate.bid) : '—'}–${currentExchangeRate.ask ? money(currentExchangeRate.ask) : '—'}</span>
+                <span class="text-emerald-400 font-extrabold">Média: ${currentExchangeRate.brlRate ? money(currentExchangeRate.brlRate) : '—'}</span>
+                <small class="text-slate-400 text-[10px]">(${currentExchangeRate.updated || 'Aguardando atualização'})</small>
             </div>
         `;
     }
@@ -397,6 +473,12 @@ function money(brlVal) {
     const brl = Number(brlVal || 0);
     return brl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
+function moneyUSD(brlVal) {
+    const brl = Number(brlVal || 0);
+    const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 0);
+    return rate > 0 ? (brl / rate).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : 'US$ —';
+}
+function moneyPair(brlVal) { return `${money(brlVal)} · ${moneyUSD(brlVal)}`; }
 function moneySimple(brlVal) { return money(brlVal); }
 
 function hasAdminAccess(user) { return user?.role === 'ADMIN_SUPERVISOR' || user?.role === 'ADMIN_SELLER' || user?.role === 'ADMIN'; }
@@ -429,6 +511,40 @@ function renderAvatarHTML(u, extraClasses = '') {
         return `<div class="avatar ${extraClasses}" style="padding:0; overflow:hidden; border-radius:9999px;"><img src="${esc(url)}" style="width:100%; height:100%; object-fit:cover;" alt="${esc(u.name)}"></div>`;
     }
     return `<div class="avatar ${extraClasses}">${avatarFor(u)}</div>`;
+}
+
+function openAvatarCropModal(file, onConfirm) {
+    if (!file || !file.type.startsWith('image/')) return alert('Selecione um arquivo de imagem válido.');
+    if (file.size > 10 * 1024 * 1024) return alert('Foto muito grande! Escolha uma imagem de até 10 MB.');
+    const reader = new FileReader();
+    reader.onload = event => {
+        const source = event.target.result;
+        const crop = modal(`
+            <h2>Ajustar e Recortar Avatar</h2>
+            <p class="text-xs text-slate-500 mb-3">Use o zoom para centralizar o rosto na área quadrada.</p>
+            <div class="flex justify-center bg-slate-100 rounded-xl p-3"><div id="avatarCropViewport" style="width:240px;height:240px;overflow:hidden;border-radius:9999px;position:relative;background:#e2e8f0;"><img id="avatarCropImage" src="${source}" style="width:100%;height:100%;object-fit:cover;transform:scale(1);transform-origin:center;" /></div></div>
+            <label class="block text-xs font-bold mt-3">Zoom <input id="avatarCropZoom" type="range" min="1" max="3" step="0.01" value="1" class="w-full"></label>
+            <div class="flex justify-end gap-2 mt-4"><button type="button" class="outline-btn cancel-avatar-crop">Cancelar</button><button type="button" class="primary-btn confirm-avatar-crop">Usar Foto Recortada</button></div>
+        `);
+        const image = crop.querySelector('#avatarCropImage');
+        const zoom = crop.querySelector('#avatarCropZoom');
+        zoom.oninput = () => image.style.transform = `scale(${zoom.value})`;
+        crop.querySelector('.cancel-avatar-crop').onclick = () => crop.remove();
+        crop.querySelector('.confirm-avatar-crop').onclick = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640; canvas.height = 640;
+            const ctx = canvas.getContext('2d');
+            const side = Math.min(image.naturalWidth, image.naturalHeight);
+            const factor = Number(zoom.value);
+            const cropSide = side / factor;
+            const sx = (image.naturalWidth - cropSide) / 2;
+            const sy = (image.naturalHeight - cropSide) / 2;
+            ctx.drawImage(image, sx, sy, cropSide, cropSide, 0, 0, canvas.width, canvas.height);
+            onConfirm(canvas.toDataURL('image/jpeg', 0.88));
+            crop.remove();
+        };
+    };
+    reader.readAsDataURL(file);
 }
 
 function loadLeaflet(callback) {
@@ -753,16 +869,16 @@ function navContent() {
 
         <div class="side-label">${isAdmin ? 'ADMINISTRAÇÃO GERAL' : 'SUPERVISÃO OPERACIONAL'}</div>
         ${isAdmin ? `
-            <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
-            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
-            <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
             <button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>
-            <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
-            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
-            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
-            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
-            <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
+            <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
+            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
+            <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
+            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
+            <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
+            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
+            <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
+            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
             <button class="side-link ${activeTab === 'backup' ? 'active' : ''}" data-admin-tab="backup">${icons.database} <span>Backup & Importação</span></button>
             <button class="side-link ${activeTab === 'adminReports' ? 'active' : ''}" data-admin-tab="adminReports">${icons.reports} <span>Relatórios Globais</span></button>
         ` : `
@@ -1000,18 +1116,10 @@ function editSelfAvatarModal() {
         m.querySelector('#selfAvatarPreview').innerHTML = `<div class="avatar text-xl font-black text-slate-700">${avatarFor(currentUser)}</div>`;
     };
 
-    fileInput.onchange = e => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 3 * 1024 * 1024) return alert('A foto deve ter no máximo 3MB.');
-            const reader = new FileReader();
-            reader.onload = ev => {
-                m.querySelector('#selfAvatarBase64').value = ev.target.result;
-                m.querySelector('#selfAvatarPreview').innerHTML = `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    fileInput.onchange = e => openAvatarCropModal(e.target.files[0], cropped => {
+        m.querySelector('#selfAvatarBase64').value = cropped;
+        m.querySelector('#selfAvatarPreview').innerHTML = `<img src="${cropped}" style="width:100%; height:100%; object-fit:cover;">`;
+    });
 
     m.querySelector('.cancel-avatar-btn').onclick = () => m.remove();
     m.querySelector('#saveSelfAvatarBtn').onclick = async () => {
@@ -1435,18 +1543,10 @@ function supervisorModal(existing = null) {
         showToast('Foto removida!');
     };
 
-    fileInput.onchange = e => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 3 * 1024 * 1024) return alert('Foto muito grande! Escolha até 3MB.');
-            const reader = new FileReader();
-            reader.onload = ev => {
-                avatarBase64.value = ev.target.result;
-                preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    fileInput.onchange = e => openAvatarCropModal(e.target.files[0], cropped => {
+        avatarBase64.value = cropped;
+        preview.innerHTML = `<img src="${cropped}" style="width:100%;height:100%;object-fit:cover;">`;
+    });
 
     const ufSelect = m.querySelector('#supUf');
     const citySelect = m.querySelector('#supCity');
@@ -1683,18 +1783,10 @@ function sellerModal(existing = null) {
         showToast('Foto removida!');
     };
 
-    fileInput.onchange = e => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 3 * 1024 * 1024) return alert('Foto muito grande! Escolha até 3MB.');
-            const reader = new FileReader();
-            reader.onload = ev => {
-                avatarBase64.value = ev.target.result;
-                preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    fileInput.onchange = e => openAvatarCropModal(e.target.files[0], cropped => {
+        avatarBase64.value = cropped;
+        preview.innerHTML = `<img src="${cropped}" style="width:100%;height:100%;object-fit:cover;">`;
+    });
 
     const ufSelect = m.querySelector('#ufSelect');
     const citySelect = m.querySelector('#citySelect');
@@ -3422,12 +3514,61 @@ function renderCatalogPage() {
     }
 }
 
+function editSellerStockModal(productId) {
+    if (!hasAdminAccess(currentUser)) return;
+    const allP = products();
+    const target = allP.find(p => p.id === productId);
+    const seller = allSellers().find(u => u.id === target?.sellerId);
+    if (!target || !seller) return;
+    const m = modal(`
+        <h2>Editar Quantidade em Estoque</h2>
+        <p class="text-xs text-slate-500 mb-3">${esc(target.name)} — ${esc(seller.name)}</p>
+        <form id="editStockForm" class="seller-form">
+            <label>Quantidade atual
+                <input name="stock" type="number" min="0" step="1" value="${Number(target.stock) || 0}" class="control" required>
+            </label>
+            <button type="submit" class="primary-btn w-full mt-3">${icons.check} Salvar Quantidade</button>
+        </form>
+    `);
+    m.querySelector('form').onsubmit = async e => {
+        e.preventDefault();
+        const newStock = Number(new FormData(e.target).get('stock'));
+        if (!Number.isInteger(newStock) || newStock < 0) return alert('Informe uma quantidade inteira igual ou maior que zero.');
+        target.stock = newStock;
+        write('atlasProducts', allP);
+        if (supabaseClient) await supabaseClient.from('seller_products').update({ stock: newStock }).eq('id', target.id);
+        showToast('Quantidade atualizada com sucesso!');
+        m.remove();
+        renderProductsPage();
+    };
+}
+
+function deleteSellerStockProduct(productId) {
+    if (!hasAdminAccess(currentUser)) return;
+    const allP = products();
+    const target = allP.find(p => p.id === productId);
+    const seller = allSellers().find(u => u.id === target?.sellerId);
+    if (!target || !seller) return;
+    confirmActionModal({
+        title: 'Excluir Produto do Estoque',
+        subtitle: `${target.name} — ${seller.name}`,
+        warningText: 'O produto será removido permanentemente do estoque deste vendedor. Esta ação não altera o catálogo global.',
+        confirmText: 'Excluir Produto',
+        onConfirm: async () => {
+            write('atlasProducts', allP.filter(p => p.id !== productId));
+            if (supabaseClient) await supabaseClient.from('seller_products').delete().eq('id', productId);
+            showToast('Produto removido do estoque do vendedor.');
+            renderProductsPage();
+        }
+    });
+}
+
 // ABA: ATRIBUIR / ENVIAR ESTOQUE (COM SUBTOTAL E VENDAS EM VERMELHO HOJE)
 function renderProductsPage() {
     const ss = hasAdminAccess(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser.user);
     const mySupStock = products().filter(p => p.sellerId === currentUser.id && p.stock > 0);
 
-    appFrame('Atribuir & Enviar Produtos', 'Gestão de estoque dos vendedores e transferência do seu estoque em Reais (R$).', `
+    appFrame('Atribuir & Enviar Produtos', `Gestão de estoque dos vendedores. Cotação: 1 USD = ${money(currentExchangeRate.ask || currentExchangeRate.bid)} (${esc(currentExchangeRate.source || 'aguardando atualização')}).`, `
         <div class="p-4 md:p-5 bg-sky-950/5 border border-sky-200 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <h3 class="font-extrabold text-slate-900 text-base">Seu Estoque de Supervisor</h3>
@@ -3471,7 +3612,7 @@ function renderProductsPage() {
                             <!-- SUBTOTAL DA SOMA DE TODOS OS PRODUTOS DO CARD -->
                             <div class="p-3 bg-slate-100/80 rounded-xl mb-3 border border-slate-200/60">
                                 <span class="text-[10px] font-bold text-slate-500 uppercase block">Subtotal em Posse (Soma)</span>
-                                <strong class="text-base text-slate-900 font-black">${money(sSubtotalBRL)}</strong>
+                                <strong class="text-base text-slate-900 font-black">${moneyPair(sSubtotalBRL)}</strong>
                                 <small class="block text-slate-500 text-[11px] font-semibold">${sTotalUnits} un. totais em estoque</small>
                             </div>
 
@@ -3482,11 +3623,12 @@ function renderProductsPage() {
                                         <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                             <div>
                                                 <b class="text-slate-900 block">${esc(p.name)}</b>
-                                                <small class="text-slate-500 font-semibold">${money(p.price)}/un · <span class="text-emerald-700 font-extrabold">Total: ${money(itemTotalValBRL)}</span></small>
+                                                <small class="text-slate-500 font-semibold">${moneyPair(p.price)}/un · <span class="text-emerald-700 font-extrabold">Total: ${moneyPair(itemTotalValBRL)}</span></small>
                                             </div>
                                             <div class="flex items-center gap-2">
                                                 <b class="text-slate-800 text-sm font-black">${p.stock} un.</b>
-                                                <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço R$</button>
+                                                <button class="small-btn edit-seller-price-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Preço</button>
+                                                        ${hasAdminAccess(currentUser) ? `<button class="small-btn edit-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">Qtd.</button><button class="delete-btn delete-seller-stock-btn text-[10px] py-0.5 px-1.5" data-id="${p.id}">${icons.trash}</button>` : ''}
                                             </div>
                                         </div>
                                     `;
@@ -3501,6 +3643,9 @@ function renderProductsPage() {
 
     const trBtn = document.getElementById('supTransferStockBtn');
     if (trBtn) trBtn.onclick = transferSupervisorStockModal;
+
+    document.querySelectorAll('.edit-seller-stock-btn').forEach(b => b.onclick = () => editSellerStockModal(b.dataset.id));
+    document.querySelectorAll('.delete-seller-stock-btn').forEach(b => b.onclick = () => deleteSellerStockProduct(b.dataset.id));
 
     document.querySelectorAll('.edit-seller-price-btn').forEach(b => {
         b.onclick = () => {
