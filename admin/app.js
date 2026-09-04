@@ -172,32 +172,7 @@ const cityCoordinates = {
     'Assunção': [-25.2637, -57.5759]
 };
 
-const catalog = [
-    ['Retatrutide 60mg', 'New Life'], ['Tirzepatide 120mg', 'New Life'], ['Tirzepatide 60mg', 'New Life'],
-    ['GHK-Cu 100mg', 'New Life'], ['GLOW 70mg', 'New Life'], ['KLOW 80mg', 'New Life'],
-    ['AOD-9604 5mg', 'New Life'], ['NAD+ 500mg', 'New Life'], ['CJC-1295 + Ipamorelin 10mg', 'New Life'],
-    ['Tesamorelin 20mg', 'New Life'], ['MOTS-c 40mg', 'New Life'], ['Semax 10mg', 'New Life'],
-    ['Selank 10mg', 'New Life'], ['Epithalon 50mg', 'New Life'], ['SS-31 50mg', 'New Life'], ['CBL-514 20mg', 'New Life'],
-    ['Retatrutide 40mg', 'USA Peptides'], ['Tirzepatide 120mg', 'USA Peptides'], ['Tirzepatide 60mg', 'USA Peptides'],
-    ['Tirzepatide 30mg', 'USA Peptides'], ['Beauty Stack', 'USA Peptides'], ['GHK-Cu 100mg', 'USA Peptides'],
-    ['GLOW Stack', 'USA Peptides'], ['KLOW Stack', 'USA Peptides'], ['SLU-PP-332 10mg', 'USA Peptides'],
-    ['AOD-9604 10mg', 'USA Peptides'], ['PT-141 10mg', 'USA Peptides'], ['NAD+ 500mg', 'USA Peptides'],
-    ['HGH-FRAG 10mg', 'USA Peptides'], ['BPC-157 10mg + TB-500 10mg', 'USA Peptides'], ['CJC-1295 + Ipamorelin', 'USA Peptides'],
-    ['Tesamorelin 10mg', 'USA Peptides'], ['MOTS-c 10mg', 'USA Peptides'], ['Semax 10mg', 'USA Peptides'],
-    ['Epithalon 10mg', 'USA Peptides'], ['SS-31 10mg', 'USA Peptides'], ['MT2 10mg', 'USA Peptides'],
-    ['ZPtrop 80 — Somatropina 16 UI/VIAL', 'ZPHC'], ['Retatrutida 60mg', 'ZPHC'],
-    ['Tirzepatida 15mg — 4 ampolas', 'TG'], ['Tirzepatida 15mg — 4 ampolas', 'TG antiga'],
-    ['Lispax 30mg', 'QUIMFA'], ['Retatrutide 40mg', 'SYNEDICA'], ['GLOW GHK-Cu', 'SYNEDICA'], ['Sérum Elevia', 'ELEVIA'], ['Jelly Cream', 'ELEVIA'], ['Necessaire', 'ELEVIA'], ['Kit Elevia', 'ELEVIA'],
-    ['TIRZEC 15MG 4 VIALS', 'TIRZEC'], ['TIRZEC 15MG MD', 'TIRZEC'],
-    ['LIPOLESS 15MG MD', 'LIPOLESS'], ['LIPOLESS 15MG 4 VIALS', 'LIPOLESS'],
-    ['GLUCONEX 15MG 4 VIALS', 'GLUCONEX'], ['T36 15MG 4 VIALS', 'T36'], ['T36 15MG MD', 'T36'],
-    ['CYT3', 'ZPHC'], ['NAD+ 1.000MG 1 VIAL', 'ZPHC'], ['HGH FRAGMENT 10MG X 5 VIALS 50MG', 'ZPHC'],
-    ['STANO COMP 10MG', 'ZPHC'], ['OXIMETALONA 50MG', 'ZPHC'], ['METHANDIENONE', 'ZPHC'],
-    ['NANDROLONA', 'ZPHC'], ['TESTO ENANTATO 400MG 10ML', 'ZPHC'],
-    ['DURATESTON 250MG 10ML', 'LANDER GOLD'], ['TESTENAT', 'LANDER GOLD'],
-    ['OXANDROLONA 5MG', 'LANDER GOLD'], ['CLEMBUTEROL', 'LANDER GOLD'],
-    ['LANDERTROPIN 100UI', 'LANDER'], ['KIT', 'ELEVIA'], ['SÉRUM', 'ELEVIA'], ['JELLY CREAM', 'ELEVIA']
-];
+// O catálogo oficial é carregado exclusivamente da tabela public.product_catalog.
 
 const brazilStatesList = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 const ibgeCitiesCache = {};
@@ -206,6 +181,7 @@ let currentUser = JSON.parse(localStorage.getItem('nl_current_user') || 'null');
 let activeTab = 'adminHome';
 let sellerActiveTab = 'sales';
 let drawerOpen = false;
+let currentPageReportContext = null;
 
 // ESTADO DO BANCO DE DADOS EM MEMÓRIA
 let dbCache = {
@@ -213,6 +189,7 @@ let dbCache = {
     warehouses: [],
     motoboys: [],
     products: [],
+    product_catalog: [],
     sales: [],
     orders: [],
     warehouse_inventory: [],
@@ -245,6 +222,17 @@ async function pushAllToSupabase() {
                 active: u.active !== false,
                 avatar_url: u.avatarUrl || u.avatar_url
             })));
+        }
+
+        if (dbCache.product_catalog.length) {
+            const { error: catalogError } = await supabaseClient.from('product_catalog').upsert(dbCache.product_catalog.map(p => ({
+                id: p.id,
+                name: p.name,
+                brand: p.brand,
+                created_at: p.createdAt || p.created_at || new Date().toISOString(),
+                created_by: p.createdBy || p.created_by || currentUser?.id || null
+            })), { onConflict: 'id' });
+            if (catalogError) throw catalogError;
         }
 
         if (dbCache.products.length) {
@@ -379,7 +367,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -392,7 +380,8 @@ async function fetchSupabaseData() {
             supabaseClient.from('ik_seller_allocations').select('*'),
             supabaseClient.from('seller_payment_ledger').select('*'),
             supabaseClient.from('seller_payment_sheets').select('*'),
-            supabaseClient.from('seller_payment_sheet_lines').select('*')
+            supabaseClient.from('seller_payment_sheet_lines').select('*'),
+            supabaseClient.from('product_catalog').select('*').order('brand').order('name')
         ]);
 
         if (uRes.data) {
@@ -410,6 +399,15 @@ async function fetchSupabaseData() {
         if (wRes.data) {
             dbCache.warehouses = wRes.data;
             localStorage.setItem('nl_warehouses', JSON.stringify(dbCache.warehouses));
+        }
+
+        if (cRes?.error) console.warn('Tabela public.product_catalog indisponível. Execute product_catalog.sql no Supabase:', cRes.error.message);
+        if (cRes?.data) {
+            dbCache.product_catalog = cRes.data.map(p => ({
+                ...p,
+                createdAt: p.created_at || p.createdAt,
+                createdBy: p.created_by || p.createdBy
+            }));
         }
 
         if (wsRes?.data) {
@@ -556,7 +554,8 @@ function writeWgIkCaches() {
     localStorage.setItem('nl_ik_seller_allocations', JSON.stringify(ikSellerAllocations()));
     localStorage.setItem('nl_seller_payment_ledger', JSON.stringify(sellerPaymentLedger()));
 }
-function systemCatalog() { return [...catalog, ...readStorage('atlasCustomCatalog', []).map(x => [x.name, x.brand])]; }
+function productCatalog() { return dbCache.product_catalog || []; }
+function systemCatalog() { return productCatalog().map(x => [x.name, x.brand]); }
 
 // PERSISTÊNCIA EM MEMÓRIA E LOCALSTORAGE
 function write(key, val) {
@@ -731,6 +730,68 @@ function confirmActionModal({ title, subtitle, warningText, confirmText = 'Confi
     };
 }
 
+function setPageReportContext(title, subtitle, key = activeTab) {
+    currentPageReportContext = { title, subtitle, key };
+}
+
+function currentReportScope(list) {
+    if (hasAdminAccess(currentUser)) return list;
+    if (isSellerUser(currentUser)) return list.filter(x => x.sellerId === currentUser.id);
+    if (isWGAccount(currentUser)) return list;
+    return list.filter(x => {
+        const seller = allUsers().find(u => u.id === x.sellerId);
+        return seller && String(seller.supervisor || '').toLowerCase() === String(currentUser?.user || '').toLowerCase();
+    });
+}
+
+function buildCurrentPageReport() {
+    const context = currentPageReportContext || { title: 'Relatório da Página', subtitle: '', key: activeTab };
+    const key = context.key;
+    if (key === 'catalog') {
+        return { title: context.title, subtitle: context.subtitle, headers: ['Marca', 'Produto'], rows: productCatalog().map(p => [p.brand, p.name]) };
+    }
+    if (key === 'products') {
+        const visible = hasAdminAccess(currentUser) ? products() : products().filter(p => p.sellerId === currentUser.id || allSellers().some(s => s.id === p.sellerId && s.supervisor === currentUser.user));
+        return { title: context.title, subtitle: context.subtitle, headers: ['Vendedor', 'Marca', 'Produto', 'Estoque', 'Preço'], rows: visible.map(p => [allUsers().find(u => u.id === p.sellerId)?.name || p.sellerId, p.brand, p.name, `${p.stock} un.`, money(p.price)]) };
+    }
+    if (key === 'warehouses' || key === 'stock') {
+        const visible = key === 'stock' ? warehouseInventory().filter(i => i.warehouseId === currentUser?.warehouseId) : warehouseInventory();
+        return { title: context.title, subtitle: context.subtitle, headers: ['Estoque', 'Marca', 'Produto', 'Quantidade'], rows: visible.map(i => [warehouses().find(w => w.id === i.warehouseId)?.name || i.warehouseId, i.brand, i.productName, `${i.stock} un.`]) };
+    }
+    if (key === 'motoboys') {
+        const visible = hasAdminAccess(currentUser) ? allMotoboys() : allMotoboys().filter(m => String(m.supervisor || '').toLowerCase() === String(currentUser?.user || '').toLowerCase());
+        return { title: context.title, subtitle: context.subtitle, headers: ['Nome', 'WhatsApp', 'Cidade', 'UF'], rows: visible.map(m => [m.name, m.whatsapp || m.phone, m.city, m.uf]) };
+    }
+    if (key === 'orders' || key === 'archived' || key === 'sellerOrders') {
+        const visible = currentReportScope(orders()).filter(o => key === 'archived' ? o.status === 'Entregue' : key === 'orders' ? o.status !== 'Entregue' : o.sellerId === currentUser?.id);
+        return { title: context.title, subtitle: context.subtitle, headers: ['Vendedor', 'Produto', 'Marca', 'Quantidade', 'Status', 'Data'], rows: visible.map(o => [o.sellerName, o.productName, o.brand, o.quantity, o.status, o.deliveryDate || new Date(o.createdAt).toLocaleDateString('pt-BR')]) };
+    }
+    if (key === 'sales') {
+        const visible = hasAdminAccess(currentUser) ? sales() : sales().filter(s => s.sellerId === currentUser?.id);
+        return { title: context.title, subtitle: context.subtitle, headers: ['Data', 'Vendedor', 'Produto', 'Quantidade', 'Total'], rows: visible.map(s => [new Date(s.createdAt).toLocaleString('pt-BR'), allUsers().find(u => u.id === s.sellerId)?.name || s.sellerId, products().find(p => p.id === s.productId)?.name || s.productId, s.quantity, money(s.total)]) };
+    }
+    if (key === 'sellers' || key === 'sellerTotals' || key === 'reports' || key === 'adminReports' || key === 'summary' || key === 'adminHome') {
+        const sellers = hasAdminAccess(currentUser) || isWGAccount(currentUser) ? allSellers() : allSellers().filter(s => s.supervisor === currentUser?.user);
+        return { title: context.title, subtitle: context.subtitle, headers: ['Vendedor', 'Localização', 'Qtd. no período', 'Faturamento'], rows: sellers.map(s => [s.name, `${s.city || 'N/A'}/${s.uf || 'N/A'}`, periodSales(s.id, 'month').reduce((n, x) => n + Number(x.quantity || 0), 0), money(sellerRevenue(s.id, 'month'))]) };
+    }
+    if (key === 'wgTransfers') {
+        return { title: context.title, subtitle: context.subtitle, headers: ['Data', 'Produto', 'Marca', 'Quantidade', 'Valor'], rows: wgIkShipments().map(x => [new Date(x.createdAt || x.updatedAt).toLocaleDateString('pt-BR'), x.productName, x.brand, x.quantitySent, money(x.totalValueBRL)]) };
+    }
+    const visibleSales = currentReportScope(sales());
+    return { title: context.title, subtitle: context.subtitle, headers: ['Data', 'Produto', 'Quantidade', 'Total'], rows: visibleSales.map(s => [new Date(s.createdAt).toLocaleString('pt-BR'), products().find(p => p.id === s.productId)?.name || s.productId, s.quantity, money(s.total)]) };
+}
+
+function generateCurrentPageReport() {
+    const payload = buildCurrentPageReport();
+    const slug = String(payload.title || 'pagina').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'pagina';
+    exportUniversalPDF({ ...payload, fileName: `newlife-${slug}.pdf` });
+}
+
+function bindPageReportButton() {
+    const button = document.getElementById('generatePageReportBtn');
+    if (button) button.onclick = generateCurrentPageReport;
+}
+
 function exportUniversalPDF({ title, subtitle, headers = [], rows = [], fileName = 'relatorio.pdf' }) {
     if (!window.jspdf) return alert('Aguarde o carregamento do gerador de PDF.');
     const doc = new window.jspdf.jsPDF('p', 'mm', 'a4');
@@ -781,6 +842,12 @@ function exportUniversalPDF({ title, subtitle, headers = [], rows = [], fileName
 
     doc.save(fileName);
     showToast('Relatório PDF baixado!');
+}
+
+async function deleteAllRowsFromSupabase(table, filterColumn = 'id', filterValue = '__newlife_never__') {
+    if (!supabaseClient) return;
+    const { error } = await supabaseClient.from(table).delete().neq(filterColumn, filterValue);
+    if (error) throw error;
 }
 
 function showToast(msg) {
@@ -966,6 +1033,7 @@ function appFooter() {
 function navContent() {
     const isAdmin = hasAdminAccess(currentUser);
     const isSeller = isSellerUser(currentUser);
+    const isWG = isWGAccount(currentUser);
 
     return `
         <div class="app-brand flex items-center justify-between p-4">
@@ -990,22 +1058,22 @@ function navContent() {
             ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>` : ''}
             ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
-            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
-            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>` : ''}
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
-            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>` : ''}
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
-            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>` : ''}
             <button class="side-link ${activeTab === 'backup' ? 'active' : ''}" data-admin-tab="backup">${icons.database} <span>Backup & Importação</span></button>
             <button class="side-link ${activeTab === 'adminReports' ? 'active' : ''}" data-admin-tab="adminReports">${icons.reports} <span>Relatórios Globais</span></button>
         ` : `
             <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
-            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>` : ''}
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
-            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>
-            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>
-            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
+            ${!isWG ? `<button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>` : ''}
+            ${!isWG ? `<button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>` : ''}
+            ${!isWG ? `<button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>` : ''}
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
@@ -1079,6 +1147,7 @@ function openMobileDrawer() {
 }
 
 function appFrame(title, sub, body) {
+    setPageReportContext(title, sub, activeTab);
     const container = getAppRoot();
     container.innerHTML = `
         <div class="app-layout w-full min-h-screen flex flex-col md:flex-row">
@@ -1112,6 +1181,9 @@ function appFrame(title, sub, body) {
                             <button id="pushToSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
                                 ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
                             </button>
+                            <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">
+                                ${icons.pdf} <span>Gerar Relatório</span>
+                            </button>
                             <div class="editSelfAvatarTrigger cursor-pointer">${renderAvatarHTML(currentUser, 'flex')}</div>
                         </div>
                     </header>
@@ -1141,6 +1213,7 @@ function appFrame(title, sub, body) {
             await pushAllToSupabase();
         };
     }
+    bindPageReportButton();
 }
 
 function undoTransferModal(transferId) {
@@ -1305,6 +1378,7 @@ function emergencyWipeModal() {
 }
 
 function renderSupervisor() {
+    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders'].includes(activeTab)) activeTab = 'adminHome';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'sellers') return renderSellersPage();
@@ -1320,6 +1394,7 @@ function renderSupervisor() {
 }
 
 function renderAdmin() {
+    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders'].includes(activeTab)) activeTab = 'adminHome';
     if (isWGAccount(currentUser) && activeTab === 'products') activeTab = 'warehouses';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
@@ -1431,12 +1506,15 @@ function renderAdminHome() {
                 warningText: 'Atenção! Esta ação apaga permanentemente o histórico de vendas registradas no sistema local e no Supabase.',
                 confirmText: 'Confirmar e Limpar Vendas',
                 onConfirm: async () => {
-                    write('atlasSales', []);
-                    if (supabaseClient) {
-                        await supabaseClient.from('sales').delete().neq('id', '0');
+                    try {
+                        await deleteAllRowsFromSupabase('sales');
+                        write('atlasSales', []);
+                        showToast('Logs de vendas zerados com sucesso!');
+                        renderAdminHome();
+                    } catch (error) {
+                        console.error('Erro ao apagar logs de vendas:', error);
+                        alert(`Não foi possível apagar os logs de vendas: ${error.message}`);
                     }
-                    showToast('Logs de vendas zerados com sucesso!');
-                    renderAdminHome();
                 }
             });
         };
@@ -2288,7 +2366,7 @@ function renderBackupPage() {
                     sales: sales(),
                     orders: orders(),
                     motoboys: allMotoboys(),
-                    customCatalog: readStorage('atlasCustomCatalog', [])
+                    productCatalog: productCatalog()
                 };
 
                 const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -2333,6 +2411,7 @@ function renderBackupPage() {
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
                         write('nl_motoboys', data.motoboys || []);
+                        dbCache.product_catalog = (data.productCatalog || []).map(p => ({ ...p, createdAt: p.created_at || p.createdAt, createdBy: p.created_by || p.createdBy }));
                         
                         await pushAllToSupabase();
                         
@@ -2975,12 +3054,15 @@ function renderWarehousesPage() {
                 warningText: 'Atenção! Esta ação excluirá permanentemente todos os itens registrados no inventário físico dos depósitos matriz, no sistema local e no Supabase.',
                 confirmText: 'Confirmar e Excluir Logs',
                 onConfirm: async () => {
-                    write('nl_warehouse_inventory', []);
-                    if (supabaseClient) {
-                        await supabaseClient.from('warehouse_inventory').delete().neq('id', '0');
+                    try {
+                        await deleteAllRowsFromSupabase('warehouse_inventory');
+                        write('nl_warehouse_inventory', []);
+                        showToast('Logs do inventário físico excluídos com sucesso!');
+                        renderWarehousesPage();
+                    } catch (error) {
+                        console.error('Erro ao apagar logs do inventário:', error);
+                        alert(`Não foi possível apagar os logs do inventário: ${error.message}`);
                     }
-                    showToast('Logs do inventário físico excluídos com sucesso!');
-                    renderWarehousesPage();
                 }
             });
         };
@@ -3001,12 +3083,15 @@ function renderWarehousesPage() {
                 warningText: 'Deseja apagar permanentemente o histórico de transferências de estoque do sistema local e do Supabase?',
                 confirmText: 'Confirmar e Limpar Transferências',
                 onConfirm: async () => {
-                    write('nl_transfers', []);
-                    if (supabaseClient) {
-                        await supabaseClient.from('transfers').delete().neq('id', '0');
+                    try {
+                        await deleteAllRowsFromSupabase('transfers');
+                        write('nl_transfers', []);
+                        showToast('Logs de transferências limpos com sucesso!');
+                        renderWarehousesPage();
+                    } catch (error) {
+                        console.error('Erro ao apagar logs de transferências:', error);
+                        alert(`Não foi possível apagar os logs de transferências: ${error.message}`);
                     }
-                    showToast('Logs de transferências limpos com sucesso!');
-                    renderWarehousesPage();
                 }
             });
         };
@@ -3015,6 +3100,7 @@ function renderWarehousesPage() {
 
 function renderStockPanel() {
     const wh = warehouses().find(w => w.id === currentUser.warehouseId) || warehouses()[0];
+    setPageReportContext(`Estoque ${wh?.name || ''}`, 'Inventário e histórico de saídas deste estoque.', 'stock');
     const myInv = warehouseInventory().filter(i => i.warehouseId === wh.id);
     const myTransfers = warehouseTransfers().filter(t => t.warehouseId === wh.id);
 
@@ -3033,6 +3119,7 @@ function renderStockPanel() {
                     <button id="pushStockSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
                         ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
                     </button>
+                    <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">${icons.pdf} <span>Gerar Relatório</span></button>
                     <button id="stockLogout" class="outline-btn flex items-center gap-1 text-xs px-3 py-1.5">${icons.logout} <span>Sair</span></button>
                 </div>
             </header>
@@ -3132,6 +3219,7 @@ function renderStockPanel() {
     `;
 
     document.getElementById('pushStockSupabaseBtn').onclick = pushAllToSupabase;
+    bindPageReportButton();
     document.getElementById('stockLogout').onclick = logout;
     document.getElementById('stockAddItemBtn').onclick = () => addWarehouseItemModal(wh.id);
     document.getElementById('stockDispatchBtn').onclick = () => transferStockModal(wh.id);
@@ -3146,13 +3234,19 @@ function renderStockPanel() {
                 warningText: 'Deseja apagar todos os registros de transferências deste depósito?',
                 confirmText: 'Limpar Registros',
                 onConfirm: async () => {
-                    const remainingTransfers = warehouseTransfers().filter(t => t.warehouseId !== wh.id);
-                    write('nl_transfers', remainingTransfers);
-                    if (supabaseClient) {
-                        await supabaseClient.from('transfers').delete().eq('warehouse_id', wh.id);
+                    try {
+                        if (supabaseClient) {
+                            const { error } = await supabaseClient.from('transfers').delete().eq('warehouse_id', wh.id);
+                            if (error) throw error;
+                        }
+                        const remainingTransfers = warehouseTransfers().filter(t => t.warehouseId !== wh.id);
+                        write('nl_transfers', remainingTransfers);
+                        showToast('Logs de transferências zerados!');
+                        renderStockPanel();
+                    } catch (error) {
+                        console.error('Erro ao apagar logs do estoque:', error);
+                        alert(`Não foi possível apagar os logs deste estoque: ${error.message}`);
                     }
-                    showToast('Logs de transferências zerados!');
-                    renderStockPanel();
                 }
             });
         };
@@ -3634,14 +3728,21 @@ function renderCatalogPage() {
                     warningText: 'Deseja cadastrar este novo produto no catálogo do sistema?',
                     confirmText: 'Confirmar Cadastro',
                     onConfirm: async () => {
-                        const customCat = readStorage('atlasCustomCatalog', []);
-                        customCat.push({ name: pName, brand: pBrand });
-                        write('atlasCustomCatalog', customCat);
-
-                        // Envia para o Supabase
-                        await pushAllToSupabase();
-
-                        showToast('Novo produto cadastrado no Catálogo!');
+                        if (!supabaseClient) return alert('Supabase não está conectado. O produto não foi cadastrado.');
+                        const duplicate = productCatalog().some(x => String(x.name).trim().toLowerCase() === pName.toLowerCase() && String(x.brand).trim().toLowerCase() === pBrand.toLowerCase());
+                        if (duplicate) return alert('Este produto já existe no catálogo para esta marca.');
+                        const now = new Date().toISOString();
+                        const newCatalogProduct = { id: uid(), name: pName, brand: pBrand, createdAt: now, createdBy: currentUser?.id || null };
+                        const { error } = await supabaseClient.from('product_catalog').insert({
+                            id: newCatalogProduct.id,
+                            name: newCatalogProduct.name,
+                            brand: newCatalogProduct.brand,
+                            created_at: newCatalogProduct.createdAt,
+                            created_by: newCatalogProduct.createdBy
+                        });
+                        if (error) return alert(`Não foi possível cadastrar o produto: ${error.message}`);
+                        dbCache.product_catalog = [...productCatalog(), newCatalogProduct].sort((a, b) => `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`, 'pt-BR'));
+                        showToast('Novo produto cadastrado e sincronizado com o Supabase!');
                         m.remove();
                         renderCatalogPage();
                     }
@@ -3738,7 +3839,25 @@ function openIkAllocationModal() {
 
 async function clearWgIkTransferLogs() {
     if(!canEditWgIk()) return showToast('Apenas WG e IK podem apagar logs.');
-    confirmActionModal({title:'Apagar logs de transferência',subtitle:'WG ↔ IK',warningText:'Isso apaga somente o histórico de transferências. O estoque atual e os produtos dos vendedores não serão alterados.',confirmText:'Apagar logs',onConfirm:async()=>{write('nl_transfers',[]);if(supabaseClient){const {error}=await supabaseClient.from('transfers').delete().neq('id','__none__');if(error)return alert(`Não foi possível apagar os logs: ${error.message}`);}showToast('Logs de transferência apagados.');renderWgIkStockPage();}});
+    confirmActionModal({title:'Apagar logs de transferência',subtitle:'WG ↔ IK',warningText:'Isso apaga o histórico de lotes WG → IK e dos repasses para vendedores. O estoque atual e os produtos dos vendedores não serão alterados.',confirmText:'Apagar logs',onConfirm:async()=>{
+        try {
+            if(supabaseClient){
+                const results = await Promise.all([
+                    supabaseClient.from('wg_ik_shipments').delete().neq('id','__newlife_never__'),
+                    supabaseClient.from('ik_seller_allocations').delete().neq('id','__newlife_never__')
+                ]);
+                const failed = results.find(result => result.error);
+                if(failed) return alert(`Não foi possível apagar os logs: ${failed.error.message}`);
+            }
+            write('nl_wg_ik_shipments',[]);
+            write('nl_ik_seller_allocations',[]);
+            showToast('Logs WG ↔ IK apagados com sucesso.');
+            renderWgIkStockPage();
+        } catch(error) {
+            console.error(error);
+            alert(`Não foi possível apagar os logs: ${error.message}`);
+        }
+    }});
 }
 
 function renderWgIkStockPage() {
@@ -3968,6 +4087,30 @@ function setupSupabaseRealtimeSync() {
     if (!supabaseClient || window.newlifeRealtimeChannel) return;
     window.newlifeRealtimeChannel = supabaseClient
         .channel('newlife-stock-sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'product_catalog' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'system_users' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'motoboys' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'warehouse_inventory' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'transfers' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_products' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
@@ -4199,6 +4342,7 @@ function renderReportsPage() {
 
 /* PAINEL DO VENDEDOR */
 function renderSeller() {
+    setPageReportContext('Painel do Vendedor', 'Produtos, vendas e pedidos do vendedor atual.', sellerActiveTab === 'newOrder' ? 'sellerOrders' : sellerActiveTab);
     const sellerProducts = products().filter(p => p.sellerId === currentUser.id && Number(p.stock) > 0);
     const container = getAppRoot();
 
@@ -4220,6 +4364,7 @@ function renderSeller() {
                             <button id="pushSellerSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
                                 ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
                             </button>
+                            <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">${icons.pdf} <span>Gerar Relatório</span></button>
                             <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex items-center gap-1">${icons.logout} <span>Sair</span></button>
                         </div>
                     </header>
@@ -4236,6 +4381,7 @@ function renderSeller() {
     `;
 
     document.getElementById('pushSellerSupabaseBtn').onclick = pushAllToSupabase;
+    bindPageReportButton();
     document.querySelectorAll('.logoutSellerSideBtn').forEach(b => b.onclick = logout);
     document.querySelectorAll('.editSelfAvatarTrigger').forEach(b => b.onclick = editSelfAvatarModal);
 
