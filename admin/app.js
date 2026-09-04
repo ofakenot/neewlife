@@ -160,7 +160,12 @@ const icons = {
     whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`,
     camera: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
     trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
-    upload: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`
+    upload: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+    chat: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-9 8.5 9.9 9.9 0 0 1-4-.8L3 21l1.8-4.2A8.4 8.4 0 1 1 21 11.5z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg>`,
+    send: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+    box: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+    alert: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.7 2.4 17a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    text: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg>`
 };
 
 const cityCoordinates = {
@@ -190,6 +195,7 @@ let dbCache = {
     motoboys: [],
     products: [],
     product_catalog: [],
+    wg_ik_messages: [],
     sales: [],
     orders: [],
     warehouse_inventory: [],
@@ -233,6 +239,15 @@ async function pushAllToSupabase() {
                 created_by: p.createdBy || p.created_by || currentUser?.id || null
             })), { onConflict: 'id' });
             if (catalogError) throw catalogError;
+        }
+
+        if (dbCache.wg_ik_messages.length) {
+            const { error: chatError } = await supabaseClient.from('wg_ik_messages').upsert(dbCache.wg_ik_messages.map(m => ({
+                id: m.id, sender_id: m.senderId, sender_role: m.senderRole, recipient_id: m.recipientId,
+                message_type: m.messageType || 'normal', body: m.body, metadata: m.metadata || {},
+                reply_to: m.replyTo || null, created_at: m.createdAt, read_at: m.readAt || null
+            })), { onConflict: 'id' });
+            if (chatError) throw chatError;
         }
 
         if (dbCache.products.length) {
@@ -367,7 +382,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -381,7 +396,8 @@ async function fetchSupabaseData() {
             supabaseClient.from('seller_payment_ledger').select('*'),
             supabaseClient.from('seller_payment_sheets').select('*'),
             supabaseClient.from('seller_payment_sheet_lines').select('*'),
-            supabaseClient.from('product_catalog').select('*').order('brand').order('name')
+            supabaseClient.from('product_catalog').select('*').order('brand').order('name'),
+            supabaseClient.from('wg_ik_messages').select('*').order('created_at')
         ]);
 
         if (uRes.data) {
@@ -408,6 +424,14 @@ async function fetchSupabaseData() {
                 createdAt: p.created_at || p.createdAt,
                 createdBy: p.created_by || p.createdBy
             }));
+        }
+        if (chatRes?.error) console.warn('Tabela public.wg_ik_messages indisponível. Execute wg_ik_messages.sql no Supabase:', chatRes.error.message);
+        if (chatRes?.data) {
+            dbCache.wg_ik_messages = chatRes.data.map(m => ({
+                ...m, senderId: m.sender_id, senderRole: m.sender_role, recipientId: m.recipient_id,
+                messageType: m.message_type || 'normal', replyTo: m.reply_to, createdAt: m.created_at, readAt: m.read_at
+            }));
+            localStorage.setItem('nl_wg_ik_messages', JSON.stringify(dbCache.wg_ik_messages));
         }
 
         if (wsRes?.data) {
@@ -555,6 +579,8 @@ function writeWgIkCaches() {
     localStorage.setItem('nl_seller_payment_ledger', JSON.stringify(sellerPaymentLedger()));
 }
 function productCatalog() { return dbCache.product_catalog || []; }
+function conversationMessages() { return dbCache.wg_ik_messages || readStorage('nl_wg_ik_messages', []); }
+function canUseWgIkChat(u = currentUser) { return isWGAccount(u) || isIKAccount(u) || hasAdminAccess(u); }
 function systemCatalog() { return productCatalog().map(x => [x.name, x.brand]); }
 
 // PERSISTÊNCIA EM MEMÓRIA E LOCALSTORAGE
@@ -1053,10 +1079,20 @@ function navContent() {
         ` : ''}
 
         <div class="side-label">${isAdmin ? 'ADMINISTRAÇÃO GERAL' : 'SUPERVISÃO OPERACIONAL'}</div>
-        ${isAdmin ? `
+        ${isWG ? `
+            <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
+            <button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>
+            <button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>
+            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>3 Estoques</span></button>
+            <button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>
+            <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
+            <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
+            <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
+            <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados</span></button>
+        ` : isAdmin ? `
             ${(isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
-            ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>` : ''}
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? '3 Estoques' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             ${!isWG ? `<button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
@@ -1076,8 +1112,8 @@ function navContent() {
             ${!isWG ? `<button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>` : ''}
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
-            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>Atribuir / Enviar Estoque</span></button>
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? '3 Estoques' : 'Atribuir / Enviar Estoque'}</span></button>
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
         `}
 
@@ -1378,7 +1414,8 @@ function emergencyWipeModal() {
 }
 
 function renderSupervisor() {
-    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders'].includes(activeTab)) activeTab = 'adminHome';
+    if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
+    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders', 'adminHome'].includes(activeTab)) activeTab = 'summary';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'sellers') return renderSellersPage();
@@ -1386,7 +1423,7 @@ function renderSupervisor() {
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'archived') return renderArchivedPage();
     if (activeTab === 'catalog') return renderCatalogPage();
-    if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
+    if (activeTab === 'products') return (isWGAccount(currentUser) || isIKAccount(currentUser)) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'reports') return renderReportsPage();
@@ -1394,8 +1431,8 @@ function renderSupervisor() {
 }
 
 function renderAdmin() {
-    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders'].includes(activeTab)) activeTab = 'adminHome';
-    if (isWGAccount(currentUser) && activeTab === 'products') activeTab = 'warehouses';
+    if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
+    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders', 'adminHome', 'warehouses'].includes(activeTab)) activeTab = 'summary';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'warehouses') return renderWarehousesPage();
@@ -1404,7 +1441,7 @@ function renderAdmin() {
     if (activeTab === 'motoboys') return renderMotoboysPage();
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'catalog') return renderCatalogPage();
-    if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
+    if (activeTab === 'products') return (isWGAccount(currentUser) || isIKAccount(currentUser)) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'backup') return renderBackupPage();
@@ -2366,7 +2403,8 @@ function renderBackupPage() {
                     sales: sales(),
                     orders: orders(),
                     motoboys: allMotoboys(),
-                    productCatalog: productCatalog()
+                    productCatalog: productCatalog(),
+                    wgIkMessages: conversationMessages()
                 };
 
                 const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -2412,6 +2450,8 @@ function renderBackupPage() {
                         write('atlasOrders', data.orders || []);
                         write('nl_motoboys', data.motoboys || []);
                         dbCache.product_catalog = (data.productCatalog || []).map(p => ({ ...p, createdAt: p.created_at || p.createdAt, createdBy: p.created_by || p.createdBy }));
+                        dbCache.wg_ik_messages = (data.wgIkMessages || []).map(m => ({ ...m, senderId: m.sender_id || m.senderId, senderRole: m.sender_role || m.senderRole, recipientId: m.recipient_id || m.recipientId, messageType: m.message_type || m.messageType || 'normal', createdAt: m.created_at || m.createdAt, readAt: m.read_at || m.readAt }));
+                        localStorage.setItem('nl_wg_ik_messages', JSON.stringify(dbCache.wg_ik_messages));
                         
                         await pushAllToSupabase();
                         
@@ -2922,7 +2962,7 @@ function renderWarehousesPage() {
     const inv = warehouseInventory();
     const transfers = warehouseTransfers();
 
-    appFrame('3 Estoques Separados (Somente ADM)', 'Gerencie o estoque físico dos depósitos matriz e envie produtos.', `
+    appFrame('3 Estoques', 'Gerencie os três estoques físicos e envie produtos.', `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             ${whList.map(w => {
                 const wItems = inv.filter(i => i.warehouseId === w.id);
@@ -4083,10 +4123,105 @@ async function adminRegisterSellerSale(productId) {
     };
 }
 
+function formatChatTime(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function chatMessageTypeLabel(type) {
+    return ({ stock_request: 'Pedido de estoque', sales_total: 'Total vendido', seller_report: 'Relato de baixa', normal: 'Mensagem' })[type] || 'Mensagem';
+}
+
+function chatShortcut(type) {
+    const templates = {
+        stock_request: 'PEDIDO DE ESTOQUE\nProduto: \nQuantidade: \nUrgência/observação: ',
+        sales_total: 'TOTAL VENDIDO\nPeríodo: \nTotal de unidades: \nObservação: ',
+        seller_report: 'RELATO DE BAIXA DE VENDEDOR\nVendedor: \nProduto: \nQuantidade: \nDetalhes: ',
+        normal: ''
+    };
+    const input = document.getElementById('wgIkMessageInput');
+    if (!input) return;
+    input.value = templates[type] || '';
+    input.dataset.messageType = type;
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+}
+
+async function markWgIkMessagesRead() {
+    const unread = conversationMessages().filter(m => m.recipientId === currentUser?.id && !m.readAt);
+    if (!unread.length) return;
+    const now = new Date().toISOString();
+    unread.forEach(m => { m.readAt = now; });
+    dbCache.wg_ik_messages = conversationMessages();
+    localStorage.setItem('nl_wg_ik_messages', JSON.stringify(dbCache.wg_ik_messages));
+    if (supabaseClient) await supabaseClient.from('wg_ik_messages').update({ read_at: now }).in('id', unread.map(m => m.id));
+}
+
+function renderWgIkChatPage() {
+    if (!canUseWgIkChat()) return renderSummary();
+    const messages = conversationMessages().filter(m => {
+        const parties = [m.senderId, m.recipientId];
+        return parties.includes(wgAccountId()) && parties.includes(ikAccountId());
+    }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    const otherName = isWGAccount(currentUser) ? 'IK' : 'WG';
+    setPageReportContext('Conversa WG ↔ IK', 'Comunicação direta entre WG e IK.', 'wgIkChat');
+    appFrame('Conversa WG ↔ IK', 'Comunicação direta, pedidos e avisos operacionais.', `
+        <style>
+            .wgik-chat-shell{display:grid;grid-template-rows:auto 1fr auto;min-height:calc(100vh - 190px);max-width:1050px;margin:0 auto;background:linear-gradient(180deg,#f8fbff 0%,#eef5fb 100%);border:1px solid #dbe7f2;border-radius:24px;overflow:hidden;box-shadow:0 14px 40px rgba(15,23,42,.08)}
+            .wgik-chat-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;background:#fff;border-bottom:1px solid #e2e8f0}.wgik-chat-person{display:flex;align-items:center;gap:12px}.wgik-chat-status{display:flex;align-items:center;gap:7px;color:#16a34a;font-size:11px;font-weight:800}.wgik-chat-status i{width:8px;height:8px;border-radius:99px;background:#22c55e;box-shadow:0 0 0 4px #dcfce7}.wgik-chat-body{padding:20px;overflow:auto;display:flex;flex-direction:column;gap:12px;background-image:radial-gradient(#dbe7f2 1px,transparent 1px);background-size:18px 18px}.wgik-chat-empty{text-align:center;padding:55px 20px;color:#64748b}.wgik-bubble-row{display:flex;gap:9px;align-items:flex-end}.wgik-bubble-row.mine{justify-content:flex-end}.wgik-bubble{max-width:min(78%,680px);padding:11px 13px;border-radius:16px 16px 16px 4px;background:#fff;border:1px solid #dbe5ee;box-shadow:0 3px 10px rgba(15,23,42,.05)}.wgik-bubble-row.mine .wgik-bubble{border-radius:16px 16px 4px 16px;background:#dff4e9;border-color:#b7e5c8}.wgik-bubble-kicker{font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#2563eb;margin-bottom:5px}.wgik-bubble-row.mine .wgik-bubble-kicker{color:#15803d}.wgik-bubble-text{white-space:pre-wrap;color:#1e293b;font-size:13px;line-height:1.5}.wgik-bubble-meta{display:flex;justify-content:flex-end;gap:7px;margin-top:7px;color:#94a3b8;font-size:10px}.wgik-reply-btn{border:0;background:transparent;color:#64748b;font-size:10px;cursor:pointer;padding:0}.wgik-shortcuts{display:flex;gap:8px;flex-wrap:wrap;padding:13px 16px 0}.wgik-shortcut{display:inline-flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid #dbe5ee;border-radius:12px;background:#fff;color:#334155;font-size:11px;font-weight:800;cursor:pointer;transition:.15s}.wgik-shortcut:hover{border-color:#60a5fa;color:#1d4ed8;transform:translateY(-1px)}.wgik-compose{padding:13px 16px 16px;background:#fff;border-top:1px solid #e2e8f0}.wgik-compose-form{display:flex;align-items:flex-end;gap:9px}.wgik-compose textarea{min-height:48px;max-height:150px;resize:vertical;flex:1;border:1px solid #cbd5e1;border-radius:15px;padding:13px 14px;font-size:13px;outline:none}.wgik-compose textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px #dbeafe}.wgik-send{height:48px;min-width:105px;display:flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:14px;background:#2563eb;color:#fff;font-weight:900;cursor:pointer}.wgik-send:disabled{opacity:.6;cursor:wait}.wgik-replying{display:none;margin-bottom:8px;padding:8px 11px;border-left:3px solid #2563eb;background:#eff6ff;color:#475569;font-size:11px;border-radius:7px}.wgik-replying.show{display:flex;justify-content:space-between;align-items:center}.wgik-reply-cancel{border:0;background:transparent;color:#2563eb;cursor:pointer;font-weight:800}@media(max-width:640px){.wgik-chat-shell{min-height:calc(100vh - 130px);border-radius:16px}.wgik-chat-top{padding:14px}.wgik-chat-body{padding:14px}.wgik-bubble{max-width:89%}.wgik-compose-form{align-items:stretch}.wgik-send{min-width:52px}.wgik-send span{display:none}}
+        </style>
+        <div class="wgik-chat-shell">
+            <div class="wgik-chat-top"><div class="wgik-chat-person"><div class="avatar bg-blue-100 text-blue-700 font-black">${esc(isWGAccount(currentUser) ? 'WG' : 'IK')}</div><div><h2 class="text-base font-black text-slate-900">WG ↔ IK</h2><div class="wgik-chat-status"><i></i> Conversa privada · online</div></div></div><span class="text-xs text-slate-400 font-semibold">${esc(otherName)} recebe em tempo real</span></div>
+            <div id="wgIkChatBody" class="wgik-chat-body">${messages.length ? messages.map(m => { const mine = m.senderId === currentUser.id; return `<div class="wgik-bubble-row ${mine ? 'mine' : ''}"><div class="wgik-bubble"><div class="wgik-bubble-kicker">${esc(chatMessageTypeLabel(m.messageType))}</div><div class="wgik-bubble-text">${esc(m.body)}</div><div class="wgik-bubble-meta"><span>${formatChatTime(m.createdAt)}</span><button class="wgik-reply-btn" data-reply-id="${esc(m.id)}">Responder</button>${mine ? `<span>${m.readAt ? 'Lido' : 'Enviado'}</span>` : ''}</div></div></div>`; }).join('') : '<div class="wgik-chat-empty"><div class="text-blue-600 mb-3">' + icons.chat + '</div><strong>Nenhuma mensagem ainda.</strong><p class="text-xs mt-2">Use um atalho abaixo para iniciar uma conversa organizada com ' + esc(otherName) + '.</p></div>'}</div>
+            <div><div class="wgik-shortcuts"><button class="wgik-shortcut" data-chat-shortcut="stock_request">${icons.box}<span>Pedir estoque</span></button><button class="wgik-shortcut" data-chat-shortcut="sales_total">${icons.chart}<span>Total vendido</span></button><button class="wgik-shortcut" data-chat-shortcut="seller_report">${icons.alert}<span>Relatar baixa de vendedor</span></button><button class="wgik-shortcut" data-chat-shortcut="normal">${icons.text}<span>Digitar texto livre</span></button></div><div class="wgik-compose"><div id="wgIkReplying" class="wgik-replying"><span id="wgIkReplyingText"></span><button id="wgIkCancelReply" class="wgik-reply-cancel">Cancelar</button></div><form id="wgIkChatForm" class="wgik-compose-form"><textarea id="wgIkMessageInput" class="control" placeholder="Escreva uma mensagem para ${esc(otherName)}..." required></textarea><button class="wgik-send" type="submit">${icons.send}<span>Enviar</span></button></form></div></div>
+        </div>
+    `);
+    const body = document.getElementById('wgIkChatBody');
+    if (body) body.scrollTop = body.scrollHeight;
+    document.querySelectorAll('[data-chat-shortcut]').forEach(button => button.onclick = () => chatShortcut(button.dataset.chatShortcut));
+    let replyTo = null;
+    document.querySelectorAll('.wgik-reply-btn').forEach(button => button.onclick = () => {
+        replyTo = conversationMessages().find(m => m.id === button.dataset.replyId) || null;
+        const replyBox = document.getElementById('wgIkReplying');
+        document.getElementById('wgIkReplyingText').textContent = replyTo ? `Respondendo: ${replyTo.body.slice(0, 90)}` : '';
+        replyBox.classList.toggle('show', Boolean(replyTo));
+        document.getElementById('wgIkMessageInput').focus();
+    });
+    document.getElementById('wgIkCancelReply').onclick = () => { replyTo = null; document.getElementById('wgIkReplying').classList.remove('show'); };
+    document.getElementById('wgIkChatForm').onsubmit = async event => {
+        event.preventDefault();
+        const input = document.getElementById('wgIkMessageInput');
+        const bodyText = input.value.trim();
+        if (!bodyText || !canUseWgIkChat()) return;
+        const button = event.target.querySelector('button[type="submit"]');
+        button.disabled = true;
+        const message = { id: uid(), senderId: currentUser.id, senderRole: isWGAccount(currentUser) ? 'WG' : isIKAccount(currentUser) ? 'IK' : 'ADMIN', recipientId: isWGAccount(currentUser) ? ikAccountId() : wgAccountId(), messageType: input.dataset.messageType || 'normal', body: bodyText, metadata: {}, replyTo: replyTo?.id || null, createdAt: new Date().toISOString(), readAt: null };
+        try {
+            if (!supabaseClient) throw new Error('Supabase não está conectado.');
+            const { error } = await supabaseClient.from('wg_ik_messages').insert({ id: message.id, sender_id: message.senderId, sender_role: message.senderRole, recipient_id: message.recipientId, message_type: message.messageType, body: message.body, metadata: message.metadata, reply_to: message.replyTo, created_at: message.createdAt });
+            if (error) throw error;
+            dbCache.wg_ik_messages = [...conversationMessages(), message];
+            localStorage.setItem('nl_wg_ik_messages', JSON.stringify(dbCache.wg_ik_messages));
+            input.value = ''; input.dataset.messageType = 'normal'; replyTo = null; document.getElementById('wgIkReplying').classList.remove('show');
+            renderWgIkChatPage();
+        } catch (error) {
+            console.error(error);
+            alert(`Não foi possível enviar a mensagem: ${error.message}`);
+            button.disabled = false;
+        }
+    };
+    markWgIkMessagesRead().catch(error => console.warn('Não foi possível marcar mensagens como lidas:', error));
+}
+
 function setupSupabaseRealtimeSync() {
     if (!supabaseClient || window.newlifeRealtimeChannel) return;
     window.newlifeRealtimeChannel = supabaseClient
         .channel('newlife-stock-sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'wg_ik_messages' }, async () => {
+            await fetchSupabaseData();
+            if (canUseWgIkChat() && activeTab === 'wgIkChat') renderWgIkChatPage();
+            else refreshCurrentScreen();
+        })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'product_catalog' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
