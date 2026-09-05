@@ -1,4 +1,4 @@
-/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v22 - Full Supabase Real-Time Direct Push & Câmbio) */
+/* newlife.system — Sistema Operacional de Gestão, Estoque e Vendas (v31 - Full Supabase Real-Time Direct Push & Câmbio) */
 
 // CREDENCIAIS OFICIAIS DO SUPABASE
 const SUPABASE_URL = 'https://pgqbukhnfameinfrikjw.supabase.co';
