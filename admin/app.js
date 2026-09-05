@@ -321,8 +321,9 @@ async function pushAllToSupabase() {
 
         if (dbCache.wg_ik_shipments.length) {
             await supabaseClient.from('wg_ik_shipments').upsert(dbCache.wg_ik_shipments.map(x => ({
-                id: x.id, wg_id: x.wgId, ik_id: x.ikId, product_name: x.productName, brand: x.brand,
+                id: x.id, batch_id: x.batchId || x.id, wg_id: x.wgId, ik_id: x.ikId, product_name: x.productName, brand: x.brand,
                 quantity_sent: Number(x.quantitySent || 0), quantity_remaining: Number(x.quantityRemaining || 0),
+                source_currency: x.sourceCurrency || 'BRL', unit_cost_original: Number(x.unitCostOriginal ?? x.unitCostBRL ?? 0), total_value_original: Number(x.totalValueOriginal ?? x.totalValueBRL ?? 0),
                 unit_cost_brl: Number(x.unitCostBRL || 0), total_value_brl: Number(x.totalValueBRL || 0),
                 remaining_value_brl: Number(x.remainingValueBRL || 0), status: x.status || 'OPEN', notes: x.notes || null,
                 created_at: x.createdAt, updated_at: x.updatedAt
@@ -455,10 +456,10 @@ async function fetchSupabaseData() {
         }
 
         if (wsRes?.data) {
-            dbCache.wg_ik_shipments = wsRes.data.map(x => ({ ...x, wgId: x.wg_id, ikId: x.ik_id,
-                productName: x.product_name, quantitySent: Number(x.quantity_sent || 0), quantityRemaining: Number(x.quantity_remaining || 0),
+            dbCache.wg_ik_shipments = wsRes.data.map(x => ({ ...x, batchId: x.batch_id || x.id, wgId: x.wg_id, ikId: x.ik_id,
+                productName: x.product_name, sourceCurrency: x.source_currency || 'BRL', unitCostOriginal: Number(x.unit_cost_original ?? x.unit_cost_brl ?? 0), totalValueOriginal: Number(x.total_value_original ?? x.total_value_brl ?? 0), quantitySent: Number(x.quantity_sent || 0), quantityRemaining: Number(x.quantity_remaining || 0),
                 unitCostBRL: Number(x.unit_cost_brl || 0), totalValueBRL: Number(x.total_value_brl || 0), remainingValueBRL: Number(x.remaining_value_brl || 0),
-                createdAt: x.created_at, updatedAt: x.updated_at }));
+                createdAt: x.sent_at || x.created_at, updatedAt: x.updated_at }));
             localStorage.setItem('nl_wg_ik_shipments', JSON.stringify(dbCache.wg_ik_shipments));
         }
         if (iaRes?.data) {
@@ -1128,7 +1129,6 @@ function navContent() {
             <button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>
             <button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>3 Estoques</span></button>
-            <button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>
             <button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-tab="wgNotes">${icons.clipboard} <span>Anotações</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
@@ -1141,7 +1141,8 @@ function navContent() {
         ` : isAdmin ? `
             ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
             ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>` : ''}
+            ${isIKAccount(currentUser) ? `<button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
@@ -1527,6 +1528,7 @@ function emergencyWipeModal() {
 }
 
 function renderSupervisor() {
+    if (isWGAccount(currentUser) && activeTab === 'sellerTotals') activeTab = 'summary';
     if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
@@ -1544,6 +1546,7 @@ function renderSupervisor() {
 }
 
 function renderAdmin() {
+    if (isWGAccount(currentUser) && activeTab === 'sellerTotals') activeTab = 'adminHome';
     if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
@@ -2226,31 +2229,32 @@ function deleteSeller(id) {
 
 function renderMotoboysPage() {
     const isAdm = hasAdminAccess(currentUser);
+    const canManage = isAdm || isWGAccount(currentUser);
     const sups = allSupervisors();
-    const motoboysList = isAdm ? allMotoboys() : allMotoboys().filter(m => (m.supervisor || '').toLowerCase() === (currentUser.user || '').toLowerCase());
+    const motoboysList = canManage ? allMotoboys() : allMotoboys().filter(m => (m.supervisor || '').toLowerCase() === (currentUser.user || '').toLowerCase());
 
-    appFrame('Gestão de Motoboys', isAdm ? 'Cadastre entregadores e defina o supervisor responsável.' : 'Motoboys vinculados ao seu perfil.', `
+    appFrame('Gestão de Motoboys', canManage ? 'Cadastre entregadores e defina o supervisor responsável.' : 'Motoboys vinculados ao seu perfil.', `
         <div class="page-toolbar flex justify-between items-center mb-4 gap-3 flex-wrap">
-            <div><b>${motoboysList.length} Motoboy(s) ${isAdm ? 'Cadastrado(s)' : 'Atribuído(s) a Você'}</b></div>
-            ${isAdm ? `<button id="addNewMotoboyBtn" class="primary-btn text-xs py-2">+ Cadastrar Novo Motoboy</button>` : ''}
+            <div><b>${motoboysList.length} Motoboy(s) ${canManage ? 'Cadastrado(s)' : 'Atribuído(s) a Você'}</b></div>
+            ${canManage ? `<button id="addNewMotoboyBtn" class="primary-btn text-xs py-2">+ Cadastrar Novo Motoboy</button>` : ''}
         </div>
 
         <div class="panel glass-panel">
             ${motoboysList.length ? `
                 <div class="data-table flex flex-col gap-3">
-                    <div class="table-head hidden md:grid" style="grid-template-columns: ${isAdm ? '2fr 1.5fr 1.5fr 1.5fr auto' : '2fr 1.5fr 1.5fr'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
+                    <div class="table-head hidden md:grid" style="grid-template-columns: ${canManage ? '2fr 1.5fr 1.5fr 1.5fr auto' : '2fr 1.5fr 1.5fr'}; align-items: center; padding: 12px 18px; font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px;">
                         <span>NOME DO MOTOBOY</span>
                         <span>WHATSAPP DE CONTATO</span>
                         <span>LOCALIZAÇÃO (CIDADE/UF)</span>
-                        ${isAdm ? '<span>SUPERVISOR ATRIBUÍDO</span>' : ''}
-                        ${isAdm ? '<span>AÇÕES</span>' : ''}
+                        ${canManage ? '<span>SUPERVISOR ATRIBUÍDO</span>' : ''}
+                        ${canManage ? '<span>AÇÕES</span>' : ''}
                     </div>
                     ${motoboysList.map(mb => {
                         const cleanPhone = String(mb.whatsapp || mb.phone || '').replace(/\D/g, '');
                         const waUrl = cleanPhone ? `https://wa.me/55${cleanPhone}` : '#';
 
                         return `
-                            <div class="table-row flex flex-col md:grid ${isAdm ? 'md:grid-cols-5' : 'md:grid-cols-3'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                            <div class="table-row flex flex-col md:grid ${canManage ? 'md:grid-cols-5' : 'md:grid-cols-3'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                                 <div class="flex justify-between items-center md:block">
                                     <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Motoboy</span>
                                     <div class="flex items-center gap-2">
@@ -2271,7 +2275,7 @@ function renderMotoboysPage() {
                                     <span class="text-sm font-semibold text-slate-700">📍 ${esc(mb.city || 'N/A')} / ${esc(mb.uf || 'N/A')}</span>
                                 </div>
 
-                                ${isAdm ? `
+                                ${canManage ? `
                                     <div class="flex justify-between items-center md:block">
                                         <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Supervisor</span>
                                         <select class="control compact change-motoboy-sup w-36 md:w-full" data-id="${mb.id}">
@@ -2291,11 +2295,11 @@ function renderMotoboysPage() {
                         `;
                     }).join('')}
                 </div>
-            ` : `<div class="empty-state"><strong>${isAdm ? 'Nenhum motoboy cadastrado.' : 'Nenhum motoboy foi atribuído a você.'}</strong></div>`}
+            ` : `<div class="empty-state"><strong>${canManage ? 'Nenhum motoboy cadastrado.' : 'Nenhum motoboy foi atribuído a você.'}</strong></div>`}
         </div>
     `);
 
-    if (isAdm) {
+    if (canManage) {
         const addBtn = document.getElementById('addNewMotoboyBtn');
         if (addBtn) addBtn.onclick = () => motoboyModal();
 
@@ -3958,22 +3962,59 @@ function deleteSellerStockProduct(productId) {
 // OPERAÇÃO WG → IK → VENDEDORES (tabelas normalizadas no Supabase)
 function openWgShipmentModal() {
     if (!isWGAccount()) return showToast('Somente WG pode enviar estoque ao IK.');
-    const catalogItems=[...new Map(systemCatalog().map(([name,brand])=>[`${name}::${brand}`,{name,brand}])).values()];
-    const options='<option value="">Selecione um produto do catálogo</option>'+catalogItems.map(item=>`<option value="${esc(item.name)}" data-brand="${esc(item.brand)}">${esc(item.name)}${item.brand?` — ${esc(item.brand)}`:''}</option>`).join('');
-    const m=modal(`<h2>WG: Cadastrar Estoque para IK</h2><p class="text-xs text-slate-500 mb-3">Selecione o produto cadastrado e informe manualmente o valor que o WG passou para o IK.</p><form id="wgShipmentForm" class="seller-form"><label>Produto do catálogo<select name="productName" id="wgProductSelect" class="control" required>${options}</select></label><input type="hidden" name="brand" id="wgProductBrand"><label>Quantidade<input name="quantity" type="number" min="1" class="control" required></label><label>Valor unitário passado ao IK (R$)<input name="unitCost" type="number" min="0" step="0.01" class="control" required placeholder="Digite o valor manualmente"></label><label>Observação<input name="notes" class="control"></label><button class="primary-btn w-full mt-3" type="submit">Salvar estoque para IK</button></form>`);
-    const productSelect=m.querySelector('#wgProductSelect'); productSelect.onchange=()=>{m.querySelector('#wgProductBrand').value=productSelect.selectedOptions[0]?.dataset.brand||'';};
-    m.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);const qty=Number(f.get('quantity'));const unit=Number(f.get('unitCost'));const productName=String(f.get('productName')||'').trim();if(!productName||!Number.isInteger(qty)||qty<1||!(unit>=0))return alert('Selecione um produto e informe quantidade e valor válidos.');const now=new Date().toISOString();const item={id:uid(),wgId:wgAccountId(),ikId:ikAccountId(),productName,brand:String(f.get('brand')||''),quantitySent:qty,quantityRemaining:qty,unitCostBRL:Number(unit.toFixed(2)),totalValueBRL:Number((qty*unit).toFixed(2)),remainingValueBRL:Number((qty*unit).toFixed(2)),status:'OPEN',notes:String(f.get('notes')||'').trim(),createdAt:now,updatedAt:now};const existing=wgIkShipments().filter(x=>x.status!=='CLOSED'&&x.productName===item.productName&&String(x.brand||'')===item.brand).sort((a,b)=>new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt))[0];
-        let error=null; let list=wgIkShipments();
-        if(existing){
-            const newRemainingQty=Number(existing.quantityRemaining)+qty; const newSentQty=Number(existing.quantitySent)+qty; const newTotal=Number((newRemainingQty*unit).toFixed(2));
-            const result=await supabaseClient.from('wg_ik_shipments').update({quantity_sent:newSentQty,quantity_remaining:newRemainingQty,unit_cost_brl:item.unitCostBRL,total_value_brl:Number((newSentQty*unit).toFixed(2)),remaining_value_brl:newTotal,updated_at:now,notes:item.notes||existing.notes}).eq('id',existing.id); error=result.error;
-            if(!error){existing.quantitySent=newSentQty;existing.quantityRemaining=newRemainingQty;existing.unitCostBRL=item.unitCostBRL;existing.totalValueBRL=Number((newSentQty*unit).toFixed(2));existing.remainingValueBRL=newTotal;existing.updatedAt=now;existing.notes=item.notes||existing.notes;}
-        } else {
-            const result=await supabaseClient.from('wg_ik_shipments').insert({id:item.id,wg_id:item.wgId,ik_id:item.ikId,product_name:item.productName,brand:item.brand,quantity_sent:item.quantitySent,quantity_remaining:item.quantityRemaining,unit_cost_brl:item.unitCostBRL,total_value_brl:item.totalValueBRL,remaining_value_brl:item.remainingValueBRL,status:item.status,notes:item.notes,created_at:now,updated_at:now}); error=result.error; if(!error)list.push(item);
-        }
-        if(error)return alert(`Não foi possível registrar: ${error.message}`);write('nl_wg_ik_shipments',list);m.remove();showToast(existing?'Valor do produto atualizado para o IK.':'Produto cadastrado no estoque do IK.');renderWgIkStockPage();};
+    const catalogItems = [...new Map(systemCatalog().map(([name, brand]) => [`${name}::${brand}`, { name, brand }])).values()];
+    const options = '<option value="">Selecione um produto</option>' + catalogItems.map(item => `<option value="${esc(item.name)}" data-brand="${esc(item.brand)}">${esc(item.name)}${item.brand ? ` — ${esc(item.brand)}` : ''}</option>`).join('');
+    const m = modal(`<h2>Novo lote WG → IK</h2><p class="text-xs text-slate-500 mb-4">Adicione quantos produtos quiser. Cada item pode ter sua própria moeda e valor.</p><form id="wgShipmentForm" class="seller-form"><label>Data de envio<input name="sentDate" type="date" class="control" value="${new Date().toISOString().slice(0, 10)}" required></label><div id="wgShipmentRows" class="space-y-3"></div><div class="flex flex-wrap gap-2 mt-3"><button type="button" id="addWgShipmentRow" class="outline-btn">+ Adicionar produto</button><span id="wgShipmentTotal" class="small-btn">0 itens · R$ 0,00</span></div><label class="mt-3">Observação do lote<input name="notes" class="control" placeholder="Opcional"></label><button class="primary-btn w-full mt-4" type="submit">Gerar e salvar lote</button></form>`);
+    const rows = m.querySelector('#wgShipmentRows');
+    const totalBadge = m.querySelector('#wgShipmentTotal');
+    const refreshTotal = () => {
+        const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 0) || 1;
+        const totals = [...rows.querySelectorAll('.wg-shipment-row')].reduce((sum, row) => {
+            const value = Number(row.querySelector('[name="quantity"]')?.value || 0) * Number(row.querySelector('[name="unitValue"]')?.value || 0);
+            const currency = row.querySelector('[name="currency"]')?.value || 'BRL';
+            if (currency === 'USD') sum.usd += value; else sum.brl += value;
+            return sum;
+        }, { brl: 0, usd: 0 });
+        totalBadge.textContent = `${rows.children.length} item(ns) · R$ ${totals.brl.toFixed(2)} · US$ ${totals.usd.toFixed(2)} · equivalente R$ ${(totals.brl + totals.usd * rate).toFixed(2)}`;
+    };
+    const addRow = () => {
+        const row = document.createElement('div');
+        row.className = 'wg-shipment-row rounded-xl border border-slate-200 bg-slate-50 p-3';
+        row.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_90px_110px_120px_auto] gap-2 items-end"><label>Produto<select name="productName" class="control" required>${options}</select></label><label>Qtd.<input name="quantity" class="control" type="number" min="1" step="1" required value="1"></label><label>Moeda<select name="currency" class="control"><option value="BRL">R$</option><option value="USD">US$</option></select></label><label>Valor unitário<input name="unitValue" class="control" type="number" min="0" step="0.01" required placeholder="0,00"></label><button type="button" class="delete-btn remove-wg-shipment-row">Remover</button></div><input type="hidden" name="brand" value="">`;
+        const select = row.querySelector('[name="productName"]');
+        select.onchange = () => { row.querySelector('[name="brand"]').value = select.selectedOptions[0]?.dataset.brand || ''; };
+        row.querySelector('.remove-wg-shipment-row').onclick = () => { if (rows.children.length > 1) row.remove(); else row.querySelector('[name="productName"]').value = ''; refreshTotal(); };
+        row.querySelectorAll('input,select').forEach(field => field.addEventListener('input', refreshTotal));
+        rows.appendChild(row);
+        refreshTotal();
+    };
+    m.querySelector('#addWgShipmentRow').onclick = addRow;
+    addRow();
+    m.querySelector('form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.target;
+        const rowsData = [...rows.querySelectorAll('.wg-shipment-row')].map(row => ({
+            productName: String(row.querySelector('[name="productName"]').value || '').trim(), brand: String(row.querySelector('[name="brand"]').value || ''),
+            quantity: Number(row.querySelector('[name="quantity"]').value), currency: String(row.querySelector('[name="currency"]').value || 'BRL'), unitOriginal: Number(row.querySelector('[name="unitValue"]').value)
+        })).filter(x => x.productName);
+        const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 0);
+        if (!rowsData.length || rowsData.some(x => !Number.isInteger(x.quantity) || x.quantity < 1 || !(x.unitOriginal >= 0))) return alert('Preencha produto, quantidade e valor de todos os itens.');
+        if (!(rate > 0) && rowsData.some(x => x.currency === 'USD')) return alert('A cotação do dólar ainda não está disponível. Atualize a cotação e tente novamente.');
+        const sentDate = String(form.querySelector('[name="sentDate"]').value);
+        const notes = String(form.querySelector('[name="notes"]').value || '').trim();
+        const batchId = uid();
+        const now = new Date().toISOString();
+        const items = rowsData.map(x => ({ ...x, id: uid(), batchId, wgId: wgAccountId(), ikId: ikAccountId(), unitCostOriginal: Number(x.unitOriginal.toFixed(2)), totalValueOriginal: Number((x.quantity * x.unitOriginal).toFixed(2)), unitCostBRL: Number((x.currency === 'USD' ? x.unitOriginal * rate : x.unitOriginal).toFixed(2)), totalValueBRL: Number((x.quantity * (x.currency === 'USD' ? x.unitOriginal * rate : x.unitOriginal)).toFixed(2)), quantitySent: x.quantity, quantityRemaining: x.quantity, remainingValueBRL: Number((x.quantity * (x.currency === 'USD' ? x.unitOriginal * rate : x.unitOriginal)).toFixed(2)), status: 'OPEN', notes, createdAt: `${sentDate}T12:00:00.000Z`, updatedAt: now }));
+        try {
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('wg_ik_shipments').insert(items.map(x => ({ id: x.id, batch_id: x.batchId, wg_id: x.wgId, ik_id: x.ikId, product_name: x.productName, brand: x.brand, quantity_sent: x.quantitySent, quantity_remaining: x.quantityRemaining, source_currency: x.currency, unit_cost_original: x.unitCostOriginal, total_value_original: x.totalValueOriginal, unit_cost_brl: x.unitCostBRL, total_value_brl: x.totalValueBRL, remaining_value_brl: x.remainingValueBRL, status: x.status, notes: x.notes, sent_at: x.createdAt, created_at: now, updated_at: now })));
+                if (error) throw error;
+            }
+            write('nl_wg_ik_shipments', [...wgIkShipments(), ...items]);
+            m.remove(); showToast(`Lote ${batchId} gerado com ${items.length} produto(s).`); renderWgIkStockPage();
+        } catch (error) { alert(`Não foi possível salvar o lote: ${error.message || error}`); }
+    };
 }
-
 
 function openIkAllocationModal() {
     if (!isIKAccount() && !hasAdminAccess()) return showToast('Somente IK pode repassar estoque aos vendedores.');
@@ -4013,24 +4054,56 @@ async function clearWgIkTransferLogs() {
     }});
 }
 
+
+async function undoWgIkBatch(batchShipmentIds) {
+    if (!isWGAccount()) return showToast('Somente WG pode desfazer um envio.');
+    const ids = new Set(batchShipmentIds || []);
+    const allocations = ikSellerAllocations().filter(a => ids.has(a.shipmentId));
+    if (allocations.length) return alert('Este envio já foi distribuído a vendedores. Desfaça primeiro os repasses para poder desfazer o envio WG → IK.');
+    if (!confirm('Desfazer este envio WG → IK? O lote será removido do histórico.')) return;
+    try {
+        if (supabaseClient) {
+            const { error } = await supabaseClient.from('wg_ik_shipments').delete().in('id', [...ids]);
+            if (error) throw error;
+        }
+        write('nl_wg_ik_shipments', wgIkShipments().filter(x => !ids.has(x.id)));
+        showToast('Envio WG → IK desfeito.');
+        renderWgIkStockPage();
+    } catch (error) {
+        alert(`Não foi possível desfazer o envio: ${error.message || error}`);
+    }
+}
+
+async function deleteWgIkShipment(shipmentId) {
+    if (!isWGAccount()) return showToast('Somente WG pode excluir produtos enviados.');
+    const allocations = ikSellerAllocations().filter(a => a.shipmentId === shipmentId);
+    if (allocations.length) return alert('Este produto já foi distribuído a vendedor e não pode ser excluído antes de desfazer o repasse.');
+    if (!confirm('Excluir este produto do lote?')) return;
+    try {
+        if (supabaseClient) { const { error } = await supabaseClient.from('wg_ik_shipments').delete().eq('id', shipmentId); if (error) throw error; }
+        write('nl_wg_ik_shipments', wgIkShipments().filter(x => x.id !== shipmentId));
+        showToast('Produto removido do lote.'); renderWgIkStockPage();
+    } catch (error) { alert(`Não foi possível excluir o produto: ${error.message || error}`); }
+}
+
 function renderWgIkStockPage() {
     if(!canEditWgIk()) return showToast('Acesso restrito às contas WG e IK.');
     const shipments=wgIkShipments().filter(x=>isWGAccount()?(x.wgId===currentUser.id||x.wgId==='u_wg'):true);
     const allocations=ikSellerAllocations(); const rate=Number(currentExchangeRate.ask||currentExchangeRate.bid||0);
     const groups={};
-    shipments.forEach(x=>{const day=String(x.createdAt||x.updatedAt||'').slice(0,10)||'sem-data';const key=`${x.wgId||'wg'}-${day}`;(groups[key]??={key,date:day,shipments:[]}).shipments.push(x);});
+    shipments.forEach(x=>{const day=String(x.createdAt||x.updatedAt||'').slice(0,10)||'sem-data';const key=x.batchId||`${x.wgId||'wg'}-${day}`;(groups[key]??={key,batchId:key,date:day,shipments:[]}).shipments.push(x);});
     const batchCards=Object.values(groups).sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(batch=>{
         const ids=new Set(batch.shipments.map(x=>x.id)); const batchAllocs=allocations.filter(a=>ids.has(a.shipmentId)); const totalBatch=batch.shipments.reduce((n,x)=>n+Number(x.totalValueBRL||0),0); const remaining=batch.shipments.reduce((n,x)=>n+Number(x.remainingValueBRL||0),0); const sellerGroups={};
         batchAllocs.forEach(a=>{const key=a.sellerId;(sellerGroups[key]??={seller:allSellers().find(s=>s.id===key),items:[],total:0}).items.push(a);sellerGroups[key].total+=Number(a.totalValueBRL||0);});
-        const products=batch.shipments.map(x=>`<div class="wgik-batch-product"><div><b>${esc(x.productName)}</b><span>${esc(x.brand||'Sem marca')}</span></div><div class="wgik-batch-product-meta"><b>${Number(x.quantitySent||0)} un.</b><span>${money(x.unitCostBRL)} / un.</span><strong>${money(x.totalValueBRL)}</strong></div></div>`).join('');
+        const products=batch.shipments.map(x=>`<div class="wgik-batch-product"><div><b>${esc(x.productName)}</b><span>${esc(x.brand||'Sem marca')} · ${Number(x.quantitySent||0)} un.</span></div><div class="wgik-batch-product-meta"><b>${x.sourceCurrency === 'USD' ? 'US$' : 'R$'} ${Number(x.unitCostOriginal ?? x.unitCostBRL ?? 0).toFixed(2)} / un.</b><strong>${x.sourceCurrency === 'USD' ? 'US$' : 'R$'} ${Number(x.totalValueOriginal ?? x.totalValueBRL ?? 0).toFixed(2)}</strong>${isWGAccount()?`<button class="delete-btn wgik-delete-product" data-id="${x.id}" title="Excluir produto">${icons.trash}</button>`:''}</div></div>`).join('');
         const sellers=Object.values(sellerGroups).map(g=>`<div class="wgik-batch-seller"><div><b>${esc(g.seller?.name||g.items[0]?.sellerId||'Vendedor')}</b><span>${g.items.map(i=>esc(i.productName)).join(' · ')}</span></div><strong>${money(g.total)} <small>· US$ ${(rate?g.total/rate:0).toFixed(2)}</small></strong></div>`).join('')||'<div class="wgik-empty-small">Nenhum produto repassado a vendedor neste lote.</div>';
         const dateLabel=batch.date==='sem-data'?'Data não informada':new Date(`${batch.date}T12:00:00`).toLocaleDateString('pt-BR');
-        return `<article class="wgik-batch-card"><div class="wgik-batch-head"><div><span class="ik-stock-label">Lote WG → IK</span><h2>${esc(dateLabel)}</h2><p>${batch.shipments.length} produto(s) enviado(s) ao IK</p></div><div class="wgik-batch-values"><span>Valor repassado ao IK</span><b>${money(totalBatch)} · US$ ${(rate?totalBatch/rate:0).toFixed(2)}</b><small>Restante: ${money(remaining)}</small></div></div><div class="wgik-batch-section"><h3>Produtos do lote</h3><div class="wgik-batch-products">${products}</div></div><div class="wgik-batch-section"><h3>Vendedores que receberam produtos</h3><div class="wgik-batch-sellers">${sellers}</div></div></article>`;
+        return `<article class="wgik-batch-card"><div class="wgik-batch-head"><div><span class="ik-stock-label">Lote WG → IK</span><h2>${esc(dateLabel)}</h2><p>${batch.shipments.length} produto(s) enviado(s) ao IK</p></div><div class="wgik-batch-values"><span>Valor repassado ao IK</span><b>${money(totalBatch)} · US$ ${(rate?totalBatch/rate:0).toFixed(2)}</b><small>Restante: ${money(remaining)}</small>${isWGAccount()?`<button class="small-btn danger-outline mt-2 wgik-undo-batch" data-ids="${batch.shipments.map(x=>x.id).join(',')}">Desfazer envio</button>`:''}</div></div><div class="wgik-batch-section"><h3>Produtos do lote</h3><div class="wgik-batch-products">${products}</div></div><div class="wgik-batch-section"><h3>Vendedores que receberam produtos</h3><div class="wgik-batch-sellers">${sellers}</div></div></article>`;
     }).join('')||'<div class="empty-state">Nenhum lote enviado pelo WG.</div>';
     appFrame('Envios WG → IK','Lotes enviados pelo WG, com produtos, data, valor repassado ao IK e totais por vendedor.',`<style>
     .wgik-batch-list{display:grid;gap:18px}.wgik-batch-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(15,23,42,.06)}.wgik-batch-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding-bottom:15px;border-bottom:1px solid #e2e8f0}.wgik-batch-head h2{margin:4px 0 2px;font-size:19px;color:#0f172a}.wgik-batch-head p{margin:0;color:#64748b;font-size:12px}.wgik-batch-values{text-align:right;background:#eef6ff;border:1px solid #dbeafe;border-radius:12px;padding:10px 12px;min-width:190px}.wgik-batch-values span,.wgik-batch-values small{display:block;color:#64748b;font-size:10px}.wgik-batch-values b{display:block;margin:3px 0;color:#1d4ed8;font-size:14px}.wgik-batch-section{margin-top:15px}.wgik-batch-section h3{margin:0 0 8px;color:#475569;text-transform:uppercase;font-size:10px;letter-spacing:.06em}.wgik-batch-products,.wgik-batch-sellers{display:grid;gap:7px}.wgik-batch-product,.wgik-batch-seller{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px}.wgik-batch-product span,.wgik-batch-seller span{display:block;color:#64748b;font-size:11px;margin-top:2px}.wgik-batch-product-meta{display:flex;align-items:center;gap:12px;color:#475569;font-size:11px}.wgik-batch-product-meta strong{color:#0f172a;font-size:12px}.wgik-batch-seller{background:#f0fdf4;border-color:#bbf7d0}.wgik-batch-seller strong{color:#166534;font-size:13px;white-space:nowrap}.wgik-batch-seller small{font-weight:600;color:#15803d}.wgik-empty-small{padding:12px;color:#64748b;background:#f8fafc;border-radius:10px;font-size:12px}@media(max-width:640px){.wgik-batch-head{display:block}.wgik-batch-values{text-align:left;margin-top:12px}.wgik-batch-product,.wgik-batch-seller{align-items:flex-start;flex-direction:column}.wgik-batch-product-meta{width:100%;justify-content:space-between;gap:5px}}
-    </style><div class="ik-stock-actions">${isWGAccount()?'<button id="newWgShipmentBtn" class="primary-btn">+ Cadastrar produto para IK</button>':''}${isIKAccount()||hasAdminAccess()?'<button id="newIkAllocationBtn" class="primary-btn">Repassar para vendedor</button>':''}<button id="openSellerSheetsBtn" class="small-btn">Totais por Vendedor</button><button id="clearWgIkLogsBtn" class="small-btn danger-outline">Apagar log</button></div><div class="wgik-batch-list">${batchCards}</div>`);
-    document.getElementById('newWgShipmentBtn')?.addEventListener('click',openWgShipmentModal);document.getElementById('newIkAllocationBtn')?.addEventListener('click',openIkAllocationModal);document.getElementById('openSellerSheetsBtn')?.addEventListener('click',()=>{activeTab='sellerTotals';renderSellerTotalsPage();});document.getElementById('clearWgIkLogsBtn')?.addEventListener('click',clearWgIkTransferLogs);
+    </style><div class="ik-stock-actions">${isWGAccount()?'<button id="newWgShipmentBtn" class="primary-btn">+ Cadastrar produto para IK</button>':''}${isIKAccount()||hasAdminAccess()?'<button id="newIkAllocationBtn" class="primary-btn">Repassar para vendedor</button>':''}<button id="clearWgIkLogsBtn" class="small-btn danger-outline">Apagar log</button></div><div class="wgik-batch-list">${batchCards}</div>`);
+    document.getElementById('newWgShipmentBtn')?.addEventListener('click',openWgShipmentModal);document.getElementById('newIkAllocationBtn')?.addEventListener('click',openIkAllocationModal);document.getElementById('clearWgIkLogsBtn')?.addEventListener('click',clearWgIkTransferLogs);document.querySelectorAll('.wgik-undo-batch').forEach(button => button.addEventListener('click', () => undoWgIkBatch(button.dataset.ids.split(',')).catch(error => alert(error.message)))); document.querySelectorAll('.wgik-delete-product').forEach(button => button.addEventListener('click', () => deleteWgIkShipment(button.dataset.id).catch(error => alert(error.message))));
 }
 
 function renderWgTransfersPage() {
