@@ -204,7 +204,8 @@ let dbCache = {
     ik_seller_allocations: [],
     seller_payment_ledger: [],
     seller_payment_sheets: [],
-    seller_payment_sheet_lines: []
+    seller_payment_sheet_lines: [],
+    seller_balance_payments: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -360,6 +361,14 @@ async function pushAllToSupabase() {
             })));
         }
 
+        if (dbCache.seller_balance_payments.length) {
+            await supabaseClient.from('seller_balance_payments').upsert(dbCache.seller_balance_payments.map(x => ({
+                id: x.id, seller_id: x.sellerId, payer_id: x.payerId, payer_role: x.payerRole,
+                currency: x.currency, original_amount: Number(x.originalAmount || 0), amount_brl: Number(x.amountBRL || 0),
+                exchange_rate_brl: Number(x.exchangeRateBRL || 0), notes: x.notes || null, created_at: x.createdAt
+            })));
+        }
+
         if (dbCache.motoboys.length) {
             await supabaseClient.from('motoboys').upsert(dbCache.motoboys.map(m => ({
                 id: m.id,
@@ -382,7 +391,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes, balanceRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -397,7 +406,8 @@ async function fetchSupabaseData() {
             supabaseClient.from('seller_payment_sheets').select('*'),
             supabaseClient.from('seller_payment_sheet_lines').select('*'),
             supabaseClient.from('product_catalog').select('*').order('brand').order('name'),
-            supabaseClient.from('wg_ik_messages').select('*').order('created_at')
+            supabaseClient.from('wg_ik_messages').select('*').order('created_at'),
+            supabaseClient.from('seller_balance_payments').select('*').order('created_at')
         ]);
 
         if (uRes.data) {
@@ -464,6 +474,16 @@ async function fetchSupabaseData() {
             dbCache.seller_payment_ledger = payRes.data.map(x => ({ ...x, allocationId: x.allocation_id, sellerId: x.seller_id, ikId: x.ik_id,
                 amountBRL: Number(x.amount_brl || 0), paymentDate: x.payment_date, createdBy: x.created_by, createdAt: x.created_at }));
             localStorage.setItem('nl_seller_payment_ledger', JSON.stringify(dbCache.seller_payment_ledger));
+        }
+
+        if (balanceRes?.data) {
+            dbCache.seller_balance_payments = balanceRes.data.map(x => ({
+                ...x, sellerId: x.seller_id, payerId: x.payer_id, payerRole: x.payer_role,
+                currency: x.currency || 'BRL', originalAmount: Number(x.original_amount || 0),
+                amountBRL: Number(x.amount_brl || 0), exchangeRateBRL: Number(x.exchange_rate_brl || 0),
+                createdAt: x.created_at
+            }));
+            localStorage.setItem('nl_seller_balance_payments', JSON.stringify(dbCache.seller_balance_payments));
         }
 
         if (mRes.data) {
@@ -563,6 +583,7 @@ function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transf
 function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik_shipments : readStorage('nl_wg_ik_shipments', []); }
 function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
 function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? dbCache.seller_payment_ledger : readStorage('nl_seller_payment_ledger', []); }
+function sellerBalancePayments() { return dbCache.seller_balance_payments.length ? dbCache.seller_balance_payments : readStorage('nl_seller_balance_payments', []); }
 function sellerPaymentSheets() { return dbCache.seller_payment_sheets.length ? dbCache.seller_payment_sheets : readStorage('nl_seller_payment_sheets', []); }
 function sellerPaymentSheetLines() { return dbCache.seller_payment_sheet_lines.length ? dbCache.seller_payment_sheet_lines : readStorage('nl_seller_payment_sheet_lines', []); }
 function activeSellerSheetFor(sellerId) { return sellerPaymentSheets().find(x => x.sellerId === sellerId && x.status === 'OPEN'); }
@@ -597,6 +618,7 @@ function write(key, val) {
     if (key === 'nl_wg_ik_shipments') dbCache.wg_ik_shipments = val;
     if (key === 'nl_ik_seller_allocations') dbCache.ik_seller_allocations = val;
     if (key === 'nl_seller_payment_ledger') dbCache.seller_payment_ledger = val;
+    if (key === 'nl_seller_balance_payments') dbCache.seller_balance_payments = val;
     if (key === 'nl_seller_payment_sheets') dbCache.seller_payment_sheets = val;
     if (key === 'nl_seller_payment_sheet_lines') dbCache.seller_payment_sheet_lines = val;
 }
@@ -964,29 +986,36 @@ async function authenticateLogin(username, password) {
     const normalizedPassword = String(password || '').trim();
     if (!normalizedUsername || !normalizedPassword) return { error: 'Informe o usuário e a senha.' };
 
-    if (supabaseClient) {
+    let users = allUsers();
+    let user = users.find(u => String(u.user || u.username || '').trim().toLowerCase() === normalizedUsername && String(u.password || '').trim() === normalizedPassword);
+
+    // If local data is empty or stale, query only the matching user directly.
+    if (!user && supabaseClient) {
         try {
             const { data, error } = await supabaseClient
                 .from('system_users')
                 .select('*')
-                .eq('username', normalizedUsername)
-                .maybeSingle();
+                .or(`username.eq.${normalizedUsername},user.eq.${normalizedUsername}`)
+                .limit(1);
             if (error) throw error;
-            if (data) {
-                const remotePassword = String(data.password || '').trim();
-                if (remotePassword !== normalizedPassword) return { error: 'Usuário ou senha inválidos.' };
-                const user = { ...data, user: normalizedUsername, password: remotePassword, avatarUrl: data.avatar_url || data.avatarUrl, warehouseId: data.warehouse_id || data.warehouseId, active: data.active !== false };
-                if (user.active === false) return { error: 'Esta conta foi desativada pelo Administrador.' };
-                dbCache.users = [...allUsers().filter(u => u.id !== user.id), user];
+            const remote = data?.[0];
+            if (remote && String(remote.password || '').trim() === normalizedPassword) {
+                user = {
+                    ...remote,
+                    user: String(remote.username || remote.user || '').trim().toLowerCase(),
+                    password: String(remote.password || '').trim(),
+                    avatarUrl: remote.avatar_url || remote.avatarUrl,
+                    warehouseId: remote.warehouse_id || remote.warehouseId,
+                    active: remote.active !== false
+                };
+                dbCache.users = [...users.filter(u => u.id !== user.id), user];
                 localStorage.setItem('nl_users', JSON.stringify(dbCache.users));
-                return { user };
             }
         } catch (error) {
-            console.warn('Supabase indisponível no login; usando cache local:', error.message || error);
+            console.error('Erro ao consultar usuário no Supabase:', error);
         }
     }
 
-    const user = allUsers().find(u => String(u.user || u.username || '').trim().toLowerCase() === normalizedUsername && String(u.password || '').trim() === normalizedPassword);
     if (!user) return { error: 'Usuário ou senha inválidos.' };
     if (user.active === false) return { error: 'Esta conta foi desativada pelo Administrador.' };
     return { user };
@@ -3978,11 +4007,77 @@ function renderWgTransfersPage() {
     return renderWgIkStockPage();
 }
 
+function sellerBalancePaidBRL(sellerId) {
+    return sellerBalancePayments().filter(p => p.sellerId === sellerId).reduce((sum, p) => sum + Number(p.amountBRL || 0), 0);
+}
+
+async function saveSellerBalanceDebit(sellerId, currency, entered, notes = '') {
+    if (!canEditWgIk()) return showToast('Apenas WG e IK podem registrar abatimentos.');
+    const seller = allSellers().find(x => x.id === sellerId);
+    const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 0);
+    const originalAmount = Number(entered);
+    const amountBRL = currency === 'USD' ? originalAmount * rate : originalAmount;
+    const productsTotal = products().filter(p => p.sellerId === sellerId).reduce((sum, p) => sum + Number(p.stock || 0) * Number(p.price || 0), 0);
+    const allocationsTotal = ikSellerAllocations().filter(a => a.sellerId === sellerId).reduce((sum, a) => sum + Number(a.totalValueBRL || 0), 0);
+    const totalDueBRL = allocationsTotal > 0 ? allocationsTotal : productsTotal;
+    const alreadyPaid = sellerBalancePaidBRL(sellerId);
+    const remaining = Math.max(totalDueBRL - alreadyPaid, 0);
+    if (!seller || !(originalAmount > 0) || !(amountBRL > 0)) return alert('Informe um valor de abatimento válido.');
+    if (amountBRL > remaining + 0.01) return alert(`O abatimento não pode ser maior que o saldo restante de ${money(remaining)}.`);
+    const now = new Date().toISOString();
+    const payment = { id: uid(), sellerId, payerId: currentUser.id, payerRole: currentUser.role, currency, originalAmount: Number(originalAmount.toFixed(2)), amountBRL: Number(amountBRL.toFixed(2)), exchangeRateBRL: Number(rate.toFixed(6)), notes: String(notes || '').trim(), createdAt: now };
+    if (!supabaseClient) return alert('Supabase não está conectado. Não foi possível registrar o abatimento.');
+    const { error } = await supabaseClient.from('seller_balance_payments').insert({
+        id: payment.id, seller_id: payment.sellerId, payer_id: payment.payerId, payer_role: payment.payerRole,
+        currency: payment.currency, original_amount: payment.originalAmount, amount_brl: payment.amountBRL,
+        exchange_rate_brl: payment.exchangeRateBRL, notes: payment.notes || null, created_at: payment.createdAt
+    });
+    if (error) return alert(`Não foi possível registrar o abatimento: ${error.message}`);
+    const payments = sellerBalancePayments();
+    payments.push(payment);
+    write('nl_seller_balance_payments', payments);
+    showToast(`Abatimento de ${currency === 'USD' ? 'US$' : 'R$'} ${originalAmount.toFixed(2)} registrado para ${seller.name}.`);
+    renderSellerTotalsPage();
+}
+
+function openSellerBalanceDebitModal(sellerId) {
+    if (!canEditWgIk()) return showToast('Apenas WG e IK podem registrar abatimentos.');
+    const seller = allSellers().find(x => x.id === sellerId);
+    if (!seller) return;
+    const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 0);
+    const productsTotal = products().filter(p => p.sellerId === sellerId).reduce((sum, p) => sum + Number(p.stock || 0) * Number(p.price || 0), 0);
+    const allocationsTotal = ikSellerAllocations().filter(a => a.sellerId === sellerId).reduce((sum, a) => sum + Number(a.totalValueBRL || 0), 0);
+    const totalDueBRL = allocationsTotal > 0 ? allocationsTotal : productsTotal;
+    const remaining = Math.max(totalDueBRL - sellerBalancePaidBRL(sellerId), 0);
+    if (!(remaining > 0)) return showToast('Este vendedor já está totalmente abatido.');
+    const m = modal(`<h2>Abater valor — ${esc(seller.name)}</h2><p class="text-xs text-slate-500 mb-3">O valor será convertido para reais pela cotação atual e descontado do saldo deste vendedor.</p><div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm mb-3"><div class="flex justify-between"><span>Saldo restante</span><b>${money(remaining)} · US$ ${(rate ? remaining / rate : 0).toFixed(2)}</b></div></div><form id="sellerBalanceDebitForm" class="seller-form"><label>Moeda<select name="currency" class="control"><option value="BRL">Real (R$)</option><option value="USD">Dólar (US$)</option></select></label><label>Valor abatido<input name="amount" type="number" min="0.01" step="0.01" class="control" required></label><label>Observação<input name="notes" class="control" placeholder="Opcional"></label><button class="primary-btn w-full mt-3" type="submit">Registrar abatimento</button></form>`);
+    m.querySelector('form').onsubmit = async event => {
+        event.preventDefault();
+        const form = new FormData(event.target);
+        const button = event.target.querySelector('button[type="submit"]');
+        button.disabled = true;
+        try { await saveSellerBalanceDebit(sellerId, String(form.get('currency') || 'BRL'), Number(form.get('amount')), String(form.get('notes') || '')); if (document.body.contains(m)) m.remove(); } finally { button.disabled = false; }
+    };
+}
+
 function renderSellerTotalsPage() {
     if (!isWGAccount() && !isIKAccount() && !hasAdminAccess()) return showToast('Acesso restrito às contas WG e IK.');
-    const rate=Number(currentExchangeRate.ask||currentExchangeRate.bid||1); const sellers=allSellers();
-    const cards=sellers.map(s=>{const stockProducts=products().filter(p=>p.sellerId===s.id);const totalBRL=stockProducts.reduce((n,p)=>n+Number(p.stock||0)*Number(p.price||0),0);const qty=stockProducts.reduce((n,p)=>n+Number(p.stock||0),0);const totalUSD=rate?totalBRL/rate:0;const allocations=ikSellerAllocations().filter(a=>a.sellerId===s.id);const wgCost=allocations.reduce((n,a)=>n+Number(a.totalValueBRL||0),0);return `<article class="panel glass-panel p-4 rounded-2xl bg-white/90 border border-slate-200"><div class="flex items-center justify-between gap-3 mb-4"><div class="flex items-center gap-2">${renderAvatarHTML(s,'small')}<div><h3 class="font-black text-slate-900">${esc(s.name)}</h3><p class="text-xs text-slate-500">@${esc(s.user)}</p></div></div><span class="text-xs font-bold text-slate-500">${qty} un.</span></div><div class="grid grid-cols-2 gap-2 text-xs"><div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><span class="block text-slate-500">Valor em posse (R$)</span><b class="text-emerald-800 text-base">${money(totalBRL)}</b></div><div class="rounded-xl bg-sky-50 border border-sky-100 p-3"><span class="block text-slate-500">Valor em posse (US$)</span><b class="text-sky-800 text-base">$ ${totalUSD.toFixed(2)}</b></div></div><div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-500">Custo total recebido do WG: <b class="text-slate-800">${money(wgCost)} · $ ${(rate?wgCost/rate:0).toFixed(2)}</b></div></article>`;}).join('')||'<div class="empty-state">Nenhum vendedor cadastrado.</div>';
-    appFrame('Totais por Vendedor',`Valor dos produtos em posse convertido pela cotação atual de 1 USD = ${money(rate)}.`, `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>`);
+    const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 1);
+    const sellers = allSellers();
+    const cards = sellers.map(s => {
+        const stockProducts = products().filter(p => p.sellerId === s.id);
+        const totalBRL = stockProducts.reduce((n, p) => n + Number(p.stock || 0) * Number(p.price || 0), 0);
+        const qty = stockProducts.reduce((n, p) => n + Number(p.stock || 0), 0);
+        const allocations = ikSellerAllocations().filter(a => a.sellerId === s.id);
+        const allocationTotalBRL = allocations.reduce((n, a) => n + Number(a.totalValueBRL || 0), 0);
+        const totalDueBRL = allocationTotalBRL > 0 ? allocationTotalBRL : totalBRL;
+        const paidBRL = sellerBalancePaidBRL(s.id);
+        const remainingBRL = Math.max(totalDueBRL - paidBRL, 0);
+        const paidPercent = totalDueBRL > 0 ? Math.min((paidBRL / totalDueBRL) * 100, 100) : 0;
+        return `<article class="panel glass-panel p-4 rounded-2xl bg-white/90 border border-slate-200"><div class="flex items-center justify-between gap-3 mb-4"><div class="flex items-center gap-2">${renderAvatarHTML(s, 'small')}<div><h3 class="font-black text-slate-900">${esc(s.name)}</h3><p class="text-xs text-slate-500">@${esc(s.user)}</p></div></div><span class="text-xs font-bold text-slate-500">${qty} un.</span></div><div class="grid grid-cols-2 gap-2 text-xs"><div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><span class="block text-slate-500">Total de referência (R$)</span><b class="text-emerald-800 text-base">${money(totalDueBRL)}</b></div><div class="rounded-xl bg-sky-50 border border-sky-100 p-3"><span class="block text-slate-500">Total de referência (US$)</span><b class="text-sky-800 text-base">$ ${(rate ? totalDueBRL / rate : 0).toFixed(2)}</b></div></div><div class="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100 text-xs"><div class="flex justify-between gap-2"><span class="text-slate-600">Abatido</span><b class="text-emerald-700">${money(paidBRL)} · US$ ${(rate ? paidBRL / rate : 0).toFixed(2)}</b></div><div class="flex justify-between gap-2 mt-1"><span class="text-slate-600">Falta para quitar</span><b class="text-amber-800">${money(remainingBRL)} · US$ ${(rate ? remainingBRL / rate : 0).toFixed(2)}</b></div><div class="h-2 rounded-full bg-white mt-2 overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:${paidPercent.toFixed(2)}%"></div></div><small class="block text-slate-500 mt-1">${paidPercent.toFixed(1)}% abatido</small></div><button class="primary-btn w-full mt-3 seller-balance-debit-btn" data-seller-id="${s.id}">Abater valor em R$ ou US$</button><div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-500">${allocationTotalBRL > 0 ? `Custo total recebido do WG: <b class="text-slate-800">${money(allocationTotalBRL)} · US$ ${(rate ? allocationTotalBRL / rate : 0).toFixed(2)}</b>` : 'Total calculado pelo estoque atual do vendedor.'}</div></article>`;
+    }).join('') || '<div class="empty-state">Nenhum vendedor cadastrado.</div>';
+    appFrame('Totais por Vendedor', `Valores abatidos em R$ ou US$ pela cotação atual de 1 USD = ${money(rate)}.`, `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>`);
+    document.querySelectorAll('.seller-balance-debit-btn').forEach(button => button.addEventListener('click', () => openSellerBalanceDebitModal(button.dataset.sellerId)));
 }
 
 function openSellerPaymentSheetModal(sheetId) {
@@ -4320,6 +4415,10 @@ function setupSupabaseRealtimeSync() {
             refreshCurrentScreen();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheet_lines' }, async () => {
+            await fetchSupabaseData();
+            refreshCurrentScreen();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_balance_payments' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
