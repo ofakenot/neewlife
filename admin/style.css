@@ -104,11 +104,12 @@ svg {
 .app-brand b {
   font-size: 18px;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: #0f172a !important;
+  text-shadow: none;
 }
 
 .app-brand b span {
-  color: #38bdf8;
+  color: #1684d8 !important;
 }
 
 .app-brand small {
