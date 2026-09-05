@@ -1219,6 +1219,9 @@ function ensureStableResponsiveTheme() {
         .app-layout { min-height:100vh; background:transparent !important; }
         .app-responsive-sidebar { width:270px !important; flex:0 0 270px; position:sticky; top:0; height:100vh; overflow-y:auto; overflow-x:hidden; z-index:50; background:rgba(248,251,255,.92) !important; border-right:1px solid rgba(148,163,184,.2); box-shadow:10px 0 35px rgba(31,51,77,.07); }
         .app-brand { padding:20px 18px !important; border-bottom:1px solid var(--nl-line); }
+        .app-brand b { color:#172235 !important; letter-spacing:-.04em; font-size:15px; }
+        .app-brand b span { color:#1769d1 !important; }
+        .app-brand small { color:#8a97a9 !important; }
         .brand-mark { width:38px; height:38px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(145deg,var(--nl-blue-2),var(--nl-blue)); color:#fff; box-shadow:0 8px 18px rgba(23,105,209,.2); }
         .side-label { padding:18px 16px 7px !important; color:#96a2b3 !important; font-size:9px !important; font-weight:900 !important; letter-spacing:.14em !important; }
         .side-link { margin:3px 10px; min-height:42px; border:1px solid transparent !important; border-radius:12px !important; color:#526174 !important; font-size:11px !important; font-weight:750 !important; transition:background .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease; }
