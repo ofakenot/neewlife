@@ -962,40 +962,31 @@ function getLoginField(form, selectors) {
 async function authenticateLogin(username, password) {
     const normalizedUsername = String(username || '').trim().toLowerCase();
     const normalizedPassword = String(password || '').trim();
-    if (!normalizedUsername || !normalizedPassword) {
-        return { error: 'Informe o usuário e a senha.' };
-    }
+    if (!normalizedUsername || !normalizedPassword) return { error: 'Informe o usuário e a senha.' };
 
-    let users = allUsers();
-    let user = users.find(u => String(u.user || u.username || '').trim().toLowerCase() === normalizedUsername && String(u.password || '').trim() === normalizedPassword);
-
-    // If local data is empty or stale, query only the matching user directly.
-    if (!user && supabaseClient) {
+    if (supabaseClient) {
         try {
             const { data, error } = await supabaseClient
                 .from('system_users')
                 .select('*')
-                .or(`username.eq.${normalizedUsername},user.eq.${normalizedUsername}`)
-                .limit(1);
+                .eq('username', normalizedUsername)
+                .maybeSingle();
             if (error) throw error;
-            const remote = data?.[0];
-            if (remote && String(remote.password || '').trim() === normalizedPassword) {
-                user = {
-                    ...remote,
-                    user: String(remote.username || remote.user || '').trim().toLowerCase(),
-                    password: String(remote.password || '').trim(),
-                    avatarUrl: remote.avatar_url || remote.avatarUrl,
-                    warehouseId: remote.warehouse_id || remote.warehouseId,
-                    active: remote.active !== false
-                };
-                dbCache.users = [...users.filter(u => u.id !== user.id), user];
+            if (data) {
+                const remotePassword = String(data.password || '').trim();
+                if (remotePassword !== normalizedPassword) return { error: 'Usuário ou senha inválidos.' };
+                const user = { ...data, user: normalizedUsername, password: remotePassword, avatarUrl: data.avatar_url || data.avatarUrl, warehouseId: data.warehouse_id || data.warehouseId, active: data.active !== false };
+                if (user.active === false) return { error: 'Esta conta foi desativada pelo Administrador.' };
+                dbCache.users = [...allUsers().filter(u => u.id !== user.id), user];
                 localStorage.setItem('nl_users', JSON.stringify(dbCache.users));
+                return { user };
             }
         } catch (error) {
-            console.error('Erro ao consultar usuário no Supabase:', error);
+            console.warn('Supabase indisponível no login; usando cache local:', error.message || error);
         }
     }
 
+    const user = allUsers().find(u => String(u.user || u.username || '').trim().toLowerCase() === normalizedUsername && String(u.password || '').trim() === normalizedPassword);
     if (!user) return { error: 'Usuário ou senha inválidos.' };
     if (user.active === false) return { error: 'Esta conta foi desativada pelo Administrador.' };
     return { user };
@@ -1186,14 +1177,75 @@ function openMobileDrawer() {
     if (overlay) overlay.classList.add('open');
 }
 
+
+
+function ensureStableResponsiveTheme() {
+    if (document.getElementById('newlifeStableTheme')) return;
+    const style = document.createElement('style');
+    style.id = 'newlifeStableTheme';
+    style.textContent = `
+        :root { --nl-blue:#1769d1; --nl-blue-2:#2f8bf0; --nl-ink:#172235; --nl-muted:#718096; --nl-line:#e5ebf2; --nl-card:#ffffff; --nl-radius:18px; }
+        html, body { min-height:100%; }
+        body { margin:0; background:linear-gradient(145deg,#f7faff 0%,#eef4f9 55%,#e9f1f7 100%); color:var(--nl-ink); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+        .app-layout { min-height:100vh; background:transparent !important; }
+        .app-responsive-sidebar { width:270px !important; flex:0 0 270px; position:sticky; top:0; height:100vh; overflow-y:auto; overflow-x:hidden; z-index:50; background:rgba(248,251,255,.92) !important; border-right:1px solid rgba(148,163,184,.2); box-shadow:10px 0 35px rgba(31,51,77,.07); }
+        .app-brand { padding:20px 18px !important; border-bottom:1px solid var(--nl-line); }
+        .brand-mark { width:38px; height:38px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(145deg,var(--nl-blue-2),var(--nl-blue)); color:#fff; box-shadow:0 8px 18px rgba(23,105,209,.2); }
+        .side-label { padding:18px 16px 7px !important; color:#96a2b3 !important; font-size:9px !important; font-weight:900 !important; letter-spacing:.14em !important; }
+        .side-link { margin:3px 10px; min-height:42px; border:1px solid transparent !important; border-radius:12px !important; color:#526174 !important; font-size:11px !important; font-weight:750 !important; transition:background .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease; }
+        .side-link:hover { background:#fff !important; color:#185db4 !important; transform:translateX(2px); box-shadow:0 6px 16px rgba(36,69,105,.08); }
+        .side-link.active { color:#145db8 !important; background:linear-gradient(90deg,#e8f2ff,#f5f9ff) !important; border-color:#cfe2f8 !important; box-shadow:0 7px 17px rgba(36,105,190,.1); }
+        .side-link.active::before { content:""; position:absolute; left:-11px; top:9px; bottom:9px; width:3px; border-radius:0 3px 3px 0; background:#2d86e8; }
+        .side-account { margin:14px 10px !important; padding:10px !important; border:1px solid var(--nl-line); border-radius:14px; background:#fff; }
+        .app-content { min-width:0; background:transparent !important; }
+        .app-header { min-height:76px; background:rgba(255,255,255,.88) !important; border:0 !important; border-bottom:1px solid var(--nl-line) !important; box-shadow:0 7px 22px rgba(37,58,84,.05) !important; backdrop-filter:blur(12px); }
+        .app-header h1 { letter-spacing:-.04em; font-size:clamp(18px,1.8vw,26px) !important; }
+        .page-body { width:100%; max-width:1560px; margin:0 auto; padding:clamp(18px,2.4vw,36px) clamp(14px,3vw,48px) !important; }
+        .glass-panel, .panel, .metric-card { background:rgba(255,255,255,.84) !important; border:1px solid rgba(255,255,255,.95) !important; outline:1px solid rgba(148,163,184,.16); border-radius:var(--nl-radius) !important; box-shadow:0 12px 34px rgba(39,62,91,.08) !important; }
+        .panel { padding:clamp(16px,2vw,26px) !important; }
+        .stats-grid { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) !important; gap:16px !important; }
+        .metric-card { min-height:130px; padding:18px !important; transition:transform .18s ease,box-shadow .18s ease; }
+        .metric-card:hover { transform:translateY(-3px); box-shadow:0 18px 38px rgba(39,62,91,.13) !important; }
+        .seller-attribution-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)) !important; gap:18px !important; }
+        .seller-attribution-grid > * { min-width:0; border-radius:20px !important; border:1px solid rgba(255,255,255,.95) !important; outline:1px solid rgba(148,163,184,.14); box-shadow:0 13px 30px rgba(39,62,91,.08) !important; transition:transform .18s ease,box-shadow .18s ease; }
+        .seller-attribution-grid > *:hover { transform:translateY(-4px); box-shadow:0 20px 38px rgba(39,62,91,.13) !important; }
+        .table-row { background:rgba(255,255,255,.62) !important; border-color:var(--nl-line) !important; border-radius:13px !important; }
+        .primary-btn,.outline-btn,.small-btn,.delete-btn { min-height:38px; border-radius:11px !important; font-weight:800 !important; transition:transform .16s ease,box-shadow .16s ease,background .16s ease; }
+        .primary-btn { background:linear-gradient(135deg,#2f8cf0,#1765cb) !important; box-shadow:0 7px 16px rgba(23,105,209,.18) !important; }
+        .primary-btn:hover,.outline-btn:hover,.small-btn:hover { transform:translateY(-1px); }
+        .outline-btn,.small-btn { background:#fff !important; border-color:#d9e3ee !important; color:#456079 !important; }
+        .control,input,select,textarea { border-radius:11px !important; border-color:#d6e0eb !important; background:#fff !important; }
+        .control:focus,input:focus,select:focus,textarea:focus { outline:0; border-color:#72a9df !important; box-shadow:0 0 0 3px rgba(47,140,240,.12) !important; }
+        .drawer-overlay { display:none; }
+        @media (min-width:1600px) { .page-body{max-width:1720px;} .seller-attribution-grid{grid-template-columns:repeat(4,minmax(280px,1fr)) !important;} }
+        @media (min-width:2200px) { .page-body{max-width:1920px;} .seller-attribution-grid{grid-template-columns:repeat(5,minmax(280px,1fr)) !important;} }
+        @media (max-width:767px) {
+            .app-responsive-sidebar { position:fixed; inset:0 auto 0 0; width:min(86vw,330px) !important; height:100dvh; transform:translateX(-105%); transition:transform .24s ease; box-shadow:20px 0 45px rgba(22,39,61,.22); }
+            .app-responsive-sidebar.open { transform:translateX(0); }
+            .drawer-overlay.open { display:block; position:fixed; inset:0; z-index:40; background:rgba(15,23,42,.32); backdrop-filter:blur(3px); }
+            .app-header { min-height:64px; padding:11px 13px !important; }
+            .app-header .primary-btn span,.app-header #pushToSupabaseBtn span,.app-header #generatePageReportBtn span { display:none; }
+            .app-header .primary-btn,.app-header .outline-btn { padding:9px !important; min-width:38px; }
+            .page-body { padding:14px 12px 24px !important; }
+            .seller-attribution-grid { grid-template-columns:1fr !important; gap:14px !important; }
+            .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:10px !important; }
+            .metric-card { min-height:108px; padding:14px !important; }
+            .panel { padding:15px !important; }
+        }
+        @media (max-width:420px) { .stats-grid{grid-template-columns:1fr !important;} .side-link{margin-left:8px;margin-right:8px;} }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;} }
+    `;
+    document.head.appendChild(style);
+}
+
 function appFrame(title, sub, body) {
+    ensureStableResponsiveTheme();
     setPageReportContext(title, sub, activeTab);
     const container = getAppRoot();
     container.innerHTML = `
         <div class="app-layout w-full min-h-screen flex flex-col md:flex-row">
-            <aside class="app-sidebar hidden md:flex flex-col">${navContent()}</aside>
+            <aside id="appDrawer" class="app-sidebar app-responsive-sidebar flex flex-col ${drawerOpen ? 'open' : ''}">${navContent()}</aside>
             <div id="appDrawerOverlay" class="drawer-overlay ${drawerOpen ? 'open' : ''}"></div>
-            <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${navContent()}</aside>
             <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
                 <div>
                     <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm flex flex-row items-center justify-between gap-2">
@@ -4485,9 +4537,8 @@ function renderSeller() {
 
     container.innerHTML = `
         <div class="app-layout w-full min-h-screen flex flex-col md:flex-row">
-            <aside class="app-sidebar hidden md:flex flex-col">${sellerNavContent()}</aside>
+            <aside id="appDrawer" class="app-sidebar app-responsive-sidebar flex flex-col ${drawerOpen ? 'open' : ''}">${sellerNavContent()}</aside>
             <div id="appDrawerOverlay" class="drawer-overlay ${drawerOpen ? 'open' : ''}"></div>
-            <aside id="appDrawer" class="app-sidebar drawer-sidebar md:hidden ${drawerOpen ? 'open' : ''}">${sellerNavContent()}</aside>
             <section class="app-content flex-1 min-w-0 flex flex-col justify-between">
                 <div>
                     <header class="app-header glass-panel sticky top-0 z-30 w-full p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm flex flex-row items-center justify-between gap-2">
@@ -4724,6 +4775,7 @@ function renderSellerArchivedTab() {
 
 /* CARREGAMENTO INICIAL E EVENTOS DOM */
 document.addEventListener('DOMContentLoaded', async () => {
+    ensureStableResponsiveTheme();
     // Busca cotação de Câmbio ao vivo
     fetchExchangeRate();
     setInterval(fetchExchangeRate, 60000); // Atualiza a cada 60s
