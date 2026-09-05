@@ -995,7 +995,7 @@ async function authenticateLogin(username, password) {
             const { data, error } = await supabaseClient
                 .from('system_users')
                 .select('*')
-                .or(`username.eq.${normalizedUsername},user.eq.${normalizedUsername}`)
+                .ilike('username', normalizedUsername)
                 .limit(1);
             if (error) throw error;
             const remote = data?.[0];
