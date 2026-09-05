@@ -205,7 +205,8 @@ let dbCache = {
     seller_payment_ledger: [],
     seller_payment_sheets: [],
     seller_payment_sheet_lines: [],
-    seller_balance_payments: []
+    seller_balance_payments: [],
+    wg_notes: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -368,6 +369,14 @@ async function pushAllToSupabase() {
                 exchange_rate_brl: Number(x.exchangeRateBRL || 0), notes: x.notes || null, created_at: x.createdAt
             })));
         }
+        if (dbCache.wg_notes.length) {
+            await supabaseClient.from('wg_notes').upsert(dbCache.wg_notes.map(x => ({
+                id: x.id, title: x.title, total_amount: Number(x.totalAmount || 0), currency: x.currency || 'BRL',
+                total_amount_brl: Number(x.totalAmountBRL || 0), amount_abated_brl: Number(x.amountAbatedBRL || 0),
+                exchange_rate_brl: Number(x.exchangeRateBRL || 0), notes: x.notes || null, created_by: x.createdBy,
+                updated_at: x.updatedAt || x.createdAt, created_at: x.createdAt
+            })), { onConflict: 'id' });
+        }
 
         if (dbCache.motoboys.length) {
             await supabaseClient.from('motoboys').upsert(dbCache.motoboys.map(m => ({
@@ -391,7 +400,7 @@ async function pushAllToSupabase() {
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
     try {
-        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes, balanceRes] = await Promise.all([
+        const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes, balanceRes, notesRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
             supabaseClient.from('warehouses').select('*'),
             supabaseClient.from('motoboys').select('*'),
@@ -407,7 +416,8 @@ async function fetchSupabaseData() {
             supabaseClient.from('seller_payment_sheet_lines').select('*'),
             supabaseClient.from('product_catalog').select('*').order('brand').order('name'),
             supabaseClient.from('wg_ik_messages').select('*').order('created_at'),
-            supabaseClient.from('seller_balance_payments').select('*').order('created_at')
+            supabaseClient.from('seller_balance_payments').select('*').order('created_at'),
+            supabaseClient.from('wg_notes').select('*').order('created_at')
         ]);
 
         if (uRes.data) {
@@ -484,6 +494,17 @@ async function fetchSupabaseData() {
                 createdAt: x.created_at
             }));
             localStorage.setItem('nl_seller_balance_payments', JSON.stringify(dbCache.seller_balance_payments));
+        }
+
+        if (notesRes?.error) console.warn('Tabela public.wg_notes indisponível. Execute wg_notes.sql no Supabase:', notesRes.error.message);
+        if (notesRes?.data) {
+            dbCache.wg_notes = notesRes.data.map(x => ({
+                ...x, totalAmount: Number(x.total_amount || 0), currency: x.currency || 'BRL',
+                totalAmountBRL: Number(x.total_amount_brl || 0), amountAbatedBRL: Number(x.amount_abated_brl || 0),
+                exchangeRateBRL: Number(x.exchange_rate_brl || 0), createdBy: x.created_by,
+                createdAt: x.created_at, updatedAt: x.updated_at
+            }));
+            localStorage.setItem('nl_wg_notes', JSON.stringify(dbCache.wg_notes));
         }
 
         if (mRes.data) {
@@ -584,6 +605,8 @@ function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik
 function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
 function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? dbCache.seller_payment_ledger : readStorage('nl_seller_payment_ledger', []); }
 function sellerBalancePayments() { return dbCache.seller_balance_payments.length ? dbCache.seller_balance_payments : readStorage('nl_seller_balance_payments', []); }
+function wgNotes() { return dbCache.wg_notes.length ? dbCache.wg_notes : readStorage('nl_wg_notes', []); }
+function canUseWgNotes(u = currentUser) { return isWGAccount(u) || isIKAccount(u); }
 function sellerPaymentSheets() { return dbCache.seller_payment_sheets.length ? dbCache.seller_payment_sheets : readStorage('nl_seller_payment_sheets', []); }
 function sellerPaymentSheetLines() { return dbCache.seller_payment_sheet_lines.length ? dbCache.seller_payment_sheet_lines : readStorage('nl_seller_payment_sheet_lines', []); }
 function activeSellerSheetFor(sellerId) { return sellerPaymentSheets().find(x => x.sellerId === sellerId && x.status === 'OPEN'); }
@@ -619,6 +642,7 @@ function write(key, val) {
     if (key === 'nl_ik_seller_allocations') dbCache.ik_seller_allocations = val;
     if (key === 'nl_seller_payment_ledger') dbCache.seller_payment_ledger = val;
     if (key === 'nl_seller_balance_payments') dbCache.seller_balance_payments = val;
+    if (key === 'nl_wg_notes') dbCache.wg_notes = val;
     if (key === 'nl_seller_payment_sheets') dbCache.seller_payment_sheets = val;
     if (key === 'nl_seller_payment_sheet_lines') dbCache.seller_payment_sheet_lines = val;
 }
@@ -1105,6 +1129,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>3 Estoques</span></button>
             <button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>
+            <button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-tab="wgNotes">${icons.clipboard} <span>Anotações</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
             <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
@@ -1116,7 +1141,7 @@ function navContent() {
         ` : isAdmin ? `
             ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
             ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
@@ -1137,7 +1162,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
         `}
 
@@ -1513,6 +1538,7 @@ function renderSupervisor() {
     if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
+    if (activeTab === 'wgNotes' && canUseWgNotes()) return renderWgNotesPage();
     if (activeTab === 'reports') return renderReportsPage();
     renderSummary();
 }
@@ -1530,6 +1556,7 @@ function renderAdmin() {
     if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
+    if (activeTab === 'wgNotes' && canUseWgNotes()) return renderWgNotesPage();
     if (activeTab === 'backup') return renderBackupPage();
     if (activeTab === 'adminReports') return renderReportsPage();
     renderAdminHome();
@@ -4063,6 +4090,78 @@ function openSellerBalanceDebitModal(sellerId) {
     };
 }
 
+
+function wgNotesRate() {
+    return Number(currentExchangeRate.ask || currentExchangeRate.bid || 0) || 1;
+}
+function wgNoteRemainingBRL(note) {
+    return Math.max(Number(note.totalAmountBRL || 0) - Number(note.amountAbatedBRL || 0), 0);
+}
+async function saveWgNote(note) {
+    if (!isWGAccount()) throw new Error('Somente a conta WG pode criar ou editar anotações.');
+    const list = wgNotes().filter(x => x.id !== note.id);
+    list.push(note);
+    write('nl_wg_notes', list);
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('wg_notes').upsert({
+            id: note.id, title: note.title, total_amount: Number(note.totalAmount || 0), currency: note.currency,
+            total_amount_brl: Number(note.totalAmountBRL || 0), amount_abated_brl: Number(note.amountAbatedBRL || 0),
+            exchange_rate_brl: Number(note.exchangeRateBRL || 0), notes: note.notes || null,
+            created_by: note.createdBy, updated_at: note.updatedAt, created_at: note.createdAt
+        }, { onConflict: 'id' });
+        if (error) throw error;
+    }
+}
+async function deleteWgNote(noteId) {
+    if (!isWGAccount()) return alert('Somente a conta WG pode apagar anotações.');
+    if (!confirm('Apagar esta anotação?')) return;
+    const list = wgNotes().filter(x => x.id !== noteId);
+    write('nl_wg_notes', list);
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('wg_notes').delete().eq('id', noteId);
+        if (error) throw error;
+    }
+    showToast('Anotação apagada.');
+    renderWgNotesPage();
+}
+async function applyWgNoteDebit(noteId, currency, entered, noteText = '') {
+    if (!isWGAccount()) return alert('Somente a conta WG pode registrar abatimentos.');
+    const list = wgNotes();
+    const note = list.find(x => x.id === noteId);
+    if (!note) return;
+    const rate = wgNotesRate();
+    const amountBRL = currency === 'USD' ? Number(entered) * rate : Number(entered);
+    const remaining = wgNoteRemainingBRL(note);
+    if (!(amountBRL > 0)) return alert('Informe um valor válido.');
+    if (amountBRL > remaining + 0.01) return alert(`O abatimento não pode ser maior que o saldo restante de ${money(remaining)}.`);
+    note.amountAbatedBRL = Number(note.amountAbatedBRL || 0) + amountBRL;
+    note.lastDebitCurrency = currency;
+    note.lastDebitAmount = Number(entered);
+    note.lastDebitNotes = noteText || null;
+    note.exchangeRateBRL = rate;
+    note.updatedAt = new Date().toISOString();
+    await saveWgNote(note);
+    showToast(`Abatimento registrado em ${currency === 'USD' ? 'US$' : 'R$'} ${Number(entered).toFixed(2)}.`);
+    renderWgNotesPage();
+}
+function renderWgNotesPage() {
+    if (!canUseWgNotes()) return renderSummary();
+    const canEdit = isWGAccount();
+    const rate = wgNotesRate();
+    const notes = [...wgNotes()].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+    const form = canEdit ? `<div class="panel glass-panel mb-6"><div class="panel-head"><div><h2>Nova anotação</h2><p>Crie um card separado dos totais, estoque e vendas do sistema.</p></div></div><form id="wgNoteForm" class="seller-form"><div class="form-grid"><label>Nome do card<input name="title" class="control" required placeholder="Ex.: Acerto do vendedor João"></label><label>Moeda<select name="currency" class="control"><option value="BRL">Real (R$)</option><option value="USD">Dólar (US$)</option></select></label></div><div class="form-grid"><label>Valor total<input name="amount" class="control" type="number" min="0.01" step="0.01" required placeholder="0,00"></label><label>Observação<input name="notes" class="control" placeholder="Opcional"></label></div><button class="primary-btn mt-3" type="submit">${icons.check} Criar card</button></form></div>` : `<div class="panel glass-panel mb-6"><h2>Anotações do WG</h2><p>Visualização dos abatimentos informados pelo WG. Estes valores são independentes dos totais, estoque e vendas.</p></div>`;
+    const cards = notes.length ? notes.map(note => {
+        const total = Number(note.totalAmountBRL || 0), paid = Number(note.amountAbatedBRL || 0), remaining = wgNoteRemainingBRL(note);
+        const percent = total > 0 ? Math.min(100, paid / total * 100) : 0;
+        return `<article class="panel glass-panel wg-note-card"><div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-black text-slate-900">${esc(note.title)}</h3><p class="text-xs text-slate-500">${esc(note.notes || 'Anotação independente')} · Atualizado ${new Date(note.updatedAt || note.createdAt || Date.now()).toLocaleDateString('pt-BR')}</p></div>${canEdit ? `<button class="delete-btn wg-note-delete" data-id="${note.id}" title="Apagar">${icons.trash}</button>` : '<span class="small-btn">Somente leitura</span>'}</div><div class="grid grid-cols-3 gap-2 mt-4 text-xs"><div class="rounded-xl bg-slate-50 border border-slate-200 p-3"><span class="block text-slate-500">Valor total</span><b class="text-slate-900">${money(total)}</b><small class="block text-slate-500">US$ ${(total / rate).toFixed(2)}</small></div><div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><span class="block text-slate-500">Abatido</span><b class="text-emerald-700">${money(paid)}</b><small class="block text-slate-500">US$ ${(paid / rate).toFixed(2)}</small></div><div class="rounded-xl bg-amber-50 border border-amber-100 p-3"><span class="block text-slate-500">Falta</span><b class="text-amber-800">${money(remaining)}</b><small class="block text-slate-500">US$ ${(remaining / rate).toFixed(2)}</small></div></div><div class="h-2 rounded-full bg-slate-100 mt-4 overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:${percent.toFixed(2)}%"></div></div><p class="text-xs text-slate-500 mt-1">${percent.toFixed(1)}% abatido · Cotação usada: ${money(rate)} por US$ 1</p>${canEdit && remaining > 0 ? `<form class="wg-note-debit-form mt-4 pt-4 border-t border-slate-200" data-id="${note.id}"><div class="flex flex-col sm:flex-row gap-2"><select name="currency" class="control sm:w-24"><option value="BRL">R$</option><option value="USD">US$</option></select><input name="amount" class="control flex-1" type="number" min="0.01" step="0.01" placeholder="Valor para abater" required><input name="noteText" class="control flex-1" placeholder="Observação"><button class="primary-btn" type="submit">Abater valor</button></div></form>` : (remaining <= 0 ? '<div class="mt-4 text-sm font-bold text-emerald-700">Card totalmente abatido.</div>' : '')}</article>`;
+    }).join('') : '<div class="empty-state">Nenhuma anotação criada pelo WG.</div>';
+    appFrame('Anotações', canEdit ? `Cards privados do WG, compartilhados para visualização com IK. Cotação: ${money(rate)} por US$.` : 'Abatimentos informados pelo WG para consulta do IK.', `${form}<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>`);
+    document.querySelectorAll('.wg-note-delete').forEach(button => button.onclick = () => deleteWgNote(button.dataset.id).catch(error => alert(error.message)));
+    document.querySelectorAll('.wg-note-debit-form').forEach(formEl => formEl.onsubmit = async event => { event.preventDefault(); const data = new FormData(formEl); const button = formEl.querySelector('button[type="submit"]'); button.disabled = true; try { await applyWgNoteDebit(formEl.dataset.id, String(data.get('currency')), Number(data.get('amount')), String(data.get('noteText') || '')); } catch (error) { alert(error.message || 'Não foi possível registrar o abatimento.'); } finally { button.disabled = false; } });
+    const createForm = document.getElementById('wgNoteForm');
+    if (createForm) createForm.onsubmit = async event => { event.preventDefault(); const data = new FormData(createForm); const currency = String(data.get('currency') || 'BRL'); const amount = Number(data.get('amount')); const rateNow = wgNotesRate(); const note = { id: uid(), title: String(data.get('title') || '').trim(), totalAmount: amount, currency, totalAmountBRL: currency === 'USD' ? amount * rateNow : amount, amountAbatedBRL: 0, exchangeRateBRL: rateNow, notes: String(data.get('notes') || '').trim(), createdBy: currentUser.id, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; if (!note.title || !(amount > 0)) return alert('Informe o nome e o valor do card.'); try { await saveWgNote(note); createForm.reset(); showToast('Card de anotação criado e sincronizado.'); renderWgNotesPage(); } catch (error) { alert(error.message || 'Não foi possível salvar no Supabase.'); } };
+}
+
 function renderSellerTotalsPage() {
     if (!isWGAccount() && !isIKAccount() && !hasAdminAccess()) return showToast('Acesso restrito às contas WG e IK.');
     const rate = Number(currentExchangeRate.ask || currentExchangeRate.bid || 1);
@@ -4425,6 +4524,11 @@ function setupSupabaseRealtimeSync() {
             await fetchSupabaseData();
             refreshCurrentScreen();
         })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'wg_notes' }, async () => {
+            await fetchSupabaseData();
+            if (canUseWgNotes() && activeTab === 'wgNotes') renderWgNotesPage();
+            else refreshCurrentScreen();
+        })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'seller_payment_sheets' }, async () => {
             await fetchSupabaseData();
             refreshCurrentScreen();
@@ -4508,11 +4612,6 @@ function renderProductsPage() {
                                 <span class="text-[10px] font-bold text-slate-500 uppercase block">Subtotal em Posse (Soma)</span>
                                 <strong class="text-base text-slate-900 font-black">${moneyPair(sSubtotalBRL)}</strong>
                                 <small class="block text-slate-500 text-[11px] font-semibold">${sTotalUnits} un. totais em estoque</small>
-                            </div>
-                            <div class="p-3 bg-indigo-50/70 rounded-xl mb-3 border border-indigo-100 text-xs">
-                                <div class="flex justify-between gap-2"><span class="text-slate-500 font-semibold">Enviado pelo IK</span><b class="text-slate-800">${sRemainingQty}/${sSentQty || sTotalUnits} un.</b></div>
-                                <div class="flex justify-between gap-2 mt-1"><span class="text-slate-500 font-semibold">Valor enviado</span><b class="text-slate-800">${moneyPair(sSentValue)}</b></div>
-                                <div class="flex justify-between gap-2 mt-1"><span class="text-slate-500 font-semibold">Total em aberto</span><b class="text-amber-700">${moneyPair(sOpenValue)}</b></div>${isIKAccount(currentUser)?`<div class="ik-inline-debit mt-3"><div class="flex gap-2"><select class="control ik-debit-currency flex-1 text-xs" data-seller-id="${s.id}"><option value="BRL">R$</option><option value="USD">US$</option></select><input class="control ik-debit-amount flex-[2] text-xs" data-seller-id="${s.id}" type="number" min="0.01" step="0.01" placeholder="Valor abatido"><button class="small-btn ik-inline-debit-btn" data-seller-id="${s.id}">Abater</button></div><small class="text-[10px] text-slate-500 block mt-1">Digite o valor total pago pelo vendedor; o sistema desconta automaticamente.</small></div>`:''}
                             </div>
 
                             <div class="text-xs text-slate-600 space-y-2">
