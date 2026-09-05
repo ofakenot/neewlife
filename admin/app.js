@@ -1087,32 +1087,36 @@ function navContent() {
             <button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
+            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
+            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>
+            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>
+            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados</span></button>
         ` : isAdmin ? `
-            ${(isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
-            ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? '3 Estoques' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
+            ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
             ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>` : ''}
+            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
             <button class="side-link ${activeTab === 'adminSupervisors' ? 'active' : ''}" data-admin-tab="adminSupervisors">${icons.users} <span>Supervisores & Vendedores</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>` : ''}
+            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-admin-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>` : ''}
+            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-admin-tab="motoboys">${icons.motoboy} <span>Gestão de Motoboys</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-admin-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>` : ''}
+            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-admin-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
             <button class="side-link ${activeTab === 'backup' ? 'active' : ''}" data-admin-tab="backup">${icons.database} <span>Backup & Importação</span></button>
             <button class="side-link ${activeTab === 'adminReports' ? 'active' : ''}" data-admin-tab="adminReports">${icons.reports} <span>Relatórios Globais</span></button>
         ` : `
             <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>` : ''}
+            <button class="side-link ${activeTab === 'sales' ? 'active' : ''}" data-tab="sales">${icons.chart} <span>Dar Baixa / Registrar Venda</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
-            ${!isWG ? `<button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>` : ''}
-            ${!isWG ? `<button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>` : ''}
-            ${!isWG ? `<button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>` : ''}
+            <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-tab="sellers">${icons.users} <span>Meus Vendedores</span></button>
+            <button class="side-link ${activeTab === 'motoboys' ? 'active' : ''}" data-tab="motoboys">${icons.motoboy} <span>Meus Motoboys</span></button>
+            <button class="side-link ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">${icons.orders} <span>Pedidos de Reposição</span></button>
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
-            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? '3 Estoques' : 'Atribuir / Enviar Estoque'}</span></button>
+            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>
             ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
         `}
@@ -1415,7 +1419,6 @@ function emergencyWipeModal() {
 
 function renderSupervisor() {
     if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
-    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders', 'adminHome'].includes(activeTab)) activeTab = 'summary';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'sellers') return renderSellersPage();
@@ -1423,7 +1426,7 @@ function renderSupervisor() {
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'archived') return renderArchivedPage();
     if (activeTab === 'catalog') return renderCatalogPage();
-    if (activeTab === 'products') return (isWGAccount(currentUser) || isIKAccount(currentUser)) ? renderWarehousesPage() : renderProductsPage();
+    if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'reports') return renderReportsPage();
@@ -1432,7 +1435,6 @@ function renderSupervisor() {
 
 function renderAdmin() {
     if (canUseWgIkChat() && activeTab === 'wgIkChat') return renderWgIkChatPage();
-    if (isWGAccount(currentUser) && ['sales', 'sellers', 'motoboys', 'orders', 'adminHome', 'warehouses'].includes(activeTab)) activeTab = 'summary';
     if (activeTab === 'sales') return renderSupervisorSalesPage();
     if (activeTab === 'map') return renderMapPage();
     if (activeTab === 'warehouses') return renderWarehousesPage();
@@ -1441,7 +1443,7 @@ function renderAdmin() {
     if (activeTab === 'motoboys') return renderMotoboysPage();
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'catalog') return renderCatalogPage();
-    if (activeTab === 'products') return (isWGAccount(currentUser) || isIKAccount(currentUser)) ? renderWarehousesPage() : renderProductsPage();
+    if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
     if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'backup') return renderBackupPage();
