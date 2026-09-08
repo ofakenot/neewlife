@@ -1184,7 +1184,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
             <button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>
             
-            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>3 Estoques</span></button>
+            <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>2 Estoques</span></button>
             <button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-tab="wgNotes">${icons.clipboard} <span>Anotações</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'map' ? 'active' : ''}" data-tab="map">${icons.map} <span>Mapa de Localizações</span></button>
@@ -1195,7 +1195,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados</span></button>
         ` : isAdmin ? `
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>2 Estoques</span></button>` : ''}
             ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
             ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>` : ''}
             ${isIKAccount(currentUser) ? `<button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
@@ -3135,7 +3135,7 @@ function renderWarehousesPage() {
     const inv = warehouseInventory();
     const transfers = warehouseTransfers();
 
-    appFrame('3 Estoques', 'Gerencie os três estoques físicos e envie produtos.', `
+    appFrame('2 Estoques', 'Gerencie os dois estoques físicos de São Paulo e envie produtos.', `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             ${whList.map(w => {
                 const wItems = inv.filter(i => i.warehouseId === w.id);
@@ -3165,7 +3165,7 @@ function renderWarehousesPage() {
 
         <div class="panel glass-panel mb-6">
             <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                <div><h2>Produtos nos Depósitos Matriz</h2><p>Listagem de inventário físico dos estoques centrais.</p></div>
+                <div><h2>Produtos nos dois estoques de São Paulo</h2><p>Listagem de inventário físico dos estoques centrais.</p></div>
                 ${inv.length ? `<button id="clearPhysicalInventoryLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">${icons.trash} <span>Excluir Logs do Inventário</span></button>` : ''}
             </div>
             <div class="data-table flex flex-col gap-3">
@@ -4165,6 +4165,23 @@ function renderWgIkStockPage() {
     document.getElementById('newWgShipmentBtn')?.addEventListener('click',openWgShipmentModal);document.getElementById('newIkAllocationBtn')?.addEventListener('click',openIkAllocationModal);document.getElementById('clearWgIkLogsBtn')?.addEventListener('click',clearWgIkTransferLogs);document.querySelectorAll('.wgik-undo-batch').forEach(button => button.addEventListener('click', () => undoWgIkBatch(button.dataset.ids.split(',')).catch(error => alert(error.message)))); document.querySelectorAll('.wgik-delete-product').forEach(button => button.addEventListener('click', () => deleteWgIkShipment(button.dataset.id).catch(error => alert(error.message))));
 }
 
+
+function openWgPrivateValueModal(warehouseId, productName, brand = '') {
+    if (!isWGAccount()) return showToast('Somente WG pode cadastrar valores privados.');
+    const existing = wgPrivateValueFor(warehouseId, productName, brand);
+    const rate = wgNotesRate();
+    const warehouse = warehouses().find(w => w.id === warehouseId);
+    const m = modal(`<h2>Valor privado do WG</h2><p class="text-xs text-slate-500 mb-3">${esc(warehouse?.name || warehouseId)} · ${esc(productName)}${brand ? ` · ${esc(brand)}` : ''}</p><form id="wgPrivateValueForm" class="seller-form"><label>Moeda<select name="currency" class="control"><option value="BRL" ${existing?.currency !== 'USD' ? 'selected' : ''}>Real (R$)</option><option value="USD" ${existing?.currency === 'USD' ? 'selected' : ''}>Dólar (US$)</option></select></label><label>Valor unitário da anotação<input name="unitValue" type="number" min="0" step="0.01" class="control" value="${existing?.unitValue ?? ''}" required></label><small class="text-xs text-slate-500">Este valor é somente uma anotação do WG e não altera preços, vendas ou abatimentos.</small><button type="submit" class="primary-btn w-full mt-3">Salvar valor privado</button></form>`);
+    m.querySelector('#wgPrivateValueForm').onsubmit = async event => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const now = new Date().toISOString();
+        const value = { id: existing?.id || uid(), userId: wgAccountId(), warehouseId, productName, brand: brand || '', currency: String(data.get('currency') || 'BRL'), unitValue: Number(data.get('unitValue')), exchangeRateBRL: rate, createdAt: existing?.createdAt || now, updatedAt: now };
+        if (!(value.unitValue >= 0)) return alert('Informe um valor válido.');
+        try { await saveWgPrivateProductValue(value); m.remove(); showToast('Valor privado salvo somente para WG.'); renderWarehousesPage(); }
+        catch (error) { alert(`Não foi possível salvar o valor: ${error.message || error}`); }
+    };
+}
 
 function renderWgTransfersPage() {
     return renderWgIkStockPage();
