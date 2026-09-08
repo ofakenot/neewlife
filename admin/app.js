@@ -206,7 +206,9 @@ let dbCache = {
     seller_payment_sheets: [],
     seller_payment_sheet_lines: [],
     seller_balance_payments: [],
-    wg_notes: []
+    wg_notes: [],
+    wg_private_product_values: [],
+    wg_note_products: []
 };
 
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
@@ -498,6 +500,19 @@ async function fetchSupabaseData() {
         }
 
         if (notesRes?.error) console.warn('Tabela public.wg_notes indisponível. Execute wg_notes.sql no Supabase:', notesRes.error.message);
+        const [privateValuesRes, noteProductsRes] = await Promise.all([
+            supabaseClient.from('wg_private_product_values').select('*'),
+            supabaseClient.from('wg_note_products').select('*').order('created_at')
+        ]);
+        if (privateValuesRes?.data) {
+            dbCache.wg_private_product_values = privateValuesRes.data.map(x => ({ ...x, userId:x.user_id, warehouseId:x.warehouse_id, productName:x.product_name, unitValue:Number(x.unit_value || 0), exchangeRateBRL:Number(x.exchange_rate_brl || 0), createdAt:x.created_at, updatedAt:x.updated_at }));
+            localStorage.setItem('nl_wg_private_product_values', JSON.stringify(dbCache.wg_private_product_values));
+        }
+        if (noteProductsRes?.data) {
+            dbCache.wg_note_products = noteProductsRes.data.map(x => ({ ...x, noteId:x.note_id, productName:x.product_name, quantity:Number(x.quantity || 0), unitValue:Number(x.unit_value || 0), totalValueBRL:Number(x.total_value_brl || 0), exchangeRateBRL:Number(x.exchange_rate_brl || 0), createdAt:x.created_at, updatedAt:x.updated_at }));
+            localStorage.setItem('nl_wg_note_products', JSON.stringify(dbCache.wg_note_products));
+        }
+
         if (notesRes?.data) {
             dbCache.wg_notes = notesRes.data.map(x => ({
                 ...x, totalAmount: Number(x.total_amount || 0), currency: x.currency || 'BRL',
@@ -599,8 +614,8 @@ function allMotoboys() { return dbCache.motoboys.length ? dbCache.motoboys : rea
 function products() { return dbCache.products.length ? dbCache.products : readStorage('atlasProducts', []); }
 function sales() { return dbCache.sales.length ? dbCache.sales : readStorage('atlasSales', []); }
 function orders() { return dbCache.orders.length ? dbCache.orders : readStorage('atlasOrders', []); }
-function warehouses() { return dbCache.warehouses.length ? dbCache.warehouses : readStorage('nl_warehouses', []); }
-function warehouseInventory() { return dbCache.warehouse_inventory.length ? dbCache.warehouse_inventory : readStorage('nl_warehouse_inventory', []); }
+function warehouses() { const list = dbCache.warehouses.length ? dbCache.warehouses : readStorage('nl_warehouses', []); return list.filter(w => w.id === 'wh_sp_centro' || w.id === 'wh_sp_oe'); }
+function warehouseInventory() { const list = dbCache.warehouse_inventory.length ? dbCache.warehouse_inventory : readStorage('nl_warehouse_inventory', []); return list.filter(i => i.warehouseId === 'wh_sp_centro' || i.warehouseId === 'wh_sp_oe'); }
 function warehouseTransfers() { return dbCache.transfers.length ? dbCache.transfers : readStorage('nl_transfers', []); }
 function wgIkShipments() { return dbCache.wg_ik_shipments.length ? dbCache.wg_ik_shipments : readStorage('nl_wg_ik_shipments', []); }
 function ikSellerAllocations() { return dbCache.ik_seller_allocations.length ? dbCache.ik_seller_allocations : readStorage('nl_ik_seller_allocations', []); }
@@ -608,6 +623,47 @@ function sellerPaymentLedger() { return dbCache.seller_payment_ledger.length ? d
 function sellerBalancePayments() { return dbCache.seller_balance_payments.length ? dbCache.seller_balance_payments : readStorage('nl_seller_balance_payments', []); }
 function wgNotes() { return dbCache.wg_notes.length ? dbCache.wg_notes : readStorage('nl_wg_notes', []); }
 function canUseWgNotes(u = currentUser) { return isWGAccount(u) || isIKAccount(u); }
+function wgPrivateProductValues() { return dbCache.wg_private_product_values.length ? dbCache.wg_private_product_values : readStorage('nl_wg_private_product_values', []); }
+function wgNoteProducts() { return dbCache.wg_note_products.length ? dbCache.wg_note_products : readStorage('nl_wg_note_products', []); }
+function isWgPrivateValueOwner(u = currentUser) { return isWGAccount(u); }
+function wgPrivateValueFor(warehouseId, productName, brand = '') {
+    return wgPrivateProductValues().find(x => x.userId === wgAccountId() && x.warehouseId === warehouseId && x.productName === productName && (x.brand || '') === (brand || ''));
+}
+async function saveWgPrivateProductValue(value) {
+    if (!isWgPrivateValueOwner()) throw new Error('Somente WG pode cadastrar valores privados.');
+    const list = wgPrivateProductValues().filter(x => x.id !== value.id);
+    list.push(value); dbCache.wg_private_product_values = list; write('nl_wg_private_product_values', list);
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('wg_private_product_values').upsert({
+            id: value.id, user_id: value.userId, warehouse_id: value.warehouseId,
+            product_name: value.productName, brand: value.brand || '', currency: value.currency,
+            unit_value: Number(value.unitValue || 0), exchange_rate_brl: value.exchangeRateBRL || null,
+            created_at: value.createdAt, updated_at: value.updatedAt
+        }, { onConflict: 'id' });
+        if (error) throw error;
+    }
+}
+async function saveWgNoteProduct(item) {
+    if (!isWGAccount()) throw new Error('Somente WG pode editar produtos dos cards.');
+    const list = wgNoteProducts().filter(x => x.id !== item.id); list.push(item);
+    dbCache.wg_note_products = list; write('nl_wg_note_products', list);
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('wg_note_products').upsert({
+            id:item.id, note_id:item.noteId, product_name:item.productName, brand:item.brand || '',
+            quantity:Number(item.quantity), currency:item.currency, unit_value:Number(item.unitValue),
+            exchange_rate_brl:item.exchangeRateBRL || null, total_value_brl:Number(item.totalValueBRL || 0),
+            created_at:item.createdAt, updated_at:item.updatedAt
+        }, { onConflict:'id' });
+        if (error) throw error;
+    }
+}
+async function deleteWgNoteProduct(id) {
+    if (!isWGAccount()) return;
+    dbCache.wg_note_products = wgNoteProducts().filter(x => x.id !== id); write('nl_wg_note_products', wgNoteProducts());
+    if (supabaseClient) { const { error } = await supabaseClient.from('wg_note_products').delete().eq('id', id); if (error) throw error; }
+    renderWgNotesPage();
+}
+
 function sellerPaymentSheets() { return dbCache.seller_payment_sheets.length ? dbCache.seller_payment_sheets : readStorage('nl_seller_payment_sheets', []); }
 function sellerPaymentSheetLines() { return dbCache.seller_payment_sheet_lines.length ? dbCache.seller_payment_sheet_lines : readStorage('nl_seller_payment_sheet_lines', []); }
 function activeSellerSheetFor(sellerId) { return sellerPaymentSheets().find(x => x.sellerId === sellerId && x.status === 'OPEN'); }
@@ -1127,7 +1183,7 @@ function navContent() {
         ${isWG ? `
             <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
             <button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>
-            <button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>
+            
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>3 Estoques</span></button>
             <button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-tab="wgNotes">${icons.clipboard} <span>Anotações</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
@@ -1141,7 +1197,7 @@ function navContent() {
         ` : isAdmin ? `
             ${(isWGAccount(currentUser) || isIKAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'warehouses' ? 'active' : ''}" data-admin-tab="warehouses">${icons.warehouse} <span>3 Estoques</span></button>` : ''}
             ${(!isWGAccount(currentUser) || (!isWGAccount(currentUser) && !isIKAccount(currentUser))) ? `<button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-admin-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>` : ''}
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-admin-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-admin-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>` : ''}
             ${isIKAccount(currentUser) ? `<button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-admin-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'adminHome' ? 'active' : ''}" data-admin-tab="adminHome">${icons.summary} <span>Visão Consolidada</span></button>
             <button class="side-link ${activeTab === 'sellers' ? 'active' : ''}" data-admin-tab="sellers">${icons.users} <span>Equipe de Vendedores</span></button>
@@ -1163,7 +1219,7 @@ function navContent() {
             <button class="side-link ${activeTab === 'archived' ? 'active' : ''}" data-tab="archived">${icons.archive} <span>Arquivados / Histórico</span></button>
             <button class="side-link ${activeTab === 'catalog' ? 'active' : ''}" data-tab="catalog">${icons.catalog} <span>Catálogo do Sistema</span></button>
             <button class="side-link ${activeTab === 'products' ? 'active' : ''}" data-tab="products">${icons.products} <span>${isIKAccount(currentUser) ? 'Enviar / Distribuir Estoque' : 'Atribuir / Enviar Estoque'}</span></button>
-            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'wgTransfers' ? 'active' : ''}" data-tab="wgTransfers">${icons.warehouse} <span>Envios WG → IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
+            ${(isWGAccount(currentUser) || isIKAccount(currentUser)) ? `<button class="side-link ${activeTab === 'wgNotes' ? 'active' : ''}" data-admin-tab="wgNotes">${icons.clipboard} <span>Anotações WG</span></button><button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button><button class="side-link ${activeTab === 'sellerTotals' ? 'active' : ''}" data-tab="sellerTotals">${icons.chart} <span>Totais por Vendedor</span></button>` : ''}
             <button class="side-link ${activeTab === 'reports' ? 'active' : ''}" data-tab="reports">${icons.reports} <span>Relatórios</span></button>
         `}
 
@@ -1538,7 +1594,7 @@ function renderSupervisor() {
     if (activeTab === 'archived') return renderArchivedPage();
     if (activeTab === 'catalog') return renderCatalogPage();
     if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
-    if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
+    if (activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'wgNotes' && canUseWgNotes()) return renderWgNotesPage();
     if (activeTab === 'reports') return renderReportsPage();
@@ -1557,7 +1613,7 @@ function renderAdmin() {
     if (activeTab === 'orders') return renderSupervisorOrdersPage();
     if (activeTab === 'catalog') return renderCatalogPage();
     if (activeTab === 'products') return isWGAccount(currentUser) ? renderWarehousesPage() : renderProductsPage();
-    if (activeTab === 'wgTransfers' || activeTab === 'wgIkStock') return renderWgTransfersPage();
+    if (activeTab === 'wgIkStock') return renderWgTransfersPage();
     if (activeTab === 'sellerTotals' || activeTab === 'sellerSheets') return renderSellerTotalsPage();
     if (activeTab === 'wgNotes' && canUseWgNotes()) return renderWgNotesPage();
     if (activeTab === 'backup') return renderBackupPage();
@@ -3113,13 +3169,13 @@ function renderWarehousesPage() {
                 ${inv.length ? `<button id="clearPhysicalInventoryLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">${icons.trash} <span>Excluir Logs do Inventário</span></button>` : ''}
             </div>
             <div class="data-table flex flex-col gap-3">
-                <div class="table-head hidden md:grid" style="grid-template-columns: 1.5fr 2.5fr 1.5fr auto; align-items: center;">
-                    <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Físico Disponível</span><span>Ações</span>
+                <div class="table-head hidden md:grid" style="grid-template-columns: ${isWGAccount() ? '1.5fr 2.5fr 1.2fr 1.3fr auto' : '1.5fr 2.5fr 1.5fr auto'}; align-items: center;">
+                    <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Físico Disponível</span>${isWGAccount() ? '<span>Valor privado WG</span>' : ''}<span>Ações</span>
                 </div>
                 ${inv.length ? inv.map(i => {
                     const w = whList.find(x => x.id === i.warehouseId);
                     return `
-                        <div class="table-row flex flex-col md:grid md:grid-cols-4 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
+                        <div class="table-row flex flex-col md:grid ${isWGAccount() ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
                             <div class="flex justify-between items-center md:block">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Depósito</span>
                                 <b>${esc(w?.name || 'Desconhecido')}</b>
@@ -3132,6 +3188,7 @@ function renderWarehousesPage() {
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
                                 <strong class="text-slate-800">${i.stock} un.</strong>
                             </div>
+                            ${isWGAccount() ? (() => { const pv = wgPrivateValueFor(i.warehouseId, i.productName, i.brand); return `<div class="flex justify-between items-center md:block"><span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor WG</span><button class="small-btn wg-private-value-btn" data-wh="${esc(i.warehouseId)}" data-product="${esc(i.productName)}" data-brand="${esc(i.brand || '')}">${pv ? `${pv.currency === 'USD' ? 'US$' : 'R$'} ${Number(pv.unitValue).toFixed(2)}` : 'Cadastrar valor'}</button></div>`; })() : ''}
                             <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
                                 <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
                                 <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
@@ -3201,6 +3258,8 @@ function renderWarehousesPage() {
             ` : '<div class="p-6 text-center text-slate-400">Nenhum envio de estoque registrado ainda.</div>'}
         </div>
     `);
+
+    document.querySelectorAll('.wg-private-value-btn').forEach(btn => btn.onclick = () => openWgPrivateValueModal(btn.dataset.wh, btn.dataset.product, btn.dataset.brand));
 
     const clearPhysicalBtn = document.getElementById('clearPhysicalInventoryLogsBtn');
     if (clearPhysicalBtn) {
@@ -4106,6 +4165,7 @@ function renderWgIkStockPage() {
     document.getElementById('newWgShipmentBtn')?.addEventListener('click',openWgShipmentModal);document.getElementById('newIkAllocationBtn')?.addEventListener('click',openIkAllocationModal);document.getElementById('clearWgIkLogsBtn')?.addEventListener('click',clearWgIkTransferLogs);document.querySelectorAll('.wgik-undo-batch').forEach(button => button.addEventListener('click', () => undoWgIkBatch(button.dataset.ids.split(',')).catch(error => alert(error.message)))); document.querySelectorAll('.wgik-delete-product').forEach(button => button.addEventListener('click', () => deleteWgIkShipment(button.dataset.id).catch(error => alert(error.message))));
 }
 
+
 function renderWgTransfersPage() {
     return renderWgIkStockPage();
 }
@@ -4217,6 +4277,13 @@ async function applyWgNoteDebit(noteId, currency, entered, noteText = '') {
     showToast(`Abatimento registrado em ${currency === 'USD' ? 'US$' : 'R$'} ${Number(entered).toFixed(2)}.`);
     renderWgNotesPage();
 }
+
+function openWgNoteProductModal(noteId) {
+    if (!isWGAccount()) return;
+    const catalog = [...new Map(systemCatalog().map(([name, brand]) => [`${name}::${brand}`, {name, brand}])).values()]; const rate = wgNotesRate();
+    const m = modal(`<h2>Adicionar produto ao card</h2><form class="seller-form" id="wgNoteProductForm"><label>Produto<select name="product" class="control" required>${catalog.map(x => `<option value="${esc(x.name)}" data-brand="${esc(x.brand)}">${esc(x.name)} — ${esc(x.brand)}</option>`).join('')}</select></label><label>Quantidade<input name="quantity" type="number" min="1" step="1" value="1" class="control" required></label><label>Moeda<select name="currency" class="control"><option value="BRL">Real (R$)</option><option value="USD">Dólar (US$)</option></select></label><label>Valor unitário<input name="unitValue" type="number" min="0" step="0.01" class="control" required></label><small class="text-xs text-slate-500">O total será somado apenas aos produtos do card, sem alterar o abatimento.</small><button class="primary-btn mt-3" type="submit">Adicionar produto</button></form>`);
+    m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), sel = m.querySelector('[name="product"]'), now = new Date().toISOString(); const currency = String(f.get('currency')), quantity = Number(f.get('quantity')), unitValue = Number(f.get('unitValue')); const item = { id:uid(), noteId, productName:String(f.get('product')), brand:sel.selectedOptions[0]?.dataset.brand || '', quantity, currency, unitValue, totalValueOriginal:Number((quantity*unitValue).toFixed(2)), totalValueBRL:Number((quantity*(currency === 'USD' ? unitValue*rate : unitValue)).toFixed(2)), exchangeRateBRL:rate, createdAt:now, updatedAt:now }; if (!(quantity > 0) || !(unitValue >= 0)) return alert('Informe quantidade e valor válidos.'); try { await saveWgNoteProduct(item); m.remove(); showToast('Produto adicionado ao card.'); renderWgNotesPage(); } catch(err) { alert(err.message || 'Não foi possível salvar o produto.'); } };
+}
 function renderWgNotesPage() {
     if (!canUseWgNotes()) return renderSummary();
     const canEdit = isWGAccount();
@@ -4224,12 +4291,16 @@ function renderWgNotesPage() {
     const notes = [...wgNotes()].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
     const form = canEdit ? `<div class="panel glass-panel mb-6"><div class="panel-head"><div><h2>Nova anotação</h2><p>Crie um card separado dos totais, estoque e vendas do sistema.</p></div></div><form id="wgNoteForm" class="seller-form"><div class="form-grid"><label>Nome do card<input name="title" class="control" required placeholder="Ex.: Acerto do vendedor João"></label><label>Moeda<select name="currency" class="control"><option value="BRL">Real (R$)</option><option value="USD">Dólar (US$)</option></select></label></div><div class="form-grid"><label>Valor total<input name="amount" class="control" type="number" min="0.01" step="0.01" required placeholder="0,00"></label><label>Observação<input name="notes" class="control" placeholder="Opcional"></label></div><button class="primary-btn mt-3" type="submit">${icons.check} Criar card</button></form></div>` : `<div class="panel glass-panel mb-6"><h2>Anotações do WG</h2><p>Visualização dos abatimentos informados pelo WG. Estes valores são independentes dos totais, estoque e vendas.</p></div>`;
     const cards = notes.length ? notes.map(note => {
+        const noteItems = wgNoteProducts().filter(x => x.noteId === note.id);
+        const noteProductsTotal = noteItems.reduce((sum,x) => sum + Number(x.totalValueBRL || 0), 0);
         const total = Number(note.totalAmountBRL || 0), paid = Number(note.amountAbatedBRL || 0), remaining = wgNoteRemainingBRL(note);
         const percent = total > 0 ? Math.min(100, paid / total * 100) : 0;
-        return `<article class="panel glass-panel wg-note-card"><div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-black text-slate-900">${esc(note.title)}</h3><p class="text-xs text-slate-500">${esc(note.notes || 'Anotação independente')} · Atualizado ${new Date(note.updatedAt || note.createdAt || Date.now()).toLocaleDateString('pt-BR')}</p></div>${canEdit ? `<button class="delete-btn wg-note-delete" data-id="${note.id}" title="Apagar">${icons.trash}</button>` : '<span class="small-btn">Somente leitura</span>'}</div><div class="grid grid-cols-3 gap-2 mt-4 text-xs"><div class="rounded-xl bg-slate-50 border border-slate-200 p-3"><span class="block text-slate-500">Valor total</span><b class="text-slate-900">${money(total)}</b><small class="block text-slate-500">US$ ${(total / rate).toFixed(2)}</small></div><div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><span class="block text-slate-500">Abatido</span><b class="text-emerald-700">${money(paid)}</b><small class="block text-slate-500">US$ ${(paid / rate).toFixed(2)}</small></div><div class="rounded-xl bg-amber-50 border border-amber-100 p-3"><span class="block text-slate-500">Falta</span><b class="text-amber-800">${money(remaining)}</b><small class="block text-slate-500">US$ ${(remaining / rate).toFixed(2)}</small></div></div><div class="h-2 rounded-full bg-slate-100 mt-4 overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:${percent.toFixed(2)}%"></div></div><p class="text-xs text-slate-500 mt-1">${percent.toFixed(1)}% abatido · Cotação usada: ${money(rate)} por US$ 1</p>${canEdit && remaining > 0 ? `<form class="wg-note-debit-form mt-4 pt-4 border-t border-slate-200" data-id="${note.id}"><div class="flex flex-col sm:flex-row gap-2"><select name="currency" class="control sm:w-24"><option value="BRL">R$</option><option value="USD">US$</option></select><input name="amount" class="control flex-1" type="number" min="0.01" step="0.01" placeholder="Valor para abater" required><input name="noteText" class="control flex-1" placeholder="Observação"><button class="primary-btn" type="submit">Abater valor</button></div></form>` : (remaining <= 0 ? '<div class="mt-4 text-sm font-bold text-emerald-700">Card totalmente abatido.</div>' : '')}</article>`;
+        return `<article class="panel glass-panel wg-note-card"><div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-black text-slate-900">${esc(note.title)}</h3><p class="text-xs text-slate-500">${esc(note.notes || 'Anotação independente')} · Atualizado ${new Date(note.updatedAt || note.createdAt || Date.now()).toLocaleDateString('pt-BR')}</p></div>${canEdit ? `<button class="delete-btn wg-note-delete" data-id="${note.id}" title="Apagar">${icons.trash}</button>` : '<span class="small-btn">Somente leitura</span>'}</div><div class="grid grid-cols-3 gap-2 mt-4 text-xs"><div class="rounded-xl bg-slate-50 border border-slate-200 p-3"><span class="block text-slate-500">Valor total</span><b class="text-slate-900">${money(total)}</b><small class="block text-slate-500">US$ ${(total / rate).toFixed(2)}</small></div><div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><span class="block text-slate-500">Abatido</span><b class="text-emerald-700">${money(paid)}</b><small class="block text-slate-500">US$ ${(paid / rate).toFixed(2)}</small></div><div class="rounded-xl bg-amber-50 border border-amber-100 p-3"><span class="block text-slate-500">Falta</span><b class="text-amber-800">${money(remaining)}</b><small class="block text-slate-500">US$ ${(remaining / rate).toFixed(2)}</small></div></div><div class="h-2 rounded-full bg-slate-100 mt-4 overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:${percent.toFixed(2)}%"></div></div><p class="text-xs text-slate-500 mt-1">${percent.toFixed(1)}% abatido · Cotação usada: ${money(rate)} por US$ 1</p>${canEdit && remaining > 0 ? `<form class="wg-note-debit-form mt-4 pt-4 border-t border-slate-200" data-id="${note.id}"><div class="flex flex-col sm:flex-row gap-2"><select name="currency" class="control sm:w-24"><option value="BRL">R$</option><option value="USD">US$</option></select><input name="amount" class="control flex-1" type="number" min="0.01" step="0.01" placeholder="Valor para abater" required><input name="noteText" class="control flex-1" placeholder="Observação"><button class="primary-btn" type="submit">Abater valor</button></div></form>` : (remaining <= 0 ? '<div class="mt-4 text-sm font-bold text-emerald-700">Card totalmente abatido.</div>' : '')}<div class="mt-4 pt-4 border-t border-slate-200"><div class="flex justify-between items-center mb-2"><b class="text-sm">Produtos deste card</b>${canEdit ? `<button class="small-btn wg-note-add-product" data-id="${note.id}">+ Produto</button>` : ''}</div>${noteItems.length ? noteItems.map(x => `<div class="flex justify-between items-center text-xs py-2 border-b border-slate-100"><span>${esc(x.productName)} ${x.brand ? `· ${esc(x.brand)}` : ''} · ${x.quantity} un.</span><b>${x.currency === 'USD' ? 'US$' : 'R$'} ${Number(x.totalValueOriginal || x.quantity * x.unitValue).toFixed(2)}</b>${canEdit ? `<button class="delete-btn wg-note-product-delete" data-id="${x.id}">${icons.trash}</button>` : ''}</div>`).join('') : '<span class="text-xs text-slate-500">Nenhum produto selecionado.</span>'}<div class="text-xs font-bold text-sky-700 mt-2">Total dos produtos: ${money(noteProductsTotal)} · US$ ${(noteProductsTotal / rate).toFixed(2)} <small>(não interfere no abatimento)</small></div></div></article>`;
     }).join('') : '<div class="empty-state">Nenhuma anotação criada pelo WG.</div>';
     appFrame('Anotações', canEdit ? `Cards privados do WG, compartilhados para visualização com IK. Cotação: ${money(rate)} por US$.` : 'Abatimentos informados pelo WG para consulta do IK.', `${form}<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>`);
     document.querySelectorAll('.wg-note-delete').forEach(button => button.onclick = () => deleteWgNote(button.dataset.id).catch(error => alert(error.message)));
+    document.querySelectorAll('.wg-note-add-product').forEach(button => button.onclick = () => openWgNoteProductModal(button.dataset.id));
+    document.querySelectorAll('.wg-note-product-delete').forEach(button => button.onclick = () => deleteWgNoteProduct(button.dataset.id).catch(error => alert(error.message)));
     document.querySelectorAll('.wg-note-debit-form').forEach(formEl => formEl.onsubmit = async event => { event.preventDefault(); const data = new FormData(formEl); const button = formEl.querySelector('button[type="submit"]'); button.disabled = true; try { await applyWgNoteDebit(formEl.dataset.id, String(data.get('currency')), Number(data.get('amount')), String(data.get('noteText') || '')); } catch (error) { alert(error.message || 'Não foi possível registrar o abatimento.'); } finally { button.disabled = false; } });
     const createForm = document.getElementById('wgNoteForm');
     if (createForm) createForm.onsubmit = async event => { event.preventDefault(); const data = new FormData(createForm); const currency = String(data.get('currency') || 'BRL'); const amount = Number(data.get('amount')); const rateNow = wgNotesRate(); const note = { id: uid(), title: String(data.get('title') || '').trim(), totalAmount: amount, currency, totalAmountBRL: currency === 'USD' ? amount * rateNow : amount, amountAbatedBRL: 0, exchangeRateBRL: rateNow, notes: String(data.get('notes') || '').trim(), createdBy: currentUser.id, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; if (!note.title || !(amount > 0)) return alert('Informe o nome e o valor do card.'); try { await saveWgNote(note); createForm.reset(); showToast('Card de anotação criado e sincronizado.'); renderWgNotesPage(); } catch (error) { alert(error.message || 'Não foi possível salvar no Supabase.'); } };
