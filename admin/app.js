@@ -3136,7 +3136,7 @@ function renderWarehousesPage() {
     const transfers = warehouseTransfers();
 
     appFrame('2 Estoques', 'Gerencie os dois estoques físicos de São Paulo e envie produtos.', `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             ${whList.map(w => {
                 const wItems = inv.filter(i => i.warehouseId === w.id);
                 const totalQty = wItems.reduce((a, i) => a + Number(i.stock || 0), 0);
@@ -3165,153 +3165,82 @@ function renderWarehousesPage() {
 
         <div class="panel glass-panel mb-6">
             <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                <div><h2>Produtos nos dois estoques de São Paulo</h2><p>Listagem de inventário físico dos estoques centrais.</p></div>
+                <div><h2>Produtos nos dois estoques de São Paulo</h2><p>Listagem de inventário físico dos estoques centrais, separada por estoque.</p></div>
                 ${inv.length ? `<button id="clearPhysicalInventoryLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">${icons.trash} <span>Excluir Logs do Inventário</span></button>` : ''}
             </div>
-            <div class="data-table flex flex-col gap-3">
-                <div class="table-head hidden md:grid" style="grid-template-columns: ${isWGAccount() ? '1.5fr 2.5fr 1.2fr 1.3fr auto' : '1.5fr 2.5fr 1.5fr auto'}; align-items: center;">
-                    <span>Depósito / Estoque</span><span>Produto & Marca</span><span>Estoque Físico Disponível</span>${isWGAccount() ? '<span>Valor privado WG</span>' : ''}<span>Ações</span>
-                </div>
-                ${inv.length ? inv.map(i => {
-                    const w = whList.find(x => x.id === i.warehouseId);
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                ${whList.map(w => {
+                    const wItems = inv.filter(i => i.warehouseId === w.id);
                     return `
-                        <div class="table-row flex flex-col md:grid ${isWGAccount() ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none">
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Depósito</span>
-                                <b>${esc(w?.name || 'Desconhecido')}</b>
+                        <section class="warehouse-inventory-card rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200">
+                                <div><h3 class="font-black text-slate-900">${icons.warehouse} ${esc(w.name)}</h3><p class="text-[11px] text-slate-500">${esc(w.city)} / ${esc(w.uf)} · ${wItems.length} produto(s)</p></div>
+                                <span class="status-pill style-blue">${wItems.reduce((n, i) => n + Number(i.stock || 0), 0)} un.</span>
                             </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                                <span><b>${esc(i.productName)}</b> <small>(${esc(i.brand)})</small></span>
+                            <div class="p-3 flex flex-col gap-2">
+                                ${wItems.length ? wItems.map(i => `
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-xl border border-slate-100 bg-slate-50/70">
+                                        <div><b class="text-slate-900">${esc(i.productName)}</b><small class="block text-slate-500">${esc(i.brand || 'Sem marca')}</small></div>
+                                        <div class="flex items-center justify-between sm:justify-end gap-2">
+                                            <strong class="text-slate-800">${i.stock} un.</strong>
+                                            ${isWGAccount() ? (() => { const pv = wgPrivateValueFor(i.warehouseId, i.productName, i.brand); return `<button class="small-btn wg-private-value-btn" data-wh="${esc(i.warehouseId)}" data-product="${esc(i.productName)}" data-brand="${esc(i.brand || '')}">${pv ? `${pv.currency === 'USD' ? 'US$' : 'R$'} ${Number(pv.unitValue).toFixed(2)}` : 'Cadastrar valor'}</button>`; })() : ''}
+                                            <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
+                                            <button class="delete-btn delete-inv-btn text-xs py-1 px-2" data-id="${i.id}">${icons.trash}</button>
+                                        </div>
+                                    </div>
+                                `).join('') : '<div class="p-5 text-center text-slate-400 text-sm">Nenhum produto neste estoque.</div>'}
                             </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Estoque</span>
-                                <strong class="text-slate-800">${i.stock} un.</strong>
-                            </div>
-                            ${isWGAccount() ? (() => { const pv = wgPrivateValueFor(i.warehouseId, i.productName, i.brand); return `<div class="flex justify-between items-center md:block"><span class="text-xs font-bold text-slate-400 uppercase md:hidden">Valor WG</span><button class="small-btn wg-private-value-btn" data-wh="${esc(i.warehouseId)}" data-product="${esc(i.productName)}" data-brand="${esc(i.brand || '')}">${pv ? `${pv.currency === 'USD' ? 'US$' : 'R$'} ${Number(pv.unitValue).toFixed(2)}` : 'Cadastrar valor'}</button></div>`; })() : ''}
-                            <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                                <button class="small-btn edit-inv-btn" data-id="${i.id}">Ajustar Qtd</button>
-                                <button class="delete-btn delete-inv-btn text-xs py-1 px-2" data-id="${i.id}">${icons.trash} Excluir</button>
-                            </div>
-                        </div>
+                        </section>
                     `;
-                }).join('') : '<div class="p-6 text-center text-slate-400">Nenhum produto cadastrado nos estoques. Clique em "+ Inserir Produto" para adicionar.</div>'}
+                }).join('')}
             </div>
         </div>
 
         <div class="panel glass-panel">
             <div class="panel-head flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-                <div>
-                    <h2>Histórico Geral de Transferências (Com opção de Desfazer)</h2>
-                    <p class="text-xs text-slate-500">Histórico de saídas dos depósitos centrais para vendedores e supervisores.</p>
-                </div>
-                <!-- BOTÃO DE LIMPAR LOGS DE TRANSFERÊNCIA -->
-                ${transfers.length ? `
-                    <button id="clearTransferLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
-                        ${icons.trash} <span>Limpar Logs de Transferências</span>
-                    </button>
-                ` : ''}
+                <div><h2>Logs de transferências por estoque</h2><p class="text-xs text-slate-500">Cada estoque central possui seu próprio histórico de saídas para vendedores e supervisores.</p></div>
+                ${transfers.length ? `<button id="clearTransferLogsBtn" class="delete-btn text-xs py-2 px-3 flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">${icons.trash} <span>Limpar Todos os Logs</span></button>` : ''}
             </div>
-            ${transfers.length ? `
-                <div class="data-table flex flex-col gap-3">
-                    <div class="table-head hidden md:grid" style="grid-template-columns: 1.2fr 1.3fr 1.1fr 1.5fr 1.8fr 1fr 1.8fr auto; align-items: center;">
-                        <span>Data</span><span>Estoque Origem</span><span>Tipo Destino</span><span>Destinatário</span><span>Produto</span><span>Qtd</span><span>Preço Def. (R$)</span><span>Ações</span>
-                    </div>
-                    ${transfers.slice().reverse().map(t => `
-                        <div class="table-row flex flex-col md:grid md:grid-cols-8 gap-2.5 p-4 border border-slate-200 md:border-0 md:border-b md:border-slate-200 rounded-xl md:rounded-none bg-white shadow-sm md:shadow-none text-xs">
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Data</span>
-                                <small>${new Date(t.createdAt).toLocaleString('pt-BR')}</small>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                ${whList.map(w => {
+                    const wTransfers = transfers.filter(t => t.warehouseId === w.id);
+                    return `
+                        <section class="warehouse-log-card rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200"><div><h3 class="font-black text-slate-900">${icons.clipboard} ${esc(w.name)}</h3><p class="text-[11px] text-slate-500">Histórico deste estoque</p></div><span class="status-pill">${wTransfers.length} registro(s)</span></div>
+                            <div class="p-3 flex flex-col gap-2">
+                                ${wTransfers.length ? wTransfers.slice().reverse().map(t => `
+                                    <div class="rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs">
+                                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2"><b class="text-slate-900">${esc(t.productName)}</b><span class="font-black text-slate-800">${t.quantity} un.</span></div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-slate-500"><span>${new Date(t.createdAt).toLocaleString('pt-BR')}</span><span>Destino: <b class="text-slate-700">${esc(t.targetName)}</b> (${t.targetType === 'SUPERVISOR' ? 'Supervisor' : 'Vendedor'})</span><span>Preço: <b class="text-emerald-600">${money(t.price)}</b></span><span>${t.reverted ? '<span class="status-pill style-red">Desfeito</span>' : ''}</span></div>
+                                        ${!t.reverted ? `<div class="flex justify-end mt-2"><button class="delete-btn undo-transfer-btn text-xs py-1 px-2.5 flex items-center gap-1" data-id="${t.id}">${icons.undo} Desfazer Envio</button></div>` : ''}
+                                    </div>
+                                `).join('') : '<div class="p-5 text-center text-slate-400 text-sm">Nenhum envio registrado neste estoque.</div>'}
                             </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Origem</span>
-                                <b>${esc(t.warehouseName)}</b>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Tipo</span>
-                                <span class="status-pill">${t.targetType === 'SUPERVISOR' ? 'Supervisor' : 'Vendedor'}</span>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Destinatário</span>
-                                <b>${esc(t.targetName)}</b>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Produto</span>
-                                <span>${esc(t.productName)}</span>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Qtd</span>
-                                <b>${t.quantity} un.</b>
-                            </div>
-                            <div class="flex justify-between items-center md:block">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Preço</span>
-                                <span class="font-bold text-emerald-600">${money(t.price)}</span>
-                            </div>
-                            <div class="flex justify-between items-center md:justify-end gap-2 pt-2 md:pt-0 border-t border-slate-100 md:border-0">
-                                <span class="text-xs font-bold text-slate-400 uppercase md:hidden">Ações</span>
-                                ${t.reverted ? `<span class="status-pill style-red">🔴 Desfeito</span>` : `<button class="delete-btn undo-transfer-btn text-xs py-1 px-2.5 flex items-center gap-1" data-id="${t.id}">${icons.undo} Desfazer Envio</button>`}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '<div class="p-6 text-center text-slate-400">Nenhum envio de estoque registrado ainda.</div>'}
+                        </section>
+                    `;
+                }).join('')}
+            </div>
         </div>
     `);
 
     document.querySelectorAll('.wg-private-value-btn').forEach(btn => btn.onclick = () => openWgPrivateValueModal(btn.dataset.wh, btn.dataset.product, btn.dataset.brand));
-
     const clearPhysicalBtn = document.getElementById('clearPhysicalInventoryLogsBtn');
-    if (clearPhysicalBtn) {
-        clearPhysicalBtn.onclick = () => {
-            confirmActionModal({
-                title: '🗑️ Excluir Logs do Inventário Físico',
-                subtitle: 'Listagem de inventário físico dos estoques centrais',
-                warningText: 'Atenção! Esta ação excluirá permanentemente todos os itens registrados no inventário físico dos depósitos matriz, no sistema local e no Supabase.',
-                confirmText: 'Confirmar e Excluir Logs',
-                onConfirm: async () => {
-                    try {
-                        await deleteAllRowsFromSupabase('warehouse_inventory');
-                        write('nl_warehouse_inventory', []);
-                        showToast('Logs do inventário físico excluídos com sucesso!');
-                        renderWarehousesPage();
-                    } catch (error) {
-                        console.error('Erro ao apagar logs do inventário:', error);
-                        alert(`Não foi possível apagar os logs do inventário: ${error.message}`);
-                    }
-                }
-            });
-        };
-    }
-
+    if (clearPhysicalBtn) clearPhysicalBtn.onclick = () => confirmActionModal({
+        title: '🗑️ Excluir Logs do Inventário Físico', subtitle: 'Listagem de inventário físico dos estoques centrais',
+        warningText: 'Atenção! Esta ação excluirá permanentemente todos os itens registrados no inventário físico dos depósitos matriz, no sistema local e no Supabase.', confirmText: 'Confirmar e Excluir Logs',
+        onConfirm: async () => { try { await deleteAllRowsFromSupabase('warehouse_inventory'); write('nl_warehouse_inventory', []); showToast('Logs do inventário físico excluídos com sucesso!'); renderWarehousesPage(); } catch (error) { console.error('Erro ao apagar logs do inventário:', error); alert(`Não foi possível apagar os logs do inventário: ${error.message}`); } }
+    });
     document.querySelectorAll('.add-item-wh').forEach(b => b.onclick = () => addWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.send-from-wh').forEach(b => b.onclick = () => transferStockModal(b.dataset.id));
     document.querySelectorAll('.edit-inv-btn').forEach(b => b.onclick = () => editWarehouseItemModal(b.dataset.id));
     document.querySelectorAll('.delete-inv-btn').forEach(b => b.onclick = () => deleteWarehouseItem(b.dataset.id));
     document.querySelectorAll('.undo-transfer-btn').forEach(b => b.onclick = () => undoTransferModal(b.dataset.id));
-
     const clearTrBtn = document.getElementById('clearTransferLogsBtn');
-    if (clearTrBtn) {
-        clearTrBtn.onclick = () => {
-            confirmActionModal({
-                title: '🗑️ Limpar Logs de Transferências',
-                subtitle: 'Aba Estoque',
-                warningText: 'Deseja apagar permanentemente o histórico de transferências de estoque do sistema local e do Supabase?',
-                confirmText: 'Confirmar e Limpar Transferências',
-                onConfirm: async () => {
-                    try {
-                        await deleteAllRowsFromSupabase('transfers');
-                        write('nl_transfers', []);
-                        showToast('Logs de transferências limpos com sucesso!');
-                        renderWarehousesPage();
-                    } catch (error) {
-                        console.error('Erro ao apagar logs de transferências:', error);
-                        alert(`Não foi possível apagar os logs de transferências: ${error.message}`);
-                    }
-                }
-            });
-        };
-    }
+    if (clearTrBtn) clearTrBtn.onclick = () => confirmActionModal({
+        title: '🗑️ Limpar Logs de Transferências', subtitle: 'Logs de transferências dos estoques centrais',
+        warningText: 'Deseja apagar permanentemente o histórico de transferências de estoque do sistema local e do Supabase?', confirmText: 'Confirmar e Limpar Transferências',
+        onConfirm: async () => { try { await deleteAllRowsFromSupabase('transfers'); write('nl_transfers', []); showToast('Logs de transferências limpos com sucesso!'); renderWarehousesPage(); } catch (error) { console.error('Erro ao apagar logs de transferências:', error); alert(`Não foi possível apagar os logs de transferências: ${error.message}`); } }
+    });
 }
 
 function renderStockPanel() {
@@ -4751,11 +4680,6 @@ function renderProductsPage() {
             ${ss.map(s => {
                 const sProds = products().filter(p => p.sellerId === s.id && p.stock > 0);
                 
-                // Cálculo de Vendas do Dia (Total em vermelho ex: -4.000)
-                const sSalesToday = periodSales(s.id, 'day');
-                const sTotalSoldTodayBRL = sSalesToday.reduce((a, x) => a + Number(x.total || 0), 0);
-                const formattedSoldToday = moneyPairSigned(-sTotalSoldTodayBRL);
-
                 // Subtotal da soma de todos os produtos do vendedor
                 const sSubtotalBRL = sProds.reduce((a, p) => a + (p.stock * p.price), 0);
                 const sTotalUnits = sProds.reduce((a, p) => a + p.stock, 0);
@@ -4776,12 +4700,6 @@ function renderProductsPage() {
                                         <h3 class="text-base font-bold text-slate-900 leading-tight">${esc(s.name)}</h3>
                                         <p class="text-xs text-slate-500">@${esc(s.user)} · ${esc(s.city || 'N/A')}/${esc(s.uf || 'N/A')}</p>
                                     </div>
-                                </div>
-                                <!-- TOTAL VENDIDO NO DIA EM VERMELHO -->
-                                <div class="text-right" title="Total Vendido Hoje">
-                                    <span class="text-xs font-black px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-200 block" style="color: #ef4444; font-weight: 800;">
-                                        ${formattedSoldToday}
-                                    </span>
                                 </div>
                             </div>
 
