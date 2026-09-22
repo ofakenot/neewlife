@@ -887,7 +887,7 @@
                 
                 <div class="batch-validation-box modal-batch-validation">
                     <label class="batch-validation-label" for="modal-batch-input">LOTE do produto para liberar os downloads</label>
-                    <input id="modal-batch-input" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digite o batch do frasco">
+                    <input id="modal-batch-input" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" maxlength="15" placeholder="Ex.: NL-XQF-4187-562">
                     <div id="modal-batch-message" class="batch-validation-message" role="status" aria-live="polite"></div>
                 </div>
                 <div class="modal-actions">
@@ -1039,7 +1039,7 @@ const productsQA = [
     {
         id: 12, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10MG", category: "gh-secretagogues",
         key: "NL-CJC-3406-010", purity: "99.39%", date: "Aug 12, 2026", batch: "NL-CJC-3406-010",
-        imageUrl: "https://newlifelabs.us/images/products/cjc.png", imagem: "images/cjc.png",
+        imageUrl: "https://newlifelabs.us/images/products/cjc1.png", imagem: "images/cjc.png",
         pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20+%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
         manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20+%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
         desc_pt: "Combinação de CJC-1295 e ipamorelina para investigação da liberação somatotrópica.",
@@ -1049,7 +1049,7 @@ const productsQA = [
     {
         id: 13, targetId: "motsc", product: "MOTS-C 40MG", category: "Research Peptide",
         key: "NL-MOT-3506-011", purity: "99.40%", date: "Aug 12, 2026", batch: "NL-MOT-3506-011",
-        imageUrl: "https://newlifelabs.us/images/products/motsc.png", imagem: "images/motsc.png",
+        imageUrl: "https://newlifelabs.us/images/products/motsc.png", imagem: "images/mots-c.png",
         pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
         manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf",
         desc_pt: "Peptídeo derivado do genoma mitocondrial associado à investigação da via AMPK e da homeostase metabólica celular.",
@@ -1375,6 +1375,13 @@ const productsQA = [
             return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
         }
 
+        function formatBatchInput(input) {
+            if (!input) return;
+            const raw = String(input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+            const parts = [raw.slice(0, 2), raw.slice(2, 5), raw.slice(5, 9), raw.slice(9, 12)].filter(Boolean);
+            input.value = parts.join('-');
+        }
+
         function clearBatchValidation(index) {
             const input = document.getElementById(`batch-input-${index}`);
             const message = document.getElementById(`batch-message-${index}`);
@@ -1457,7 +1464,7 @@ const productsQA = [
                         <div class="card-btn-drawer" id="drawer-${index}">
                             <div class="batch-validation-box">
                                 <label class="batch-validation-label" for="batch-input-${index}">${batchLabel} do produto para liberar os downloads</label>
-                                <input id="batch-input-${index}" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digite o batch do frasco" oninput="clearBatchValidation(${index})" onkeydown="if (event.key === 'Enter') validateBatchAndDownload(${index}, 'manual')">
+                                <input id="batch-input-${index}" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" maxlength="15" placeholder="Ex.: NL-XQF-4187-562" oninput="formatBatchInput(this); clearBatchValidation(${index})" onkeydown="if (event.key === 'Enter') validateBatchAndDownload(${index}, 'manual')">
                                 <div id="batch-message-${index}" class="batch-validation-message" role="status" aria-live="polite"></div>
                             </div>
                             <div class="card-btn-row">
@@ -1496,7 +1503,7 @@ const productsQA = [
             modalProductIndex = index;
             const modalBatchInput = document.getElementById('modal-batch-input');
             const modalBatchMessage = document.getElementById('modal-batch-message');
-            if (modalBatchInput) { modalBatchInput.value = ''; modalBatchInput.classList.remove('invalid'); modalBatchInput.oninput = () => { modalBatchInput.classList.remove('invalid'); if (modalBatchMessage) modalBatchMessage.textContent = ''; }; modalBatchInput.onkeydown = (e) => { if (e.key === 'Enter') validateModalBatchAndDownload('manual'); }; }
+            if (modalBatchInput) { modalBatchInput.value = ''; modalBatchInput.classList.remove('invalid'); modalBatchInput.oninput = () => { formatBatchInput(modalBatchInput); modalBatchInput.classList.remove('invalid'); if (modalBatchMessage) modalBatchMessage.textContent = ''; }; modalBatchInput.onkeydown = (e) => { if (e.key === 'Enter') validateModalBatchAndDownload('manual'); }; }
             if (modalBatchMessage) modalBatchMessage.textContent = '';
             document.getElementById('modal-desc').textContent = shortDesc;
 
