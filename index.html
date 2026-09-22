@@ -907,137 +907,24 @@
     <!-- SCRIPT PRINCIPAL -->
     <script>
         const productsQA = [
-            { 
-                id: 1, targetId: "terzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-3006-006", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/terzepatida1.png",
-                desc_pt: "Co-agonista dual dos receptores GIP e GLP-1 desenvolvido para regulação metabólica avançada e otimização glicêmica.",
-                desc_en: "Dual GIP and GLP-1 receptor co-agonist engineered for advanced metabolic regulation and glycemic optimization.",
-                desc_es: "Co-agonista dual de los receptores GIP y GLP-1 diseñado para la regulación metabólica avanzada y optimización glucémica."
-            },
-            { 
-                id: 2, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-3206-008", 
-                pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/retatrutide1.png",
-                desc_pt: "Agonista triplo dos receptores GIP, GLP-1 e Glucagon focado em reprogramação e oxidação lipídica profunda.",
-                desc_en: "Triple GIP, GLP-1 and Glucagon receptor agonist focused on metabolic reprogramming and lipid oxidation.",
-                desc_es: "Agonista triple de los receptores GIP, GLP-1 y Glucagón enfocado en reprogramación metabólica y oxidación lipídica."
-            },
-            { 
-                id: 3, targetId: "ghk100", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2506-001", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-Cu%20100%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/ghk-cu100.png",
-                desc_pt: "Tripeptídeo de cobre de alta concentração para neocolagênese, remodelação da matriz extracelular e regeneração tecidual.",
-                desc_en: "High-concentration copper tripeptide for neocollagenesis, extracellular matrix remodeling, and tissue regeneration.",
-                desc_es: "Tripéptido de cobre de alta concentración para neocolagénesis, remodelación de matriz extracelular y regeneración tisular."
-            },
-            { 
-                id: 4, targetId: "tesam", product: "TESAMORELIN 10mg", category: "gh-secretagogues", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2806-004", 
-                pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/tesamorelin10.png",
-                desc_pt: "Análogo sintético do GHRH que estimula a síntese e liberação pulsátil do hormônio do crescimento endógeno.",
-                desc_en: "Synthetic GHRH analogue that stimulates the synthesis and pulsatile release of endogenous growth hormone.",
-                desc_es: "Análogo sintético del GHRH que estimula la síntesis y liberación pulsátil de la hormona del crecimiento endógena."
-            },
-            { 
-                id: 5, targetId: "cjc", product: "CJC 1295 + IPAMORELIN 10mg", category: "gh-secretagogues", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-3406-010", 
-                pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20%2B%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20%2B%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/cjc.png",
-                desc_pt: "Combinação sinérgica de secretagogo GH e análogo GHRH para amplificação da liberação somatotrópica.",
-                desc_en: "Synergistic GH secretagogue and GHRH analogue blend for amplified somatotropic release.",
-                desc_es: "Mezcla sinérgica de secretagogo GH y análogo GHRH para amplificación somatotrópica."
-            },
-            { 
-                id: 6, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-3706-013", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/semax1.png",
-                desc_pt: "Heptapeptídeo nootrópico e neuroprotetor estimulador da expressão de BDNF e NGF no sistema nervoso central.",
-                desc_en: "Nootropic and neuroprotective heptapeptide stimulating BDNF and NGF expression in the central nervous system.",
-                desc_es: "Heptapéptido nootrópico y neuroprotector estimulador de la expresión de BDNF y NGF en el sistema nervioso central."
-            },
-            { 
-                id: 7, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-3606-012", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/selank1.png",
-                desc_pt: "Peptídeo ansiolítico e imunomodulador sintético derivado da tuftsina para modulação da neurotransmissão GABAérgica.",
-                desc_en: "Anxiolytic and immunomodulatory peptide derived from tuftsin for GABAergic neurotransmission modulation.",
-                desc_es: "Péptido ansiolítico e inmunomodulador derivado de la tuftsina para modulación neurotransmisora GABAérgica."
-            },
-            { 
-                id: 8, targetId: "epithalon", product: "EPITHALON 50mg", category: "aesthetics-anti-aging", purity: "99.72%", date: "May 14, 2026", batch: "NL-EPI-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/EPITHALON%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20EPITHALON%2050%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/epithalon1.png",
-                desc_pt: "Tetrapeptídeo sintético ativador da telomerase projetado para longevidade e preservação do comprimento telomérico.",
-                desc_en: "Synthetic telomerase activating tetrapeptide designed for longevity and telomere length preservation.",
-                desc_es: "Tetrapéptido sintético activador de la telomerasa diseñado para longevidad y preservación del telómero."
-            },
-            { 
-                id: 9, targetId: "ss31", product: "SS-31 50mg", category: "recovery-regeneration", purity: "99.37%", date: "May 14, 2026", batch: "NL-SS-2026-05", 
-                pdfUrl: "https://newlifelabs.us/pdfs/SS-31%2050MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SS-31%2050%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/ss31.png",
-                desc_pt: "Tetrapeptídeo mitocôndria-alvo que se liga seletivamente à cardiolipina para otimização do gradiente de prótons e redução de ROS.",
-                desc_en: "Mitochondria-targeted tetrapeptide selectively binding cardiolipin for proton gradient optimization and ROS reduction.",
-                desc_es: "Tetrapéptido mitocondrial dirigido que se une a la cardiolipina para optimización del gradiente de protones."
-            },
-            { 
-                id: 10, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MOT-3506-011", 
-                pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/motsc.png",
-                desc_pt: "Peptídeo derivado do genoma mitocondrial (MDP) que ativa a via AMPK e restaura a homeostase metabólica celular.",
-                desc_en: "Mitochondrial-derived peptide (MDP) activating AMPK pathway and restoring cellular metabolic homeostasis.",
-                desc_es: "Péptido derivado del genoma mitocondrial que activa la vía AMPK y restaura la homeostasis metabólica."
-            },
-            { 
-                id: 11, targetId: "nad", product: "NAD+ 500mg", category: "aesthetics-anti-aging", purity: "99.85%", date: "Jul 15, 2026", batch: "NL-NAD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/NAD%2B%20500MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20NAD%2B%20500%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/nad+.png",
-                desc_pt: "Coenzima essencial para o ciclo de Krebs, reparo do DNA via PARP e ativação das sirtuínas (SIRT1-7).",
-                desc_en: "Essential coenzyme for Krebs cycle, DNA repair via PARP, and sirtuin activation (SIRT1-7).",
-                desc_es: "Coenzima esencial para el ciclo de Krebs, reparación de ADN vía PARP y activación de sirtuínas."
-            },
-            { 
-                id: 12, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2606-002", 
-                pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%20Blend%2070%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/glow70.png",
-                desc_pt: "Matriz biomimética aceleradora de renovação celular, luminosidade e inibição do estresse oxidativo cutâneo.",
-                desc_en: "Biomimetic matrix accelerating cell turnover, skin radiance, and inhibition of cutaneous oxidative stress.",
-                desc_es: "Matriz biomimética aceleradora de renovación celular, luminosidad e inhibición del estrés oxidativo."
-            },
-            { 
-                id: 13, targetId: "aod", product: "AOD 5mg", category: "Research Peptide", purity: "99.67%", date: "Jul 15, 2026", batch: "NL-AOD-2026-07", 
-                pdfUrl: "https://newlifelabs.us/pdfs/AOD-9604%205MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20AOD-9604%205%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/aod.png",
-                desc_pt: "Fragmento sintético C-terminal do hGH (177-191) focado em lipólise direcionada e inibição da lipogênese.",
-                desc_en: "Synthetic C-terminal fragment of hGH (177-191) targeted for lipolysis and inhibition of lipogenesis.",
-                desc_es: "Fragmento sintético C-terminal del hGH (177-191) enfocado en lipólisis dirigida e inhibición de lipogénesis."
-            },
-            { 
-                id: 14, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2706-003", 
-                pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf",
-                manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%20Blend%2080%20mg%20-%20New%20Life%20Labs.pdf",
-                imagem: "images/klow80.png",
-                desc_pt: "Fórmula peptídica de bioestimulação avançada para reconstrução dérmica, firmeza e hidratação de alta profundidade.",
-                desc_en: "Advanced bio-stimulation peptide formula for dermal reconstruction, firmness, and deep hydration.",
-                desc_es: "Fórmula de péptidos de bioestimulación avanzada para reconstrucción dérmica, firmeza e hidratación profunda."
-            }
-        ];
+    { id: 1, targetId: "selank", product: "SELANK 10mg", category: "neuromodulation", purity: "99.55%", date: "May 14, 2026", batch: "NL-SEL-3606-012", pdfUrl: "https://newlifelabs.us/pdfs/SELANK%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SELANK%2010%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/selank.png", desc_pt: "Peptídeo ansiolítico e imunomodulador sintético derivado da tuftsina para modulação da neurotransmissão GABAérgica.", desc_en: "Anxiolytic and immunomodulatory peptide derived from tuftsin for GABAergic neurotransmission modulation.", desc_es: "Péptido ansiolítico e inmunomodulador derivado de la tuftsina para modulación neurotransmisora GABAérgica." },
+    { id: 2, targetId: "semax", product: "SEMAX 10mg", category: "neuromodulation", purity: "99.60%", date: "Jul 15, 2026", batch: "NL-SEM-3706-013", pdfUrl: "https://newlifelabs.us/pdfs/SEMAX%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20SEMAX%2010%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/semax.png", desc_pt: "Heptapeptídeo nootrópico e neuroprotetor estimulador da expressão de BDNF e NGF no sistema nervoso central.", desc_en: "Nootropic and neuroprotective heptapeptide stimulating BDNF and NGF expression in the central nervous system.", desc_es: "Heptapéptido nootrópico y neuroprotector estimulador de la expresión de BDNF y NGF en el sistema nervioso central." },
+    { id: 3, targetId: "ghkcu", product: "GHK-Cu 100mg", category: "aesthetics-anti-aging", purity: "99.62%", date: "May 14, 2026", batch: "NL-GHK-2506-001", pdfUrl: "https://newlifelabs.us/pdfs/GHK-CU%20100MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GHK-Cu%20100%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/ghkcu.png", desc_pt: "Tripeptídeo de cobre de alta concentração para neocolagênese, remodelação da matriz extracelular e regeneração tecidual.", desc_en: "High-concentration copper tripeptide for neocollagenesis, extracellular matrix remodeling, and tissue regeneration.", desc_es: "Tripéptido de cobre de alta concentración para neocolagénesis, remodelación de matriz extracelular y regeneración tisular." },
+    { id: 4, targetId: "retatrutide120", product: "RETATRUTIDE 120mg", category: "weight-loss", purity: "N/A", date: "N/A", batch: "N/A", pdfUrl: "", manualUrl: "", imagem: "images/retatrutide120mg.png", desc_pt: "Agonista triplo dos receptores GIP, GLP-1 e Glucagon.", desc_en: "Triple GIP, GLP-1 and Glucagon receptor agonist.", desc_es: "Agonista triple de los receptores GIP, GLP-1 y Glucagón." },
+    { id: 5, targetId: "retatrutide", product: "RETATRUTIDE 60mg", category: "weight-loss", purity: "99.25%", date: "May 14, 2026", batch: "NL-RET-3206-008", pdfUrl: "https://newlifelabs.us/pdfs/RETATRUTIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20RETATRUTIDE%2060%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/retatrutide60mg.png", desc_pt: "Agonista triplo dos receptores GIP, GLP-1 e Glucagon focado em reprogramação e oxidação lipídica profunda.", desc_en: "Triple GIP, GLP-1 and Glucagon receptor agonist focused on metabolic reprogramming and lipid oxidation.", desc_es: "Agonista triple de los receptores GIP, GLP-1 y Glucagón enfocado en reprogramación metabólica y oxidación lipídica." },
+    { id: 6, targetId: "tirzepatida120", product: "TIRZEPATIDE 120mg", category: "weight-loss", purity: "N/A", date: "N/A", batch: "N/A", pdfUrl: "", manualUrl: "", imagem: "images/tirxepatida120mg.png", desc_pt: "Co-agonista dual dos receptores GIP e GLP-1.", desc_en: "Dual GIP and GLP-1 receptor co-agonist.", desc_es: "Co-agonista dual de los receptores GIP y GLP-1." },
+    { id: 7, targetId: "tirzepatida", product: "TIRZEPATIDE 60mg", category: "weight-loss", purity: "99.90%", date: "Jul 15, 2026", batch: "NL-TIR-3006-006", pdfUrl: "https://newlifelabs.us/pdfs/TIRZEPATIDE%2060MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TIRZEPATIDE%2060%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/tirzepatida60mg.png", desc_pt: "Co-agonista dual dos receptores GIP e GLP-1 desenvolvido para regulação metabólica avançada e otimização glicêmica.", desc_en: "Dual GIP and GLP-1 receptor co-agonist engineered for advanced metabolic regulation and glycemic optimization.", desc_es: "Co-agonista dual de los receptores GIP y GLP-1 diseñado para la regulación metabólica avanzada y optimización glucémica." },
+    { id: 8, targetId: "glow70", product: "GLOW 70mg", category: "aesthetics-anti-aging", purity: "99.37%", date: "May 14, 2026", batch: "NL-GLW-2606-002", pdfUrl: "https://newlifelabs.us/pdfs/GLOW%2070MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20GLOW%20Blend%2070%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/glow.png", desc_pt: "Matriz biomimética aceleradora de renovação celular, luminosidade e inibição do estresse oxidativo cutâneo.", desc_en: "Biomimetic matrix accelerating cell turnover, skin radiance, and inhibition of cutaneous oxidative stress.", desc_es: "Matriz biomimética aceleradora de renovación celular, luminosidad e inhibición del estrés oxidativo." },
+    { id: 9, targetId: "klow80", product: "KLOW 80mg", category: "aesthetics-anti-aging", purity: "99.70%", date: "May 14, 2026", batch: "NL-KLW-2706-003", pdfUrl: "https://newlifelabs.us/pdfs/KLOW%2080MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20KLOW%20Blend%2080%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/klow.png", desc_pt: "Fórmula peptídica de bioestimulação avançada para reconstrução dérmica, firmeza e hidratação de alta profundidade.", desc_en: "Advanced bio-stimulation peptide formula for dermal reconstruction, firmness, and deep hydration.", desc_es: "Fórmula de péptidos de bioestimulación avanzada para reconstrucción dérmica, firmeza e hidratación profunda." },
+    { id: 10, targetId: "tesam", product: "TESAMORELIN 20mg", category: "gh-secretagogues", purity: "99.76%", date: "May 11, 2026", batch: "NL-TES-2806-004", pdfUrl: "https://newlifelabs.us/pdfs/TESAMORELIN%2020MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20TESAMORELIN%2020%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/tesamorelin.png", desc_pt: "Análogo sintético do GHRH que estimula a síntese e liberação pulsátil do hormônio do crescimento endógeno.", desc_en: "Synthetic GHRH analogue that stimulates the synthesis and pulsatile release of endogenous growth hormone.", desc_es: "Análogo sintético del GHRH que estimula la síntesis y liberación pulsátil de la hormona del crecimiento endógena." },
+    { id: 11, targetId: "cbl514", product: "CBL-514 20mg", category: "Research Peptide", purity: "N/A", date: "N/A", batch: "N/A", pdfUrl: "", manualUrl: "", imagem: "images/cbl514.png", desc_pt: "Peptídeo de pesquisa CBL-514 apresentado em frasco de 20 mg.", desc_en: "Research peptide CBL-514 supplied in a 20 mg vial.", desc_es: "Péptido de investigación CBL-514 presentado en vial de 20 mg." },
+    { id: 12, targetId: "cjc", product: "CJC + IPA 10mg", category: "gh-secretagogues", purity: "99.39%", date: "May 14, 2026", batch: "NL-CJC-3406-010", pdfUrl: "https://newlifelabs.us/pdfs/CJC%201295%20%2B%20IPAMORELIN%2010MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20CJC-1295%20%2B%20IPAMORELIN%2010%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/cjc.png", desc_pt: "Combinação sinérgica de secretagogo GH e análogo GHRH para amplificação da liberação somatotrópica.", desc_en: "Synergistic GH secretagogue and GHRH analogue blend for amplified somatotropic release.", desc_es: "Mezcla sinérgica de secretagogo GH y análogo GHRH para amplificación somatotrópica." },
+    { id: 13, targetId: "motsc", product: "MOTS-C 40mg", category: "Research Peptide", purity: "99.40%", date: "Jul 15, 2026", batch: "NL-MOT-3506-011", pdfUrl: "https://newlifelabs.us/pdfs/MOTS-C%2040MG%20-%20Test%20Report%20New%20Life%20Labs.pdf", manualUrl: "https://newlifelabs.us/manual/Guia%20Tecnico%20-%20MOTS-C%2040%20mg%20-%20New%20Life%20Labs.pdf", imagem: "images/motsc.png", desc_pt: "Peptídeo derivado do genoma mitocondrial que ativa a via AMPK e restaura a homeostase metabólica celular.", desc_en: "Mitochondrial-derived peptide activating the AMPK pathway and restoring cellular metabolic homeostasis.", desc_es: "Péptido derivado del genoma mitocondrial que activa la vía AMPK y restaura la homeostasis metabólica." }
+];
 
         const artigos = [
             {
-                id: "terzepatida", key: "NL-TIR-3006-006", purity: "99.90%",
+                id: "tirzepatida", key: "NL-TIR-3006-006", purity: "99.90%",
                 tag_pt: "Agonista Duplo GIP/GLP-1", tag_en: "Dual GIP/GLP-1 Agonist", tag_es: "Agonista Doble GIP/GLP-1",
                 titulo_pt: "TIRZEPATIDE 60mg: Co-Agonismo Dual na Regulação Glicêmica e Sensibilidade Insulínica",
                 titulo_en: "TIRZEPATIDE 60mg: Dual Co-Agonism in Glycemic Control and Insulin Sensitivity",
@@ -1063,7 +950,7 @@
                 texto_es: "<h4>1. Acción del Receptor de Glucagón</h4><p>Aumenta el gasto energético basal y activa la termogénesis.</p>"
             },
             {
-                id: "ghk100", key: "NL-GHK-2506-001", purity: "99.62%",
+                id: "ghkcu", key: "NL-GHK-2506-001", purity: "99.62%",
                 tag_pt: "Matriz Extracelular", tag_en: "Extracellular Matrix", tag_es: "Matriz Extracelular",
                 titulo_pt: "GHK-Cu 100mg: Remodelação Tecidual Avançada, Neocolagênese e Reprogramação Genômica",
                 titulo_en: "GHK-Cu 100mg: Advanced Tissue Remodeling, Neocollagenesis, and Genomic Reprogramming",
@@ -1128,32 +1015,6 @@
                 texto_es: "<h4>1. Control Emocional e Inmune</h4><p>Modula las monoaminas cerebrales y citoquinas sin causar sedación.</p>"
             },
             {
-                id: "epithalon", key: "NL-EPI-2026-05", purity: "99.72%",
-                tag_pt: "Bioregulação / Telomerase", tag_en: "Bioregulation / Telomerase", tag_es: "Biorregulación / Telomerasa",
-                titulo_pt: "EPITHALON 50mg: Biorregulador Epifisário, Ativação de Telomerase e Longevidade Celular",
-                titulo_en: "EPITHALON 50mg: Epiphyseal Bioregulator, Telomerase Activation and Cellular Longevity",
-                titulo_es: "EPITHALON 50mg: Biorregulador Epifisario, Activación de Telomerasa y Longevidad",
-                resumo_pt: "Tetrapeptídeo indutor do alongamento de telômeros e regulação da melatonina endógena.",
-                resumo_en: "Tetrapeptide inducing telomere elongation and endogenous melatonin circadian regulation.",
-                resumo_es: "Tetrapéptido inductor del alargamiento de telómeros y regulación de melatonina.",
-                texto_pt: "<h4>1. Manutenção do Telômero</h4><p>Induz a expressão da enzima telomerase estendendo o limite de Hayflick celular.</p>",
-                texto_en: "<h4>1. Telomere Preservation</h4><p>Triggers telomerase activity extending cellular replication capacity.</p>",
-                texto_es: "<h4>1. Mantenimiento del Telómero</h4><p>Induce la enzima telomerasa prolongando la capacidad replicativa celular.</p>"
-            },
-            {
-                id: "ss31", key: "NL-SS-2026-05", purity: "99.37%",
-                tag_pt: "Proteção Mitocondrial", tag_en: "Mitochondrial Protection", tag_es: "Protección Mitocondrial",
-                titulo_pt: "SS-31 50mg: Tetrapeptídeo Ligante da Cardiolipina e Otimização da Bioenergética Mitocondrial",
-                titulo_en: "SS-31 50mg: Cardiolipin-Binding Tetrapeptide and Mitochondrial Bioenergetics",
-                titulo_es: "SS-31 50mg: Tetrapéptido Ligando de Cardiolipina y Bioenergética Mitocondrial",
-                resumo_pt: "Atuação seletiva na membrana mitocondrial interna, reduzindo radicais livres e estabilizando cristas mitocondriais.",
-                resumo_en: "Selective action on the inner mitochondrial membrane, reducing ROS and stabilizing cristae structure.",
-                resumo_es: "Acción selectiva en la membrana mitocondrial interna, reduciendo ROS y estabilizando crestas.",
-                texto_pt: "<h4>1. Otimização do ATP</h4><p>Protege a cardiolipina contra oxidação lipídica, restaurando a síntese eficiente de ATP.</p>",
-                texto_en: "<h4>1. ATP Optimization</h4><p>Protects cardiolipin from oxidation restoring mitochondrial efficiency.</p>",
-                texto_es: "<h4>1. Optimización de ATP</h4><p>Protege la cardiolipina contra la oxidación restaurando la síntesis energética.</p>"
-            },
-            {
                 id: "motsc", key: "NL-MOT-3506-011", purity: "99.40%",
                 tag_pt: "Metabolismo Mitocondrial", tag_en: "Mitochondrial Metabolism", tag_es: "Metabolismo Mitocondrial",
                 titulo_pt: "MOTS-c 40mg: Peptídeo Codificado pela Mitocôndria (MDP) na Ativação Central da Via AMPK",
@@ -1165,19 +1026,6 @@
                 texto_pt: "<h4>1. Eixo Mitocôndria-Núcleo</h4><p>Promove a translocação nuclear e ativação da AMPK em resposta ao estresse de energia celular.</p>",
                 texto_en: "<h4>1. Mitochondria-to-Nucleus Axis</h4><p>Promotes nuclear translocation and AMPK activation.</p>",
                 texto_es: "<h4>1. Eje Mitocondria-Núcleo</h4><p>Promueve la translocación nuclear y activación de AMPK.</p>"
-            },
-            {
-                id: "nad", key: "NL-NAD-2026-07", purity: "99.85%",
-                tag_pt: "Coenzima Energética / Sirtuínas", tag_en: "Energy Coenzyme / Sirtuins", tag_es: "Coenzima Energética / Sirtuínas",
-                titulo_pt: "NAD+ 500mg: Nicotinamida Adenina Dinucleotídeo no Reparo de DNA e Sinalização das Sirtuínas",
-                titulo_en: "NAD+ 500mg: Nicotinamide Adenine Dinucleotide in DNA Repair and Sirtuin Signaling",
-                titulo_es: "NAD+ 500mg: Dinucleótido de Nicotinamida y Adenina en Reparación de ADN y Sirtuínas",
-                resumo_pt: "Coenzima central na transferência de elétrons mitocondrial, fosforylação oxidativa e ativação da enzima PARP-1.",
-                resumo_en: "Central coenzyme in mitochondrial electron transport, oxidative phosphorylation, and PARP-1 activation.",
-                resumo_es: "Coenzima central en transporte de electrones mitocondrial y activación de sirtuínas.",
-                texto_pt: "<h4>1. Suporte às Sirtuínas</h4><p>Co-fator indispensável para as enzimas deacetylases SIRT1 a SIRT7 de longevidade.</p>",
-                texto_en: "<h4>1. Sirtuin Activation</h4><p>Essential co-factor for SIRT1-SIRT7 enzymes involved in genomic stability.</p>",
-                texto_es: "<h4>1. Soporte de Sirtuínas</h4><p>Cofactor indispensable para enzimas SIRT1-SIRT7 de estabilidad genética.</p>"
             },
             {
                 id: "glow70", key: "NL-GLW-2606-002", purity: "99.37%",
@@ -1193,19 +1041,6 @@
                 texto_es: "<h4>1. Luminosidad Cutánea</h4><p>Inhibe la melanogénesis focal reduciendo hiperpigmentación UV.</p>"
             },
             {
-                id: "aod", key: "NL-AOD-2026-07", purity: "99.67%",
-                tag_pt: "Lipólise Direcionada", tag_en: "Targeted Lipolysis", tag_es: "Lipólisis Dirigida",
-                titulo_pt: "AOD-9604 5mg: Fragmento C-Terminal hGH (177-191) na Lipólise e Inibição Lipogênica",
-                titulo_en: "AOD-9604 5mg: C-Terminal hGH Fragment (177-191) in Lipolysis and Lipogenesis Inhibition",
-                titulo_es: "AOD-9604 5mg: Fragmento C-Terminal del hGH (177-191) en Lipólisis e Inhibición Lipogénica",
-                resumo_pt: "Fragmento peptídico sintetizado especificamente para estimular a quebra de lipídios sem alterar glicemia ou IGF-1.",
-                resumo_en: "Peptide fragment engineered to stimulate lipid breakdown without affecting blood glucose or IGF-1 levels.",
-                resumo_es: "Fragmento de péptido para estimular la descomposición de lípidos sin alterar glucemia.",
-                texto_pt: "<h4>1. Ação Lipolítica Isolada</h4><p>Ativa os receptores beta-3 sem desencadear efeitos anabólicos no eixo IGF-1.</p>",
-                texto_en: "<h4>1. Selective Lipolysis</h4><p>Activates beta-3 adrenoceptors without altering anabolic IGF-1 axis.</p>",
-                texto_es: "<h4>1. Lipólisis Selectiva</h4><p>Activa receptores beta-3 sin alterar la glucemia o eje IGF-1.</p>"
-            },
-            {
                 id: "klow80", key: "NL-KLW-2706-003", purity: "99.70%",
                 tag_pt: "Reconstrução Dérmica", tag_en: "Dermal Reconstruction", tag_es: "Reconstrucción Dérmica",
                 titulo_pt: "KLOW 80mg: Bioestimulação Avançada, Densidade Matricial e Firmeza Tissular",
@@ -1217,8 +1052,25 @@
                 texto_pt: "<h4>1. Fortalecimento da Barreira Dermoepidérmica</h4><p>Estimula a rede de glicosaminoglicanos aumentando a retenção hídrica profunda.</p>",
                 texto_en: "<h4>1. Dermal Barrier Strength</h4><p>Boosts glycosaminoglycans matrix increasing deep skin hydration.</p>",
                 texto_es: "<h4>1. Fortalecimiento Dermoepidérmico</h4><p>Aumenta la matriz de glicosaminoglicanos mejorando la hidratación.</p>"
-            }
-        ];
+            },
+            {
+                id: "tirzepatida120", key: "", purity: "N/A", tag_pt: "Agonista Duplo GIP/GLP-1", tag_en: "Dual GIP/GLP-1 Agonist", tag_es: "Agonista Doble GIP/GLP-1",
+                titulo_pt: "TIRZEPATIDE 120mg: Co-Agonismo Dual GIP/GLP-1", titulo_en: "TIRZEPATIDE 120mg: Dual GIP/GLP-1 Co-Agonism", titulo_es: "TIRZEPATIDE 120mg: Co-Agonismo Dual GIP/GLP-1",
+                resumo_pt: "Registro de catálogo para a apresentação de 120 mg.", resumo_en: "Catalog entry for the 120 mg presentation.", resumo_es: "Registro de catálogo para la presentación de 120 mg.",
+                texto_pt: "<h4>Informação de catálogo</h4><p>Dados analíticos e laudos devem ser inseridos quando disponíveis.</p>", texto_en: "<h4>Catalog information</h4><p>Analytical data and reports should be added when available.</p>", texto_es: "<h4>Información de catálogo</h4><p>Los datos analíticos y reportes deben añadirse cuando estén disponibles.</p>"
+            },
+            {
+                id: "retatrutide120", key: "", purity: "N/A", tag_pt: "Agonista Triplo", tag_en: "Triple Agonist", tag_es: "Agonista Triple",
+                titulo_pt: "RETATRUTIDE 120mg: Agonismo Triplo", titulo_en: "RETATRUTIDE 120mg: Triple Agonism", titulo_es: "RETATRUTIDE 120mg: Agonismo Triple",
+                resumo_pt: "Registro de catálogo para a apresentação de 120 mg.", resumo_en: "Catalog entry for the 120 mg presentation.", resumo_es: "Registro de catálogo para la presentación de 120 mg.",
+                texto_pt: "<h4>Informação de catálogo</h4><p>Dados analíticos e laudos devem ser inseridos quando disponíveis.</p>", texto_en: "<h4>Catalog information</h4><p>Analytical data and reports should be added when available.</p>", texto_es: "<h4>Información de catálogo</h4><p>Los datos analíticos y reportes deben añadirse cuando estén disponibles.</p>"
+            },
+            {
+                id: "cbl514", key: "", purity: "N/A", tag_pt: "Peptídeo de Pesquisa", tag_en: "Research Peptide", tag_es: "Péptido de Investigación",
+                titulo_pt: "CBL-514 20mg: Peptídeo de Pesquisa", titulo_en: "CBL-514 20mg: Research Peptide", titulo_es: "CBL-514 20mg: Péptido de Investigación",
+                resumo_pt: "Registro de catálogo para CBL-514 20 mg.", resumo_en: "Catalog entry for CBL-514 20 mg.", resumo_es: "Registro de catálogo para CBL-514 20 mg.",
+                texto_pt: "<h4>Informação de catálogo</h4><p>Dados analíticos e laudos devem ser inseridos quando disponíveis.</p>", texto_en: "<h4>Catalog information</h4><p>Analytical data and reports should be added when available.</p>", texto_es: "<h4>Información de catálogo</h4><p>Los datos analíticos y reportes deben añadirse cuando estén disponibles.</p>"
+            }];
 
         const i18n = {
             pt: {
