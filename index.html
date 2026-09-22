@@ -381,6 +381,22 @@
 
         .btn-card-quote { background-color: var(--primary); color: #ffffff; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2); font-size: 0.82rem; padding: 11px; border-radius: 10px; }
         .btn-card-quote:hover { background-color: var(--primary-hover); }
+        .batch-validation-box {
+            display: flex; flex-direction: column; gap: 8px;
+            background: rgba(0, 113, 227, 0.045); border: 1px solid rgba(0, 113, 227, 0.16);
+            border-radius: 10px; padding: 10px;
+        }
+        .batch-validation-label { font-size: 0.74rem; font-weight: 700; color: var(--gray-600); }
+        .batch-validation-input {
+            width: 100%; padding: 9px 10px; border: 1px solid var(--gray-300); border-radius: 8px;
+            background: #fff; color: var(--dark); font: 700 0.78rem monospace; text-transform: uppercase;
+            outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .batch-validation-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1); }
+        .batch-validation-input.invalid { border-color: #c62828; box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1); }
+        .batch-validation-message { min-height: 1.1em; font-size: 0.72rem; font-weight: 700; color: #c62828; }
+        .modal-batch-validation { margin-top: 4px; }
+
 
         /* --- ARTIGOS CIENTÍFICOS SECTION --- */
         .articles-section {
@@ -626,7 +642,6 @@
                 <li class="nav-item"><a href="#inicio" data-i18n="nav_inicio" class="active-link">Início</a></li>
                 <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
                 <li class="nav-item"><a href="#artigos" data-i18n="nav_artigos">Artigos</a></li>
-                <li class="nav-item"><a href="https://newlifelabs.us/laudo" data-i18n="nav_laudo">Laudo</a></li>
                 <li class="nav-item"><a href="#sobre" data-i18n="nav_sobre">Sobre</a></li>
                 <li class="nav-item"><a href="#contato" data-i18n="nav_contato">Contato</a></li>
             </ul>
@@ -812,7 +827,6 @@
                         <li><a href="#inicio" data-i18n="nav_inicio">Início</a></li>
                         <li><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
                         <li><a href="#artigos" data-i18n="nav_artigos">Artigos Científicos</a></li>
-                        <li><a href="https://newlifelabs.us/laudo" data-i18n="nav_laudo">Validação de Laudo</a></li>
                         <li><a href="#sobre" data-i18n="nav_sobre">Sobre Nós</a></li>
                     </ul>
                 </div>
@@ -820,7 +834,6 @@
                 <div>
                     <h4 class="footer-col-title" data-i18n="footer_compliance">Conformidade</h4>
                     <ul class="footer-nav-list">
-                        <li><a href="https://newlifelabs.us/laudo" data-i18n="footer_link1">Rastreabilidade de Lotes</a></li>
                         <li><a href="#" data-i18n="footer_link2">Termos de Uso Corporativo</a></li>
                         <li><a href="#" data-i18n="footer_link3">Política de Privacidade</a></li>
                         <li><a href="#" data-i18n="footer_link4">Certificações HPLC</a></li>
@@ -872,13 +885,18 @@
 
                 <div id="modal-desc" style="font-size: 0.92rem; color: #424245; line-height: 1.6; margin-bottom: 15px;">Descrição completa do composto.</div>
                 
+                <div class="batch-validation-box modal-batch-validation">
+                    <label class="batch-validation-label" for="modal-batch-input">LOTE do produto para liberar os downloads</label>
+                    <input id="modal-batch-input" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digite o batch do frasco">
+                    <div id="modal-batch-message" class="batch-validation-message" role="status" aria-live="polite"></div>
+                </div>
                 <div class="modal-actions">
-                    <a href="#" id="modal-manual-btn" class="btn-card-action btn-card-manual">
+                    <button type="button" id="modal-manual-btn" class="btn-card-action btn-card-manual">
                         <i class="fas fa-book-open"></i> <span data-i18n="btn_manual">Baixar Manual</span>
-                    </a>
-                    <a href="#" id="modal-coa-btn" class="btn-card-action btn-card-laudo">
+                    </button>
+                    <button type="button" id="modal-coa-btn" class="btn-card-action btn-card-laudo">
                         <i class="fas fa-file-pdf"></i> <span data-i18n="btn_laudo">Baixar Laudo</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1291,7 +1309,9 @@ const productsQA = [
             }
         };
 
-        let currentLanguage = localStorage.getItem('newlifelabs-lang') || 'pt';
+        const supportedLanguages = ['pt', 'en', 'es'];
+        const savedLanguage = localStorage.getItem('newlifelabs-lang');
+        let currentLanguage = supportedLanguages.includes(savedLanguage) ? savedLanguage : 'pt';
         const verificadoBadge = `<span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #0071e3; color: #ffffff; font-size: 9px; font-weight: bold; border-radius: 50%; margin-left: 6px; vertical-align: middle;" title="Verificado">&#10003;</span>`;
 
         function forceDownload(event, url, filename) {
@@ -1313,6 +1333,7 @@ const productsQA = [
         }
 
         function updateLanguage(lang) {
+            if (!supportedLanguages.includes(lang) || !i18n[lang]) lang = 'pt';
             currentLanguage = lang;
             localStorage.setItem('newlifelabs-lang', lang);
             document.documentElement.lang = lang === 'es' ? 'es' : lang === 'en' ? 'en' : 'pt-BR';
@@ -1346,6 +1367,55 @@ const productsQA = [
 
             renderProducts();
             renderArticles();
+        }
+
+        let modalProductIndex = null;
+
+        function normalizeBatch(value) {
+            return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
+        }
+
+        function clearBatchValidation(index) {
+            const input = document.getElementById(`batch-input-${index}`);
+            const message = document.getElementById(`batch-message-${index}`);
+            if (input) input.classList.remove('invalid');
+            if (message) message.textContent = '';
+        }
+
+        function validateBatchAndDownload(index, type) {
+            const product = productsQA[index];
+            const input = document.getElementById(`batch-input-${index}`);
+            const message = document.getElementById(`batch-message-${index}`);
+            const enteredBatch = normalizeBatch(input ? input.value : '');
+            const expectedBatch = normalizeBatch(product.batch);
+            if (!enteredBatch || enteredBatch !== expectedBatch) {
+                if (input) { input.classList.add('invalid'); input.focus(); }
+                if (message) message.textContent = 'Batch incorreto. Confira o lote informado no frasco.';
+                return;
+            }
+            if (message) message.textContent = '';
+            if (input) input.classList.remove('invalid');
+            const url = type === 'manual' ? product.manualUrl : product.pdfUrl;
+            const filename = `${product.product} - ${type === 'manual' ? 'Manual' : 'Laudo'}.pdf`;
+            forceDownload({ preventDefault: () => {}, stopPropagation: () => {} }, url, filename);
+        }
+
+        function validateModalBatchAndDownload(type) {
+            if (modalProductIndex === null) return;
+            const product = productsQA[modalProductIndex];
+            const input = document.getElementById('modal-batch-input');
+            const message = document.getElementById('modal-batch-message');
+            const isValid = normalizeBatch(input ? input.value : '') === normalizeBatch(product.batch);
+            if (!isValid) {
+                if (input) { input.classList.add('invalid'); input.focus(); }
+                if (message) message.textContent = 'Batch incorreto. Confira o lote informado no frasco.';
+                return;
+            }
+            if (input) input.classList.remove('invalid');
+            if (message) message.textContent = '';
+            const url = type === 'manual' ? product.manualUrl : product.pdfUrl;
+            const filename = `${product.product} - ${type === 'manual' ? 'Manual' : 'Laudo'}.pdf`;
+            forceDownload({ preventDefault: () => {}, stopPropagation: () => {} }, url, filename);
         }
 
         function renderProducts() {
@@ -1382,20 +1452,21 @@ const productsQA = [
                     <div class="product-info">
                         <h3 class="product-title-text">${produto.product}${verificadoBadge}</h3>
                         
-                        <div class="product-meta-row">
-                            <span>${batchLabel}: ${produto.batch}</span>
-                        </div>
-
                         <p class="product-short-desc">${shortDesc}</p>
 
                         <div class="card-btn-drawer" id="drawer-${index}">
+                            <div class="batch-validation-box">
+                                <label class="batch-validation-label" for="batch-input-${index}">${batchLabel} do produto para liberar os downloads</label>
+                                <input id="batch-input-${index}" class="batch-validation-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digite o batch do frasco" oninput="clearBatchValidation(${index})" onkeydown="if (event.key === 'Enter') validateBatchAndDownload(${index}, 'manual')">
+                                <div id="batch-message-${index}" class="batch-validation-message" role="status" aria-live="polite"></div>
+                            </div>
                             <div class="card-btn-row">
-                                <a href="${produto.manualUrl}" download class="btn-card-action btn-card-manual" onclick="forceDownload(event, '${produto.manualUrl}', '${produto.product} - Manual.pdf')">
+                                <button type="button" class="btn-card-action btn-card-manual" onclick="validateBatchAndDownload(${index}, 'manual')">
                                     <i class="fas fa-book-open"></i> <span>${manualText}</span>
-                                </a>
-                                <a href="${produto.pdfUrl}" download class="btn-card-action btn-card-laudo" onclick="forceDownload(event, '${produto.pdfUrl}', '${produto.product} - Laudo.pdf')">
+                                </button>
+                                <button type="button" class="btn-card-action btn-card-laudo" onclick="validateBatchAndDownload(${index}, 'laudo')">
                                     <i class="fas fa-file-pdf"></i> <span>${laudoText}</span>
-                                </a>
+                                </button>
                             </div>
                             <a href="${waUrl}" target="_blank" class="btn-card-action btn-card-quote">
                                 <i class="fab fa-whatsapp"></i> <span>${quoteText}</span>
@@ -1421,7 +1492,12 @@ const productsQA = [
 
             document.getElementById('modal-title').innerHTML = `${prod.product}${verificadoBadge}`;
             document.getElementById('modal-purity-val').textContent = prod.purity;
-            document.getElementById('modal-key-val').textContent = prod.batch;
+            document.getElementById('modal-key-val').textContent = '••••••••';
+            modalProductIndex = index;
+            const modalBatchInput = document.getElementById('modal-batch-input');
+            const modalBatchMessage = document.getElementById('modal-batch-message');
+            if (modalBatchInput) { modalBatchInput.value = ''; modalBatchInput.classList.remove('invalid'); modalBatchInput.oninput = () => { modalBatchInput.classList.remove('invalid'); if (modalBatchMessage) modalBatchMessage.textContent = ''; }; modalBatchInput.onkeydown = (e) => { if (e.key === 'Enter') validateModalBatchAndDownload('manual'); }; }
+            if (modalBatchMessage) modalBatchMessage.textContent = '';
             document.getElementById('modal-desc').textContent = shortDesc;
 
             document.getElementById('modal-img-container').innerHTML = `
@@ -1429,14 +1505,10 @@ const productsQA = [
             `;
 
             const manualBtn = document.getElementById('modal-manual-btn');
-            if (manualBtn) {
-                manualBtn.onclick = (e) => forceDownload(e, prod.manualUrl, `${prod.product} - Manual.pdf`);
-            }
+            if (manualBtn) manualBtn.onclick = () => validateModalBatchAndDownload('manual');
 
             const coaBtn = document.getElementById('modal-coa-btn');
-            if (coaBtn) {
-                coaBtn.onclick = (e) => forceDownload(e, prod.pdfUrl, `${prod.product} - Laudo.pdf`);
-            }
+            if (coaBtn) coaBtn.onclick = () => validateModalBatchAndDownload('laudo');
 
             const productModal = document.getElementById('product-modal');
             if (productModal) {
