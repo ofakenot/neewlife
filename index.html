@@ -626,6 +626,115 @@
             .modal-article-title { font-size: 1.25rem !important; }
             .modal-meta-box { flex-direction: column; gap: 6px; }
         }
+
+        /* --- VERIFICADOR DE BATCH NO HERO --- */
+        .hero-batch-verifier {
+            width: 100%; max-width: 610px; margin-top: 12px;
+            position: relative; z-index: 3;
+        }
+        .hero-batch-verifier-shell {
+            background: rgba(255,255,255,0.54);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.88);
+            border-radius: 22px; padding: 10px;
+            box-shadow: 0 18px 44px rgba(0, 113, 227, 0.10), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+        .hero-batch-form {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.82); border: 1px solid rgba(226,232,240,0.8);
+            border-radius: 15px; padding: 8px 9px 8px 14px;
+        }
+        .hero-batch-form i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+        .hero-batch-input-wrap { flex: 1; min-width: 0; text-align: left; }
+        .hero-batch-label { display: block; color: var(--gray-600); font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .hero-batch-input {
+            width: 100%; border: 0; outline: 0; background: transparent; color: var(--dark);
+            font: 700 0.86rem monospace; letter-spacing: 0.02em; padding: 2px 0;
+        }
+        .hero-batch-input::placeholder { color: #98a2b3; font-family: inherit; font-weight: 500; }
+        .hero-batch-submit {
+            display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+            border: 0; border-radius: 12px; background: var(--primary); color: #fff;
+            padding: 12px 17px; font-size: 0.78rem; font-weight: 800; cursor: pointer;
+            box-shadow: 0 7px 16px rgba(0,113,227,0.22); transition: all 0.2s ease;
+        }
+        .hero-batch-submit:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .hero-batch-submit:active { transform: scale(0.97); }
+        .hero-batch-help { display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--gray-600); font-size: 0.68rem; padding: 8px 4px 1px; text-align: center; }
+        .hero-batch-help i { color: var(--accent-green); font-size: 0.7rem; }
+        .hero-batch-result { margin-top: 10px; animation: fadeInDrawer 0.25s ease forwards; }
+        .hero-batch-result-card {
+            display: grid; grid-template-columns: 112px 1fr; align-items: stretch; overflow: hidden;
+            background: rgba(255,255,255,0.82); border: 1px solid rgba(255,255,255,0.88);
+            border-radius: 18px; box-shadow: 0 15px 35px rgba(0,113,227,0.09); text-align: left;
+        }
+        .hero-batch-result-image { background: linear-gradient(145deg,#eef7ff,#dceeff); min-height: 120px; display: flex; align-items: center; justify-content: center; padding: 8px; }
+        .hero-batch-result-image img { width: 100%; height: 100%; object-fit: contain; }
+        .hero-batch-result-body { padding: 13px 15px; min-width: 0; }
+        .hero-batch-success { display: inline-flex; align-items: center; gap: 5px; color: var(--accent-green); font-size: 0.62rem; font-weight: 800; letter-spacing: .8px; }
+        .hero-batch-success i { font-size: .7rem; }
+        .hero-batch-code { color: var(--gray-600); font: 700 .64rem monospace; margin-left: 7px; }
+        .hero-batch-product { color: var(--dark); font-size: 1rem; font-weight: 800; margin: 4px 0 2px; }
+        .hero-batch-purity { color: var(--gray-600); font-size: .72rem; }
+        .hero-batch-purity strong { color: var(--accent-green); }
+        .hero-batch-actions { display: flex; gap: 7px; margin-top: 9px; }
+        .hero-batch-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; border-radius: 8px; padding: 7px 9px; font-size: .66rem; font-weight: 800; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+        .hero-batch-action:hover { transform: translateY(-1px); }
+        .hero-batch-action.report { background: var(--accent-green); color: #fff; }
+        .hero-batch-action.manual { background: var(--gray-100); border: 1px solid var(--gray-300); color: var(--dark); }
+        .hero-batch-error { display: flex; align-items: center; gap: 7px; background: rgba(255,248,248,.92); border: 1px solid #f1caca; border-radius: 13px; color: #a43434; font-size: .72rem; font-weight: 700; padding: 10px 12px; text-align: left; }
+        .hero-batch-modal {
+            position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center;
+            padding: 20px; background: rgba(15, 23, 42, 0.42); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity .25s ease;
+        }
+        .hero-batch-modal.active { opacity: 1; pointer-events: auto; }
+        .hero-batch-modal-card {
+            position: relative; width: 100%; max-width: 440px; overflow: hidden; background: #fff;
+            border: 1px solid rgba(255,255,255,.9); border-radius: 24px; box-shadow: 0 28px 70px rgba(15,23,42,.22);
+            transform: translateY(10px) scale(.97); transition: transform .25s var(--transition-smooth);
+        }
+        .hero-batch-modal.active .hero-batch-modal-card { transform: translateY(0) scale(1); }
+        .hero-batch-modal-close {
+            position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center;
+            width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(255,255,255,.92);
+            color: var(--gray-600); cursor: pointer; box-shadow: 0 4px 12px rgba(15,23,42,.1); transition: all .2s ease;
+        }
+        .hero-batch-modal-close:hover { color: var(--dark); background: #fff; transform: scale(1.05); }
+        .hero-batch-modal-photo { height: 190px; display: flex; align-items: center; justify-content: center; padding: 18px; background: #fff; border-bottom: 1px solid #edf0f4; }
+        .hero-batch-modal-photo img { width: 100%; height: 100%; object-fit: contain; }
+        .hero-batch-modal-content { padding: 22px 24px 24px; text-align: center; }
+        .hero-batch-modal-status { display: inline-flex; align-items: center; gap: 7px; color: var(--accent-green); font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .hero-batch-modal-status i { font-size: .95rem; }
+        .hero-batch-modal-title { margin: 9px 0 4px; color: var(--dark); font-size: 1.35rem; font-weight: 800; letter-spacing: -.03em; }
+        .hero-batch-modal-batch { color: var(--gray-600); font: 700 .76rem monospace; }
+        .hero-batch-modal-message { max-width: 350px; margin: 10px auto 0; color: var(--gray-600); font-size: .84rem; line-height: 1.55; }
+        .hero-batch-modal-purity { margin-top: 10px; color: var(--gray-600); font-size: .84rem; }
+        .hero-batch-modal-purity strong { color: var(--accent-green); }
+        .hero-batch-modal-actions { display: flex; gap: 9px; justify-content: center; margin-top: 18px; }
+        .hero-batch-modal-actions .hero-batch-action { min-width: 132px; padding: 10px 12px; }
+        .hero-batch-modal-error .hero-batch-modal-photo { height: 115px; color: #b23b3b; font-size: 2rem; background: #fff; }
+        .hero-batch-modal-error .hero-batch-modal-title { font-size: 1.15rem; }
+        .hero-batch-modal-error .hero-batch-modal-content { padding-top: 18px; }
+        @media (max-width: 868px) {
+            .hero-batch-verifier { max-width: 520px; }
+            .hero-batch-result-card { grid-template-columns: 92px 1fr; }
+        }
+        @media (max-width: 520px) {
+            .hero-batch-form { flex-wrap: wrap; }
+            .hero-batch-input-wrap { min-width: calc(100% - 38px); }
+            .hero-batch-submit { width: 100%; justify-content: center; }
+            .hero-batch-result-card { grid-template-columns: 1fr; }
+            .hero-batch-result-image { min-height: 108px; max-height: 150px; }
+            .hero-batch-modal { padding: 16px; }
+            .hero-batch-modal-card { max-width: 360px; border-radius: 22px; }
+            .hero-batch-modal-photo { height: 165px; }
+            .hero-batch-modal-content { padding: 20px 18px 20px; }
+            .hero-batch-modal-actions { flex-direction: column; }
+            .hero-batch-modal-actions .hero-batch-action { width: 100%; }
+        }
+
 </style>
 
 </head>
@@ -682,6 +791,21 @@
                     <p class="hero-description-clean" data-i18n="hero_subtitle">
                         Desenvolvimento de alta performance com pureza rigorosamente certificada por ensaios HPLC, máxima estabilidade molecular e logística internacional acelerada.
                     </p>
+
+                    <div class="hero-batch-verifier" id="hero-batch-verifier">
+                        <div class="hero-batch-verifier-shell">
+                            <div class="hero-batch-form">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                                <div class="hero-batch-input-wrap">
+                                    <label class="hero-batch-label" for="hero-batch-input">Verifique seu produto</label>
+                                    <input id="hero-batch-input" class="hero-batch-input" type="text" autocomplete="off" spellcheck="false" maxlength="15" placeholder="Digite o batch do frasco" aria-describedby="hero-batch-help">
+                                </div>
+                                <button id="hero-batch-submit" class="hero-batch-submit" type="button">Verificar <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div id="hero-batch-help" class="hero-batch-help"><i class="fas fa-shield-alt"></i> Consulte o código exatamente como aparece no rótulo do frasco.</div>
+                        </div>
+                        <div id="hero-batch-result" class="hero-batch-result" aria-live="polite"></div>
+                    </div>
                 </div>
 
                 <div class="hero-mockup-col">
@@ -739,6 +863,14 @@
             </div>
         </div>
     </header>
+
+    <div id="hero-batch-modal" class="hero-batch-modal" role="dialog" aria-modal="true" aria-labelledby="hero-batch-modal-title" aria-hidden="true">
+        <div class="hero-batch-modal-card">
+            <button id="hero-batch-modal-close" class="hero-batch-modal-close" type="button" aria-label="Fechar verificação"><i class="fas fa-xmark"></i></button>
+            <div id="hero-batch-modal-photo" class="hero-batch-modal-photo"></div>
+            <div id="hero-batch-modal-content" class="hero-batch-modal-content"></div>
+        </div>
+    </div>
 
     <!-- SEÇÃO DE PRODUTOS -->
     <section id="produtos" class="section-padding reveal active">
@@ -1239,7 +1371,8 @@ const productsQA = [
                 footer_contact: 'Canais Oficiais', footer_copyright: '© 2015 New Life Labs. Todos os direitos reservados.',
                 btn_manual: 'Baixar Manual', btn_laudo: 'Baixar Laudo', btn_quote: 'Solicitar Cotação',
                 click_photo_hint: 'Clique na foto para ver os botões',
-                mockup_panel_title: 'Painel de Rastreabilidade', mockup_panel_sub: 'Lotes Autenticados HPLC'
+                mockup_panel_title: 'Painel de Rastreabilidade', mockup_panel_sub: 'Lotes Autenticados HPLC',
+                verify_success: 'Produto verificado', verify_message: 'Certificado pela New Life Labs. Procedência, autenticidade e rastreabilidade confirmadas para este lote.', verify_batch: 'LOTE', verify_purity: 'Pureza certificada', verify_report: 'Baixar laudo', verify_manual: 'Baixar manual', verify_not_completed: 'Verificação não concluída', verify_not_found: 'Batch não localizado', verify_retry: 'Confira o código no rótulo e tente novamente.'
             },
             en: {
                 hero_word: 'New Life Labs',
@@ -1272,7 +1405,8 @@ const productsQA = [
                 footer_contact: 'Official Channels', footer_copyright: '© 2015 New Life Labs. All rights reserved.',
                 btn_manual: 'Download Manual', btn_laudo: 'Download Report', btn_quote: 'Request Quote',
                 click_photo_hint: 'Click photo to show buttons',
-                mockup_panel_title: 'Traceability Panel', mockup_panel_sub: 'HPLC Authenticated Batches'
+                mockup_panel_title: 'Traceability Panel', mockup_panel_sub: 'HPLC Authenticated Batches',
+                verify_success: 'Product verified', verify_message: 'Certified by New Life Labs. Provenance, authenticity, and traceability confirmed for this batch.', verify_batch: 'BATCH', verify_purity: 'Certified purity', verify_report: 'Download report', verify_manual: 'Download manual', verify_not_completed: 'Verification not completed', verify_not_found: 'Batch not found', verify_retry: 'Check the code on the label and try again.'
             },
             es: {
                 hero_word: 'New Life Labs',
@@ -1305,7 +1439,8 @@ const productsQA = [
                 footer_contact: 'Canales Oficiales', footer_copyright: '© 2015 New Life Labs. Todos los derechos reservados.',
                 btn_manual: 'Manual PDF', btn_laudo: 'Laudo PDF', btn_quote: 'Solicitar Cotización',
                 click_photo_hint: 'Clic en la foto para ver botones',
-                mockup_panel_title: 'Panel de Trazabilidad', mockup_panel_sub: 'Lotes Autenticados HPLC'
+                mockup_panel_title: 'Panel de Trazabilidad', mockup_panel_sub: 'Lotes Autenticados HPLC',
+                verify_success: 'Producto verificado', verify_message: 'Certificado por New Life Labs. Procedencia, autenticidad y trazabilidad confirmadas para este lote.', verify_batch: 'LOTE', verify_purity: 'Pureza certificada', verify_report: 'Descargar informe', verify_manual: 'Descargar manual', verify_not_completed: 'Verificación no completada', verify_not_found: 'Lote no encontrado', verify_retry: 'Compruebe el código de la etiqueta e inténtelo de nuevo.'
             }
         };
 
@@ -1367,9 +1502,14 @@ const productsQA = [
 
             renderProducts();
             renderArticles();
+            const heroModal = document.getElementById('hero-batch-modal');
+            if (heroModal && heroModal.classList.contains('active') && heroVerifiedProduct) {
+                renderHeroBatchResult(heroVerifiedProduct);
+            }
         }
 
         let modalProductIndex = null;
+        let heroVerifiedProduct = null;
 
         function normalizeBatch(value) {
             return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
@@ -1432,7 +1572,6 @@ const productsQA = [
             container.innerHTML = '';
 
             const langObj = i18n[currentLanguage] || i18n.pt;
-            const purityLabel = langObj.purity_label || 'Pureza';
             const batchLabel = langObj.batch_label || 'LOTE';
             const manualText = langObj.btn_manual || 'Baixar Manual';
             const laudoText = langObj.btn_laudo || 'Baixar Laudo';
@@ -1447,8 +1586,6 @@ const productsQA = [
                 const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Solicito cotação corporativa para o composto: ' + produto.product + ' (Lote: ' + produto.batch + ')')}`;
 
                 card.innerHTML = `
-                    <span class="product-purity-tag">${purityLabel} ${produto.purity}</span>
-                    
                     <div class="product-img-box" onclick="handlePhotoClick(${index}, event)">
                         <img src="${produto.imagem}" alt="${produto.product}" loading="lazy" onerror="this.src='images/newlogo.png';">
                         <div class="img-click-badge">
@@ -1582,6 +1719,68 @@ const productsQA = [
             document.body.style.overflow = 'hidden';
         }
 
+
+        const heroProductImages = {
+            'NL-TIR-3006-006': '/manus-storage/research-vial-fallback_9693c9c2.png',
+            'NL-TIR-3106-007': '/manus-storage/research-vial-fallback_9693c9c2.png',
+            'NL-RET-3206-008': '/manus-storage/research-vial-fallback_9693c9c2.png',
+            'NL-RET-3306-009': '/manus-storage/research-vial-fallback_9693c9c2.png',
+            'NL-GHK-2506-001': '/manus-storage/ghkcu_5b0ceb64.png',
+            'NL-SEL-3606-012': '/manus-storage/selank_5938f57e.png',
+            'NL-SEM-3706-013': '/manus-storage/semax_8ba65522.png',
+            'NL-GLW-2606-002': '/manus-storage/glow_1b6b447f.png',
+            'NL-KLW-2706-003': '/manus-storage/klow_a54bbb5c.png',
+            'NL-TES-2806-004': '/manus-storage/tesamorelin_05f69075.png',
+            'NL-CBL-2906-005': '/manus-storage/cbl514_2e9d37c2.png',
+            'NL-CJC-3406-010': '/manus-storage/cjc_e4acdd69.png',
+            'NL-MOT-3506-011': '/manus-storage/mots-c_d4079b0f.png'
+        };
+
+        function renderHeroBatchResult(product, query) {
+            const result = document.getElementById('hero-batch-result');
+            const modal = document.getElementById('hero-batch-modal');
+            const modalPhoto = document.getElementById('hero-batch-modal-photo');
+            const modalContent = document.getElementById('hero-batch-modal-content');
+            if (!result || !modal || !modalPhoto || !modalContent) return;
+            const copy = i18n[currentLanguage] || i18n.pt;
+            if (!product) {
+                heroVerifiedProduct = null;
+                result.innerHTML = '';
+                modal.classList.add('active', 'hero-batch-modal-error');
+                modal.setAttribute('aria-hidden', 'false');
+                modalPhoto.innerHTML = '<i class="fas fa-triangle-exclamation"></i>';
+                modalContent.innerHTML = `<div class="hero-batch-modal-status" style="color:#b23b3b"><i class="fas fa-circle-exclamation"></i> ${copy.verify_not_completed}</div><h2 id="hero-batch-modal-title" class="hero-batch-modal-title">${copy.verify_not_found}</h2><p class="hero-batch-modal-purity">${copy.verify_retry}</p>`;
+                document.body.style.overflow = 'hidden';
+                return;
+            }
+            heroVerifiedProduct = product;
+            result.innerHTML = '';
+            modal.classList.remove('hero-batch-modal-error');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            const image = heroProductImages[product.batch] || product.imagem;
+            modalPhoto.innerHTML = `<img src="${image}" alt="${product.product}" onerror="this.src='${product.imageUrl || 'images/newlogo.png'}';">`;
+            modalContent.innerHTML = `<div class="hero-batch-modal-status"><i class="fas fa-circle-check"></i> ${copy.verify_success}</div><h2 id="hero-batch-modal-title" class="hero-batch-modal-title">${product.product}</h2><p class="hero-batch-modal-message">${copy.verify_message}</p><div class="hero-batch-modal-batch">${copy.verify_batch}: ${product.batch}</div><div class="hero-batch-modal-purity">${copy.verify_purity}: <strong>${product.purity}</strong></div><div class="hero-batch-modal-actions"><a class="hero-batch-action report" href="${product.pdfUrl}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> ${copy.verify_report}</a><a class="hero-batch-action manual" href="${product.manualUrl}" target="_blank" rel="noopener"><i class="fas fa-book-open"></i> ${copy.verify_manual}</a></div>`;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHeroBatchModal() {
+            const modal = document.getElementById('hero-batch-modal');
+            if (!modal) return;
+            modal.classList.remove('active', 'hero-batch-modal-error');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function verifyHeroBatch() {
+            const input = document.getElementById('hero-batch-input');
+            if (!input) return;
+            const value = input.value.trim();
+            const normalized = normalizeBatch(value);
+            const product = productsQA.find((item) => normalizeBatch(item.batch) === normalized);
+            renderHeroBatchResult(product, value);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const productModal = document.getElementById('product-modal');
             const articleModal = document.getElementById('article-modal');
@@ -1591,6 +1790,21 @@ const productsQA = [
             setTimeout(() => {
                 document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
             }, 300);
+
+            const heroBatchInput = document.getElementById('hero-batch-input');
+            const heroBatchSubmit = document.getElementById('hero-batch-submit');
+            const heroBatchModal = document.getElementById('hero-batch-modal');
+            const heroBatchModalClose = document.getElementById('hero-batch-modal-close');
+            if (heroBatchInput && heroBatchSubmit) {
+                heroBatchInput.addEventListener('input', () => {
+                    formatBatchInput(heroBatchInput);
+                    document.getElementById('hero-batch-result').innerHTML = '';
+                });
+                heroBatchInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') verifyHeroBatch(); });
+                heroBatchSubmit.addEventListener('click', verifyHeroBatch);
+            }
+            if (heroBatchModalClose) heroBatchModalClose.addEventListener('click', closeHeroBatchModal);
+            if (heroBatchModal) heroBatchModal.addEventListener('click', (event) => { if (event.target === heroBatchModal) closeHeroBatchModal(); });
 
             const searchInput = document.getElementById('article-search');
             if (searchInput) {
@@ -1633,6 +1847,7 @@ const productsQA = [
 
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
+                    closeHeroBatchModal();
                     if (productModal) productModal.classList.remove('active');
                     if (articleModal) articleModal.classList.remove('active');
                     document.body.style.overflow = '';
