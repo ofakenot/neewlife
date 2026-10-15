@@ -1162,7 +1162,7 @@ function refreshCurrentScreen() {
 }
 
 function appFooter() {
-    return `<footer class="app-footer"><b>newlife.system</b> &copy; 2026 — Gestão Integrada de Estoque e Vendas (R$)</footer>`;
+    return `<footer class="app-footer"><b>newlife.system</b> &copy; 2026 — Centro operacional de estoque, vendas e equipe</footer>`;
 }
 
 function navContent() {
@@ -1174,7 +1174,7 @@ function navContent() {
         <div class="app-brand flex items-center justify-between p-4">
             <div class="flex items-center gap-2">
                 <div class="brand-mark">${icons.brand}</div>
-                <div><b>newlife<span>.system</span></b><small>gestão</small></div>
+                <div><b>newlife<span>.system</span></b><small>operations control</small></div>
             </div>
             <button class="mobile-close-drawer md:hidden text-slate-400 hover:text-white text-xl p-2">✕</button>
         </div>
@@ -1182,12 +1182,12 @@ function navContent() {
         ${isSeller ? `
             <div style="padding: 0 12px 10px 12px;">
                 <button class="switchToSellerBtn primary-btn w-full flex items-center justify-center gap-2" style="background: #0284c7; color: #fff; height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
-                    ${icons.chart} <span>🛒 MODO VENDEDOR (DAR BAIXA)</span>
+                    ${icons.chart} <span>MODO VENDEDOR</span>
                 </button>
             </div>
         ` : ''}
 
-        <div class="side-label">${isAdmin ? 'ADMINISTRAÇÃO GERAL' : 'SUPERVISÃO OPERACIONAL'}</div>
+        <div class="side-label">${isAdmin ? 'CENTRO ADMINISTRATIVO' : 'OPERAÇÃO & EQUIPE'}</div>
         ${isWG ? `
             <button class="side-link ${activeTab === 'summary' ? 'active' : ''}" data-tab="summary">${icons.summary} <span>Resumo da Equipe</span></button>
             <button class="side-link ${activeTab === 'wgIkChat' ? 'active' : ''}" data-tab="wgIkChat">${icons.chat} <span>Conversa WG ↔ IK</span></button>
@@ -1251,7 +1251,7 @@ function sellerNavContent() {
         <div class="app-brand flex items-center justify-between p-4">
             <div class="flex items-center gap-2">
                 <div class="brand-mark">${icons.brand}</div>
-                <div><b>newlife<span>.system</span></b><small>vendedor</small></div>
+                <div><b>newlife<span>.system</span></b><small>field operations</small></div>
             </div>
             <button class="mobile-close-drawer md:hidden text-slate-400 hover:text-white text-xl p-2">✕</button>
         </div>
@@ -1259,12 +1259,12 @@ function sellerNavContent() {
         ${isAdmin ? `
             <div style="padding: 0 12px 10px 12px;">
                 <button class="switchToAdminBtn outline-btn w-full flex items-center justify-center gap-2" style="background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); height: 38px; font-size: 11px; font-weight: 800; border-radius: 10px;">
-                    ${icons.summary} <span>⚙️ PAINEL ADMINISTRATIVO</span>
+                    ${icons.summary} <span>PAINEL ADMIN</span>
                 </button>
             </div>
         ` : ''}
 
-        <div class="side-label">PAINEL DO VENDEDOR</div>
+        <div class="side-label">FIELD OPS · VENDAS</div>
         <button class="side-link ${sellerActiveTab === 'sales' ? 'active' : ''}" data-seller-tab="sales">${icons.chart} <span>Registrar Baixas / Vendas</span></button>
         <button class="side-link ${sellerActiveTab === 'newOrder' ? 'active' : ''}" data-seller-tab="newOrder">${icons.orders} <span>Pedido de Reposição</span></button>
         <button class="side-link ${sellerActiveTab === 'myOrders' ? 'active' : ''}" data-seller-tab="myOrders">${icons.clipboard} <span>Acompanhar Meus Pedidos</span></button>
@@ -1296,68 +1296,35 @@ function openMobileDrawer() {
     if (overlay) overlay.classList.add('open');
 }
 
-
-
 function ensureStableResponsiveTheme() {
-    if (document.getElementById('newlifeStableTheme')) return;
+    if (document.getElementById('newlifeStableTheme')) {
+        document.body?.classList.add('newlife-shell');
+        window.newlifeApplyVisualSystem?.();
+        return;
+    }
     const style = document.createElement('style');
     style.id = 'newlifeStableTheme';
     style.textContent = `
-        :root { --nl-blue:#1769d1; --nl-blue-2:#2f8bf0; --nl-ink:#172235; --nl-muted:#718096; --nl-line:#e5ebf2; --nl-card:#ffffff; --nl-radius:18px; }
+        :root { --nl-blue:#536dff; --nl-blue-2:#74e6f2; --nl-ink:#101a33; --nl-muted:#7d8ba7; --nl-line:rgba(123,146,188,.18); --nl-card:rgba(255,255,255,.58); --nl-radius:22px; }
         html, body { min-height:100%; }
-        body { margin:0; background:linear-gradient(145deg,#f7faff 0%,#eef4f9 55%,#e9f1f7 100%); color:var(--nl-ink); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
-        .app-layout { min-height:100vh; background:transparent !important; }
-        .app-responsive-sidebar { width:270px !important; flex:0 0 270px; position:sticky; top:0; height:100vh; overflow-y:auto; overflow-x:hidden; z-index:50; background:rgba(248,251,255,.92) !important; border-right:1px solid rgba(148,163,184,.2); box-shadow:10px 0 35px rgba(31,51,77,.07); }
-        .app-brand { padding:20px 18px !important; border-bottom:1px solid var(--nl-line); }
-        .app-brand b { color:#172235 !important; letter-spacing:-.04em; font-size:15px; }
-        .app-brand b span { color:#1769d1 !important; }
-        .app-brand small { color:#8a97a9 !important; }
-        .brand-mark { width:38px; height:38px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(145deg,var(--nl-blue-2),var(--nl-blue)); color:#fff; box-shadow:0 8px 18px rgba(23,105,209,.2); }
-        .side-label { padding:18px 16px 7px !important; color:#96a2b3 !important; font-size:9px !important; font-weight:900 !important; letter-spacing:.14em !important; }
-        .side-link { margin:3px 10px; min-height:42px; border:1px solid transparent !important; border-radius:12px !important; color:#526174 !important; font-size:11px !important; font-weight:750 !important; transition:background .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease; }
-        .side-link:hover { background:#fff !important; color:#185db4 !important; transform:translateX(2px); box-shadow:0 6px 16px rgba(36,69,105,.08); }
-        .side-link.active { color:#145db8 !important; background:linear-gradient(90deg,#e8f2ff,#f5f9ff) !important; border-color:#cfe2f8 !important; box-shadow:0 7px 17px rgba(36,105,190,.1); }
-        .side-link.active::before { content:""; position:absolute; left:-11px; top:9px; bottom:9px; width:3px; border-radius:0 3px 3px 0; background:#2d86e8; }
-        .side-account { margin:14px 10px !important; padding:10px !important; border:1px solid var(--nl-line); border-radius:14px; background:#fff; }
+        body { margin:0; color:var(--nl-ink); font-family:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"SF Pro Display","Manrope",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+        .app-layout { min-height:100dvh; background:transparent !important; }
         .app-content { min-width:0; background:transparent !important; }
-        .app-header { min-height:76px; background:rgba(255,255,255,.88) !important; border:0 !important; border-bottom:1px solid var(--nl-line) !important; box-shadow:0 7px 22px rgba(37,58,84,.05) !important; backdrop-filter:blur(12px); }
-        .app-header h1 { letter-spacing:-.04em; font-size:clamp(18px,1.8vw,26px) !important; }
-        .page-body { width:100%; max-width:1560px; margin:0 auto; padding:clamp(18px,2.4vw,36px) clamp(14px,3vw,48px) !important; }
-        .glass-panel, .panel, .metric-card { background:rgba(255,255,255,.84) !important; border:1px solid rgba(255,255,255,.95) !important; outline:1px solid rgba(148,163,184,.16); border-radius:var(--nl-radius) !important; box-shadow:0 12px 34px rgba(39,62,91,.08) !important; }
-        .panel { padding:clamp(16px,2vw,26px) !important; }
-        .stats-grid { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) !important; gap:16px !important; }
-        .metric-card { min-height:130px; padding:18px !important; transition:transform .18s ease,box-shadow .18s ease; }
-        .metric-card:hover { transform:translateY(-3px); box-shadow:0 18px 38px rgba(39,62,91,.13) !important; }
-        .seller-attribution-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)) !important; gap:18px !important; }
-        .seller-attribution-grid > * { min-width:0; border-radius:20px !important; border:1px solid rgba(255,255,255,.95) !important; outline:1px solid rgba(148,163,184,.14); box-shadow:0 13px 30px rgba(39,62,91,.08) !important; transition:transform .18s ease,box-shadow .18s ease; }
-        .seller-attribution-grid > *:hover { transform:translateY(-4px); box-shadow:0 20px 38px rgba(39,62,91,.13) !important; }
-        .table-row { background:rgba(255,255,255,.62) !important; border-color:var(--nl-line) !important; border-radius:13px !important; }
-        .primary-btn,.outline-btn,.small-btn,.delete-btn { min-height:38px; border-radius:11px !important; font-weight:800 !important; transition:transform .16s ease,box-shadow .16s ease,background .16s ease; }
-        .primary-btn { background:linear-gradient(135deg,#2f8cf0,#1765cb) !important; box-shadow:0 7px 16px rgba(23,105,209,.18) !important; }
-        .primary-btn:hover,.outline-btn:hover,.small-btn:hover { transform:translateY(-1px); }
-        .outline-btn,.small-btn { background:#fff !important; border-color:#d9e3ee !important; color:#456079 !important; }
-        .control,input,select,textarea { border-radius:11px !important; border-color:#d6e0eb !important; background:#fff !important; }
-        .control:focus,input:focus,select:focus,textarea:focus { outline:0; border-color:#72a9df !important; box-shadow:0 0 0 3px rgba(47,140,240,.12) !important; }
+        .app-responsive-sidebar { width:278px !important; flex:0 0 278px; }
+        .app-header { min-height:78px; }
+        .page-body { width:100%; max-width:1680px; margin:0 auto; }
         .drawer-overlay { display:none; }
-        @media (min-width:1600px) { .page-body{max-width:1720px;} .seller-attribution-grid{grid-template-columns:repeat(4,minmax(280px,1fr)) !important;} }
-        @media (min-width:2200px) { .page-body{max-width:1920px;} .seller-attribution-grid{grid-template-columns:repeat(5,minmax(280px,1fr)) !important;} }
+        .primary-btn,.outline-btn,.delete-btn,button.small-btn { height:42px; min-height:42px; border-radius:13px !important; font-weight:800 !important; }
         @media (max-width:767px) {
-            .app-responsive-sidebar { position:fixed; inset:0 auto 0 0; width:min(86vw,330px) !important; height:100dvh; transform:translateX(-105%); transition:transform .24s ease; box-shadow:20px 0 45px rgba(22,39,61,.22); }
+            .app-responsive-sidebar { position:fixed; inset:0 auto 0 0; width:min(86vw,340px) !important; height:100dvh; transform:translateX(-105%); transition:transform .30s cubic-bezier(.16,1,.3,1); }
             .app-responsive-sidebar.open { transform:translateX(0); }
-            .drawer-overlay.open { display:block; position:fixed; inset:0; z-index:40; background:rgba(15,23,42,.32); backdrop-filter:blur(3px); }
-            .app-header { min-height:64px; padding:11px 13px !important; }
-            .app-header .primary-btn span,.app-header #pushToSupabaseBtn span,.app-header #generatePageReportBtn span { display:none; }
-            .app-header .primary-btn,.app-header .outline-btn { padding:9px !important; min-width:38px; }
-            .page-body { padding:14px 12px 24px !important; }
-            .seller-attribution-grid { grid-template-columns:1fr !important; gap:14px !important; }
-            .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:10px !important; }
-            .metric-card { min-height:108px; padding:14px !important; }
-            .panel { padding:15px !important; }
+            .drawer-overlay.open { display:block; position:fixed; inset:0; z-index:40; background:rgba(8,15,34,.38); backdrop-filter:blur(6px); }
         }
-        @media (max-width:420px) { .stats-grid{grid-template-columns:1fr !important;} .side-link{margin-left:8px;margin-right:8px;} }
-        @media (prefers-reduced-motion:reduce) { *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;} }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms !important; animation-duration:.01ms !important; } }
     `;
     document.head.appendChild(style);
+    document.body?.classList.add('newlife-shell');
+    window.newlifeApplyVisualSystem?.();
 }
 
 function appFrame(title, sub, body) {
@@ -1376,7 +1343,7 @@ function appFrame(title, sub, body) {
                                 ${icons.menu}
                             </button>
                             <div class="hidden md:block">
-                                <div class="eyebrow text-[10px] font-bold text-sky-600 uppercase tracking-wider">NEWLIFE.SYSTEM · ${new Date().toLocaleDateString('pt-BR')}</div>
+                                <div class="eyebrow text-[10px] font-bold text-sky-600 uppercase tracking-wider">NEWLIFE.SYSTEM · OPERATIONS · ${new Date().toLocaleDateString('pt-BR')}</div>
                                 <h1 class="text-xl font-black text-slate-900 leading-tight">${title}</h1>
                                 <p class="text-xs text-slate-500">${sub}</p>
                             </div>
@@ -1393,10 +1360,10 @@ function appFrame(title, sub, body) {
 
                         <div class="flex items-center gap-2 shrink-0 ml-auto">
                             <button id="pushToSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
-                                ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
+                                ${icons.upload} <span>Sincronizar dados</span>
                             </button>
                             <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">
-                                ${icons.pdf} <span>Gerar Relatório</span>
+                                ${icons.pdf} <span>Exportar relatório</span>
                             </button>
                             <div class="editSelfAvatarTrigger cursor-pointer">${renderAvatarHTML(currentUser, 'flex')}</div>
                         </div>
@@ -4933,13 +4900,13 @@ function renderSeller() {
                             <button id="hamburgerBtnSeller" class="hamburger-btn md:hidden shrink-0 p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center justify-center">
                                 ${icons.menu}
                             </button>
-                            <h1 class="text-xs md:text-xl font-black text-slate-900 truncate">${currentUser.name} (Painel Vendedor)</h1>
+                            <h1 class="text-xs md:text-xl font-black text-slate-900 truncate">${currentUser.name} · Field Ops</h1>
                         </div>
                         <div class="flex items-center gap-2 shrink-0 ml-auto">
                             <button id="pushSellerSupabaseBtn" class="primary-btn flex items-center gap-1.5 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm border-0">
-                                ${icons.upload} <span>Enviar Alterações p/ Supabase</span>
+                                ${icons.upload} <span>Sincronizar dados</span>
                             </button>
-                            <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">${icons.pdf} <span>Gerar Relatório</span></button>
+                            <button id="generatePageReportBtn" class="outline-btn flex items-center gap-1.5 text-xs py-1.5 px-3">${icons.pdf} <span>Exportar relatório</span></button>
                             <button class="logoutSellerSideBtn outline-btn text-xs px-2.5 py-1.5 hidden md:flex items-center gap-1">${icons.logout} <span>Sair</span></button>
                         </div>
                     </header>
