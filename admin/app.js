@@ -211,8 +211,12 @@ let dbCache = {
     wg_note_products: []
 };
 
+// Evita consultas antigas sobrescrevendo alterações recentes do catálogo.
+let catalogDataVersion = 0;
+const pendingCatalogDeletionIds = new Set();
+
 // 1. FUNÇÃO EXCLUSIVA DE ENVIO (PUSH) SITE -> SUPABASE
-async function pushAllToSupabase() {
+async function pushAllToSupabase({ restoreCatalog = false } = {}) {
     if (!supabaseClient) return alert('Cliente Supabase não inicializado.');
     
     try {
@@ -234,7 +238,10 @@ async function pushAllToSupabase() {
             })));
         }
 
-        if (dbCache.product_catalog.length) {
+        // Inclusões e exclusões do catálogo são persistidas diretamente.
+        // Reenviar um cache antigo aqui recriaria produtos já excluídos.
+        // O upsert completo fica reservado à restauração explícita de backup.
+        if (restoreCatalog && dbCache.product_catalog.length) {
             const { error: catalogError } = await supabaseClient.from('product_catalog').upsert(dbCache.product_catalog.map(p => ({
                 id: p.id,
                 name: p.name,
@@ -402,6 +409,7 @@ async function pushAllToSupabase() {
 // 2. BUSCA E MAPEAMENTO RIGOROSO DE DADOS DO SUPABASE
 async function fetchSupabaseData() {
     if (!supabaseClient) return;
+    const catalogRequestVersion = ++catalogDataVersion;
     try {
         const [uRes, wRes, mRes, pRes, sRes, oRes, wiRes, tRes, wsRes, iaRes, payRes, sheetRes, lineRes, cRes, chatRes, balanceRes, notesRes] = await Promise.all([
             supabaseClient.from('system_users').select('*'),
@@ -441,7 +449,7 @@ async function fetchSupabaseData() {
         }
 
         if (cRes?.error) console.warn('Tabela public.product_catalog indisponível. Execute product_catalog.sql no Supabase:', cRes.error.message);
-        if (cRes?.data) {
+        if (cRes?.data && catalogRequestVersion === catalogDataVersion) {
             dbCache.product_catalog = cRes.data.map(p => ({
                 ...p,
                 createdAt: p.created_at || p.createdAt,
@@ -2622,11 +2630,12 @@ function renderBackupPage() {
                         write('atlasSales', data.sales || []);
                         write('atlasOrders', data.orders || []);
                         write('nl_motoboys', data.motoboys || []);
+                        catalogDataVersion++;
                         dbCache.product_catalog = (data.productCatalog || []).map(p => ({ ...p, createdAt: p.created_at || p.createdAt, createdBy: p.created_by || p.createdBy }));
                         dbCache.wg_ik_messages = (data.wgIkMessages || []).map(m => ({ ...m, senderId: m.sender_id || m.senderId, senderRole: m.sender_role || m.senderRole, recipientId: m.recipient_id || m.recipientId, messageType: m.message_type || m.messageType || 'normal', createdAt: m.created_at || m.createdAt, readAt: m.read_at || m.readAt }));
                         localStorage.setItem('nl_wg_ik_messages', JSON.stringify(dbCache.wg_ik_messages));
                         
-                        await pushAllToSupabase();
+                        await pushAllToSupabase({ restoreCatalog: true });
                         
                         showToast('Banco de dados restaurado!');
                         setTimeout(() => location.reload(), 1000);
@@ -3818,29 +3827,109 @@ function renderArchivedPage() {
     `);
 }
 
-// ABA: CATÁLOGO DO SISTEMA (COM BOTÃO ADICIONAR PRODUTO)
-function renderCatalogPage() {
-    const sysCat = systemCatalog();
+// Esta validação controla a interface; a autorização real depende do RLS no Supabase.
+function canDeleteFromCatalog(user = currentUser) {
+    return Boolean(user && user.active !== false && (
+        hasAdminAccess(user) || hasSupervisorAccess(user) || isWGAccount(user) || isIKAccount(user)
+    ));
+}
 
-    appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas. Adicione novos produtos que serão atualizados no Supabase.', `
+function deleteCatalogProduct(productId) {
+    if (!canDeleteFromCatalog()) return showToast('Você não tem permissão para excluir produtos do catálogo.');
+    const id = String(productId ?? '');
+    const target = productCatalog().find(p => String(p.id) === id);
+    if (!id || !target) return showToast('Produto não encontrado no catálogo. Atualize a página.');
+    if (pendingCatalogDeletionIds.has(id)) return;
+
+    confirmActionModal({
+        title: 'Excluir Produto do Catálogo',
+        subtitle: `${target.name} — ${target.brand}`,
+        warningText: 'Este produto será excluído permanentemente do catálogo e não estará disponível para novos cadastros, envios ou reposições. Estoques, vendas, pedidos e históricos já registrados serão preservados. Deseja continuar?',
+        confirmText: 'Excluir Produto',
+        onConfirm: async () => {
+            if (!canDeleteFromCatalog()) return showToast('Você não tem permissão para excluir produtos do catálogo.');
+            if (pendingCatalogDeletionIds.has(id)) return;
+            const client = initializeSupabaseClient();
+            if (!client) return alert('Supabase não está conectado. Nenhum produto foi excluído.');
+
+            pendingCatalogDeletionIds.add(id);
+            document.querySelectorAll('[data-delete-catalog-id]').forEach(button => {
+                if (button.dataset.deleteCatalogId === id) {
+                    button.disabled = true;
+                    button.textContent = 'Excluindo...';
+                }
+            });
+
+            try {
+                // Exclui somente o registro do catálogo, nunca estoque ou histórico.
+                // O retorno confirma que uma linha realmente foi removida (inclusive com RLS).
+                const { data, error } = await client.from('product_catalog')
+                    .delete()
+                    .eq('id', target.id)
+                    .select('id');
+                if (error) throw error;
+                if (!Array.isArray(data) || !data.some(p => String(p.id) === id)) {
+                    throw new Error('A exclusão não foi confirmada pelo Supabase. O produto pode já ter sido removido por outra sessão ou as políticas de acesso podem ter bloqueado a operação. Atualize a página e confira.');
+                }
+
+                catalogDataVersion++;
+                dbCache.product_catalog = productCatalog().filter(p => String(p.id) !== id);
+                showToast('Produto excluído do catálogo e do Supabase. Estoques e históricos preservados.');
+            } catch (error) {
+                console.error('Erro ao excluir produto do catálogo:', error);
+                const detail = error?.code === '42501'
+                    ? 'O Supabase bloqueou a exclusão. Verifique as permissões DELETE e as políticas RLS da tabela product_catalog.'
+                    : error?.code === '23503'
+                        ? 'Existe um vínculo com outra tabela que impede a exclusão. Nenhum vínculo será apagado automaticamente pelo aplicativo.'
+                        : error?.message || String(error);
+                alert(`Não foi possível excluir o produto do catálogo: ${detail}`);
+            } finally {
+                pendingCatalogDeletionIds.delete(id);
+                if (currentUser && activeTab === 'catalog') renderCatalogPage();
+            }
+        }
+    });
+}
+
+// ABA: CATÁLOGO DO SISTEMA (ADICIONAR E EXCLUIR PRODUTOS)
+function renderCatalogPage() {
+    const catalog = productCatalog();
+    const canDelete = canDeleteFromCatalog();
+
+    appFrame('Catálogo do Sistema', 'Catálogo oficial multi-marcas. Adicione ou exclua produtos com sincronização no Supabase.', `
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-            <b>${sysCat.length} Produtos Registrados no Catálogo</b>
+            <b>${catalog.length} Produtos Registrados no Catálogo</b>
             <button id="addCatalogProductBtn" class="primary-btn text-xs py-2.5 px-4 flex items-center justify-center gap-1.5 w-full sm:w-auto">
                 + Adicionar Novo Produto ao Catálogo
             </button>
         </div>
 
         <div class="panel glass-panel">
+            ${catalog.length ? `
             <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                ${sysCat.map(p => `
+                ${catalog.map(p => `
                     <div class="catalog-card p-4 bg-white/90 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-2">
-                        <div class="catalog-badge self-start font-bold uppercase text-[10px] tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md">${esc(p[1])}</div>
-                        <h3 class="font-bold text-slate-900 text-sm mt-1">${esc(p[0])}</h3>
+                        <div class="catalog-badge self-start font-bold uppercase text-[10px] tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md">${esc(p.brand)}</div>
+                        <h3 class="font-bold text-slate-900 text-sm mt-1">${esc(p.name)}</h3>
+                        ${canDelete ? `
+                            <button type="button" data-delete-catalog-id="${esc(p.id)}"
+                                class="text-xs mt-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 9px 12px; border: 1px solid #b91c1c; border-radius: 8px; background: #dc2626; color: #ffffff; font-weight: 700; cursor: pointer;"
+                                aria-label="${esc(`Excluir ${p.name} — ${p.brand} do catálogo`)}"
+                                ${pendingCatalogDeletionIds.has(String(p.id)) ? 'disabled' : ''}>
+                                ${icons.trash} ${pendingCatalogDeletionIds.has(String(p.id)) ? 'Excluindo...' : 'Excluir produto'}
+                            </button>
+                        ` : ''}
                     </div>
                 `).join('')}
             </div>
+            ` : '<div class="empty-state">Nenhum produto cadastrado no catálogo.</div>'}
         </div>
     `);
+
+    document.querySelectorAll('[data-delete-catalog-id]').forEach(button => {
+        button.onclick = () => deleteCatalogProduct(button.dataset.deleteCatalogId);
+    });
 
     const addCatBtn = document.getElementById('addCatalogProductBtn');
     if (addCatBtn) {
@@ -3886,7 +3975,8 @@ function renderCatalogPage() {
                             created_by: newCatalogProduct.createdBy
                         });
                         if (error) return alert(`Não foi possível cadastrar o produto: ${error.message}`);
-                        dbCache.product_catalog = [...productCatalog(), newCatalogProduct].sort((a, b) => `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`, 'pt-BR'));
+                        catalogDataVersion++;
+                        dbCache.product_catalog = [...productCatalog().filter(p => p.id !== newCatalogProduct.id), newCatalogProduct].sort((a, b) => `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`, 'pt-BR'));
                         showToast('Novo produto cadastrado e sincronizado com o Supabase!');
                         m.remove();
                         renderCatalogPage();
