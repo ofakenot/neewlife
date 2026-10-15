@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>newlifelabs.us system · Operação</title>
+  <meta name="theme-color" content="#0b1224" />
+  <meta name="color-scheme" content="light" />
+  <meta name="description" content="newlife.system — centro operacional de estoque, vendas e equipe." />
+  <title>newlife.system · Centro Operacional</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Fonts Google (iOS Light Style: Plus Jakarta Sans, Manrope, Bebas Neue, DM Mono) -->
+  <!-- Tipografia editorial: Plus Jakarta Sans para interface, Manrope para dados e DM Mono para indicadores -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,18 +19,18 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <!-- Custom Light Glassmorphism CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- Design system Apple Glass / Digital Finance -->
+  <link rel="stylesheet" href="style.css?v=36" />
 </head>
-<body class="bg-[#f1f5f9] text-slate-900 antialiased selection:bg-sky-500 selection:text-white">
+<body class="newlife-shell bg-[#eef4fb] text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Tela de Login -->
   <section id="loginScreen" class="login-screen">
     <div class="login-card glass-panel">
       <div class="brand-mark login-brand">✦</div>
-      <div class="login-kicker">FIELD INTELLIGENCE</div>
-      <h1>Bem-vindo ao <span>newlifelabs.us</span></h1>
-      <p class="login-description">Entre para acompanhar sua operação em campo.</p>
+      <div class="login-kicker">OPERATIONS CONTROL CENTER</div>
+      <h1>Bem-vindo ao <span>newlife.system</span></h1>
+      <p class="login-description">Estoque, vendas e equipe em um único centro operacional.</p>
       
       <form id="loginForm" class="login-form">
         <label>
@@ -45,10 +48,10 @@
 
         <div id="loginError" class="login-error"></div>
         <button class="primary-btn login-submit" type="submit">
-          Entrar no sistema <span>→</span>
+          Acessar o painel <span>→</span>
         </button>
       </form>
-      <div class="login-help">Acesso protegido · Ambiente operacional</div>
+      <div class="login-help">Acesso protegido · Dados sincronizados em tempo real</div>
     </div>
   </section>
 
@@ -283,7 +286,10 @@
   <!-- Cliente oficial do Supabase deve carregar antes do app.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- Camada de microinterações e movimento reduzido -->
+  <script src="style.js?v=36"></script>
+
   <!-- JavaScript Principal -->
-  <script src="app.js?v=35"></script>
+  <script src="app.js?v=36"></script>
 </body>
 </html>
