@@ -2125,6 +2125,13 @@
         .qf-pchip.is-on i { display: inline; }
         .qf-cta-sticky { position: sticky; bottom: 14px; z-index: 5; }
         @media (max-width: 600px) { .qz-reco-list { grid-template-columns: 1fr; } .qz-reco-panel { padding: 13px; } }
+        /* --- BOTÃO VERIFICAR PRODUTO NO MENU --- */
+        .nav-item a.nav-verify { display: inline-flex; align-items: center; gap: 7px; background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.28); }
+        .nav-item a.nav-verify:hover { background: var(--primary-hover); color: #fff; }
+        .nav-item a.nav-verify i { font-size: 0.8em; }
+        .hero-batch-form.is-pulse { animation: nlPulse 1.2s ease-out 2; }
+        @keyframes nlPulse { 0% { box-shadow: 0 0 0 0 rgba(0, 113, 227, 0.45); } 100% { box-shadow: 0 0 0 16px rgba(0, 113, 227, 0); } }
+
         /* --- MENU MOBILE: OPÇÕES SEMPRE VISÍVEIS --- */
         @media (max-width: 868px) {
             .menu-toggle { display: none !important; }
@@ -2144,12 +2151,21 @@
             }
             .nav-menu.at-end { -webkit-mask-image: none; mask-image: none; }
             .nav-menu::-webkit-scrollbar { display: none; }
-            .nav-item { flex: none; }
-            .nav-item a { font-size: 0.9rem; padding: 10px 15px; }
+            .nav-menu, .nav-menu.active { overflow: visible; gap: 3px; -webkit-mask-image: none; mask-image: none; }
+            .nav-item { flex: 1 1 auto; min-width: 0; }
+            .nav-item a { display: flex; justify-content: center; align-items: center; text-align: center; white-space: nowrap; font-size: 0.84rem; padding: 10px 8px; }
+            .nav-item a.nav-verify { display: flex; gap: 5px; }
             .hero { padding-top: 144px; }
             body.nl-solo > section.nl-page-on { padding-top: 150px; }
+            .site-corner-right { top: 26px; }
             .section-title { font-size: 1.6rem; }
             .section-padding { padding: 64px 0; }
+        }
+        @media (max-width: 380px) {
+            .navbar, .navbar.scrolled { left: 8px; right: 8px; padding: 4px; }
+            .nav-menu, .nav-menu.active { gap: 2px; }
+            .nav-item a { font-size: 0.78rem; padding: 9px 6px; }
+            .nav-item a.nav-verify i { display: none; }
         }
     </style>
 
@@ -2182,6 +2198,7 @@
             <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
             <li class="nav-item"><a href="#laudos" data-i18n="nav_laudos">Laudos</a></li>
             <li class="nav-item"><a href="#planos" data-i18n="nav_planos">Planos</a></li>
+            <li class="nav-item"><a href="#verificar" class="nav-verify" data-verify><i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav_verify">Verificar produto</span></a></li>
         </ul>
     </nav>
 
@@ -2815,7 +2832,7 @@ const productsQA = [
                 about_f3_text: 'Através do código e chave serial individual presente em cada frasco, os pesquisadores possuem acesso transparente e instantâneo ao laudo analítico emitido por laboratório independente.',
                 about_f4_title: 'Cadeia de Frio & Borossilicato Tipo I',
                 about_chip_purity: 'Pureza ≥ 99% · HPLC & MS', about_chip_place: 'Georgetown, Texas · EUA', about_cta_verify: 'Verificar lote', about_cta_products: 'Ver produtos',
-                nav_laudos: 'Laudos', nav_faq: 'Perguntas frequentes', section_reports: 'Laudos & Transparência', reports_subtitle: 'Escolha uma categoria e explore: cada laudo vem acompanhado das leituras que explicam o que está por trás do composto.', reports_latest: 'Últimos laudos publicados', section_faq: 'Perguntas Frequentes', faq_subtitle: 'O essencial sobre verificação de lotes, laudos e envio.', final_title: 'Saiba exatamente o que há em cada frasco.', final_sub: 'Verifique o lote, confira a pureza medida e baixe o laudo do seu produto em segundos.', final_cta_verify: 'Verificar meu lote', final_cta_contact: 'Falar com a equipe',
+                nav_laudos: 'Laudos', nav_verify: 'Verificar produto', nav_faq: 'Perguntas frequentes', section_reports: 'Laudos & Transparência', reports_subtitle: 'Escolha uma categoria e explore: cada laudo vem acompanhado das leituras que explicam o que está por trás do composto.', reports_latest: 'Últimos laudos publicados', section_faq: 'Perguntas Frequentes', faq_subtitle: 'O essencial sobre verificação de lotes, laudos e envio.', final_title: 'Saiba exatamente o que há em cada frasco.', final_sub: 'Verifique o lote, confira a pureza medida e baixe o laudo do seu produto em segundos.', final_cta_verify: 'Verificar meu lote', final_cta_contact: 'Falar com a equipe',
                 reports_close: 'Fechar laudos', about_eyebrow: 'Padrão New Life', products_close: 'Fechar produtos', about_lead_title: 'Ciência verificável, lote a lote.', about_lead_text: 'Cada frasco que sai da New Life Labs pode ser conferido: código de lote no rótulo, laudo analítico próprio e especificação mínima de pureza de 99,0%.', cat_all: 'Todos',
                 pm_verified: 'Lote certificado', modal_batch_label: 'Digite o lote do frasco para liberar os downloads',
                 footer_news_label: 'Seu e-mail', footer_news_ph: 'Seu e-mail para novidades', footer_news_btn: 'Assinar',
@@ -2854,7 +2871,7 @@ const productsQA = [
                 about_f3_text: 'Through the unique serial key printed on every vial, researchers gain instant transparent access to independent lab test reports.',
                 about_f4_title: 'Cold Chain & Type I Borosilicate',
                 about_chip_purity: 'Purity ≥ 99% · HPLC & MS', about_chip_place: 'Georgetown, Texas · USA', about_cta_verify: 'Verify batch', about_cta_products: 'View products',
-                nav_laudos: 'Reports', nav_faq: 'FAQ', section_reports: 'Reports & Transparency', reports_subtitle: 'Pick a category and explore: every report comes with the reads that explain what is behind the compound.', reports_latest: 'Latest published reports', section_faq: 'Frequently Asked Questions', faq_subtitle: 'The essentials on batch verification, reports and shipping.', final_title: 'Know exactly what is in every vial.', final_sub: 'Verify your batch, check the measured purity and download your product report in seconds.', final_cta_verify: 'Verify my batch', final_cta_contact: 'Talk to the team',
+                nav_laudos: 'Reports', nav_verify: 'Verify product', nav_faq: 'FAQ', section_reports: 'Reports & Transparency', reports_subtitle: 'Pick a category and explore: every report comes with the reads that explain what is behind the compound.', reports_latest: 'Latest published reports', section_faq: 'Frequently Asked Questions', faq_subtitle: 'The essentials on batch verification, reports and shipping.', final_title: 'Know exactly what is in every vial.', final_sub: 'Verify your batch, check the measured purity and download your product report in seconds.', final_cta_verify: 'Verify my batch', final_cta_contact: 'Talk to the team',
                 reports_close: 'Close reports', about_eyebrow: 'The New Life standard', products_close: 'Close products', about_lead_title: 'Verifiable science, batch by batch.', about_lead_text: 'Every vial that leaves New Life Labs can be checked: a batch code on the label, its own analytical report and a minimum purity specification of 99.0%.', cat_all: 'All',
                 pm_verified: 'Certified batch', modal_batch_label: 'Enter the vial batch code to unlock the downloads',
                 footer_news_label: 'Your email', footer_news_ph: 'Your email for updates', footer_news_btn: 'Subscribe',
@@ -2893,7 +2910,7 @@ const productsQA = [
                 about_f3_text: 'Mediante la clave serial única en cada frasco, los investigadores acceden de forma transparente a reportes analíticos independientes.',
                 about_f4_title: 'Cadena de Frío y Borosilicato',
                 about_chip_purity: 'Pureza ≥ 99% · HPLC & MS', about_chip_place: 'Georgetown, Texas · EE. UU.', about_cta_verify: 'Verificar lote', about_cta_products: 'Ver productos',
-                nav_laudos: 'Informes', nav_faq: 'Preguntas frecuentes', section_reports: 'Informes & Transparencia', reports_subtitle: 'Elige una categoría y explora: cada informe viene acompañado de las lecturas que explican qué hay detrás del compuesto.', reports_latest: 'Últimos informes publicados', section_faq: 'Preguntas Frecuentes', faq_subtitle: 'Lo esencial sobre verificación de lotes, informes y envío.', final_title: 'Sepa exactamente qué hay en cada frasco.', final_sub: 'Verifique el lote, consulte la pureza medida y descargue el informe de su producto en segundos.', final_cta_verify: 'Verificar mi lote', final_cta_contact: 'Hablar con el equipo',
+                nav_laudos: 'Informes', nav_verify: 'Verificar producto', nav_faq: 'Preguntas frecuentes', section_reports: 'Informes & Transparencia', reports_subtitle: 'Elige una categoría y explora: cada informe viene acompañado de las lecturas que explican qué hay detrás del compuesto.', reports_latest: 'Últimos informes publicados', section_faq: 'Preguntas Frecuentes', faq_subtitle: 'Lo esencial sobre verificación de lotes, informes y envío.', final_title: 'Sepa exactamente qué hay en cada frasco.', final_sub: 'Verifique el lote, consulte la pureza medida y descargue el informe de su producto en segundos.', final_cta_verify: 'Verificar mi lote', final_cta_contact: 'Hablar con el equipo',
                 reports_close: 'Cerrar informes', about_eyebrow: 'Estándar New Life', products_close: 'Cerrar productos', about_lead_title: 'Ciencia verificable, lote a lote.', about_lead_text: 'Cada frasco que sale de New Life Labs puede comprobarse: código de lote en la etiqueta, informe analítico propio y especificación mínima de pureza del 99,0%.', cat_all: 'Todos',
                 pm_verified: 'Lote certificado', modal_batch_label: 'Introduzca el lote del frasco para liberar las descargas',
                 footer_news_label: 'Su correo', footer_news_ph: 'Su correo para novedades', footer_news_btn: 'Suscribirse',
@@ -3302,8 +3319,24 @@ const productsQA = [
             window.addEventListener('resize', fade); fade();
             document.querySelectorAll('.nav-item a').forEach(a => a.addEventListener('click', () => {
                 const id = a.getAttribute('href').slice(1);
+                if (a.hasAttribute('data-verify')) return;
                 if (!NL_PAGES.includes(id)) nlNavActive(id);
             }));
+        });
+        function nlOpenVerify(e) {
+            if (e) e.preventDefault();
+            hidePages();
+            document.querySelectorAll('.nav-item a.active-link').forEach(a => a.classList.remove('active-link'));
+            history.replaceState(null, '', location.pathname + location.search);
+            const input = document.getElementById('hero-batch-input');
+            const form = document.querySelector('.hero-batch-form');
+            if (!input) return;
+            input.focus({ preventScroll: true });
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (form) { form.classList.remove('is-pulse'); void form.offsetWidth; form.classList.add('is-pulse'); }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-verify]').forEach(a => a.addEventListener('click', nlOpenVerify));
         });
         function hidePages() {
             NL_PAGES.forEach(x => { const sec = document.getElementById(x); if (sec) sec.hidden = true; });
