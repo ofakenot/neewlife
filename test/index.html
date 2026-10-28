@@ -2197,7 +2197,6 @@
         <ul class="nav-menu">
             <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
             <li class="nav-item"><a href="#laudos" data-i18n="nav_laudos">Laudos</a></li>
-            <li class="nav-item"><a href="#planos" data-i18n="nav_planos">Planos</a></li>
             <li class="nav-item"><a href="#verificar" class="nav-verify" data-verify><i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav_verify">Verificar produto</span></a></li>
         </ul>
     </nav>
@@ -2293,11 +2292,6 @@
         </div>
     </section>
 
-    <!-- PLANOS MENSAIS -->
-    <section id="planos" class="section-padding reveal active nl-solo-page" hidden>
-        <div class="container"><button type="button" class="lr-close" id="pl-page-close"><i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-i18n="page_back">Voltar ao início</span></button></div>
-        <div class="container" id="planos-box"></div>
-    </section>
 
     <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS -->
     <section id="artigos" class="section-padding articles-section reveal active">
@@ -2414,7 +2408,6 @@
                     <a href="#produtos" data-i18n="nav_produtos">Produtos</a>
                     <a href="#laudos" data-i18n="nav_laudos">Laudos</a>
                     <a href="#plano" data-i18n="nav_plano">Meu plano</a>
-                    <a href="#planos" data-i18n="nav_planos">Planos</a>
                     <a href="#artigos" data-i18n="nav_artigos">Artigos</a>
                     <a href="#sobre" data-i18n="nav_sobre">Sobre</a>
                     <a href="#faq" data-i18n="nav_faq">Perguntas frequentes</a>
@@ -3275,8 +3268,8 @@ const productsQA = [
 
         // seção de laudos: só aparece quando o visitante clica na aba "Laudos"
         // Produtos e Laudos funcionam como páginas próprias: só aparecem quando a aba é clicada
-        const NL_PAGES = ['produtos', 'laudos', 'planos'];
-        const NL_SOLO = ['planos'];
+        const NL_PAGES = ['produtos', 'laudos'];
+        const NL_SOLO = [];
         function nlRetryImages(root) {
             root.querySelectorAll('img[data-fb]').forEach(img => {
                 img.loading = 'eager';
@@ -3361,7 +3354,7 @@ const productsQA = [
                     hidePages();
                 }
             });
-            ['lr-close', 'pr-close', 'pl-page-close'].forEach(id => {
+            ['lr-close', 'pr-close'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) btn.addEventListener('click', () => {
                     hidePages();
