@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://newlifelabs.us/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/logo-newlife.png">
+    <link rel="icon" type="image/png" href="images/.png">
     
     <!-- Fonte Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2097,6 +2097,21 @@
         .qc-reco .qz-reco-info p { margin: 2px 0 5px; font-size: .71rem; }
         .qc-reco .qz-reco-meta { font-size: .68rem; }
         .qc-reco .qz-reco-note { margin-top: 9px; padding: 8px 9px; font-size: .69rem; }
+        .qz-reco-for { display: block; width: 100%; font-style: normal; font-size: .72rem; font-weight: 600; color: var(--gray-600); }
+        .qf-check { width: 22px; height: 22px; flex: none; border-radius: 7px; border: 2px solid var(--gray-200); display: inline-flex; align-items: center; justify-content: center; color: transparent; font-size: .7rem; transition: .2s; }
+        .qf-tile.is-on .qf-check { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .qf-other-t { margin: 28px 0 12px; font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em; color: var(--dark); text-align: center; }
+        .qf-other { display: flex; flex-direction: column; gap: 14px; }
+        .qf-other-g { padding: 14px; border-radius: 16px; background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.9); }
+        .qf-other-l { display: inline-flex; align-items: center; gap: 7px; font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--gray-600); margin-bottom: 10px; }
+        .qf-other-l i { color: var(--primary); }
+        .qf-other-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .qf-pchip { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; border-radius: 999px; border: 1.5px solid var(--gray-200); background: #fff; font: inherit; font-size: .85rem; font-weight: 600; color: var(--dark); cursor: pointer; transition: .2s; }
+        .qf-pchip i { display: none; font-size: .7rem; }
+        .qf-pchip:hover { border-color: rgba(0,113,227,.5); }
+        .qf-pchip.is-on { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .qf-pchip.is-on i { display: inline; }
+        .qf-cta-sticky { position: sticky; bottom: 14px; z-index: 5; }
         @media (max-width: 600px) { .qz-reco-list { grid-template-columns: 1fr; } .qz-reco-panel { padding: 13px; } }
     </style>
 
@@ -3754,12 +3769,14 @@ const productsQA = [
                 txt(v, cx, cy + 14, 11, 'bold');
             });
             y += 120;
-            doc.setFillColor(236, 246, 240); doc.roundedRect(M, y, CW, 48, 12, 12, 'F');
+            const probLines = wrap(qzProbText(), 10.5, CW / 2 - 24);
+            const gh = Math.max(48, 30 + probLines.length * 13);
+            doc.setFillColor(236, 246, 240); doc.roundedRect(M, y, CW, gh, 12, 12, 'F');
             txt(t.goalL.toUpperCase(), M + 16, y + 19, 8, 'bold', green);
             txt(t.goals[qz.goal][0], M + 16, y + 36, 12, 'bold');
-            txt(t.probL.toUpperCase(), M + CW / 2, y + 19, 8, 'bold', green);
-            txt(t.problems[qz.goal][qz.problem], M + CW / 2, y + 36, 12, 'bold');
-            y += 80;
+            txt((qz.picks.length > 1 ? t.probsL : t.probL).toUpperCase(), M + CW / 2, y + 19, 8, 'bold', green);
+            probLines.forEach((r, i) => txt(r, M + CW / 2, y + 35 + i * 13, 10.5, 'bold'));
+            y += gh + 32;
 
             // metas diárias
             txt(q.target, M, y, 14, 'bold'); y += 12;
@@ -3836,7 +3853,7 @@ const productsQA = [
             if (recommendedPeptides.length) {
                 const intro = wrap(t.peptidesSub, 9, CW);
                 const notice = wrap(t.peptideNotice, 8, CW - 28);
-                const cards = recommendedPeptides.map(p => wrap(qzProductDesc(p), 8.5, CW - 28));
+                const cards = recommendedPeptides.map(p => wrap(qzProductDesc(p) + '  ·  ' + t.peptideFor + ': ' + p._for.join(', '), 8.5, CW - 28));
                 const bh = 42 + intro.length * 12 + cards.reduce((sum, lines) => sum + 38 + lines.length * 11, 0) + 20 + notice.length * 10;
                 need(bh + 20);
                 txt(t.peptides, M, y, 14, 'bold'); y += 16;
@@ -3899,7 +3916,7 @@ const productsQA = [
                 eat: 'O que colocar no prato', eatSub: 'Alimentos naturais que ajudam no seu objetivo.',
                 sheet: 'Sua planilha alimentar', sheetSub: 'Quantidades calculadas para a sua meta diária.',
                 meals: ['Café da manhã', 'Almoço', 'Lanche', 'Jantar'], colFood: 'Alimento', colQty: 'Quantidade', colKcal: 'kcal', colProt: 'Proteína', total: 'Total do dia', units: 'unid.',
-                res: 'Pesquisas sobre o seu objetivo', resSub: 'O que a ciência publicou sobre compostos estudados nesta área. Conteúdo informativo, não é recomendação de uso.', resRead: 'Ler o estudo', peptides: 'Peptídeos relacionados às suas respostas', peptidesSub: 'Com base no objetivo e no desafio que você selecionou, estes compostos de pesquisa estão relacionados ao tema consultado para fins educativos.', peptideArea: 'Área de pesquisa', peptideReport: 'Ver laudo', peptideNotice: 'Informações educativas sobre compostos de pesquisa. Não constituem recomendação individual, diagnóstico, prescrição ou orientação de uso. Converse com um profissional habilitado.',
+                res: 'Pesquisas sobre o seu objetivo', resSub: 'O que a ciência publicou sobre compostos estudados nesta área. Conteúdo informativo, não é recomendação de uso.', resRead: 'Ler o estudo', peptides: 'Peptídeos relacionados às suas respostas', peptidesSub: 'Com base no objetivo e nos desafios que você marcou, estes compostos de pesquisa estão relacionados ao tema consultado para fins educativos.', peptideArea: 'Área de pesquisa', peptideFor: 'Relacionado a', probsL: 'Desafios', q2multi: 'Marque tudo o que te atrapalha hoje', q2sub: 'Pode marcar mais de uma opção, inclusive de outras áreas.', q2other: 'Também enfrenta algum destes?', q2pick: 'Marque pelo menos uma opção.', q2count: (n) => `Continuar · ${n} ${n === 1 ? 'selecionado' : 'selecionados'}`, peptideReport: 'Ver laudo', peptideNotice: 'Informações educativas sobre compostos de pesquisa. Não constituem recomendação individual, diagnóstico, prescrição ou orientação de uso. Converse com um profissional habilitado.',
                 download: 'Planilha Excel', pdf: 'Baixar planilha em PDF', pdfDone: 'Pronto! Sua planilha em PDF foi baixada. Quer enviar o plano para um especialista?', print: 'Imprimir', expert: 'Falar com especialista',
                 expertSub: 'Leve seu plano para uma conversa com a equipe New Life.',
                 note: 'Estimativa educativa com base na fórmula de Mifflin-St Jeor. Não substitui a avaliação de um nutricionista ou médico.',
@@ -3939,7 +3956,7 @@ const productsQA = [
                 eat: 'What to put on your plate', eatSub: 'Natural foods that support your goal.',
                 sheet: 'Your meal plan', sheetSub: 'Amounts calculated for your daily target.',
                 meals: ['Breakfast', 'Lunch', 'Snack', 'Dinner'], colFood: 'Food', colQty: 'Amount', colKcal: 'kcal', colProt: 'Protein', total: 'Daily total', units: 'units',
-                res: 'Research on your goal', resSub: 'What science has published about compounds studied in this area. Informational content, not a usage recommendation.', resRead: 'Read the study', peptides: 'Peptides related to your answers', peptidesSub: 'Based on the goal and challenge you selected, these research compounds are related to the topic you looked up for educational purposes.', peptideArea: 'Research area', peptideReport: 'See lab report', peptideNotice: 'Educational information about research compounds. It is not an individual recommendation, diagnosis, prescription or use guidance. Speak with a qualified professional.',
+                res: 'Research on your goal', resSub: 'What science has published about compounds studied in this area. Informational content, not a usage recommendation.', resRead: 'Read the study', peptides: 'Peptides related to your answers', peptidesSub: 'Based on the goal and challenges you selected, these research compounds are related to the topic you looked up for educational purposes.', peptideArea: 'Research area', peptideFor: 'Related to', probsL: 'Challenges', q2multi: 'Select everything that gets in your way', q2sub: 'You can pick more than one, including other areas.', q2other: 'Dealing with any of these too?', q2pick: 'Pick at least one option.', q2count: (n) => `Continue · ${n} selected`, peptideReport: 'See lab report', peptideNotice: 'Educational information about research compounds. It is not an individual recommendation, diagnosis, prescription or use guidance. Speak with a qualified professional.',
                 download: 'Excel sheet', pdf: 'Download plan as PDF', pdfDone: 'Done! Your PDF meal plan was downloaded. Want to send it to a specialist?', print: 'Print', expert: 'Talk to a specialist',
                 expertSub: 'Take your plan to a conversation with the New Life team.',
                 note: 'Educational estimate based on the Mifflin-St Jeor formula. It does not replace an assessment by a dietitian or doctor.',
@@ -3979,7 +3996,7 @@ const productsQA = [
                 eat: 'Qué poner en el plato', eatSub: 'Alimentos naturales que ayudan a tu objetivo.',
                 sheet: 'Tu plan de alimentación', sheetSub: 'Cantidades calculadas para tu meta diaria.',
                 meals: ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'], colFood: 'Alimento', colQty: 'Cantidad', colKcal: 'kcal', colProt: 'Proteína', total: 'Total del día', units: 'unid.',
-                res: 'Investigaciones sobre tu objetivo', resSub: 'Lo que la ciencia ha publicado sobre compuestos estudiados en esta área. Contenido informativo, no es una recomendación de uso.', resRead: 'Leer el estudio', peptides: 'Péptidos relacionados con tus respuestas', peptidesSub: 'Según el objetivo y el desafío que seleccionaste, estos compuestos de investigación se relacionan con el tema consultado con fines educativos.', peptideArea: 'Área de investigación', peptideReport: 'Ver informe', peptideNotice: 'Información educativa sobre compuestos de investigación. No constituye recomendación individual, diagnóstico, prescripción ni orientación de uso. Consulta a un profesional habilitado.',
+                res: 'Investigaciones sobre tu objetivo', resSub: 'Lo que la ciencia ha publicado sobre compuestos estudiados en esta área. Contenido informativo, no es una recomendación de uso.', resRead: 'Leer el estudio', peptides: 'Péptidos relacionados con tus respuestas', peptidesSub: 'Según el objetivo y los desafíos que marcaste, estos compuestos de investigación se relacionan con el tema consultado con fines educativos.', peptideArea: 'Área de investigación', peptideFor: 'Relacionado con', probsL: 'Desafíos', q2multi: 'Marca todo lo que te frena hoy', q2sub: 'Puedes marcar más de una opción, incluso de otras áreas.', q2other: '¿También enfrentas alguno de estos?', q2pick: 'Marca al menos una opción.', q2count: (n) => `Continuar · ${n} ${n === 1 ? 'seleccionado' : 'seleccionados'}`, peptideReport: 'Ver informe', peptideNotice: 'Información educativa sobre compuestos de investigación. No constituye recomendación individual, diagnóstico, prescripción ni orientación de uso. Consulta a un profesional habilitado.',
                 download: 'Hoja de Excel', pdf: 'Descargar plan en PDF', pdfDone: '¡Listo! Tu plan en PDF se descargó. ¿Quieres enviarlo a un especialista?', print: 'Imprimir', expert: 'Hablar con un especialista',
                 expertSub: 'Lleva tu plan a una conversación con el equipo de New Life.',
                 note: 'Estimación educativa basada en la fórmula de Mifflin-St Jeor. No sustituye la evaluación de un nutricionista o médico.',
@@ -3992,7 +4009,7 @@ const productsQA = [
             }
         };
 
-        const qz = { screen: 0, step: 0, sleep: null, water: null, meals: null, goal: null, problem: null, name: '', sex: 'f', age: '', weight: '', height: '', activity: 1 };
+        const qz = { screen: 0, step: 0, sleep: null, water: null, meals: null, goal: null, problem: null, picks: [], name: '', sex: 'f', age: '', weight: '', height: '', activity: 1 };
         const qzT = () => QZ_T[currentLanguage] || QZ_T.pt;
         const qzEsc = (t) => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
         const qzFoodName = (id) => (QZ_FOODS[id][currentLanguage] || QZ_FOODS[id].pt)[0];
@@ -4213,10 +4230,28 @@ const productsQA = [
         };
         const qzCatName = (c) => ((trCopy[currentLanguage] || trCopy.pt).cats || {})[c] || c;
         const qzProductDesc = (p) => p['desc_' + currentLanguage] || p.desc_pt || '';
+        // desafios marcados no quiz ("objetivo:índice"); o do objetivo principal vem primeiro
+        function qzPicks() {
+            const list = (qz.picks || []).map(k => k.split(':')).filter(([g, i]) => QZ_PEPTIDE_MATCHES[g] && QZ_PEPTIDE_MATCHES[g][+i]).map(([g, i]) => [g, +i]);
+            if (!list.length && qz.goal && qz.problem !== null) list.push([qz.goal, qz.problem]);
+            return list.sort((a, b) => (a[0] === qz.goal ? 0 : 1) - (b[0] === qz.goal ? 0 : 1));
+        }
+        function qzProbText() {
+            const t = qzT();
+            return qzPicks().map(([g, i]) => t.problems[g][i]).join(', ');
+        }
+        // junta os peptídeos de todos os desafios, sem repetir, e guarda a que desafios cada um se liga
         function qzRecommendedPeptides() {
-            const ids = qz.goal && qz.problem !== null && QZ_PEPTIDE_MATCHES[qz.goal]
-                ? QZ_PEPTIDE_MATCHES[qz.goal][qz.problem] || [] : [];
-            return ids.map(id => productsQA.find(p => p.targetId === id)).filter(Boolean);
+            const t = qzT(), map = new Map();
+            qzPicks().forEach(([g, i]) => (QZ_PEPTIDE_MATCHES[g][i] || []).forEach(id => {
+                if (!map.has(id)) map.set(id, []);
+                const lbl = t.problems[g][i];
+                if (!map.get(id).includes(lbl)) map.get(id).push(lbl);
+            }));
+            return [...map].map(([id, why]) => {
+                const p = productsQA.find(x => x.targetId === id);
+                return p ? Object.assign({}, p, { _for: why }) : null;
+            }).filter(Boolean).sort((a, b) => b._for.length - a._for.length);
         }
         function qzRecommendedHtml(inChat) {
             const t = qzT(), recommendations = qzRecommendedPeptides();
@@ -4224,7 +4259,7 @@ const productsQA = [
             return `${heading}<div class="qz-reco-panel"><div class="qz-reco-list">${recommendations.map(p => `<article class="qz-reco-item">
                 <img ${nlImgAttrs(p)} alt="${qzEsc(p.product)}" loading="lazy">
                 <div class="qz-reco-info"><b>${qzEsc(p.product)}</b><p>${qzEsc(qzProductDesc(p))}</p>
-                    <div class="qz-reco-meta"><span>${qzEsc(t.peptideArea)}: ${qzEsc(qzCatName(p.category))}</span>${p.pdfUrl ? `<a href="${p.pdfUrl}" target="_blank" rel="noopener">${t.peptideReport} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>` : ''}</div>
+                    <div class="qz-reco-meta"><span>${qzEsc(t.peptideArea)}: ${qzEsc(qzCatName(p.category))}</span><em class="qz-reco-for">${qzEsc(t.peptideFor)}: ${qzEsc(p._for.join(', '))}</em>${p.pdfUrl ? `<a href="${p.pdfUrl}" target="_blank" rel="noopener">${t.peptideReport} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>` : ''}</div>
                 </div></article>`).join('')}</div><p class="qz-reco-note"><i class="fas fa-circle-info" aria-hidden="true"></i>${t.peptideNotice}</p></div>`;
         }
 
@@ -4263,14 +4298,21 @@ const productsQA = [
                         <span class="qf-goal-img"><i class="fas ${QZ_GOALS[k].icon}" aria-hidden="true"></i>${pic(k, 480)}</span>
                         <span class="qf-goal-txt"><b>${t.goals[k][0]}</b><small>${t.goals[k][1]}</small></span><span class="qf-go"><i class="fas fa-arrow-right" aria-hidden="true"></i></span></button>`).join('')}</div>`;
             } else if (scr === 'problem') {
-                body = `<h3 class="qf-q">${t.q2}</h3>
-                    <div class="qf-tiles">${t.problems[qz.goal].map((p, i) => `<button type="button" class="qf-tile${qz.problem === i ? ' is-on' : ''}" data-problem="${i}">
-                        <span class="qf-tile-img">${fpic(QZ_PROB_PICS[qz.goal][i], 480)}</span><span class="qf-tile-txt"><span class="qf-radio"></span>${p}</span></button>`).join('')}</div>`;
+                const on = (g, i) => qz.picks.includes(g + ':' + i) ? ' is-on' : '';
+                const others = Object.keys(QZ_GOALS).filter(g => g !== qz.goal);
+                body = `<h3 class="qf-q">${t.q2multi}</h3><p class="qf-sub">${t.q2sub}</p>
+                    <div class="qf-tiles">${t.problems[qz.goal].map((p, i) => `<button type="button" class="qf-tile${on(qz.goal, i)}" data-pick="${qz.goal}:${i}" aria-pressed="${!!on(qz.goal, i)}">
+                        <span class="qf-tile-img">${fpic(QZ_PROB_PICS[qz.goal][i], 480)}</span><span class="qf-tile-txt"><span class="qf-check"><i class="fas fa-check" aria-hidden="true"></i></span>${p}</span></button>`).join('')}</div>
+                    <h4 class="qf-other-t">${t.q2other}</h4>
+                    <div class="qf-other">${others.map(g => `<div class="qf-other-g"><span class="qf-other-l"><i class="fas ${QZ_GOALS[g].icon}" aria-hidden="true"></i> ${t.goals[g][0]}</span>
+                        <div class="qf-other-chips">${t.problems[g].map((p, i) => `<button type="button" class="qf-pchip${on(g, i)}" data-pick="${g}:${i}" aria-pressed="${!!on(g, i)}"><i class="fas fa-check" aria-hidden="true"></i>${p}</button>`).join('')}</div></div>`).join('')}</div>
+                    <p class="qz-err" id="qz-perr" aria-live="polite"></p>
+                    <button type="button" class="qf-cta qf-cta-sticky" id="qz-prob-next">${qz.picks.length ? t.q2count(qz.picks.length) : u.cont} <i class="fas fa-arrow-right" aria-hidden="true"></i></button>`;
             } else if (scr === 'insight') {
                 const cs = QZ_CASES[qz.goal][qz.problem];
                 body = `<div class="qf-insight"><div class="qf-insight-img">${fpic(QZ_PROB_PICS[qz.goal][qz.problem], 900)}
                         <div class="qf-insight-foods">${cs.foods.slice(0, 3).map(id => `<span><img src="${qzImg(id, 200)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()"><small>${qzFoodName(id)}</small></span>`).join('')}</div></div>
-                    <h3 class="qf-q">${u.insT}</h3><p class="qf-sub">${u.insSub(t.problems[qz.goal][qz.problem])}</p>
+                    <h3 class="qf-q">${u.insT}</h3><p class="qf-sub">${u.insSub(qzProbText())}</p>
                     <ul class="qf-checks">${u.insPts.map(s => `<li><i class="fas fa-circle-check" aria-hidden="true"></i>${s}</li>`).join('')}</ul>
                     <blockquote class="qf-tip"><i class="fas fa-lightbulb" aria-hidden="true"></i>${cs[currentLanguage] || cs.pt}</blockquote>
                     <button type="button" class="qf-cta" data-next>${u.cont} <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div>`;
@@ -4307,7 +4349,7 @@ const productsQA = [
                     <div class="qf-hero"><div class="qf-hero-img">${pic(qz.goal, 1000)}</div><div class="qf-hero-txt">
                         <span class="qz-eyebrow"><i class="fas fa-circle-check" aria-hidden="true"></i> ${u.ready}</span>
                         <h3>${u.hello(qz.name ? qzEsc(qz.name) : '')}</h3>
-                        <div class="qf-tags"><span><i class="fas ${g.icon}" aria-hidden="true"></i> ${t.goals[qz.goal][0]}</span><span>${t.problems[qz.goal][qz.problem]}</span><span>${t.acts[qz.activity]}</span></div></div></div>
+                        <div class="qf-tags"><span><i class="fas ${g.icon}" aria-hidden="true"></i> ${t.goals[qz.goal][0]}</span>${qzPicks().map(([g, i]) => `<span>${t.problems[g][i]}</span>`).join('')}<span>${t.acts[qz.activity]}</span></div></div></div>
                     <div class="qf-dash">
                         <div class="qf-card qf-card-kcal"><small>${t.kcal}</small>${qzDonut(c)}</div>
                         <div class="qf-card"><small>${u.bmiT}</small>${qzGauge(c.bmi)}
@@ -4352,8 +4394,26 @@ const productsQA = [
             box.innerHTML = head + `<div class="qf-screen qf-s-${scr}">${body}</div>`;
 
             const next = () => qzGo((qz.screen || 0) + 1);
-            box.querySelectorAll('[data-goal]').forEach(b => b.onclick = () => { if (qz.goal !== b.dataset.goal) qz.problem = null; qz.goal = b.dataset.goal; b.classList.add('is-on'); setTimeout(next, 220); });
-            box.querySelectorAll('[data-problem]').forEach(b => b.onclick = () => { qz.problem = +b.dataset.problem; b.classList.add('is-on'); setTimeout(next, 220); });
+            box.querySelectorAll('[data-goal]').forEach(b => b.onclick = () => { if (qz.goal !== b.dataset.goal) { qz.problem = null; qz.picks = qz.picks.filter(k => !k.startsWith(qz.goal + ':')); } qz.goal = b.dataset.goal; b.classList.add('is-on'); setTimeout(next, 220); });
+            box.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
+                const k = b.dataset.pick, at = qz.picks.indexOf(k);
+                if (at >= 0) qz.picks.splice(at, 1); else qz.picks.push(k);
+                const sel = at < 0;
+                box.querySelectorAll(`[data-pick="${k}"]`).forEach(x => { x.classList.toggle('is-on', sel); x.setAttribute('aria-pressed', sel); });
+                const err = box.querySelector('#qz-perr'); if (err) err.textContent = '';
+                const nb = box.querySelector('#qz-prob-next');
+                if (nb) nb.innerHTML = `${qz.picks.length ? t.q2count(qz.picks.length) : u.cont} <i class="fas fa-arrow-right" aria-hidden="true"></i>`;
+            });
+            const pn = box.querySelector('#qz-prob-next');
+            if (pn) pn.onclick = () => {
+                if (!qz.picks.length) { box.querySelector('#qz-perr').textContent = t.q2pick; return; }
+                // o desafio principal (cardápio e dicas) é o primeiro marcado do objetivo escolhido;
+                // se só marcou de outras áreas, o objetivo passa a ser o do primeiro marcado
+                const main = qz.picks.find(k => k.startsWith(qz.goal + ':')) || qz.picks[0];
+                const [g, i] = main.split(':');
+                qz.goal = g; qz.problem = +i;
+                next();
+            };
             box.querySelectorAll('[data-sex]').forEach(b => b.onclick = () => { qz.sex = b.dataset.sex; b.classList.add('is-on'); setTimeout(next, 220); });
             box.querySelectorAll('[data-act]').forEach(b => b.onclick = () => { qz.activity = +b.dataset.act; b.classList.add('is-on'); setTimeout(next, 220); });
             box.querySelectorAll('[data-hab]').forEach(b => b.onclick = () => { qz[b.dataset.hab] = +b.dataset.v; b.classList.add('is-on'); setTimeout(next, 220); });
@@ -4379,7 +4439,7 @@ const productsQA = [
                 tick();
             }
             const on = (id, fn) => { const el = box.querySelector(id); if (el) el.onclick = fn; };
-            on('#qz-redo', () => { Object.assign(qz, { goal: null, problem: null }); qzGo(1); });
+            on('#qz-redo', () => { Object.assign(qz, { goal: null, problem: null, picks: [] }); qzGo(1); });
             box.querySelectorAll('.qz-res-card').forEach(b => b.onclick = () => openStory(+b.dataset.story));
             on('#qz-csv', qzDownload);
             on('#qz-pdf', qzDownloadPdf);
@@ -4411,7 +4471,7 @@ const productsQA = [
 
         function qzDownload() {
             const t = qzT(), c = qzCalc(), plan = qzPlan(c.kcal);
-            const rows = [[t.sheet], [t.goalL, t.goals[qz.goal][0]], [t.probL, t.problems[qz.goal][qz.problem]],
+            const rows = [[t.sheet], [t.goalL, t.goals[qz.goal][0]], [qz.picks.length > 1 ? t.probsL : t.probL, qzProbText()],
                 [t.kcal, c.kcal], [t.prot, c.prot + ' g'], [t.carb, c.carb + ' g'], [t.fat, c.fat + ' g'], [t.water, c.water + ' L'], [],
                 ['', t.colFood, t.colQty, t.colKcal, t.colProt]];
             plan.forEach(m => m.items.forEach(it => rows.push([m.name, qzFoodName(it.id), qzQty(it), it.kcal, it.prot + ' g'])));
@@ -4493,7 +4553,7 @@ const productsQA = [
                     `• ${q.bmi}: ${c.bmi}  |  ${t.activity}: ${t.acts[qz.activity]}`, '',
                     `🎯 *${q.waGoal}*`,
                     `• ${t.goals[qz.goal][0]}`,
-                    `• ${t.probL}: ${t.problems[qz.goal][qz.problem]}`, '',
+                    `• ${qz.picks.length > 1 ? t.probsL : t.probL}: ${qzProbText()}`, '',
                     `🔥 *${q.waTarget}*`,
                     `• ${c.kcal} kcal`,
                     `• ${t.prot}: ${c.prot} g  |  ${t.carb}: ${c.carb} g  |  ${t.fat}: ${c.fat} g`,
@@ -4506,7 +4566,7 @@ const productsQA = [
             }
             const recommendedPeptides = qzRecommendedPeptides();
             if (recommendedPeptides.length) {
-                body.push(`🧪 *${q.waPeptides}*`, ...recommendedPeptides.map(pep => `• ${pep.product} (${qzCatName(pep.category)})`), `• ${q.waPeptidesNote}`, '');
+                body.push(`🧪 *${q.waPeptides}*`, ...recommendedPeptides.map(pep => `• ${pep.product} (${qzCatName(pep.category)}) → ${pep._for.join(', ')}`), `• ${q.waPeptidesNote}`, '');
             }
             if (planName) body.push(`📦 *${q.waPlan}:* ${planName}`);
             if (topic) body.push(`💬 *${q.waTopic}:* ${topic}`);
@@ -4533,7 +4593,7 @@ const productsQA = [
             document.body.style.overflow = 'hidden';
             const fab = document.getElementById('qc-fab');
             if (fab) fab.classList.remove('has-badge');
-            const rows = [[t.age, qz.age], [q.sex, qz.sex === 'm' ? q.sexM : q.sexF], [t.weight, qz.weight], [t.height, qz.height], [q.bmi, c.bmi], [t.activity, t.acts[qz.activity]], [t.goalL, t.goals[qz.goal][0]], [t.probL, t.problems[qz.goal][qz.problem]]];
+            const rows = [[t.age, qz.age], [q.sex, qz.sex === 'm' ? q.sexM : q.sexF], [t.weight, qz.weight], [t.height, qz.height], [q.bmi, c.bmi], [t.activity, t.acts[qz.activity]], [t.goalL, t.goals[qz.goal][0]], [qz.picks.length > 1 ? t.probsL : t.probL, qzProbText()]];
             const dataCard = `<b class="qc-card-t">${q.data}</b><dl class="qc-dl">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${qzEsc(v)}</dd>`).join('')}</dl>`;
             const target = `<b class="qc-card-t">${q.target}</b><span class="qc-sub">${q.targetSub}</span>
                 <div class="qc-kcal">${c.kcal.toLocaleString({ pt: 'pt-BR', en: 'en-US', es: 'es-ES' }[currentLanguage] || 'pt-BR')}<small>kcal/${{ pt: 'dia', en: 'day', es: 'día' }[currentLanguage] || 'dia'}</small></div>
