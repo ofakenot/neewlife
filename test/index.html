@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://newlifelabs.us/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/newlogo.png">
+    <link rel="icon" type="image/png" href="images/logo-newlife.png">
     
     <!-- Fonte Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2018,7 +2018,7 @@
         .qc-msg { font-size: 0.93rem; line-height: 1.5; border-radius: 20px; padding: 11px 15px; animation: qcIn2 0.4s cubic-bezier(.2,.9,.3,1.2) both; }
         @keyframes qcIn2 { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
         .qc-bot { position: relative; margin-left: 36px; background: rgba(255,255,255,0.82); color: var(--dark); border: 1px solid rgba(255,255,255,0.95); border-bottom-left-radius: 6px; box-shadow: 0 6px 20px rgba(30,40,90,0.08); backdrop-filter: blur(10px); }
-        .qc-bot::before { content: ''; position: absolute; left: -36px; bottom: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff url(images/newlogo.png) center / 72% no-repeat; box-shadow: 0 3px 10px rgba(30,40,90,0.15); }
+        .qc-bot::before { content: ''; position: absolute; left: -36px; bottom: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff url(images/logo-newlife.png) center / 72% no-repeat; box-shadow: 0 3px 10px rgba(30,40,90,0.15); }
         .qc-me { background: linear-gradient(135deg, #0071e3, #2a8cff); color: #fff; border-bottom-right-radius: 6px; box-shadow: 0 8px 20px rgba(0,113,227,0.3); font-weight: 600; }
         .qc-typing span { background: #0071e3; opacity: 0.5; }
         .qc-card-t { color: #0071e3; }
@@ -2105,7 +2105,7 @@
 
     <!-- LOGO FIXA (canto superior esquerdo) -->
     <a href="#inicio" class="logo-box site-logo">
-        <img src="images/newlogo.png" alt="New Life Labs">
+        <img src="images/logo-newlife.png" alt="New Life Labs">
     </a>
 
     <!-- SELETOR DE IDIOMA FIXO (canto superior direito) -->
@@ -2343,7 +2343,7 @@
         <div class="container">
             <div class="sf-inner">
                 <a href="#inicio" class="sf-logo" aria-label="New Life Labs">
-                    <img src="images/newlogo.png" alt="New Life Labs">
+                    <img src="images/logo-newlife.png" alt="New Life Labs">
                 </a>
                 <p class="sf-brand" data-i18n="footer_brand">Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.</p>
 
@@ -3076,7 +3076,7 @@ const productsQA = [
             img.src = list[0];
         }
         function nlImgAttrs(prod) {
-            const chain = [prod.imagem, prod.imageUrl, 'images/newlogo.png'].filter(Boolean).join('|');
+            const chain = [prod.imagem, prod.imageUrl, 'images/logo-newlife.png'].filter(Boolean).join('|');
             return `src="${trPhoto(prod)}" data-fb="${chain}" onerror="nlImgFb(this)"`;
         }
         // laudos + artigos misturados, filtrados por categoria
@@ -3704,7 +3704,7 @@ const productsQA = [
                     } catch (e) { resolve(null); }
                 };
                 img.onerror = () => resolve(null);
-                img.src = 'images/newlogo.png';
+                img.src = 'images/logo-newlife.png';
                 setTimeout(() => resolve(null), 2500);
             });
         }
@@ -4522,7 +4522,7 @@ const productsQA = [
             qzChatTimers.forEach(clearTimeout); qzChatTimers = [];
             panel.innerHTML = `<div class="qc-head">
                     <button type="button" class="qc-close" aria-label="×"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
-                    <div class="qc-id"><span class="qc-avatar"><span class="qc-ring"></span><img src="images/newlogo.png" alt=""><i class="qc-online"></i></span>
+                    <div class="qc-id"><span class="qc-avatar"><span class="qc-ring"></span><img src="images/logo-newlife.png" alt=""><i class="qc-online"></i></span>
                         <span class="qc-id-txt"><b>${q.name} <i class="fas fa-circle-check qc-verified" aria-hidden="true"></i></b><small><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> ${q.status}</small></span></div>
                     <button type="button" class="qc-close qc-x" aria-label="×"><i class="fas fa-xmark" aria-hidden="true"></i></button>
                 </div>
@@ -4999,7 +4999,7 @@ const productsQA = [
                         <h3 class="nc-title">${L(n.title)}</h3>
                         <p class="nc-dek">${L(n.dek)}</p>
                         <div class="nc-foot">
-                            <img src="images/newlogo.png" alt="" aria-hidden="true">
+                            <img src="images/logo-newlife.png" alt="" aria-hidden="true">
                             <div class="nc-meta">
                                 <b>New Life Health</b>
                                 <span>${mins} ${ui.min}</span>
@@ -5130,7 +5130,7 @@ const productsQA = [
             modal.classList.add('active');
             modal.setAttribute('aria-hidden', 'false');
             const image = heroProductImages[product.batch] || product.imagem;
-            modalPhoto.innerHTML = `<img src="${image}" alt="${product.product}" onerror="this.src='${product.imageUrl || 'images/newlogo.png'}';">`;
+            modalPhoto.innerHTML = `<img src="${image}" alt="${product.product}" onerror="this.src='${product.imageUrl || 'images/logo-newlife.png'}';">`;
             modalContent.innerHTML = `<div class="hero-batch-modal-status"><i class="fas fa-circle-check"></i> ${copy.verify_success}</div><h2 id="hero-batch-modal-title" class="hero-batch-modal-title">${product.product}</h2><p class="hero-batch-modal-message">${copy.verify_message}</p><div class="hero-batch-modal-batch">${copy.verify_batch}: ${product.batch}</div><div class="hero-batch-modal-purity">${copy.verify_purity}: <strong>${product.purity}</strong></div><div class="hero-batch-modal-actions"><a class="hero-batch-action report" href="${product.pdfUrl}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> ${copy.verify_report}</a><a class="hero-batch-action manual" href="${product.manualUrl}" target="_blank" rel="noopener"><i class="fas fa-book-open"></i> ${copy.verify_manual}</a></div>`;
             document.body.style.overflow = 'hidden';
         }
