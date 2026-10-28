@@ -1556,16 +1556,15 @@
         .st-r-nav button:hover span { color: var(--primary); }
         @media (max-width: 900px) {
             .st-head { flex-direction: column; align-items: flex-start; }
-            .st-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin: 0 -20px; padding: 4px 20px 14px; scrollbar-width: none; }
-            .st-grid::-webkit-scrollbar { display: none; }
-            .st-grid:not(.is-open) .st-extra { display: flex; }
-            .st-more-wrap { display: none; }
-            .st-card, .st-card.st-featured { flex: 0 0 78%; max-width: 320px; scroll-snap-align: start; }
-            .st-featured .st-cover { flex: none; min-height: 0; height: 120px; }
-            .st-featured .st-word { font-size: 3.4rem; bottom: -14px; }
-            .st-featured .st-body { padding: 16px 18px 18px; flex: 1; }
-            .st-featured .st-title { font-size: 1rem; }
-            .st-featured .st-teaser { display: none; }
+            .st-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; gap: 14px; }
+            .st-card.st-featured { grid-column: 1 / -1; grid-row: auto; }
+            .st-featured .st-cover { flex: none; min-height: 0; height: 230px; }
+            .st-featured .st-word { font-size: 4.6rem; bottom: -16px; }
+            .st-featured .st-body { padding: 18px 20px 20px; flex: 1; }
+            .st-featured .st-title { font-size: 1.3rem; }
+            .st-card .st-teaser { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.86rem; }
+            .st-featured .st-teaser { -webkit-line-clamp: 3; font-size: 0.95rem; }
+            .st-more-wrap .ab-btn { width: 100%; max-width: 420px; justify-content: center; }
             .st-r-hero.has-photo { min-height: 300px; }
             .st-r-head { padding-left: 20px; padding-right: 20px; }
             .st-r-head h2 { font-size: 1.7rem; }
@@ -1575,6 +1574,19 @@
             .st-prod { flex-wrap: wrap; }
             .st-prod-go { margin-left: 100px; padding-top: 0; }
             .st-r-nav { padding: 8px 20px 24px; }
+        }
+
+        @media (max-width: 600px) {
+            .st-block { margin-bottom: 40px; }
+            .st-head h3 { font-size: 1.4rem; }
+            .st-grid { grid-template-columns: 1fr; gap: 12px; }
+            .st-featured .st-cover { height: 200px; }
+            .st-card:not(.st-featured) { flex-direction: row; border-radius: 18px; }
+            .st-card:not(.st-featured) .st-cover { width: 116px; height: auto; min-height: 128px; flex: none; }
+            .st-card:not(.st-featured) .st-word { font-size: 2.4rem; bottom: -8px; }
+            .st-card:not(.st-featured) .st-body { padding: 14px 16px; gap: 5px; }
+            .st-card:not(.st-featured) .st-title { font-size: 0.98rem; }
+            .st-card:not(.st-featured) .st-meta { padding-top: 4px; }
         }
 
         /* --- QUIZ: PLANO PERSONALIZADO --- */
@@ -2113,6 +2125,32 @@
         .qf-pchip.is-on i { display: inline; }
         .qf-cta-sticky { position: sticky; bottom: 14px; z-index: 5; }
         @media (max-width: 600px) { .qz-reco-list { grid-template-columns: 1fr; } .qz-reco-panel { padding: 13px; } }
+        /* --- MENU MOBILE: OPÇÕES SEMPRE VISÍVEIS --- */
+        @media (max-width: 868px) {
+            .menu-toggle { display: none !important; }
+            .navbar, .navbar.scrolled {
+                position: absolute; top: 76px; left: 12px; right: 12px; width: auto; transform: none; padding: 5px;
+                border-radius: 999px; background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(255, 255, 255, 0.85);
+                box-shadow: 0 8px 24px rgba(30, 40, 90, 0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+                backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            }
+            .nav-menu, .nav-menu.active {
+                position: static; right: auto; width: auto; max-width: none; height: auto;
+                flex-direction: row; justify-content: flex-start; align-items: center; gap: 2px;
+                background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+                overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-behavior: smooth;
+                -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+                mask-image: linear-gradient(90deg, #000 85%, transparent);
+            }
+            .nav-menu.at-end { -webkit-mask-image: none; mask-image: none; }
+            .nav-menu::-webkit-scrollbar { display: none; }
+            .nav-item { flex: none; }
+            .nav-item a { font-size: 0.9rem; padding: 10px 15px; }
+            .hero { padding-top: 144px; }
+            body.nl-solo > section.nl-page-on { padding-top: 150px; }
+            .section-title { font-size: 1.6rem; }
+            .section-padding { padding: 64px 0; }
+        }
     </style>
 
 </head>
@@ -2141,14 +2179,9 @@
     <!-- NAVBAR (pílula flutuante) -->
     <nav class="navbar">
         <ul class="nav-menu">
-            <li class="nav-item"><a href="#inicio" data-i18n="nav_inicio" class="active-link">Início</a></li>
             <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
             <li class="nav-item"><a href="#laudos" data-i18n="nav_laudos">Laudos</a></li>
-            <li class="nav-item"><a href="#plano" data-i18n="nav_plano">Meu plano</a></li>
             <li class="nav-item"><a href="#planos" data-i18n="nav_planos">Planos</a></li>
-            <li class="nav-item"><a href="#artigos" data-i18n="nav_artigos">Artigos</a></li>
-            <li class="nav-item"><a href="#sobre" data-i18n="nav_sobre">Sobre</a></li>
-            <li class="nav-item"><a href="#contato" data-i18n="nav_contato">Contato</a></li>
         </ul>
     </nav>
 
@@ -2202,6 +2235,15 @@
         </div>
     </header>
 
+    <!-- QUIZ: PLANO PERSONALIZADO -->
+    <section id="plano" class="section-padding reveal active">
+        <div class="container">
+            <h2 class="section-title" data-i18n="section_quiz">Monte seu plano</h2>
+            <p class="section-subtitle-center" data-i18n="quiz_subtitle">Em menos de 2 minutos: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.</p>
+            <div class="qz" id="quiz"></div>
+        </div>
+    </section>
+
     <div id="hero-batch-modal" class="hero-batch-modal" role="dialog" aria-modal="true" aria-labelledby="hero-batch-modal-title" aria-hidden="true">
         <div class="hero-batch-modal-card">
             <button id="hero-batch-modal-close" class="hero-batch-modal-close" type="button" aria-label="Fechar verificação"><i class="fas fa-xmark"></i></button>
@@ -2231,16 +2273,6 @@
             <div class="pc-cats fd-cats" id="fd-cats" role="tablist"></div>
             <div class="fd-intro" id="fd-intro" aria-live="polite"></div>
             <div class="fd-grid" id="fd-grid"></div>
-        </div>
-    </section>
-
-    <!-- QUIZ: PLANO PERSONALIZADO -->
-    <section id="plano" class="section-padding reveal active nl-solo-page" hidden>
-        <div class="container">
-            <button type="button" class="lr-close" id="qz-page-close"><i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-i18n="page_back">Voltar ao início</span></button>
-            <h2 class="section-title" data-i18n="section_quiz">Monte seu plano</h2>
-            <p class="section-subtitle-center" data-i18n="quiz_subtitle">Em menos de 2 minutos: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.</p>
-            <div class="qz" id="quiz"></div>
         </div>
     </section>
 
@@ -2286,7 +2318,6 @@
                         <span class="ab-chip ab-chip-place"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span data-i18n="about_chip_place">Georgetown, Texas · EUA</span></span>
                     </div>
                     <div class="ab-actions">
-                        <a href="#inicio" class="ab-btn ab-btn-primary"><i class="fas fa-qrcode" aria-hidden="true"></i> <span data-i18n="about_cta_verify">Verificar lote</span></a>
                         <a href="#produtos" class="ab-btn ab-btn-glass"><span data-i18n="about_cta_products">Ver produtos</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                 </div>
@@ -2344,7 +2375,6 @@
                     <h2 class="fc-title" data-i18n="final_title">Saiba exatamente o que há em cada frasco.</h2>
                     <p class="fc-sub" data-i18n="final_sub">Verifique o lote, confira a pureza medida e baixe o laudo do seu produto em segundos.</p>
                     <div class="fc-actions">
-                        <a href="#inicio" class="ab-btn ab-btn-primary" id="fc-verify"><i class="fas fa-qrcode" aria-hidden="true"></i> <span data-i18n="final_cta_verify">Verificar meu lote</span></a>
                         <a href="mailto:contact@newlifelabs.com" class="ab-btn ab-btn-glass"><i class="far fa-envelope" aria-hidden="true"></i> <span data-i18n="final_cta_contact">Falar com a equipe</span></a>
                     </div>
                 </div>
@@ -3228,8 +3258,8 @@ const productsQA = [
 
         // seção de laudos: só aparece quando o visitante clica na aba "Laudos"
         // Produtos e Laudos funcionam como páginas próprias: só aparecem quando a aba é clicada
-        const NL_PAGES = ['produtos', 'laudos', 'plano', 'planos'];
-        const NL_SOLO = ['plano', 'planos'];
+        const NL_PAGES = ['produtos', 'laudos', 'planos'];
+        const NL_SOLO = ['planos'];
         function nlRetryImages(root) {
             root.querySelectorAll('img[data-fb]').forEach(img => {
                 img.loading = 'eager';
@@ -3249,7 +3279,7 @@ const productsQA = [
                 nlRetryImages(sec);
                 setTimeout(() => nlRetryImages(sec), 1500);
             });
-            document.querySelectorAll('.nav-item a').forEach(a => a.classList.toggle('active-link', a.getAttribute('href') === '#' + id));
+            nlNavActive(id);
             const sec = document.getElementById(id);
             // "Meu plano" e "Planos" abrem sozinhos, sem o resto da página inicial
             const solo = NL_SOLO.includes(id);
@@ -3258,6 +3288,23 @@ const productsQA = [
             if (solo) window.scrollTo({ top: 0, behavior: scroll ? 'smooth' : 'auto' });
             else if (scroll && sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        function nlNavActive(id) {
+            let act = null;
+            document.querySelectorAll('.nav-item a').forEach(a => { const on = a.getAttribute('href') === '#' + id; a.classList.toggle('active-link', on); if (on) act = a; });
+            const menu = document.querySelector('.nav-menu');
+            if (act && menu && menu.scrollWidth > menu.clientWidth) menu.scrollLeft = act.offsetLeft - (menu.clientWidth - act.offsetWidth) / 2;
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.querySelector('.nav-menu');
+            if (!menu) return;
+            const fade = () => menu.classList.toggle('at-end', menu.scrollLeft + menu.clientWidth >= menu.scrollWidth - 4);
+            menu.addEventListener('scroll', fade, { passive: true });
+            window.addEventListener('resize', fade); fade();
+            document.querySelectorAll('.nav-item a').forEach(a => a.addEventListener('click', () => {
+                const id = a.getAttribute('href').slice(1);
+                if (!NL_PAGES.includes(id)) nlNavActive(id);
+            }));
+        });
         function hidePages() {
             NL_PAGES.forEach(x => { const sec = document.getElementById(x); if (sec) sec.hidden = true; });
             document.body.classList.remove('nl-solo');
@@ -3281,7 +3328,7 @@ const productsQA = [
                     hidePages();
                 }
             });
-            ['lr-close', 'pr-close', 'qz-page-close', 'pl-page-close'].forEach(id => {
+            ['lr-close', 'pr-close', 'pl-page-close'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) btn.addEventListener('click', () => {
                     hidePages();
