@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://newlifelabs.us/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/nrelogo.png">
+    <link rel="icon" type="image/png" href="images/newlogo.png">
     
     <!-- Fonte Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,7 +113,7 @@
 
         /* --- NAVBAR FROSTED GLASS STYLE --- */
         .navbar {
-            position: fixed;
+            position: absolute;
             top: 0; left: 0; width: 100%; z-index: 1000;
             padding: 16px 0;
             background: var(--glass-bg);
@@ -729,13 +729,13 @@
            NOVO LAYOUT: LOGO FIXA + NAV PÍLULA + IDIOMAS FIXOS + HERO VIDRO
            ========================================================= */
         .site-logo {
-            position: fixed; top: 18px; left: 28px; z-index: 1002;
+            position: absolute; top: 18px; left: 28px; z-index: 1002;
             height: 64px;
         }
         .site-logo img { max-height: 64px; width: auto; object-fit: contain; }
 
         .site-corner-right {
-            position: fixed; top: 30px; right: 28px; z-index: 1002;
+            position: absolute; top: 30px; right: 28px; z-index: 1002;
             display: flex; align-items: center; gap: 14px;
         }
 
@@ -1992,14 +1992,120 @@
         .qz-cta-btns .ab-btn { border: 0; cursor: pointer; font-family: inherit; white-space: nowrap; }
         .qz-cta-btns .ab-btn-glass { background: #fff; }
         @media (max-width: 900px) { .qz-cta-btns { flex-direction: column; } .qz-cta-btns .ab-btn { justify-content: center; } }
-</style>
+
+        /* ---- chat glass (v2) ---- */
+        #qz-chat-modal { background: radial-gradient(60% 50% at 20% 20%, rgba(0,113,227,0.35), transparent 60%), radial-gradient(50% 50% at 85% 80%, rgba(45,150,93,0.3), transparent 60%), rgba(8,12,30,0.55); }
+        .modal-content.qc-panel { position: relative; max-width: 440px; height: min(740px, 92vh); border-radius: 30px; background: linear-gradient(160deg, rgba(255,255,255,0.78), rgba(236,244,255,0.62)); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 40px 100px rgba(5,10,40,0.45), inset 0 1px 0 rgba(255,255,255,0.9); font-family: Inter, -apple-system, sans-serif; }
+        .modal-content.qc-panel::before { content: ''; position: absolute; inset: -40% -30% auto auto; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(0,113,227,0.22), transparent 70%); pointer-events: none; animation: qcFloat 9s ease-in-out infinite; }
+        .modal-content.qc-panel::after { content: ''; position: absolute; left: -120px; bottom: -120px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(45,150,93,0.18), transparent 70%); pointer-events: none; animation: qcFloat 11s ease-in-out infinite reverse; }
+        @keyframes qcFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-30px, 30px); } }
+        .qc-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; background: rgba(255,255,255,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.6); }
+        .qc-head .qc-id { flex-direction: row; align-items: center; gap: 12px; }
+        .qc-avatar { position: relative; width: 50px; height: 50px; border-radius: 50%; background: #fff; overflow: visible; display: flex; align-items: center; justify-content: center; }
+        .qc-ring { position: absolute; inset: -3px; border-radius: 50%; background: conic-gradient(#0071e3, #5ac8fa, #2d965d, #0071e3); animation: qcSpin 4s linear infinite; z-index: 0; }
+        .qc-ring::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #fff; }
+        @keyframes qcSpin { to { transform: rotate(360deg); } }
+        .qc-avatar img { position: relative; z-index: 1; width: 36px; height: 36px; object-fit: contain; padding: 0; background: none; }
+        .qc-online { position: absolute; z-index: 2; right: 0; bottom: 1px; width: 13px; height: 13px; border-radius: 50%; background: #34c759; border: 2.5px solid #fff; box-shadow: 0 0 0 0 rgba(52,199,89,0.6); animation: qcOn 2s infinite; }
+        @keyframes qcOn { 0% { box-shadow: 0 0 0 0 rgba(52,199,89,0.55); } 70% { box-shadow: 0 0 0 8px rgba(52,199,89,0); } 100% { box-shadow: 0 0 0 0 rgba(52,199,89,0); } }
+        .qc-id-txt { display: flex; flex-direction: column; align-items: flex-start; }
+        .qc-id-txt b { font-size: 1rem; font-weight: 800; color: var(--dark); display: inline-flex; align-items: center; gap: 6px; }
+        .qc-verified { color: #0071e3; font-size: 0.85rem; }
+        .qc-id-txt small { font-size: 0.75rem; font-weight: 600; color: #2d965d; display: inline-flex; align-items: center; gap: 5px; }
+        .qc-x { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.6); color: var(--dark); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; padding: 0; }
+        .qc-x:hover { background: #fff; transform: rotate(90deg); }
+        .qc-body { position: relative; z-index: 1; background: transparent; padding: 20px 16px 10px; gap: 8px; }
+        .qc-msg { font-size: 0.93rem; line-height: 1.5; border-radius: 20px; padding: 11px 15px; animation: qcIn2 0.4s cubic-bezier(.2,.9,.3,1.2) both; }
+        @keyframes qcIn2 { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+        .qc-bot { position: relative; margin-left: 36px; background: rgba(255,255,255,0.82); color: var(--dark); border: 1px solid rgba(255,255,255,0.95); border-bottom-left-radius: 6px; box-shadow: 0 6px 20px rgba(30,40,90,0.08); backdrop-filter: blur(10px); }
+        .qc-bot::before { content: ''; position: absolute; left: -36px; bottom: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff url(images/newlogo.png) center / 72% no-repeat; box-shadow: 0 3px 10px rgba(30,40,90,0.15); }
+        .qc-me { background: linear-gradient(135deg, #0071e3, #2a8cff); color: #fff; border-bottom-right-radius: 6px; box-shadow: 0 8px 20px rgba(0,113,227,0.3); font-weight: 600; }
+        .qc-typing span { background: #0071e3; opacity: 0.5; }
+        .qc-card-t { color: #0071e3; }
+        .qc-macros span { background: rgba(240,246,255,0.9); }
+        .qc-kcal { background: linear-gradient(90deg, #0071e3, #2d965d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .qc-kcal small { -webkit-text-fill-color: #6e6e73; }
+        .qc-choices { align-items: stretch; margin: 6px 0 4px 36px; }
+        .qc-choices button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; text-align: left; padding: 13px 14px 13px 18px; border-radius: 16px; border: 1px solid rgba(0,113,227,0.25); background: rgba(255,255,255,0.75); color: #0058b3; font: inherit; font-size: 0.92rem; font-weight: 700; box-shadow: 0 6px 18px rgba(0,113,227,0.1); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; animation: qcIn2 0.4s 0.1s both; }
+        .qc-choices button:hover { background: linear-gradient(135deg, #0071e3, #2a8cff); color: #fff; transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,113,227,0.3); }
+        .qc-arr { flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,113,227,0.1); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: 0.2s; }
+        .qc-choices button:hover .qc-arr { background: rgba(255,255,255,0.25); transform: translateX(3px); }
+        .qc-choices button[disabled] { justify-content: flex-start; gap: 10px; border-color: rgba(0,0,0,0.08); color: #8e8e93; background: rgba(255,255,255,0.5); box-shadow: none; cursor: not-allowed; }
+        .qc-choices button[disabled]:hover { transform: none; background: rgba(255,255,255,0.5); color: #8e8e93; }
+        .qc-pdf { border: 1px solid rgba(0,113,227,0.2); border-radius: 14px; background: #fff; }
+        .qc-start { border-radius: 16px; padding: 14px 18px; background: linear-gradient(135deg, #25d366, #128c7e); box-shadow: 0 10px 24px rgba(18,140,126,0.35); }
+        .qc-input { position: relative; z-index: 1; gap: 10px; margin: 8px 14px 16px; padding: 12px 14px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); color: #8e8e93; font-size: 0.85rem; justify-content: flex-start; }
+        .qc-input span { flex: 1; }
+        .qc-input i { width: auto; height: auto; background: none; color: #0071e3; border-radius: 0; font-size: 0.9rem; }
+        .qc-story { border: 1px solid rgba(255,255,255,0.9); }
+        @media (max-width: 900px) { .modal-content.qc-panel { border-radius: 0; height: 100dvh; } }
+
+        /* ---- tela de abertura do quiz ---- */
+        .qz.qf:has(.qf-s-intro) { max-width: 1080px; }
+        .qf-intro { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; padding: 38px; border-radius: 32px; background: linear-gradient(150deg, rgba(255,255,255,0.88), rgba(240,246,255,0.7)); border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 24px 60px rgba(30,40,90,0.1); }
+        .qf-intro-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 99px; background: rgba(0,113,227,0.1); color: #0071e3; font-size: 0.8rem; font-weight: 800; }
+        .qf-intro-txt h3 { font-size: 2.4rem; line-height: 1.08; letter-spacing: -0.04em; font-weight: 800; color: var(--dark); margin: 16px 0 12px; }
+        .qf-intro-txt > p { color: var(--gray-600); font-size: 1.02rem; margin: 0 0 20px; line-height: 1.55; }
+        .qf-intro-txt ul { list-style: none; padding: 0; margin: 0 0 26px; display: flex; flex-direction: column; gap: 11px; }
+        .qf-intro-txt li { display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--dark); }
+        .qf-intro-txt li span { width: 34px; height: 34px; flex: none; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e3eefc, #e6f4ec); color: #0071e3; font-size: 0.9rem; }
+        .qf-start { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: space-between; gap: 18px; padding: 8px 8px 8px 26px; border: 0; border-radius: 99px; background: linear-gradient(135deg, #0071e3, #2d965d); color: #fff; font: inherit; font-weight: 800; font-size: 1.08rem; cursor: pointer; box-shadow: 0 16px 34px rgba(0,113,227,0.35); transition: transform 0.25s; animation: qfPulse 2.4s ease-in-out infinite; }
+        .qf-start i { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+        .qf-start::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent); transform: skewX(-20deg); animation: qfShine 3s ease-in-out infinite; }
+        @keyframes qfShine { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+        .qf-start:hover { transform: translateY(-3px); } .qf-start:hover i { transform: translateX(4px); }
+        .qf-intro-note { display: flex; align-items: center; gap: 6px; margin-top: 14px; color: var(--gray-600); font-size: 0.8rem; }
+        .qf-intro-art { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .qf-intro-ph { position: relative; display: block; aspect-ratio: 3 / 4; border-radius: 22px; overflow: hidden; background: linear-gradient(135deg, #e3eefc, #e6f4ec); box-shadow: 0 16px 34px rgba(30,40,90,0.14); animation: qfIn 0.7s both; }
+        .qf-intro-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+        .qf-ph1, .qf-ph3 { transform: translateY(26px); }
+        .qf-ph1 { animation-delay: 0.1s; } .qf-ph2 { animation-delay: 0.2s; } .qf-ph3 { animation-delay: 0.3s; }
+        .qf-intro-badge { position: absolute; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: 16px; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); box-shadow: 0 14px 30px rgba(30,40,90,0.18); font-size: 0.88rem; color: var(--dark); animation: qcFloat 6s ease-in-out infinite; }
+        .qf-intro-badge i { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #0071e3; color: #fff; }
+        .qf-b-top { top: 18px; left: -26px; } .qf-b-bot { bottom: -6px; right: -16px; animation-delay: -3s; } .qf-b-bot i { background: #e5484d; }
+        @media (max-width: 900px) {
+            .qf-intro { grid-template-columns: 1fr; padding: 24px 20px; gap: 30px; }
+            .qf-intro-txt h3 { font-size: 1.75rem; }
+            .qf-start { width: 100%; }
+            .qf-b-top { left: -6px; } .qf-b-bot { right: -4px; }
+            .qf-intro-ph { aspect-ratio: 1 / 1; }
+        }
+        .qc-id small { display: inline-flex; align-items: center; gap: 5px; }
+        .qc-id small i { font-size: 0.7rem; }
+
+        /* indicações educativas de peptídeos baseadas nas respostas do quiz */
+        .qz-reco-panel { margin-top: 16px; padding: 18px; border: 1px solid rgba(0,113,227,.16); border-radius: 18px; background: linear-gradient(135deg, rgba(0,113,227,.055), rgba(45,150,93,.055)); }
+        .qz-reco-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .qz-reco-item { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 13px; border: 1px solid rgba(210,210,215,.82); border-radius: 14px; background: rgba(255,255,255,.82); }
+        .qz-reco-item img { width: 68px; height: 58px; flex: none; object-fit: contain; }
+        .qz-reco-info { min-width: 0; }
+        .qz-reco-info b { display: block; color: var(--dark); font-size: .92rem; line-height: 1.25; }
+        .qz-reco-info p { margin: 4px 0 7px; color: var(--gray-600); font-size: .79rem; line-height: 1.4; }
+        .qz-reco-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: .73rem; font-weight: 700; }
+        .qz-reco-meta span { color: var(--accent-green); }
+        .qz-reco-meta a { color: var(--primary); text-decoration: none; }
+        .qz-reco-note { display: flex; gap: 8px; margin: 14px 0 0; padding: 11px 12px; border-radius: 12px; background: #fff8e8; color: #6b5a2e; font-size: .82rem; line-height: 1.45; }
+        .qz-reco-note i { margin-top: 3px; }
+        .qc-msg:has(.qc-reco) { max-width: 94%; }
+        .qc-reco .qc-reco-t { display: block; margin-bottom: 4px; font-size: .95rem; }
+        .qc-reco > p { margin: 0 0 8px; font-size: .83rem; }
+        .qc-reco .qz-reco-panel { margin-top: 8px; padding: 10px; border-radius: 13px; }
+        .qc-reco .qz-reco-list { grid-template-columns: 1fr; gap: 8px; }
+        .qc-reco .qz-reco-item { gap: 9px; padding: 9px; border-radius: 11px; }
+        .qc-reco .qz-reco-item img { width: 46px; height: 42px; }
+        .qc-reco .qz-reco-info b { font-size: .79rem; }
+        .qc-reco .qz-reco-info p { margin: 2px 0 5px; font-size: .71rem; }
+        .qc-reco .qz-reco-meta { font-size: .68rem; }
+        .qc-reco .qz-reco-note { margin-top: 9px; padding: 8px 9px; font-size: .69rem; }
+        @media (max-width: 600px) { .qz-reco-list { grid-template-columns: 1fr; } .qz-reco-panel { padding: 13px; } }
+    </style>
 
 </head>
 <body>
 
     <!-- LOGO FIXA (canto superior esquerdo) -->
     <a href="#inicio" class="logo-box site-logo">
-        <img src="images/logo-newlife.png" alt="New Life Labs">
+        <img src="images/newlogo.png" alt="New Life Labs">
     </a>
 
     <!-- SELETOR DE IDIOMA FIXO (canto superior direito) -->
@@ -2118,7 +2224,7 @@
         <div class="container">
             <button type="button" class="lr-close" id="qz-page-close"><i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-i18n="page_back">Voltar ao início</span></button>
             <h2 class="section-title" data-i18n="section_quiz">Monte seu plano</h2>
-            <p class="section-subtitle-center" data-i18n="quiz_subtitle">Leva menos de 1 minuto: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.</p>
+            <p class="section-subtitle-center" data-i18n="quiz_subtitle">Em menos de 2 minutos: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.</p>
             <div class="qz" id="quiz"></div>
         </div>
     </section>
@@ -2237,7 +2343,7 @@
         <div class="container">
             <div class="sf-inner">
                 <a href="#inicio" class="sf-logo" aria-label="New Life Labs">
-                    <img src="images/logo-newlife.png" alt="New Life Labs">
+                    <img src="images/newlogo.png" alt="New Life Labs">
                 </a>
                 <p class="sf-brand" data-i18n="footer_brand">Excelência, inovação e alta performance em desenvolvimento laboratorial e biotecnologia aplicada.</p>
 
@@ -2646,7 +2752,7 @@ const productsQA = [
                 hero_subtitle: 'Desenvolvimento de alta performance com pureza rigorosamente certificada por ensaios HPLC, máxima estabilidade molecular e logística internacional acelerada.',
                 cta_whatsapp: 'Falar no WhatsApp', section_products: 'Nossos Produtos',
                 products_subtitle: 'Insumos de grau científico com duplo atestado de garantia. Clique na foto de qualquer frasco para revelar os botões de download dos laudos em PDF e cotação.',
-                section_articles: 'Artigos & Revisões Científicas', section_news: 'Notícias', nav_noticias: 'Notícias', nav_plano: 'Meu plano', nav_planos: 'Planos', page_back: 'Voltar ao início', section_quiz: 'Monte seu plano', quiz_subtitle: 'Leva menos de 1 minuto: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.',
+                section_articles: 'Artigos & Revisões Científicas', section_news: 'Notícias', nav_noticias: 'Notícias', nav_plano: 'Meu plano', nav_planos: 'Planos', page_back: 'Voltar ao início', section_quiz: 'Monte seu plano', quiz_subtitle: 'Em menos de 2 minutos: responda algumas perguntas e receba suas calorias, os alimentos certos para o seu objetivo e uma planilha alimentar pronta.',
                 articles_subtitle: 'Notícias da New Life Health sobre peptídeos, metabolismo, pele e longevidade. Toque em uma matéria para ler no portal.',
                 search_placeholder: 'Buscar por composto, via celular ou mecanismo...',
                 read_article: 'Ler Monografia Completa',
@@ -2685,7 +2791,7 @@ const productsQA = [
                 hero_subtitle: 'High-performance development with rigorously certified HPLC purity, maximum molecular stability, and accelerated international logistics.',
                 cta_whatsapp: 'Chat on WhatsApp', section_products: 'Our Products',
                 products_subtitle: 'Scientific grade peptides with dual certificate guarantee. Click on the photo of any vial to reveal the download buttons for PDF reports and quotes.',
-                section_articles: 'Articles & Scientific Reviews', section_news: 'News', nav_noticias: 'News', nav_plano: 'My plan', nav_planos: 'Plans', page_back: 'Back to home', section_quiz: 'Build your plan', quiz_subtitle: 'It takes under a minute: answer a few questions and get your calories, the right foods for your goal and a ready-made meal plan.',
+                section_articles: 'Articles & Scientific Reviews', section_news: 'News', nav_noticias: 'News', nav_plano: 'My plan', nav_planos: 'Plans', page_back: 'Back to home', section_quiz: 'Build your plan', quiz_subtitle: 'In under 2 minutes: answer a few questions and get your calories, the right foods for your goal and a ready-made meal plan.',
                 articles_subtitle: 'New Life Health news on peptides, metabolism, skin and longevity. Tap a story to read it on the portal.',
                 search_placeholder: 'Search by compound, cellular pathway, or mechanism...',
                 read_article: 'Read Full Monograph',
@@ -2724,7 +2830,7 @@ const productsQA = [
                 hero_subtitle: 'Desarrollo de alto rendimiento con pureza rigurosamente certificada por HPLC, máxima estabilidad molecular y logística internacional.',
                 cta_whatsapp: 'Chatear en WhatsApp', section_products: 'Nuestros Productos',
                 products_subtitle: 'Péptidos de grado científico con certificado duplo. Haga clic en la foto de cualquier frasco para mostrar los botones de descarga de PDF y cotización.',
-                section_articles: 'Artículos y Revisiones Científicas', section_news: 'Noticias', nav_noticias: 'Noticias', nav_plano: 'Mi plan', nav_planos: 'Planes', page_back: 'Volver al inicio', section_quiz: 'Arma tu plan', quiz_subtitle: 'Toma menos de 1 minuto: responde algunas preguntas y recibe tus calorías, los alimentos adecuados para tu objetivo y un plan de alimentación listo.',
+                section_articles: 'Artículos y Revisiones Científicas', section_news: 'Noticias', nav_noticias: 'Noticias', nav_plano: 'Mi plan', nav_planos: 'Planes', page_back: 'Volver al inicio', section_quiz: 'Arma tu plan', quiz_subtitle: 'En menos de 2 minutos: responde algunas preguntas y recibe tus calorías, los alimentos adecuados para tu objetivo y un plan de alimentación listo.',
                 articles_subtitle: 'Noticias de New Life Health sobre péptidos, metabolismo, piel y longevidad. Toque una noticia para leerla en el portal.',
                 search_placeholder: 'Buscar por compuesto, vía celular o mecanismo...',
                 read_article: 'Leer Monografía Completa',
@@ -3377,6 +3483,8 @@ const productsQA = [
             const prods = st.products.map(id => productsQA.findIndex(p => p.targetId === id)).filter(x => x >= 0);
             const prev = NL_STORIES[(currentStory - 1 + n) % n], next = NL_STORIES[(currentStory + 1) % n];
             const ttl = (s) => stEsc((s[currentLanguage] || s.pt).title);
+            // aberta pelo chat do quiz: sem o bloco de produtos (não indicamos peptídeo por pessoa)
+            const fromChat = !!document.querySelector('#qz-chat-modal.active');
             const reader = document.getElementById('story-reader');
             const scrollTop = reader.scrollTop;
             reader.innerHTML = `
@@ -3395,7 +3503,7 @@ const productsQA = [
                     ${t.story.map(p => `<p>${stEsc(p)}</p>`).join('')}
                     <h3>${ui.ch2}</h3>
                     ${t.science.map(p => `<p>${stEsc(p)}</p>`).join('')}
-                    <h3>${ui.ch3}</h3>
+                    ${fromChat ? '' : `<h3>${ui.ch3}</h3>
                     <p>${stEsc(t.bridge)}</p>
                     <div class="st-prods">${prods.map(idx => {
                         const p = productsQA[idx];
@@ -3407,7 +3515,7 @@ const productsQA = [
                             </div>
                             <button type="button" class="st-prod-go" data-prod="${idx}">${ui.cta} <i class="fas fa-arrow-right"></i></button>
                         </div>`;
-                    }).join('')}</div>
+                    }).join('')}</div>`}
                     <footer class="st-r-foot">
                         <span>${ui.sources}</span>
                         <ol>${st.sources.map(x => `<li>${stEsc(x)}</li>`).join('')}</ol>
@@ -3428,7 +3536,6 @@ const productsQA = [
                 const max = reader.scrollHeight - reader.clientHeight;
                 const bar = document.getElementById('st-progress');
                 if (bar) bar.style.width = (max > 0 ? reader.scrollTop / max * 100 : 0) + '%';
-                if (max <= 0 || reader.scrollTop / max >= 0.9) qcStoryRead(currentStory);
             };
             reader.scrollTop = keepScroll ? scrollTop : 0;
             reader.onscroll();
@@ -3597,7 +3704,7 @@ const productsQA = [
                     } catch (e) { resolve(null); }
                 };
                 img.onerror = () => resolve(null);
-                img.src = 'images/logo-newlife.png';
+                img.src = 'images/newlogo.png';
                 setTimeout(() => resolve(null), 2500);
             });
         }
@@ -3724,6 +3831,32 @@ const productsQA = [
             });
             y += Math.ceil(foods.length / 2) * 32 + 10;
 
+            // peptídeos relacionados às respostas do quiz (conteúdo educativo)
+            const recommendedPeptides = qzRecommendedPeptides();
+            if (recommendedPeptides.length) {
+                const intro = wrap(t.peptidesSub, 9, CW);
+                const notice = wrap(t.peptideNotice, 8, CW - 28);
+                const cards = recommendedPeptides.map(p => wrap(qzProductDesc(p), 8.5, CW - 28));
+                const bh = 42 + intro.length * 12 + cards.reduce((sum, lines) => sum + 38 + lines.length * 11, 0) + 20 + notice.length * 10;
+                need(bh + 20);
+                txt(t.peptides, M, y, 14, 'bold'); y += 16;
+                intro.forEach(line => { txt(line, M, y, 9, 'normal', mute); y += 12; });
+                y += 7;
+                recommendedPeptides.forEach((pep, i) => {
+                    const lines = cards[i], ch = 32 + lines.length * 11;
+                    doc.setFillColor(245, 247, 251); doc.setDrawColor(225, 228, 234); doc.roundedRect(M, y, CW, ch, 9, 9, 'FD');
+                    txt(pep.product, M + 14, y + 17, 10.5, 'bold');
+                    txt(qzCatName(pep.category), W - M - 14, y + 17, 8, 'normal', green, { align: 'right' });
+                    let py = y + 30;
+                    lines.forEach(line => { txt(line, M + 14, py, 8.5, 'normal', mute); py += 11; });
+                    y += ch + 8;
+                });
+                doc.setFillColor(255, 248, 230); doc.roundedRect(M, y, CW, 18 + notice.length * 10, 8, 8, 'F');
+                let ny = y + 12;
+                notice.forEach(line => { txt(line, M + 14, ny, 8, 'normal', [107, 90, 46]); ny += 10; });
+                y += 28 + notice.length * 10;
+            }
+
             // rodapé em todas as páginas
             const pages = doc.internal.getNumberOfPages();
             for (let p = 1; p <= pages; p++) {
@@ -3766,7 +3899,7 @@ const productsQA = [
                 eat: 'O que colocar no prato', eatSub: 'Alimentos naturais que ajudam no seu objetivo.',
                 sheet: 'Sua planilha alimentar', sheetSub: 'Quantidades calculadas para a sua meta diária.',
                 meals: ['Café da manhã', 'Almoço', 'Lanche', 'Jantar'], colFood: 'Alimento', colQty: 'Quantidade', colKcal: 'kcal', colProt: 'Proteína', total: 'Total do dia', units: 'unid.',
-                res: 'Pesquisas sobre o seu objetivo', resSub: 'O que a ciência publicou sobre compostos estudados nesta área. Conteúdo informativo, não é recomendação de uso.', resRead: 'Ler o estudo',
+                res: 'Pesquisas sobre o seu objetivo', resSub: 'O que a ciência publicou sobre compostos estudados nesta área. Conteúdo informativo, não é recomendação de uso.', resRead: 'Ler o estudo', peptides: 'Peptídeos relacionados às suas respostas', peptidesSub: 'Com base no objetivo e no desafio que você selecionou, estes compostos de pesquisa estão relacionados ao tema consultado para fins educativos.', peptideArea: 'Área de pesquisa', peptideReport: 'Ver laudo', peptideNotice: 'Informações educativas sobre compostos de pesquisa. Não constituem recomendação individual, diagnóstico, prescrição ou orientação de uso. Converse com um profissional habilitado.',
                 download: 'Planilha Excel', pdf: 'Baixar planilha em PDF', pdfDone: 'Pronto! Sua planilha em PDF foi baixada. Quer enviar o plano para um especialista?', print: 'Imprimir', expert: 'Falar com especialista',
                 expertSub: 'Leve seu plano para uma conversa com a equipe New Life.',
                 note: 'Estimativa educativa com base na fórmula de Mifflin-St Jeor. Não substitui a avaliação de um nutricionista ou médico.',
@@ -3806,7 +3939,7 @@ const productsQA = [
                 eat: 'What to put on your plate', eatSub: 'Natural foods that support your goal.',
                 sheet: 'Your meal plan', sheetSub: 'Amounts calculated for your daily target.',
                 meals: ['Breakfast', 'Lunch', 'Snack', 'Dinner'], colFood: 'Food', colQty: 'Amount', colKcal: 'kcal', colProt: 'Protein', total: 'Daily total', units: 'units',
-                res: 'Research on your goal', resSub: 'What science has published about compounds studied in this area. Informational content, not a usage recommendation.', resRead: 'Read the study',
+                res: 'Research on your goal', resSub: 'What science has published about compounds studied in this area. Informational content, not a usage recommendation.', resRead: 'Read the study', peptides: 'Peptides related to your answers', peptidesSub: 'Based on the goal and challenge you selected, these research compounds are related to the topic you looked up for educational purposes.', peptideArea: 'Research area', peptideReport: 'See lab report', peptideNotice: 'Educational information about research compounds. It is not an individual recommendation, diagnosis, prescription or use guidance. Speak with a qualified professional.',
                 download: 'Excel sheet', pdf: 'Download plan as PDF', pdfDone: 'Done! Your PDF meal plan was downloaded. Want to send it to a specialist?', print: 'Print', expert: 'Talk to a specialist',
                 expertSub: 'Take your plan to a conversation with the New Life team.',
                 note: 'Educational estimate based on the Mifflin-St Jeor formula. It does not replace an assessment by a dietitian or doctor.',
@@ -3846,7 +3979,7 @@ const productsQA = [
                 eat: 'Qué poner en el plato', eatSub: 'Alimentos naturales que ayudan a tu objetivo.',
                 sheet: 'Tu plan de alimentación', sheetSub: 'Cantidades calculadas para tu meta diaria.',
                 meals: ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'], colFood: 'Alimento', colQty: 'Cantidad', colKcal: 'kcal', colProt: 'Proteína', total: 'Total del día', units: 'unid.',
-                res: 'Investigaciones sobre tu objetivo', resSub: 'Lo que la ciencia ha publicado sobre compuestos estudiados en esta área. Contenido informativo, no es una recomendación de uso.', resRead: 'Leer el estudio',
+                res: 'Investigaciones sobre tu objetivo', resSub: 'Lo que la ciencia ha publicado sobre compuestos estudiados en esta área. Contenido informativo, no es una recomendación de uso.', resRead: 'Leer el estudio', peptides: 'Péptidos relacionados con tus respuestas', peptidesSub: 'Según el objetivo y el desafío que seleccionaste, estos compuestos de investigación se relacionan con el tema consultado con fines educativos.', peptideArea: 'Área de investigación', peptideReport: 'Ver informe', peptideNotice: 'Información educativa sobre compuestos de investigación. No constituye recomendación individual, diagnóstico, prescripción ni orientación de uso. Consulta a un profesional habilitado.',
                 download: 'Hoja de Excel', pdf: 'Descargar plan en PDF', pdfDone: '¡Listo! Tu plan en PDF se descargó. ¿Quieres enviarlo a un especialista?', print: 'Imprimir', expert: 'Hablar con un especialista',
                 expertSub: 'Lleva tu plan a una conversación con el equipo de New Life.',
                 note: 'Estimación educativa basada en la fórmula de Mifflin-St Jeor. No sustituye la evaluación de un nutricionista o médico.',
@@ -3918,27 +4051,31 @@ const productsQA = [
         }
 
         // --- QUIZ EM FUNIL (uma pergunta por tela) ---
-        // objetivos: fotos enviadas pelo Charles (images/quiz/); desafios: só objetos e alimentos
+        // objetivos: fotos enviadas pelo Charles (images/quiz/); desafios e hábitos: fotos do Unsplash no mesmo estilo
         const QZ_PICS = {
             emagrecer: 'images/quiz/emagrecer.jpg', definir: 'Fit young man doing deadlift exercise in gym.jpg', pele: 'images/quiz/pele.jpg',
             energia: 'images/quiz/energia.jpg', sono: 'images/quiz/sono.jpg', foco: 'images/quiz/foco.jpg',
-            sleep: 'Alarm.jpg', water: 'Glass-of-water.jpg', meals: 'Healthy food.jpg'
+            sleep: 'u:photo-1531353826977-0941b4779a1c', water: 'u:photo-1613679358839-d897e8dc1437', meals: 'u:photo-1490645935967-10de6ba17061'
         };
-        // uma foto para cada desafio de cada objetivo (mesma ordem de QZ_T.problems)
+        // uma foto para cada desafio de cada objetivo (mesma ordem de QZ_T.problems), do Unsplash
         const QZ_PROB_PICS = {
-            emagrecer: ['Open refrigerator with food at night.jpg', 'Measuring-tape.jpg', 'Bathroom Scale.jpg', 'Sugar in Junk Food - Doughnuts, Biscuits, Chocolate and Cake.jpg'],
-            definir: ['TwoDumbbells.JPG', 'Tape measure.JPG', 'Healthy Lentil Salad (Unsplash).jpg', 'Heavy Dumbbells 200 pound.JPG'],
-            pele: ['Nivea Lotion.jpg', 'Prestige Cosmetics.jpg', 'Daylogic Sheer Touch SPF 30 Sunscreen - Sarah Stierch.jpg', 'Sunbum sunscreen spf 30.jpg'],
-            energia: ['A small cup of coffee.JPG', 'Classic alarm clock 20180513.jpg', 'Competition kettlebells 8-24 kilos.jpg', 'Potted flower bulb and coffee (Unsplash).jpg'],
-            sono: ['Alarm Clock 3.jpg', 'Windup alarm clock.jpg', 'Hotel Alarm Clock - 9 00 a.m. (45674883422).jpg', 'Alarm Clocks 20101107a.jpg'],
-            foco: ['Coffee, flowers and books (Unsplash).jpg', 'Sticky Notes in different colors.jpg', 'Hot coffee on a cold day (Unsplash).jpg', 'Post-it.jpg']
+            emagrecer: ['u:photo-1702648156462-3eb1d11450a0', 'u:photo-1778918006895-3f13da650ea9', 'u:photo-1522844990619-4951c40f7eda', 'u:photo-1636272168293-77b272da5a14'],
+            definir: ['u:photo-1574680096145-d05b474e2155', 'u:photo-1571019613454-1cb2f99b2d8b', 'u:photo-1593431763017-c689a61b729a', 'u:photo-1517836357463-d25dfeac3438'],
+            pele: ['u:photo-1728727217834-b190862837a3', 'u:photo-1675773051474-55c4b7d2cf53', 'u:photo-1581182815808-b6eb627a8798', 'u:photo-1646457417455-77a66a9fcf34'],
+            energia: ['u:photo-1620809975674-10b8ff5f8e58', 'u:photo-1721815714586-73849a2a163b', 'u:photo-1632163390156-89ac6019b56a', 'u:photo-1758876019043-cedb0b6f56ea'],
+            sono: ['u:photo-1502322328990-fc8f47a2d9a5', 'u:photo-1721815731590-d4aae3a7fc9f', 'u:photo-1758520144795-299f212ccba0', 'u:photo-1758520145138-fad6db286b9d'],
+            foco: ['u:photo-1507206130118-b5907f817163', 'u:photo-1634245481935-1a496162ae15', 'u:photo-1607688387751-c1e95ae09a42', 'u:photo-1758598497429-6eb3895d5bfa']
         };
-        const qzFile = (f, w) => f.startsWith('images/') ? f : 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(f.replace(/ /g, '_')) + '?width=' + w;
+        const qzFile = (f, w) => f.startsWith('images/') ? f : f.startsWith('u:') ? `https://images.unsplash.com/${f.slice(2)}?auto=format&fit=crop&w=${w}&q=75` : 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(f.replace(/ /g, '_')) + '?width=' + w;
         const qzPic = (k, w) => qzFile(QZ_PICS[k], w);
-        const QZ_SCREENS = ['goal', 'problem', 'insight', 'sex', 'body', 'activity', 'sleep', 'water', 'meals', 'loading', 'result'];
+        const QZ_SCREENS = ['intro', 'goal', 'problem', 'insight', 'sex', 'body', 'activity', 'sleep', 'water', 'meals', 'loading', 'result'];
         const QZ_UI = {
             pt: {
-                of: (a, b) => `${a} de ${b}`, cont: 'Continuar', sexQ: 'Qual é o seu sexo?', sexSub: 'Homens e mulheres gastam energia de formas diferentes.',
+                of: (a, b) => `${a} de ${b}`, cont: 'Continuar',
+                inEyebrow: 'Quiz gratuito · resultado na hora', inTitle: 'Em menos de 2 minutos, um plano de ação para o seu problema',
+                inSub: 'Responda 9 perguntas rápidas sobre seu objetivo, sua rotina e seu corpo. No final, você recebe um plano feito para o seu caso.',
+                inPts: [['fa-fire', 'Calorias e macros calculados para o seu corpo'], ['fa-utensils', 'Cardápio com os alimentos certos para o seu desafio'], ['fa-chart-line', 'Gráficos de evolução e planilha em PDF'], ['fa-user-doctor', 'Conversa com um especialista da New Life']],
+                inCta: 'Começar meu quiz agora', inNote: 'Seus dados ficam só no seu navegador', inBadge1: 'Menos de 2 min', inBadge2: 'Plano em PDF', sexQ: 'Qual é o seu sexo?', sexSub: 'Homens e mulheres gastam energia de formas diferentes.',
                 bodyQ: 'Agora, suas medidas', bodySub: 'Com elas calculamos seu metabolismo com precisão.',
                 actQ: 'Com que frequência você se exercita?', actSub: ['Pouco ou nenhum exercício', 'Caminhadas ou treino leve', 'Treino regular', 'Treino pesado quase todo dia'],
                 insT: 'Boa notícia: isso tem solução', insSub: (p) => `Muita gente que quer o mesmo que você enfrenta <b>${p.toLowerCase()}</b>. O segredo está em ajustar a alimentação ao seu corpo:`,
@@ -3955,7 +4092,11 @@ const productsQA = [
                 burnT: 'Gasto x consumo', burn: 'Você gasta', eat: 'Sua meta', deficit: 'Déficit diário', surplus: 'Equilíbrio'
             },
             en: {
-                of: (a, b) => `${a} of ${b}`, cont: 'Continue', sexQ: 'What is your sex?', sexSub: 'Men and women burn energy differently.',
+                of: (a, b) => `${a} of ${b}`, cont: 'Continue',
+                inEyebrow: 'Free quiz · instant result', inTitle: 'In under 2 minutes, an action plan for your problem',
+                inSub: 'Answer 9 quick questions about your goal, routine and body. At the end, you get a plan built for your case.',
+                inPts: [['fa-fire', 'Calories and macros calculated for your body'], ['fa-utensils', 'A menu with the right foods for your challenge'], ['fa-chart-line', 'Progress charts and a PDF meal plan'], ['fa-user-doctor', 'A conversation with a New Life specialist']],
+                inCta: 'Start my quiz now', inNote: 'Your data stays in your browser', inBadge1: 'Under 2 min', inBadge2: 'PDF plan', sexQ: 'What is your sex?', sexSub: 'Men and women burn energy differently.',
                 bodyQ: 'Now, your measurements', bodySub: 'We use them to calculate your metabolism accurately.',
                 actQ: 'How often do you exercise?', actSub: ['Little or no exercise', 'Walks or light training', 'Regular training', 'Hard training almost daily'],
                 insT: 'Good news: this can be solved', insSub: (p) => `Many people with your goal struggle with <b>${p.toLowerCase()}</b>. The key is matching your diet to your body:`,
@@ -3972,7 +4113,11 @@ const productsQA = [
                 burnT: 'Burn vs. intake', burn: 'You burn', eat: 'Your target', deficit: 'Daily deficit', surplus: 'Balance'
             },
             es: {
-                of: (a, b) => `${a} de ${b}`, cont: 'Continuar', sexQ: '¿Cuál es tu sexo?', sexSub: 'Hombres y mujeres gastan energía de forma diferente.',
+                of: (a, b) => `${a} de ${b}`, cont: 'Continuar',
+                inEyebrow: 'Quiz gratuito · resultado al instante', inTitle: 'En menos de 2 minutos, un plan de acción para tu problema',
+                inSub: 'Responde 9 preguntas rápidas sobre tu objetivo, tu rutina y tu cuerpo. Al final, recibes un plan hecho para tu caso.',
+                inPts: [['fa-fire', 'Calorías y macros calculados para tu cuerpo'], ['fa-utensils', 'Menú con los alimentos adecuados para tu desafío'], ['fa-chart-line', 'Gráficos de evolución y plan en PDF'], ['fa-user-doctor', 'Conversación con un especialista de New Life']],
+                inCta: 'Empezar mi quiz ahora', inNote: 'Tus datos se quedan en tu navegador', inBadge1: 'Menos de 2 min', inBadge2: 'Plan en PDF', sexQ: '¿Cuál es tu sexo?', sexSub: 'Hombres y mujeres gastan energía de forma diferente.',
                 bodyQ: 'Ahora, tus medidas', bodySub: 'Con ellas calculamos tu metabolismo con precisión.',
                 actQ: '¿Con qué frecuencia haces ejercicio?', actSub: ['Poco o ningún ejercicio', 'Caminatas o entrenamiento ligero', 'Entrenamiento regular', 'Entrenamiento intenso casi a diario'],
                 insT: 'Buena noticia: esto tiene solución', insSub: (p) => `Mucha gente con tu objetivo enfrenta <b>${p.toLowerCase()}</b>. La clave es ajustar la alimentación a tu cuerpo:`,
@@ -4055,6 +4200,34 @@ const productsQA = [
             return `<div class="qz-bars">${plan.map((m, i) => `<div class="qz-bar"><span>${m.name}</span><div><i style="--w:${(ks[i] / max * 100).toFixed(0)}%"></i></div><b>${ks[i]}</b></div>`).join('')}</div>`;
         }
 
+
+        // --- PEPTÍDEOS RELACIONADOS ÀS RESPOSTAS DO QUIZ (conteúdo educativo) ---
+        // A lista é gerada por objetivo + desafio. Não é indicação clínica nem orientação de uso.
+        const QZ_PEPTIDE_MATCHES = {
+            emagrecer: [['tirzepatida', 'retatrutide'], ['retatrutide', 'cbl514'], ['tirzepatida', 'retatrutide'], ['tirzepatida', 'retatrutide']],
+            definir: [['cjc', 'motsc'], ['tesam', 'cjc'], ['cjc', 'motsc'], ['cjc', 'motsc']],
+            pele: [['ghkcu', 'klow80'], ['ghkcu', 'glow70'], ['glow70', 'ghkcu'], ['glow70', 'klow80']],
+            energia: [['motsc'], ['motsc', 'cjc'], ['motsc', 'cjc'], ['selank', 'motsc']],
+            sono: [['selank'], ['selank'], ['selank'], ['selank']],
+            foco: [['semax', 'motsc'], ['semax', 'motsc'], ['selank', 'semax'], ['semax', 'motsc']]
+        };
+        const qzCatName = (c) => ((trCopy[currentLanguage] || trCopy.pt).cats || {})[c] || c;
+        const qzProductDesc = (p) => p['desc_' + currentLanguage] || p.desc_pt || '';
+        function qzRecommendedPeptides() {
+            const ids = qz.goal && qz.problem !== null && QZ_PEPTIDE_MATCHES[qz.goal]
+                ? QZ_PEPTIDE_MATCHES[qz.goal][qz.problem] || [] : [];
+            return ids.map(id => productsQA.find(p => p.targetId === id)).filter(Boolean);
+        }
+        function qzRecommendedHtml(inChat) {
+            const t = qzT(), recommendations = qzRecommendedPeptides();
+            const heading = inChat ? `<b class="qc-reco-t">${t.peptides}</b><p>${t.peptidesSub}</p>` : `<h4>${t.peptides}</h4><p>${t.peptidesSub}</p>`;
+            return `${heading}<div class="qz-reco-panel"><div class="qz-reco-list">${recommendations.map(p => `<article class="qz-reco-item">
+                <img ${nlImgAttrs(p)} alt="${qzEsc(p.product)}" loading="lazy">
+                <div class="qz-reco-info"><b>${qzEsc(p.product)}</b><p>${qzEsc(qzProductDesc(p))}</p>
+                    <div class="qz-reco-meta"><span>${qzEsc(t.peptideArea)}: ${qzEsc(qzCatName(p.category))}</span>${p.pdfUrl ? `<a href="${p.pdfUrl}" target="_blank" rel="noopener">${t.peptideReport} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>` : ''}</div>
+                </div></article>`).join('')}</div><p class="qz-reco-note"><i class="fas fa-circle-info" aria-hidden="true"></i>${t.peptideNotice}</p></div>`;
+        }
+
         function renderQuiz() {
             const box = document.getElementById('quiz');
             if (!box) return;
@@ -4062,14 +4235,29 @@ const productsQA = [
             qzLoadTimers.forEach(clearTimeout); qzLoadTimers = [];
             const scr = QZ_SCREENS[qz.screen || 0];
             qz.step = scr === 'result' ? 3 : 0;
-            const nQ = 9, idx = Math.min(qz.screen || 0, nQ - 1) + 1;
-            const head = scr === 'loading' || scr === 'result' ? '' : `<div class="qf-head">
+            const nQ = 9, idx = Math.max(1, Math.min(qz.screen || 0, nQ));
+            const head = scr === 'intro' || scr === 'loading' || scr === 'result' ? '' : `<div class="qf-head">
                     ${qz.screen ? `<button type="button" class="qf-back" data-back aria-label="${t.back}"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>` : '<span class="qf-back-sp"></span>'}
                     <div class="qf-prog"><i style="width:${idx / nQ * 100}%"></i></div><small>${u.of(idx, nQ)}</small></div>`;
             const fpic = (f, w) => `<img src="${qzFile(f, w)}" alt="" loading="eager" referrerpolicy="no-referrer" onerror="this.remove()">`;
             const pic = (k, w) => fpic(QZ_PICS[k], w);
             let body = '';
-            if (scr === 'goal') {
+            if (scr === 'intro') {
+                body = `<div class="qf-intro">
+                    <div class="qf-intro-txt">
+                        <span class="qf-intro-eyebrow"><i class="fas fa-bolt" aria-hidden="true"></i> ${u.inEyebrow}</span>
+                        <h3>${u.inTitle}</h3>
+                        <p>${u.inSub}</p>
+                        <ul>${u.inPts.map(([ic, s]) => `<li><span><i class="fas ${ic}" aria-hidden="true"></i></span>${s}</li>`).join('')}</ul>
+                        <button type="button" class="qf-start" data-next><span>${u.inCta}</span><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                        <small class="qf-intro-note"><i class="fas fa-lock" aria-hidden="true"></i> ${u.inNote}</small>
+                    </div>
+                    <div class="qf-intro-art">
+                        ${['emagrecer', 'pele', 'energia', 'sono'].map((k, i) => `<span class="qf-intro-ph qf-ph${i}">${pic(k, 520)}</span>`).join('')}
+                        <span class="qf-intro-badge qf-b-top"><i class="fas fa-stopwatch" aria-hidden="true"></i><b>${u.inBadge1}</b></span>
+                        <span class="qf-intro-badge qf-b-bot"><i class="fas fa-file-pdf" aria-hidden="true"></i><b>${u.inBadge2}</b></span>
+                    </div></div>`;
+            } else if (scr === 'goal') {
                 body = `<h3 class="qf-q">${t.q1}</h3>
                     <div class="qf-goals">${Object.keys(QZ_GOALS).map(k => `<button type="button" class="qf-goal${qz.goal === k ? ' is-on' : ''}" data-goal="${k}">
                         <span class="qf-goal-img"><i class="fas ${QZ_GOALS[k].icon}" aria-hidden="true"></i>${pic(k, 480)}</span>
@@ -4140,6 +4328,7 @@ const productsQA = [
                             const f = QZ_FOODS[id][currentLanguage] || QZ_FOODS[id].pt;
                             return `<div class="qz-food"><div class="qz-food-img"><img src="${qzImg(id, 320)}" alt="${qzEsc(f[0])}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></div><b>${f[0]}</b><small>${f[1]}</small></div>`;
                         }).join('')}</div></div>
+                    <div class="qz-block qz-reco" id="qz-recommendations">${qzRecommendedHtml()}</div>
                     <div class="qz-block" id="qz-sheet"><h4>${t.sheet}</h4><p>${t.sheetSub}</p>
                         <div class="qz-table-wrap"><table class="qz-table"><thead><tr><th>${t.colFood}</th><th>${t.colQty}</th><th>${t.colKcal}</th><th>${t.colProt}</th></tr></thead>
                         <tbody>${plan.map(m => `<tr class="qz-meal"><th colspan="4">${m.name} · ${m.items.reduce((s, it) => s + it.kcal, 0)} kcal</th></tr>` + m.items.map(it => `<tr><td>${qzFoodName(it.id)}</td><td>${qzQty(it)}</td><td>${it.kcal}</td><td>${it.prot} g</td></tr>`).join('')).join('')}</tbody>
@@ -4152,6 +4341,7 @@ const productsQA = [
                             return `<button type="button" class="qz-res-card" data-story="${i}"><div class="qz-res-img" style="background: linear-gradient(135deg, ${st.tone[0]}, ${st.tone[1]});">${stPhoto(st, 480, 'st-photo')}</div>
                                 <span class="st-kicker">${qzEsc(tx.kicker)}</span><b>${qzEsc(tx.title)}</b><span class="qz-res-go">${t.resRead} <i class="fas fa-arrow-right" aria-hidden="true"></i></span></button>`;
                         }).join('')}</div></div>
+                    
                     <div class="qz-cta"><div><h4>${t.expert}</h4><p>${t.expertSub}</p></div>
                         <div class="qz-cta-btns"><button type="button" class="qz-glow" id="qz-expert"><span>${t.expert}</span></button></div></div>
                     <p class="qz-note"><i class="fas fa-circle-info" aria-hidden="true"></i> ${t.note}</p>
@@ -4189,7 +4379,7 @@ const productsQA = [
                 tick();
             }
             const on = (id, fn) => { const el = box.querySelector(id); if (el) el.onclick = fn; };
-            on('#qz-redo', () => { Object.assign(qz, { goal: null, problem: null }); qzGo(0); });
+            on('#qz-redo', () => { Object.assign(qz, { goal: null, problem: null }); qzGo(1); });
             box.querySelectorAll('.qz-res-card').forEach(b => b.onclick = () => openStory(+b.dataset.story));
             on('#qz-csv', qzDownload);
             on('#qz-pdf', qzDownloadPdf);
@@ -4246,44 +4436,44 @@ const productsQA = [
         const QC_T = {
             pt: {
                 name: 'IA New Life', status: 'IA especialista · online',
-                hi: (n) => `Olá${n ? ', <b>' + n + '</b>' : ''}! 👋 Seja bem-vindo(a)! Eu sou a IA especialista da New Life. Analisei suas respostas e seu plano está pronto.`,
+                hi: (n) => `Olá${n ? ', <b>' + n + '</b>' : ''}, seja bem-vindo(a)! Eu sou a IA especialista da New Life. Analisei suas respostas e seu plano está pronto.`,
                 data: 'Seus dados', sexM: 'Masculino', sexF: 'Feminino', sex: 'Sexo', bmi: 'IMC',
                 target: 'Sua meta diária', targetSub: 'É isso que você precisa bater por dia para chegar ao seu objetivo:',
-                pdfMsg: 'Sua planilha alimentar personalizada já está pronta para baixar:', pdfBtn: 'Baixar planilha em PDF', pdfDone: 'Pronto! Sua planilha em PDF foi baixada. 📄',
-                ask: 'Um especialista da New Life vai te apresentar tudo e tirar suas dúvidas pelo WhatsApp. Seus dados já vão junto. Toque abaixo para iniciar:', start: 'Iniciar processo', steps: ['Oi! Vamos lá 👋', 'Isso mesmo ✅', 'Entendi, e agora?', 'Quero saber mais'], resIntro: 'Antes de continuar, separei uma pesquisa sobre o seu objetivo. Leia até o final, ela explica o que a ciência já descobriu nessa área: 📚', resOpen: 'Ler a pesquisa', resGate: 'Leia a pesquisa até o final para continuar', resDone: 'Li até o final ✅', resMin: 'min de leitura', sol: (g) => `Ótima notícia: temos <b>produtos específicos para quem quer ${g}</b> e a <b>solução completa com especialista</b>, que une o seu plano alimentar, os produtos certos e o acompanhamento de perto. 💙`,
-                opts: ['Falar com um especialista', 'Conhecer os planos de acompanhamento', 'Baixar minha planilha em PDF', 'Ver pesquisas sobre meu objetivo'],
+                pdfMsg: 'Sua planilha alimentar personalizada já está pronta para baixar:', pdfBtn: 'Baixar planilha em PDF', pdfDone: 'Pronto! Sua planilha em PDF foi baixada.',
+                ask: 'Um especialista da New Life vai te apresentar tudo e tirar suas dúvidas pelo WhatsApp. Seus dados já vão junto. Toque abaixo para iniciar:', start: 'Iniciar processo', steps: ['Vamos começar', 'Sim, meus dados estão corretos', 'Entendi minha meta, e agora?', 'Quero conhecer a solução completa'], sol: () => `Além do seu plano alimentar, a New Life tem um <b>catálogo de peptídeos de pesquisa</b>, com laudo de cada lote, e <b>especialistas</b> para tirar suas dúvidas. Essas informações são educativas e não são uma recomendação individual.`,
+                opts: ['Falar com um especialista', 'Conhecer os planos de acompanhamento', 'Baixar minha planilha em PDF', 'Conhecer os peptídeos do meu resultado'],
                 waReply: 'Perfeito! Vou te passar para um especialista da equipe. A mensagem já vai com todos os seus dados preenchidos:',
                 plansReply: 'Temos 3 planos mensais com planilha, acompanhamento e ajustes. Vou te mostrar:', plansBtn: 'Ver planos',
-                resReply: 'Separei as pesquisas científicas ligadas ao seu objetivo, logo abaixo do seu plano:', resBtn: 'Ver pesquisas',
-                wa: 'Abrir WhatsApp', fab: 'Falar com a IA New Life',
+                pepReply: 'Estes são os peptídeos relacionados às suas respostas, logo abaixo do seu plano:', pepBtn: 'Ver peptídeos',
+                wa: 'Abrir WhatsApp', fab: 'Falar com a IA New Life', recoNext: 'Ver a solução completa', waPeptides: 'PEPTÍDEOS RELACIONADOS ÀS RESPOSTAS', waPeptidesNote: 'Conteúdo educativo gerado pelas respostas do quiz; não constitui recomendação individual.',
                 waTitle: 'NOVO CONTATO · SITE NEW LIFE', waClient: 'DADOS DO CLIENTE', waGoal: 'OBJETIVO', waTarget: 'METAS DIÁRIAS', waTopic: 'Assunto', waPlan: 'Plano de interesse', waEnd: 'Gostaria de falar com um especialista. Obrigado!'
             },
             en: {
                 name: 'New Life AI', status: 'AI specialist · online',
-                hi: (n) => `Hi${n ? ', <b>' + n + '</b>' : ''}! 👋 Welcome! I'm New Life's AI specialist. I've analyzed your answers and your plan is ready.`,
+                hi: (n) => `Hi${n ? ', <b>' + n + '</b>' : ''}, welcome! I'm New Life's AI specialist. I've analyzed your answers and your plan is ready.`,
                 data: 'Your details', sexM: 'Male', sexF: 'Female', sex: 'Sex', bmi: 'BMI',
                 target: 'Your daily target', targetSub: 'This is what you need to hit each day to reach your goal:',
-                pdfMsg: 'Your personalized meal plan is ready to download:', pdfBtn: 'Download plan as PDF', pdfDone: 'Done! Your PDF meal plan was downloaded. 📄',
-                ask: 'A New Life specialist will walk you through everything and answer your questions on WhatsApp. Your details go along. Tap below to start:', start: 'Start the process', steps: ['Hi! Let\'s go 👋', 'That\'s right ✅', 'Got it, what\'s next?', 'Tell me more'], resIntro: 'Before we continue, I picked a study about your goal. Read it to the end, it explains what science has found in this area: 📚', resOpen: 'Read the research', resGate: 'Read the research to the end to continue', resDone: 'I read it all ✅', resMin: 'min read', sol: (g) => `Great news: we have <b>products made specifically for your goal (${g})</b> and the <b>complete solution with a specialist</b>, combining your meal plan, the right products and close follow-up. 💙`,
-                opts: ['Talk to a specialist', 'See the coaching plans', 'Download my plan as PDF', 'See research on my goal'],
+                pdfMsg: 'Your personalized meal plan is ready to download:', pdfBtn: 'Download plan as PDF', pdfDone: 'Done! Your PDF meal plan was downloaded.',
+                ask: 'A New Life specialist will walk you through everything and answer your questions on WhatsApp. Your details go along. Tap below to start:', start: 'Start the process', steps: ['Let\'s start', 'Yes, my details are correct', 'Got my target, what\'s next?', 'Show me the complete solution'], sol: () => `Besides your meal plan, New Life has a <b>catalog of research peptides</b>, with a lab report for every batch, and <b>specialists</b> to answer your questions. This information is educational and is not an individual recommendation.`,
+                opts: ['Talk to a specialist', 'See the coaching plans', 'Download my plan as PDF', 'See the peptides from my result'],
                 waReply: 'Perfect! I\'ll hand you over to a specialist on the team. The message already includes all your details:',
                 plansReply: 'We have 3 monthly plans with meal plans, coaching and adjustments. Take a look:', plansBtn: 'See plans',
-                resReply: 'I picked the scientific research related to your goal, right below your plan:', resBtn: 'See research',
-                wa: 'Open WhatsApp', fab: 'Chat with New Life AI',
+                pepReply: 'These are the peptides related to your answers, right below your plan:', pepBtn: 'See peptides',
+                wa: 'Open WhatsApp', fab: 'Chat with New Life AI', recoNext: 'See the complete solution', waPeptides: 'PEPTIDES RELATED TO THE ANSWERS', waPeptidesNote: 'Educational content generated from quiz answers; it is not an individual recommendation.',
                 waTitle: 'NEW CONTACT · NEW LIFE WEBSITE', waClient: 'CLIENT DETAILS', waGoal: 'GOAL', waTarget: 'DAILY TARGETS', waTopic: 'Topic', waPlan: 'Plan of interest', waEnd: 'I\'d like to talk to a specialist. Thank you!'
             },
             es: {
                 name: 'IA New Life', status: 'IA especialista · en línea',
-                hi: (n) => `¡Hola${n ? ', <b>' + n + '</b>' : ''}! 👋 ¡Bienvenido(a)! Soy la IA especialista de New Life. Analicé tus respuestas y tu plan está listo.`,
+                hi: (n) => `¡Hola${n ? ', <b>' + n + '</b>' : ''}, bienvenido(a)! Soy la IA especialista de New Life. Analicé tus respuestas y tu plan está listo.`,
                 data: 'Tus datos', sexM: 'Masculino', sexF: 'Femenino', sex: 'Sexo', bmi: 'IMC',
                 target: 'Tu meta diaria', targetSub: 'Esto es lo que necesitas alcanzar cada día para llegar a tu objetivo:',
-                pdfMsg: 'Tu plan de alimentación personalizado ya está listo para descargar:', pdfBtn: 'Descargar plan en PDF', pdfDone: '¡Listo! Tu plan en PDF se descargó. 📄',
-                ask: 'Un especialista de New Life te presentará todo y resolverá tus dudas por WhatsApp. Tus datos van incluidos. Toca abajo para iniciar:', start: 'Iniciar proceso', steps: ['¡Hola! Vamos 👋', 'Así es ✅', 'Entendido, ¿y ahora?', 'Quiero saber más'], resIntro: 'Antes de seguir, separé una investigación sobre tu objetivo. Léela hasta el final, explica lo que la ciencia ya descubrió en esta área: 📚', resOpen: 'Leer la investigación', resGate: 'Lee la investigación hasta el final para continuar', resDone: 'La leí completa ✅', resMin: 'min de lectura', sol: (g) => `Buena noticia: tenemos <b>productos específicos para tu objetivo (${g})</b> y la <b>solución completa con especialista</b>, que une tu plan de alimentación, los productos adecuados y el seguimiento de cerca. 💙`,
-                opts: ['Hablar con un especialista', 'Conocer los planes de seguimiento', 'Descargar mi plan en PDF', 'Ver investigaciones sobre mi objetivo'],
+                pdfMsg: 'Tu plan de alimentación personalizado ya está listo para descargar:', pdfBtn: 'Descargar plan en PDF', pdfDone: '¡Listo! Tu plan en PDF se descargó.',
+                ask: 'Un especialista de New Life te presentará todo y resolverá tus dudas por WhatsApp. Tus datos van incluidos. Toca abajo para iniciar:', start: 'Iniciar proceso', steps: ['Empecemos', 'Sí, mis datos son correctos', 'Entendí mi meta, ¿y ahora?', 'Quiero conocer la solución completa'], sol: () => `Además de tu plan de alimentación, New Life tiene un <b>catálogo de péptidos de investigación</b>, con informe de cada lote, y <b>especialistas</b> para resolver tus dudas. Esta información es educativa y no es una recomendación individual.`,
+                opts: ['Hablar con un especialista', 'Conocer los planes de seguimiento', 'Descargar mi plan en PDF', 'Ver los péptidos de mi resultado'],
                 waReply: '¡Perfecto! Te paso con un especialista del equipo. El mensaje ya incluye todos tus datos:',
                 plansReply: 'Tenemos 3 planes mensuales con plan de alimentación, seguimiento y ajustes. Míralos:', plansBtn: 'Ver planes',
-                resReply: 'Separé las investigaciones científicas relacionadas con tu objetivo, justo debajo de tu plan:', resBtn: 'Ver investigaciones',
-                wa: 'Abrir WhatsApp', fab: 'Hablar con la IA New Life',
+                pepReply: 'Estos son los péptidos relacionados con tus respuestas, justo debajo de tu plan:', pepBtn: 'Ver péptidos',
+                wa: 'Abrir WhatsApp', fab: 'Hablar con la IA New Life', recoNext: 'Ver la solución completa', waPeptides: 'PÉPTIDOS RELACIONADOS CON LAS RESPUESTAS', waPeptidesNote: 'Contenido educativo generado por las respuestas del quiz; no constituye una recomendación individual.',
                 waTitle: 'NUEVO CONTACTO · SITIO NEW LIFE', waClient: 'DATOS DEL CLIENTE', waGoal: 'OBJETIVO', waTarget: 'METAS DIARIAS', waTopic: 'Tema', waPlan: 'Plan de interés', waEnd: 'Me gustaría hablar con un especialista. ¡Gracias!'
             }
         };
@@ -4314,6 +4504,10 @@ const productsQA = [
             } else {
                 body = [`*${q.waTitle}*`, ''];
             }
+            const recommendedPeptides = qzRecommendedPeptides();
+            if (recommendedPeptides.length) {
+                body.push(`🧪 *${q.waPeptides}*`, ...recommendedPeptides.map(pep => `• ${pep.product} (${qzCatName(pep.category)})`), `• ${q.waPeptidesNote}`, '');
+            }
             if (planName) body.push(`📦 *${q.waPlan}:* ${planName}`);
             if (topic) body.push(`💬 *${q.waTopic}:* ${topic}`);
             body.push('', q.waEnd);
@@ -4328,12 +4522,13 @@ const productsQA = [
             qzChatTimers.forEach(clearTimeout); qzChatTimers = [];
             panel.innerHTML = `<div class="qc-head">
                     <button type="button" class="qc-close" aria-label="×"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
-                    <div class="qc-id"><span class="qc-avatar"><img src="images/logo-newlife.png" alt=""></span><b>${q.name} <i class="fas fa-chevron-right" aria-hidden="true"></i></b><small>${q.status}</small></div>
-                    <span class="qc-head-sp"></span>
+                    <div class="qc-id"><span class="qc-avatar"><span class="qc-ring"></span><img src="images/newlogo.png" alt=""><i class="qc-online"></i></span>
+                        <span class="qc-id-txt"><b>${q.name} <i class="fas fa-circle-check qc-verified" aria-hidden="true"></i></b><small><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> ${q.status}</small></span></div>
+                    <button type="button" class="qc-close qc-x" aria-label="×"><i class="fas fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="qc-body" id="qc-body" aria-live="polite"></div>
-                <div class="qc-input" aria-hidden="true"><span>iMessage</span><i class="fas fa-arrow-up"></i></div>`;
-            panel.querySelector('.qc-close').onclick = closeQuizChat;
+                <div class="qc-input" aria-hidden="true"><i class="fas fa-wand-magic-sparkles"></i><span>${{ pt: 'Escolha uma opção acima', en: 'Pick an option above', es: 'Elige una opción arriba' }[currentLanguage] || 'Escolha uma opção acima'}</span><i class="fas fa-paper-plane"></i></div>`;
+            panel.querySelectorAll('.qc-close').forEach(b => b.onclick = closeQuizChat);
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             const fab = document.getElementById('qc-fab');
@@ -4347,43 +4542,22 @@ const productsQA = [
             const start = `${q.ask}<div class="qc-btns"><a class="qc-start" href="${qzWaLink(q.start)}" target="_blank" rel="noopener"><i class="fab fa-whatsapp" aria-hidden="true"></i> ${q.start}</a></div>`;
             const goalTxt = t.goals[qz.goal][0].toLowerCase();
             const steps = [[q.hi(qz.name ? qzEsc(qz.name) : ''), q.steps[0]], [dataCard, q.steps[1]], [target, q.steps[2]], [pdf, q.steps[3]]];
-            const si = NL_STORIES.findIndex(st => st.id === QZ_GOALS[qz.goal].research[0]);
-            if (si >= 0) {
-                const st = NL_STORIES[si], tx = st[currentLanguage] || st.pt;
-                qcReadStory = si; qcReadDone = false;
-                steps.push([`${q.resIntro}<button type="button" class="qc-story" data-story-open="${si}">
-                    <span class="qc-story-img" style="background: linear-gradient(135deg, ${st.tone[0]}, ${st.tone[1]});">${stPhoto(st, 600, 'st-photo')}</span>
-                    <span class="qc-story-txt"><small>${qzEsc(tx.kicker)} · ${st.minutes} ${q.resMin}</small><b>${qzEsc(tx.title)}</b><em>${qzEsc(tx.teaser)}</em>
-                    <span class="qc-story-go"><i class="fas fa-book-open" aria-hidden="true"></i> ${q.resOpen}</span></span></button>`, q.resDone, true]);
-            }
-            steps.push([q.sol(goalTxt)], [start]);
+            steps.push([`<div class="qc-reco">${qzRecommendedHtml(true)}</div>`, q.recoNext], [q.sol(goalTxt)], [start]);
             qcStep(steps, 0);
-        }
-
-        // a pesquisa do chat libera o próximo passo só depois de lida até o final
-        let qcReadStory = -1, qcReadDone = false;
-        function qcStoryRead(i) {
-            if (i !== qcReadStory || qcReadDone) return;
-            qcReadDone = true;
-            document.querySelectorAll('#qc-body [data-gate]').forEach(b => {
-                b.disabled = false; b.textContent = qcT().resDone;
-                b.classList.add('qc-unlocked');
-            });
         }
 
         // uma mensagem por vez; cada uma espera o toque da pessoa no botão de resposta
         function qcStep(steps, i) {
             if (i >= steps.length) return;
-            const [msg, reply, gate] = steps[i];
+            const [msg, reply] = steps[i];
             qzBot([msg], () => {
                 qcBindPdf();
-                document.querySelectorAll('#qc-body [data-story-open]').forEach(b => b.onclick = () => openStory(+b.dataset.storyOpen));
                 if (!reply) { qcStep(steps, i + 1); return; }
                 const body = document.getElementById('qc-body');
                 const wrap = document.createElement('div');
                 wrap.className = 'qc-choices';
-                const locked = gate && !qcReadDone;
-                wrap.innerHTML = `<button type="button"${gate ? ' data-gate' : ''}${locked ? ' disabled' : ''}>${locked ? '<i class="fas fa-lock" aria-hidden="true"></i> ' + qcT().resGate : reply}</button>`;
+                const arr = '<i class="fas fa-arrow-right qc-arr" aria-hidden="true"></i>';
+                wrap.innerHTML = `<button type="button"><span>${reply}</span>${arr}</button>`;
                 body.appendChild(wrap); body.scrollTop = body.scrollHeight;
                 wrap.querySelector('button').onclick = () => {
                     wrap.remove();
@@ -4435,11 +4609,11 @@ const productsQA = [
                 if (i === 0) reply = `${q.waReply}<div class="qc-btns"><a class="qc-wa" href="${qzWaLink(q.opts[0])}" target="_blank" rel="noopener"><i class="fab fa-whatsapp" aria-hidden="true"></i> ${q.wa}</a></div>`;
                 if (i === 1) reply = `${q.plansReply}<div class="qc-btns"><button type="button" class="qc-pdf" data-go="planos">${q.plansBtn} <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div>`;
                 if (i === 2) { qzDownloadPdf(); reply = q.pdfDone; }
-                if (i === 3) reply = `${q.resReply}<div class="qc-btns"><button type="button" class="qc-pdf" data-go="qz-res">${q.resBtn} <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div>`;
+                if (i === 3) reply = `${q.pepReply}<div class="qc-btns"><button type="button" class="qc-pdf" data-go="qz-recommendations">${q.pepBtn} <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div>`;
                 qzBot([reply], () => {
                     body.querySelectorAll('[data-go]').forEach(g => g.onclick = () => {
                         closeQuizChat();
-                        const el = g.dataset.go === 'planos' ? document.getElementById('planos') : document.querySelector('.qz-res');
+                        const el = g.dataset.go === 'planos' ? document.getElementById('planos') : document.getElementById('qz-recommendations');
                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     });
                     qzChoices();
@@ -4825,7 +4999,7 @@ const productsQA = [
                         <h3 class="nc-title">${L(n.title)}</h3>
                         <p class="nc-dek">${L(n.dek)}</p>
                         <div class="nc-foot">
-                            <img src="images/logo-newlife.png" alt="" aria-hidden="true">
+                            <img src="images/newlogo.png" alt="" aria-hidden="true">
                             <div class="nc-meta">
                                 <b>New Life Health</b>
                                 <span>${mins} ${ui.min}</span>
