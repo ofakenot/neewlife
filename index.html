@@ -2243,6 +2243,13 @@
         .pcalc-syringe { margin-top: 30px; padding: 26px 10px 6px; border-top: 0.5px solid rgba(60, 60, 67, 0.14); }
         .pcalc-syringe svg { display: block; width: 100%; height: auto; overflow: visible; }
         .syr-move { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .pcalc-syringe svg { touch-action: pan-y; cursor: pointer; user-select: none; -webkit-user-select: none; }
+        .pcalc-syringe svg:focus-visible { outline: 3px solid rgba(0, 113, 227, 0.35); outline-offset: 6px; border-radius: 12px; }
+        .syr-grip { cursor: grab; }
+        .pcalc.is-dragging .syr-grip, .pcalc.is-dragging svg { cursor: grabbing; }
+        .pcalc.is-dragging .syr-move, .pcalc.is-dragging .syr-liquid { transition: none; }
+        .syr-cap-glow { opacity: 0; transition: opacity 0.3s ease; }
+        .pcalc-syringe svg:hover .syr-cap-glow, .pcalc.is-dragging .syr-cap-glow { opacity: 1; }
         .syr-liquid { transform-box: fill-box; transform-origin: left center; transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
         .syr-needle-fluid { transition: opacity 0.4s ease; }
         .syr-drop { opacity: 0; }
@@ -5977,7 +5984,7 @@ const productsQA = [
                   overShort: 'Acima da capacidade da seringa de 50 UI.',
                   over: 'Essa dose passa da capacidade da seringa de 50 UI. Use mais água no frasco ou divida a dose em duas aplicações.',
                   under: 'Menos de 1 UI é difícil de medir. Use mais água no frasco para ter uma marca maior.',
-                  syr: 'Seringa U-50 · 0,5 mL · cada tracinho = 1 UI = 0,01 mL',
+                  syr: 'Arraste o êmbolo laranja para escolher a dose · cada tracinho = 1 UI = 0,01 mL', slider: 'Seringa: arraste para ajustar a dose',
                   note: 'Ferramenta de cálculo matemático para reconstituição em pesquisa. Não é recomendação de dose nem orientação médica. Produtos New Life destinados exclusivamente a pesquisa.' },
             en: { pep: 'Peptide', other: 'Other (type amount)', vial: 'Amount in vial', water: 'Bacteriostatic water', dose: 'Desired dose',
                   dosePh: 'e.g. 2.5', draw: 'Draw on syringe', unitsWord: 'IU', drawText: (u) => `Draw up to the ${u} mark on the 50 IU syringe (0.5 mL).`,
@@ -5985,7 +5992,7 @@ const productsQA = [
                   overShort: 'Above the 50 IU syringe capacity.',
                   over: 'This dose exceeds the 50 IU syringe capacity. Add more water to the vial or split the dose into two draws.',
                   under: 'Less than 1 IU is hard to measure. Add more water to the vial to get a larger mark.',
-                  syr: 'U-50 syringe · 0.5 mL · each tick = 1 IU = 0.01 mL',
+                  syr: 'Drag the orange plunger to set the dose · each tick = 1 IU = 0.01 mL', slider: 'Syringe: drag to set the dose',
                   note: 'Math tool for research reconstitution. Not a dosing recommendation or medical advice. New Life products are for research use only.' },
             es: { pep: 'Péptido', other: 'Otro (escribir cantidad)', vial: 'Cantidad en el vial', water: 'Agua bacteriostática', dose: 'Dosis deseada',
                   dosePh: 'Ej.: 2,5', draw: 'Cargue en la jeringa', unitsWord: 'UI', drawText: (u) => `Cargue hasta la marca ${u} de la jeringa de 50 UI (0,5 mL).`,
@@ -5993,7 +6000,7 @@ const productsQA = [
                   overShort: 'Supera la capacidad de la jeringa de 50 UI.',
                   over: 'Esta dosis supera la capacidad de la jeringa de 50 UI. Use más agua en el vial o divida la dosis en dos aplicaciones.',
                   under: 'Menos de 1 UI es difícil de medir. Use más agua en el vial para obtener una marca mayor.',
-                  syr: 'Jeringa U-50 · 0,5 mL · cada marca = 1 UI = 0,01 mL',
+                  syr: 'Arrastre el émbolo naranja para elegir la dosis · cada marca = 1 UI = 0,01 mL', slider: 'Jeringa: arrastre para ajustar la dosis',
                   note: 'Herramienta de cálculo matemático para reconstitución en investigación. No es recomendación de dosis ni orientación médica. Productos New Life exclusivamente para investigación.' }
         };
 
@@ -6053,6 +6060,7 @@ const productsQA = [
 
                 <!-- êmbolo: borracha preta, haste e pegador laranja (se move com a dose) -->
                 <g class="syr-move" style="transform: translateX(0px)">
+                    <rect class="syr-cap-glow" x="864" y="50" width="134" height="100" rx="20" fill="rgba(255,116,23,0.18)"/>
                     <rect x="240" y="68" width="34" height="64" rx="5" fill="url(#syrRubber)"/>
                     <line x1="249" y1="68" x2="249" y2="132" stroke="#5a5a62" stroke-width="2"/>
                     <line x1="265" y1="68" x2="265" y2="132" stroke="#5a5a62" stroke-width="2"/>
@@ -6060,6 +6068,7 @@ const productsQA = [
                     <rect x="874" y="66" width="104" height="68" rx="12" fill="url(#syrOrange)"/>
                     <rect x="972" y="58" width="16" height="84" rx="6" fill="#ff7a1f"/>
                     <rect x="884" y="74" width="80" height="8" rx="4" fill="#ffffff" opacity="0.28"/>
+                    <rect class="syr-grip" x="240" y="40" width="760" height="120" fill="transparent"/>
                     <g class="syr-tag">
                         <rect x="200" y="6" width="80" height="34" rx="17" fill="#1d1d1f"/>
                         <text class="syr-tag-text" x="240" y="29" text-anchor="middle" font-size="17" font-weight="700" fill="#ffffff">0 UI</text>
@@ -6073,7 +6082,7 @@ const productsQA = [
                 <!-- graduação por cima do líquido -->
                 <g>${ticks}</g>
                 <text x="740" y="134" text-anchor="middle" font-size="13" font-weight="700" fill="#1d1d1f">UI</text>
-                <text x="240" y="170" font-size="15" font-weight="600" fill="rgba(60,60,67,0.6)" class="syr-caption"></text>
+                <text x="240" y="203" font-size="15" font-weight="600" fill="rgba(60,60,67,0.6)" class="syr-caption"></text>
             </svg>`;
         }
 
@@ -6155,6 +6164,13 @@ const productsQA = [
             }));
             $('pc-dose').addEventListener('input', (e) => { s.dose = e.target.value; pcalcUpdate(); });
             box.querySelectorAll('[data-unit]').forEach(b => b.addEventListener('click', () => {
+                // troca mg <-> mcg mantendo a mesma dose
+                const d = pcalcNum(s.dose);
+                if (d && b.dataset.unit !== s.unit) {
+                    const v = b.dataset.unit === 'mcg' ? Math.round(d * 1000 * 1000) / 1000 : Math.round(d / 1000 * 100000) / 100000;
+                    s.dose = currentLanguage === 'en' ? String(v) : String(v).replace('.', ',');
+                    $('pc-dose').value = s.dose;
+                }
                 s.unit = b.dataset.unit;
                 box.querySelectorAll('[data-unit]').forEach(x => x.classList.toggle('is-on', x === b));
                 pcalcUpdate();
@@ -6162,6 +6178,7 @@ const productsQA = [
 
             s.shown = 0;
             pcalcUpdate();
+            pcalcDrag(box);
         }
 
         function pcalcUpdate() {
@@ -6192,7 +6209,7 @@ const productsQA = [
             // número grande sobe/desce até o valor
             const el = box.querySelector('#pc-units');
             const from = s.shown, to = units;
-            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || box.classList.contains('is-dragging') || pcalcState.instant;
             cancelAnimationFrame(pcalcUpdate.raf);
             if (reduce) { el.textContent = pcalcFmt(to, 1); s.shown = to; return; }
             const start = performance.now();
@@ -6204,6 +6221,65 @@ const productsQA = [
             };
             pcalcUpdate.raf = requestAnimationFrame(tick);
         }
+        // puxar o êmbolo: a posição vira UI e a dose é calculada na hora
+        function pcalcDrag(box) {
+            const svg = box.querySelector('.pcalc-syringe svg');
+            const s = pcalcState;
+            const t = PCALC_TXT[currentLanguage] || PCALC_TXT.pt;
+            svg.setAttribute('role', 'slider');
+            svg.setAttribute('tabindex', '0');
+            svg.setAttribute('aria-label', t.slider);
+            svg.setAttribute('aria-valuemin', '0');
+            svg.setAttribute('aria-valuemax', '50');
+
+            const conc = () => (s.mg && s.water ? s.mg / s.water : 0);
+            const currentUnits = () => {
+                const d = pcalcNum(s.dose), mg = s.unit === 'mcg' ? d / 1000 : d;
+                return conc() ? Math.min(50, mg / conc() * 100) : 0;
+            };
+            const setUnits = (u) => {
+                if (!conc()) return;
+                u = Math.max(0, Math.min(50, Math.round(u * 2) / 2));
+                const mg = u / 100 * conc();
+                const val = s.unit === 'mcg' ? Math.round(mg * 1000) : Math.round(mg * 1000) / 1000;
+                s.dose = u ? (currentLanguage === 'en' ? String(val) : String(val).replace('.', ',')) : '';
+                const input = box.querySelector('#pc-dose');
+                if (input) input.value = s.dose;
+                svg.setAttribute('aria-valuenow', String(u));
+                s.instant = true; pcalcUpdate(); s.instant = false;
+            };
+            const toSvgX = (clientX) => {
+                const pt = svg.createSVGPoint(); pt.x = clientX; pt.y = 0;
+                return pt.matrixTransform(svg.getScreenCTM().inverse()).x;
+            };
+
+            let grab = null;
+            svg.addEventListener('pointerdown', (e) => {
+                if (!conc()) return;
+                const x = toSvgX(e.clientX);
+                const onPlunger = e.target.closest('.syr-move');
+                // no êmbolo: puxa a partir de onde pegou; no resto da seringa: pula para a marca tocada
+                grab = { offset: onPlunger ? x - (240 + currentUnits() * 10) : 0 };
+                svg.setPointerCapture(e.pointerId);
+                box.classList.add('is-dragging');
+                if (!onPlunger) setUnits((x - 240) / 10);
+                e.preventDefault();
+            });
+            svg.addEventListener('pointermove', (e) => {
+                if (!grab) return;
+                setUnits((toSvgX(e.clientX) - grab.offset - 240) / 10);
+            });
+            const end = () => { if (!grab) return; grab = null; box.classList.remove('is-dragging'); };
+            svg.addEventListener('pointerup', end);
+            svg.addEventListener('pointercancel', end);
+            svg.addEventListener('keydown', (e) => {
+                const step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 5, PageDown: -5 }[e.key];
+                if (e.key === 'Home') { e.preventDefault(); setUnits(0); return; }
+                if (e.key === 'End') { e.preventDefault(); setUnits(50); return; }
+                if (step) { e.preventDefault(); setUnits(Math.round(currentUnits()) + step); }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => { if (!document.querySelector('#pep-calc .pcalc-grid')) renderPepCalc(); });
     </script>
 </body>
