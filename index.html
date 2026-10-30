@@ -11,8 +11,8 @@
     <link rel="canonical" href="https://newlifelabs.us/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/logo-newlife.png">
-    <link rel="apple-touch-icon" href="images/logo-newlife.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     
     <!-- Fonte Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1130,6 +1130,107 @@
             .nc-card, .nc-cover img { transition: none; }
         }
 
+        /* --- CALCULADORA DE PEPTÍDEOS --- */
+        .pcalc {
+            padding: 34px; border-radius: 32px;
+            background: rgba(255, 255, 255, 0.58);
+            backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 60px rgba(30, 40, 90, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        }
+        .pcalc-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 34px; align-items: start; }
+        .pcalc-fields { display: grid; gap: 20px; }
+        .pcalc-field label, .pcalc-label {
+            display: block; margin-bottom: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+            text-transform: uppercase; color: rgba(60, 60, 67, 0.65);
+        }
+        .pcalc-select, .pcalc-input {
+            width: 100%; height: 52px; padding: 0 18px; border-radius: 16px; font: inherit; font-size: 1rem; color: #1d1d1f;
+            background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(60, 60, 67, 0.12); outline: none;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03); transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            -webkit-appearance: none; appearance: none;
+        }
+        .pcalc-select {
+            padding-right: 44px; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231d1d1f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 18px center;
+        }
+        .pcalc-select:focus, .pcalc-input:focus { border-color: rgba(0, 113, 227, 0.55); box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12); }
+        .pcalc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .pcalc-suffix { position: relative; }
+        .pcalc-suffix .pcalc-input { padding-right: 56px; }
+        .pcalc-suffix span {
+            position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+            font-size: 0.9rem; font-weight: 600; color: rgba(60, 60, 67, 0.55); pointer-events: none;
+        }
+        .pcalc-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .pcalc-chip, .pcalc-seg button {
+            height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(60, 60, 67, 0.12); cursor: pointer;
+            font: inherit; font-size: 0.86rem; font-weight: 600; color: #1d1d1f; background: rgba(255, 255, 255, 0.7);
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .pcalc-chip.is-on, .pcalc-seg button.is-on { background: #1d1d1f; color: #fff; border-color: #1d1d1f; }
+        .pcalc-dose { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+        .pcalc-seg {
+            display: inline-flex; padding: 4px; gap: 4px; height: 52px; border-radius: 16px;
+            background: rgba(118, 118, 128, 0.12);
+        }
+        .pcalc-seg button { height: 44px; border: 0; border-radius: 12px; background: transparent; min-width: 58px; }
+        .pcalc-seg button.is-on { background: #fff; color: #1d1d1f; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+
+        .pcalc-results { display: grid; gap: 14px; }
+        .pcalc-main {
+            padding: 24px 26px; border-radius: 24px; color: #fff;
+            background: linear-gradient(150deg, #1d1d1f 0%, #2c2c34 100%);
+            box-shadow: 0 16px 40px rgba(20, 20, 30, 0.22);
+        }
+        .pcalc-main small { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+        .pcalc-big { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; }
+        .pcalc-big b { font-size: 3.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+        .pcalc-big span { font-size: 1.1rem; font-weight: 600; color: rgba(255, 255, 255, 0.75); }
+        .pcalc-main p { margin-top: 10px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); line-height: 1.5; }
+        .pcalc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .pcalc-stat {
+            padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(255, 255, 255, 0.95);
+        }
+        .pcalc-stat small { display: block; font-size: 0.72rem; font-weight: 600; color: rgba(60, 60, 67, 0.6); }
+        .pcalc-stat b { display: block; margin-top: 4px; font-size: 1.15rem; font-weight: 700; color: #1d1d1f; font-variant-numeric: tabular-nums; }
+        .pcalc-alert {
+            display: none; padding: 12px 16px; border-radius: 14px; font-size: 0.88rem; line-height: 1.45;
+            color: #8a3a00; background: rgba(255, 149, 0, 0.12); border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+        .pcalc-alert.is-on { display: block; }
+
+        .pcalc-syringe { margin-top: 30px; padding: 26px 10px 6px; border-top: 0.5px solid rgba(60, 60, 67, 0.14); }
+        .pcalc-syringe svg { display: block; width: 100%; height: auto; overflow: visible; }
+        .syr-move { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .syr-liquid { transform-box: fill-box; transform-origin: left center; transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .syr-needle-fluid { transition: opacity 0.4s ease; }
+        .syr-drop { opacity: 0; }
+        .pcalc.has-dose .syr-drop { animation: syrDrop 2.6s ease-in infinite; }
+        @keyframes syrDrop {
+            0%, 55% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+            70% { opacity: 1; transform: translate(-4px, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-8px, 26px) scale(0.9); }
+        }
+        .pcalc-note { margin-top: 18px; font-size: 0.8rem; line-height: 1.5; color: rgba(60, 60, 67, 0.6); text-align: center; }
+
+        @media (max-width: 900px) {
+            .pcalc { padding: 22px; border-radius: 26px; }
+            .pcalc-grid { grid-template-columns: 1fr; gap: 24px; }
+        }
+        @media (max-width: 560px) {
+            .pcalc { padding: 18px; }
+            .pcalc-row { grid-template-columns: 1fr; }
+            .pcalc-big b { font-size: 2.8rem; }
+            .pcalc-stats { grid-template-columns: 1fr 1fr; }
+            .pcalc-syringe { margin-left: -8px; margin-right: -8px; padding-left: 0; padding-right: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .syr-move, .syr-liquid { transition: none; }
+            .pcalc.has-dose .syr-drop { animation: none; }
+        }
+
 </style>
 
 </head>
@@ -1160,6 +1261,7 @@
         <ul class="nav-menu">
             <li class="nav-item"><a href="#inicio" data-i18n="nav_inicio" class="active-link">Início</a></li>
             <li class="nav-item"><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
+            <li class="nav-item"><a href="#calculadora" data-i18n="nav_calc">Calculadora</a></li>
             <li class="nav-item"><a href="#artigos" data-i18n="nav_artigos">Artigos</a></li>
             <li class="nav-item"><a href="#sobre" data-i18n="nav_sobre">Sobre</a></li>
             <li class="nav-item"><a href="#contato" data-i18n="nav_contato">Contato</a></li>
@@ -1234,6 +1336,15 @@
         </div>
     </section>
 
+    <!-- CALCULADORA DE PEPTÍDEOS -->
+    <section id="calculadora" class="section-padding reveal active">
+        <div class="container">
+            <h2 class="section-title" data-i18n="section_calc">Calculadora de Peptídeos</h2>
+            <p class="section-subtitle-center" data-i18n="calc_subtitle">Escolha o peptídeo, a quantidade de água bacteriostática e a dose. A calculadora mostra quantas unidades puxar na seringa de 50 UI.</p>
+            <div class="pcalc" id="pep-calc"></div>
+        </div>
+    </section>
+
     <!-- SEÇÃO DE ARTIGOS CIENTÍFICOS -->
     <section id="artigos" class="section-padding articles-section reveal active">
         <div class="container">
@@ -1305,6 +1416,7 @@
                     <ul class="footer-nav-list">
                         <li><a href="#inicio" data-i18n="nav_inicio">Início</a></li>
                         <li><a href="#produtos" data-i18n="nav_produtos">Produtos</a></li>
+                        <li><a href="#calculadora" data-i18n="nav_calc">Calculadora</a></li>
                         <li><a href="#artigos" data-i18n="nav_artigos">Artigos Científicos</a></li>
                         <li><a href="#sobre" data-i18n="nav_sobre">Sobre Nós</a></li>
                     </ul>
@@ -1852,6 +1964,7 @@ const productsQA = [
 
             renderProducts();
             renderArticles();
+            if (typeof renderPepCalc === 'function') renderPepCalc();
             const heroModal = document.getElementById('hero-batch-modal');
             if (heroModal && heroModal.classList.contains('active') && heroVerifiedProduct) {
                 renderHeroBatchResult(heroVerifiedProduct);
@@ -2378,6 +2491,256 @@ const productsQA = [
                 }
             });
         });
+    </script>
+    <script>
+        // Calculadora de peptídeos: reconstituição e unidades na seringa U-50 (0,5 mL, 50 UI)
+        Object.assign(i18n.pt, {
+            nav_calc: 'Calculadora', section_calc: 'Calculadora de Peptídeos',
+            calc_subtitle: 'Escolha o peptídeo, a quantidade de água bacteriostática e a dose. A calculadora mostra quantas unidades puxar na seringa de 50 UI.'
+        });
+        Object.assign(i18n.en, {
+            nav_calc: 'Calculator', section_calc: 'Peptide Calculator',
+            calc_subtitle: 'Pick the peptide, the amount of bacteriostatic water and the dose. The calculator shows how many units to draw on the 50 IU syringe.'
+        });
+        Object.assign(i18n.es, {
+            nav_calc: 'Calculadora', section_calc: 'Calculadora de Péptidos',
+            calc_subtitle: 'Elija el péptido, la cantidad de agua bacteriostática y la dosis. La calculadora muestra cuántas unidades cargar en la jeringa de 50 UI.'
+        });
+
+        const PCALC_TXT = {
+            pt: { pep: 'Peptídeo', other: 'Outro (digitar quantidade)', vial: 'Quantidade no frasco', water: 'Água bacteriostática', dose: 'Dose desejada',
+                  dosePh: 'Ex.: 2,5', draw: 'Puxe na seringa', unitsWord: 'UI', drawText: (u) => `Puxe até a marca ${u} da seringa de 50 UI (0,5 mL).`,
+                  empty: 'Digite a dose para ver quantas unidades puxar.', conc: 'Concentração', vol: 'Volume', doses: 'Doses por frasco',
+                  overShort: 'Acima da capacidade da seringa de 50 UI.',
+                  over: 'Essa dose passa da capacidade da seringa de 50 UI. Use mais água no frasco ou divida a dose em duas aplicações.',
+                  under: 'Menos de 1 UI é difícil de medir. Use mais água no frasco para ter uma marca maior.',
+                  syr: 'Seringa U-50 · 0,5 mL · cada tracinho = 1 UI = 0,01 mL',
+                  note: 'Ferramenta de cálculo matemático para reconstituição em pesquisa. Não é recomendação de dose nem orientação médica. Produtos New Life destinados exclusivamente a pesquisa.' },
+            en: { pep: 'Peptide', other: 'Other (type amount)', vial: 'Amount in vial', water: 'Bacteriostatic water', dose: 'Desired dose',
+                  dosePh: 'e.g. 2.5', draw: 'Draw on syringe', unitsWord: 'IU', drawText: (u) => `Draw up to the ${u} mark on the 50 IU syringe (0.5 mL).`,
+                  empty: 'Enter the dose to see how many units to draw.', conc: 'Concentration', vol: 'Volume', doses: 'Doses per vial',
+                  overShort: 'Above the 50 IU syringe capacity.',
+                  over: 'This dose exceeds the 50 IU syringe capacity. Add more water to the vial or split the dose into two draws.',
+                  under: 'Less than 1 IU is hard to measure. Add more water to the vial to get a larger mark.',
+                  syr: 'U-50 syringe · 0.5 mL · each tick = 1 IU = 0.01 mL',
+                  note: 'Math tool for research reconstitution. Not a dosing recommendation or medical advice. New Life products are for research use only.' },
+            es: { pep: 'Péptido', other: 'Otro (escribir cantidad)', vial: 'Cantidad en el vial', water: 'Agua bacteriostática', dose: 'Dosis deseada',
+                  dosePh: 'Ej.: 2,5', draw: 'Cargue en la jeringa', unitsWord: 'UI', drawText: (u) => `Cargue hasta la marca ${u} de la jeringa de 50 UI (0,5 mL).`,
+                  empty: 'Escriba la dosis para ver cuántas unidades cargar.', conc: 'Concentración', vol: 'Volumen', doses: 'Dosis por vial',
+                  overShort: 'Supera la capacidad de la jeringa de 50 UI.',
+                  over: 'Esta dosis supera la capacidad de la jeringa de 50 UI. Use más agua en el vial o divida la dosis en dos aplicaciones.',
+                  under: 'Menos de 1 UI es difícil de medir. Use más agua en el vial para obtener una marca mayor.',
+                  syr: 'Jeringa U-50 · 0,5 mL · cada marca = 1 UI = 0,01 mL',
+                  note: 'Herramienta de cálculo matemático para reconstitución en investigación. No es recomendación de dosis ni orientación médica. Productos New Life exclusivamente para investigación.' }
+        };
+
+        const PCALC_PEPTIDES = productsQA.map(p => {
+            const m = p.product.match(/(\d+(?:[.,]\d+)?)\s*MG\b/i);
+            return { id: p.targetId, name: p.product.replace(/\s*\d+(?:[.,]\d+)?\s*MG\b/i, '').trim(), mg: m ? parseFloat(m[1].replace(',', '.')) : 0 };
+        }).filter(p => p.mg > 0);
+
+        const pcalcState = { pep: (PCALC_PEPTIDES.find(p => p.id === 'retatrutide') || PCALC_PEPTIDES[0]).id, mg: 0, water: 2, dose: '', unit: 'mg', shown: 0 };
+        pcalcState.mg = PCALC_PEPTIDES.find(p => p.id === pcalcState.pep).mg;
+
+        const pcalcNum = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) && n > 0 ? n : 0; };
+        const pcalcFmt = (n, d) => n.toLocaleString({ pt: 'pt-BR', en: 'en-US', es: 'es-ES' }[currentLanguage] || 'pt-BR', { maximumFractionDigits: d });
+
+        // seringa desenhada em SVG: 0 UI em x=240, 10 px por UI, 50 UI em x=740
+        function pcalcSyringeSVG() {
+            let ticks = '';
+            for (let i = 0; i <= 50; i++) {
+                const x = 240 + i * 10, major = i % 5 === 0;
+                ticks += `<line x1="${x}" y1="62" x2="${x}" y2="${major ? 86 : 75}" stroke="#1d1d1f" stroke-width="${major ? 2.2 : 1.4}"/>`;
+                if (major && i > 0) ticks += `<text x="${x}" y="114" text-anchor="middle" font-size="19" font-weight="700" fill="#1d1d1f">${i}</text>`;
+            }
+            return `
+            <svg viewBox="0 0 1500 210" role="img" aria-labelledby="syr-title">
+                <title id="syr-title">Seringa U-50</title>
+                <defs>
+                    <linearGradient id="syrGlass" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="0.45" stop-color="#f1f4f9" stop-opacity="0.75"/><stop offset="1" stop-color="#dfe5ee" stop-opacity="0.9"/>
+                    </linearGradient>
+                    <linearGradient id="syrFluid" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#bfe3ff"/><stop offset="0.5" stop-color="#8fcaf5"/><stop offset="1" stop-color="#6fb4ea"/>
+                    </linearGradient>
+                    <linearGradient id="syrOrange" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#ff9a4a"/><stop offset="0.5" stop-color="#ff7417"/><stop offset="1" stop-color="#e05f06"/>
+                    </linearGradient>
+                    <linearGradient id="syrRubber" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#4a4a52"/><stop offset="0.5" stop-color="#1c1c20"/><stop offset="1" stop-color="#3a3a40"/>
+                    </linearGradient>
+                    <linearGradient id="syrSteel" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#e6e8ec"/><stop offset="0.5" stop-color="#9ea3ab"/><stop offset="1" stop-color="#c9ccd2"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- agulha com o líquido dentro -->
+                <rect x="20" y="97" width="135" height="6" rx="3" fill="url(#syrSteel)"/>
+                <rect class="syr-needle-fluid" x="22" y="99" width="133" height="2" rx="1" fill="#6fb4ea" opacity="0"/>
+                <circle class="syr-drop" cx="18" cy="101" r="5" fill="#8fcaf5"/>
+
+                <!-- canhão da agulha -->
+                <path d="M150 90 h30 l26 -12 v44 l-26 -12 h-30 z" fill="url(#syrGlass)" stroke="rgba(60,60,67,0.25)" stroke-width="1.5"/>
+                <rect x="204" y="76" width="38" height="48" rx="6" fill="url(#syrGlass)" stroke="rgba(60,60,67,0.25)" stroke-width="1.5"/>
+                <rect class="syr-needle-fluid" x="206" y="88" width="34" height="24" rx="4" fill="url(#syrFluid)" opacity="0"/>
+
+                <!-- corpo da seringa -->
+                <rect x="232" y="60" width="552" height="80" rx="12" fill="url(#syrGlass)" stroke="rgba(60,60,67,0.28)" stroke-width="1.5"/>
+                <rect class="syr-liquid" x="240" y="68" width="500" height="64" rx="4" fill="url(#syrFluid)" opacity="0.92" style="transform: scaleX(0)"/>
+
+                <!-- êmbolo: borracha preta, haste e pegador laranja (se move com a dose) -->
+                <g class="syr-move" style="transform: translateX(0px)">
+                    <rect x="240" y="68" width="34" height="64" rx="5" fill="url(#syrRubber)"/>
+                    <line x1="249" y1="68" x2="249" y2="132" stroke="#5a5a62" stroke-width="2"/>
+                    <line x1="265" y1="68" x2="265" y2="132" stroke="#5a5a62" stroke-width="2"/>
+                    <rect x="274" y="88" width="600" height="24" fill="rgba(235,239,245,0.85)" stroke="rgba(60,60,67,0.18)" stroke-width="1.2"/>
+                    <rect x="874" y="66" width="104" height="68" rx="12" fill="url(#syrOrange)"/>
+                    <rect x="972" y="58" width="16" height="84" rx="6" fill="#ff7a1f"/>
+                    <rect x="884" y="74" width="80" height="8" rx="4" fill="#ffffff" opacity="0.28"/>
+                    <g class="syr-tag">
+                        <rect x="200" y="6" width="80" height="34" rx="17" fill="#1d1d1f"/>
+                        <text class="syr-tag-text" x="240" y="29" text-anchor="middle" font-size="17" font-weight="700" fill="#ffffff">0 UI</text>
+                        <path d="M234 40 l6 8 l6 -8 z" fill="#1d1d1f"/>
+                    </g>
+                </g>
+
+                <!-- aba de apoio -->
+                <rect x="782" y="24" width="14" height="152" rx="7" fill="url(#syrGlass)" stroke="rgba(60,60,67,0.28)" stroke-width="1.5"/>
+
+                <!-- graduação por cima do líquido -->
+                <g>${ticks}</g>
+                <text x="740" y="134" text-anchor="middle" font-size="13" font-weight="700" fill="#1d1d1f">UI</text>
+                <text x="240" y="170" font-size="15" font-weight="600" fill="rgba(60,60,67,0.6)" class="syr-caption"></text>
+            </svg>`;
+        }
+
+        function renderPepCalc() {
+            const box = document.getElementById('pep-calc');
+            if (!box) return;
+            const t = PCALC_TXT[currentLanguage] || PCALC_TXT.pt;
+            const s = pcalcState;
+            const opts = PCALC_PEPTIDES.map(p => `<option value="${p.id}"${p.id === s.pep ? ' selected' : ''}>${p.name} · ${pcalcFmt(p.mg, 2)} mg</option>`).join('')
+                + `<option value="outro"${s.pep === 'outro' ? ' selected' : ''}>${t.other}</option>`;
+            const chips = [1, 2, 3, 5].map(v => `<button type="button" class="pcalc-chip${s.water === v ? ' is-on' : ''}" data-water="${v}">${pcalcFmt(v, 1)} mL</button>`).join('');
+
+            box.innerHTML = `
+                <div class="pcalc-grid">
+                    <div class="pcalc-fields">
+                        <div class="pcalc-field">
+                            <label for="pc-pep">${t.pep}</label>
+                            <select class="pcalc-select" id="pc-pep">${opts}</select>
+                        </div>
+                        <div class="pcalc-row">
+                            <div class="pcalc-field">
+                                <label for="pc-mg">${t.vial}</label>
+                                <div class="pcalc-suffix"><input class="pcalc-input" id="pc-mg" inputmode="decimal" value="${s.mg ? pcalcFmt(s.mg, 3) : ''}"><span>mg</span></div>
+                            </div>
+                            <div class="pcalc-field">
+                                <label for="pc-water">${t.water}</label>
+                                <div class="pcalc-suffix"><input class="pcalc-input" id="pc-water" inputmode="decimal" value="${s.water ? pcalcFmt(s.water, 2) : ''}"><span>mL</span></div>
+                            </div>
+                        </div>
+                        <div class="pcalc-chips" role="group" aria-label="${t.water}">${chips}</div>
+                        <div class="pcalc-field">
+                            <label for="pc-dose">${t.dose}</label>
+                            <div class="pcalc-dose">
+                                <input class="pcalc-input" id="pc-dose" inputmode="decimal" placeholder="${t.dosePh}" value="${s.dose}">
+                                <div class="pcalc-seg" role="group" aria-label="${t.dose}">
+                                    <button type="button" data-unit="mg" class="${s.unit === 'mg' ? 'is-on' : ''}">mg</button>
+                                    <button type="button" data-unit="mcg" class="${s.unit === 'mcg' ? 'is-on' : ''}">mcg</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcalc-results">
+                        <div class="pcalc-main">
+                            <small>${t.draw}</small>
+                            <div class="pcalc-big"><b id="pc-units">0</b><span>${t.unitsWord}</span></div>
+                            <p id="pc-text">${t.empty}</p>
+                        </div>
+                        <div class="pcalc-stats">
+                            <div class="pcalc-stat"><small>${t.conc}</small><b id="pc-conc">–</b></div>
+                            <div class="pcalc-stat"><small>${t.vol}</small><b id="pc-vol">–</b></div>
+                            <div class="pcalc-stat"><small>${t.doses}</small><b id="pc-doses">–</b></div>
+                        </div>
+                        <div class="pcalc-alert" id="pc-alert" role="status"></div>
+                    </div>
+                </div>
+                <div class="pcalc-syringe">${pcalcSyringeSVG()}</div>
+                <p class="pcalc-note">${t.note}</p>`;
+
+            box.querySelector('.syr-caption').textContent = t.syr;
+            const $ = (id) => box.querySelector('#' + id);
+
+            $('pc-pep').addEventListener('change', (e) => {
+                s.pep = e.target.value;
+                const p = PCALC_PEPTIDES.find(x => x.id === s.pep);
+                if (p) { s.mg = p.mg; $('pc-mg').value = pcalcFmt(p.mg, 3); }
+                else { $('pc-mg').value = ''; s.mg = 0; $('pc-mg').focus(); }
+                pcalcUpdate();
+            });
+            $('pc-mg').addEventListener('input', (e) => { s.mg = pcalcNum(e.target.value); pcalcUpdate(); });
+            $('pc-water').addEventListener('input', (e) => {
+                s.water = pcalcNum(e.target.value);
+                box.querySelectorAll('[data-water]').forEach(b => b.classList.toggle('is-on', +b.dataset.water === s.water));
+                pcalcUpdate();
+            });
+            box.querySelectorAll('[data-water]').forEach(b => b.addEventListener('click', () => {
+                s.water = +b.dataset.water; $('pc-water').value = pcalcFmt(s.water, 2);
+                box.querySelectorAll('[data-water]').forEach(x => x.classList.toggle('is-on', x === b));
+                pcalcUpdate();
+            }));
+            $('pc-dose').addEventListener('input', (e) => { s.dose = e.target.value; pcalcUpdate(); });
+            box.querySelectorAll('[data-unit]').forEach(b => b.addEventListener('click', () => {
+                s.unit = b.dataset.unit;
+                box.querySelectorAll('[data-unit]').forEach(x => x.classList.toggle('is-on', x === b));
+                pcalcUpdate();
+            }));
+
+            s.shown = 0;
+            pcalcUpdate();
+        }
+
+        function pcalcUpdate() {
+            const box = document.getElementById('pep-calc');
+            const t = PCALC_TXT[currentLanguage] || PCALC_TXT.pt;
+            const s = pcalcState;
+            const dose = pcalcNum(s.dose);
+            const doseMg = s.unit === 'mcg' ? dose / 1000 : dose;
+            const conc = s.mg && s.water ? s.mg / s.water : 0;
+            const units = conc && doseMg ? (doseMg / conc) * 100 : 0;
+            const alert = box.querySelector('#pc-alert');
+
+            box.querySelector('#pc-conc').textContent = conc ? `${pcalcFmt(conc, 2)} mg/mL` : '–';
+            box.querySelector('#pc-vol').textContent = units ? `${pcalcFmt(units / 100, 3)} mL` : '–';
+            box.querySelector('#pc-doses').textContent = units ? pcalcFmt(Math.floor(s.mg / doseMg + 1e-9), 0) : '–';
+            box.querySelector('#pc-text').textContent = !units ? t.empty : (units > 50 ? t.overShort : t.drawText(pcalcFmt(units, 1)));
+            alert.textContent = units > 50 ? t.over : (units && units < 1 ? t.under : '');
+            alert.classList.toggle('is-on', !!alert.textContent);
+            box.classList.toggle('has-dose', units > 0);
+
+            // seringa: líquido, êmbolo e etiqueta acompanham a dose (limitado a 50 UI)
+            const u = Math.min(units, 50);
+            box.querySelector('.syr-liquid').style.transform = `scaleX(${u / 50})`;
+            box.querySelector('.syr-move').style.transform = `translateX(${u * 10}px)`;
+            box.querySelector('.syr-tag-text').textContent = units > 50 ? '50+' : `${pcalcFmt(units, 1)} ${t.unitsWord}`;
+            box.querySelectorAll('.syr-needle-fluid').forEach(el => { el.style.opacity = units > 0 ? 1 : 0; });
+
+            // número grande sobe/desce até o valor
+            const el = box.querySelector('#pc-units');
+            const from = s.shown, to = units;
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            cancelAnimationFrame(pcalcUpdate.raf);
+            if (reduce) { el.textContent = pcalcFmt(to, 1); s.shown = to; return; }
+            const start = performance.now();
+            const tick = (now) => {
+                const k = Math.min(1, (now - start) / 700), e = 1 - Math.pow(1 - k, 3);
+                const v = from + (to - from) * e;
+                el.textContent = pcalcFmt(v, 1); s.shown = v;
+                if (k < 1) pcalcUpdate.raf = requestAnimationFrame(tick);
+            };
+            pcalcUpdate.raf = requestAnimationFrame(tick);
+        }
     </script>
     <script>
         // Efeito "digitando" no campo de batch, com exemplos fictícios (não são lotes reais)
