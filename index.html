@@ -1357,6 +1357,46 @@
         .pm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
         .pm-btn { justify-content: center; border: 0; cursor: pointer; font-family: inherit; }
         .pm-btn.ab-btn-glass { border: 1px solid var(--gray-200); background: #fff; }
+        /* laudo expandido: "Sobre o laudo" e "Sobre o artigo" na mesma janela do produto */
+        .modal-content.pm { max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; }
+        .pm-more { grid-column: 1 / -1; display: grid; gap: 14px; padding: 6px 36px 34px; }
+        .pm-more:empty { display: none; }
+        .pm-sec { background: #fff; border: 1px solid var(--gray-200); border-radius: 22px; padding: 22px 24px; }
+        .pm-sec-h { display: flex; align-items: center; gap: 10px; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary); margin: 0 0 14px; }
+        .pm-sec-h i { width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: rgba(0, 113, 227, 0.08); font-size: 0.82rem; }
+        .pm-sec-report .pm-sec-h { color: var(--accent-green); }
+        .pm-sec-report .pm-sec-h i { background: var(--accent-green-bg); }
+        .pm-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 0; }
+        .pm-fact { background: #f5f6f9; border-radius: 14px; padding: 12px 14px; min-width: 0; }
+        .pm-fact dt { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-600); }
+        .pm-fact dd { margin: 4px 0 0; font-size: 0.95rem; font-weight: 700; color: var(--dark); font-variant-numeric: tabular-nums; }
+        .pm-note { margin: 12px 0 0; font-size: 0.82rem; line-height: 1.55; color: var(--gray-600); }
+        .pm-art { border-top: 1px solid var(--gray-200); }
+        .pm-art:first-of-type { border-top: 0; }
+        .pm-art summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 0; }
+        .pm-art summary::-webkit-details-marker { display: none; }
+        .pm-art-k { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-600); }
+        .pm-art-t { grid-column: 1; font-size: 1.02rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.3; color: var(--dark); }
+        .pm-art-d { grid-column: 1; font-size: 0.88rem; line-height: 1.5; color: #424245; }
+        .pm-art-i { grid-column: 2; grid-row: 1 / span 3; width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #f0f2f7; color: var(--dark); font-size: 0.8rem; transition: transform 0.3s ease, background 0.2s ease; }
+        .pm-art[open] .pm-art-i { transform: rotate(45deg); background: var(--primary); color: #fff; }
+        .pm-art summary:focus-visible { outline: 3px solid rgba(0, 113, 227, 0.35); outline-offset: 2px; border-radius: 12px; }
+        .pm-art-body { padding: 0 0 18px; font-size: 0.95rem; line-height: 1.7; color: #2a2a2e; }
+        .pm-art-body p { margin: 0 0 12px; }
+        .pm-art-photo { margin: 0 0 14px; border-radius: 16px; overflow: hidden; background: #eef1f6; }
+        .pm-art-photo:not(.has-photo) { display: none; }
+        .pm-art-img { display: block; width: 100%; aspect-ratio: 16 / 8; object-fit: cover; }
+        .pm-art-body h4 { margin: 18px 0 8px; font-size: 0.95rem; font-weight: 800; color: var(--dark); }
+        .pm-art-src { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--gray-200); font-size: 0.8rem; color: var(--gray-600); line-height: 1.55; }
+        .pm-art-src a { color: var(--primary); font-weight: 600; text-decoration: none; }
+        .pm-art-src ol { margin: 6px 0 8px; padding-left: 18px; }
+        .fd-arts { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin-top: 2px; font-size: 0.72rem; font-weight: 700; color: var(--primary); background: rgba(0, 113, 227, 0.08); border-radius: 999px; padding: 4px 10px; }
+        @media (max-width: 868px) {
+            .modal-content.pm { max-height: 88vh; }
+            .pm-more { padding: 0 14px 18px; gap: 10px; }
+            .pm-sec { padding: 18px 16px; border-radius: 18px; }
+            .pm-facts { grid-template-columns: 1fr 1fr; }
+        }
         @media (max-width: 868px) {
             .modal-content.pm { border-radius: 26px; }
             .pm-media { padding: 52px 20px 22px; }
@@ -2599,6 +2639,7 @@
                     </button>
                 </div>
             </div>
+            <div class="pm-more" id="pm-more"></div>
         </div>
     </div>
 
@@ -3540,7 +3581,7 @@ const productsQA = [
             pt: {
                 feed: {
                     reports: n => `${n} ${n === 1 ? 'laudo' : 'laudos'}`, articles: n => `${n} ${n === 1 ? 'artigo' : 'artigos'}`,
-                    report: 'Laudo', article: 'Artigo', min: 'min de leitura', openReport: 'Abrir laudo', readArticle: 'Ler artigo', purity: 'pureza',
+                    withArticles: n => `+ ${n} ${n === 1 ? 'artigo' : 'artigos'} dentro`, report: 'Laudo', article: 'Artigo', min: 'min de leitura', openReport: 'Abrir laudo', readArticle: 'Ler artigo', purity: 'pureza',
                     teaser: 'O que o laudo deste lote revela?', method: 'HPLC + MS',
                     intro: { all: 'Todos os laudos, lado a lado com as leituras que explicam o que está por trás de cada composto.', 'weight-loss': 'Incretinas e agonistas múltiplos: os compostos no centro da pesquisa metabólica atual.', 'aesthetics-anti-aging': 'Peptídeos de cobre e blends regenerativos estudados em pele, colágeno e reparo tecidual.', 'neuromodulation': 'Peptídeos estudados em cognição, foco e resposta ao estresse.', 'gh-secretagogues': 'Secretagogos e análogos de GHRH estudados no eixo do hormônio do crescimento.', 'Research Peptide': 'Fronteiras de pesquisa: metabolismo mitocondrial e tecido adiposo.' }
                 },
@@ -3560,7 +3601,7 @@ const productsQA = [
             en: {
                 feed: {
                     reports: n => `${n} ${n === 1 ? 'report' : 'reports'}`, articles: n => `${n} ${n === 1 ? 'article' : 'articles'}`,
-                    report: 'Report', article: 'Article', min: 'min read', openReport: 'Open report', readArticle: 'Read article', purity: 'purity',
+                    withArticles: n => `+ ${n} ${n === 1 ? 'article' : 'articles'} inside`, report: 'Report', article: 'Article', min: 'min read', openReport: 'Open report', readArticle: 'Read article', purity: 'purity',
                     teaser: 'What does this batch report reveal?', method: 'HPLC + MS',
                     intro: { all: 'Every report, side by side with the reads that explain what is behind each compound.', 'weight-loss': 'Incretins and multi-agonists: the compounds at the centre of current metabolic research.', 'aesthetics-anti-aging': 'Copper peptides and regenerative blends studied in skin, collagen and tissue repair.', 'neuromodulation': 'Peptides studied in cognition, focus and stress response.', 'gh-secretagogues': 'Secretagogues and GHRH analogues studied in the growth hormone axis.', 'Research Peptide': 'Research frontiers: mitochondrial metabolism and adipose tissue.' }
                 },
@@ -3580,7 +3621,7 @@ const productsQA = [
             es: {
                 feed: {
                     reports: n => `${n} ${n === 1 ? 'informe' : 'informes'}`, articles: n => `${n} ${n === 1 ? 'artículo' : 'artículos'}`,
-                    report: 'Informe', article: 'Artículo', min: 'min de lectura', openReport: 'Abrir informe', readArticle: 'Leer artículo', purity: 'pureza',
+                    withArticles: n => `+ ${n} ${n === 1 ? 'artículo' : 'artículos'} dentro`, report: 'Informe', article: 'Artículo', min: 'min de lectura', openReport: 'Abrir informe', readArticle: 'Leer artículo', purity: 'pureza',
                     teaser: '¿Qué revela el informe de este lote?', method: 'HPLC + MS',
                     intro: { all: 'Todos los informes, junto a las lecturas que explican qué hay detrás de cada compuesto.', 'weight-loss': 'Incretinas y agonistas múltiples: los compuestos en el centro de la investigación metabólica actual.', 'aesthetics-anti-aging': 'Péptidos de cobre y blends regenerativos estudiados en piel, colágeno y reparación tisular.', 'neuromodulation': 'Péptidos estudiados en cognición, enfoque y respuesta al estrés.', 'gh-secretagogues': 'Secretagogos y análogos de GHRH estudiados en el eje de la hormona del crecimiento.', 'Research Peptide': 'Fronteras de investigación: metabolismo mitocondrial y tejido adiposo.' }
                 },
@@ -3650,6 +3691,7 @@ const productsQA = [
                     <span class="fd-kicker">${t.cats[p.category] || ''} · ${trFmtDate(p.date)}</span>
                     <span class="fd-title">${p.product}</span>
                     <span class="fd-text">${p[`desc_${currentLanguage}`] || p.desc_pt}</span>
+                    ${(() => { const n = pmArticlesFor(p).length; return n ? `<span class="fd-arts"><i class="far fa-newspaper" aria-hidden="true"></i>${t.feed.withArticles(n)}</span>` : ''; })()}
                     <span class="fd-go">${t.feed.openReport} <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
                 </div>
             </button>`;
@@ -3672,23 +3714,88 @@ const productsQA = [
                 </div>
             </button>`;
         }
+        // artigos ligados a um produto: notícias pelo nome do composto + histórias "Fronteiras da pesquisa"
+        function pmKey(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, ''); }
+        function pmArticlesFor(p) {
+            const name = pmKey(p.product);
+            const news = (typeof healthNews !== 'undefined' ? healthNews : [])
+                .filter(n => { const tag = pmKey(n.tag).replace(/a$/, 'e'); return tag.length > 3 && name.includes(tag); })
+                .map(n => ({ kind: 'news', n }));
+            const stories = (typeof NL_STORIES !== 'undefined' ? NL_STORIES : [])
+                .filter(st => (st.products || []).some(k => p.targetId === k || p.targetId.startsWith(k)))
+                .map(st => ({ kind: 'story', st }));
+            return stories.concat(news);
+        }
+        const PM_TXT = {
+            pt: { report: 'Sobre o laudo', article: 'Sobre o artigo', articles: 'Sobre os artigos', none: 'Ainda não há artigos publicados sobre este composto.', by: 'Redação New Life Health', src: 'Fonte original', go: 'Ler a matéria original (em inglês)', newsNote: 'Conteúdo informativo, resumido a partir da fonte indicada. Não substitui orientação médica.', story: 'História da molécula', status: 'Status', ok: 'Aprovado' },
+            en: { report: 'About the report', article: 'About the article', articles: 'About the articles', none: 'No articles published about this compound yet.', by: 'New Life Health Newsroom', src: 'Original source', go: 'Read the original story', newsNote: 'Informational content summarised from the source above. Not medical advice.', story: 'Molecule story', status: 'Status', ok: 'Passed' },
+            es: { report: 'Sobre el informe', article: 'Sobre el artículo', articles: 'Sobre los artículos', none: 'Aún no hay artículos publicados sobre este compuesto.', by: 'Redacción New Life Health', src: 'Fuente original', go: 'Leer la noticia original (en inglés)', newsNote: 'Contenido informativo, resumido a partir de la fuente indicada. No sustituye la orientación médica.', story: 'Historia de la molécula', status: 'Estado', ok: 'Aprobado' }
+        };
+        function renderProductMore(index) {
+            const box = document.getElementById('pm-more');
+            if (!box) return;
+            const p = productsQA[index];
+            const t = trText();
+            const x = PM_TXT[currentLanguage] || PM_TXT.pt;
+            const ui = NL_STORIES_UI[currentLanguage] || NL_STORIES_UI.pt;
+            const L = (o) => (o && (o[currentLanguage] || o.pt)) || '';
+            const cats = window.NL_NEWS_CATEGORIES || {};
+            const facts = [[t.mPurity, trFmtPct(trNum(p.purity), 2)], [t.mSpec, '≥ ' + trFmtPct(99, 1)], [t.mMethod, t.mMethodVal], [t.mDate, trFmtDate(p.date)], [t.mBatch, t.mBatchVal], [x.status, x.ok]];
+            const arts = pmArticlesFor(p);
+            const artHtml = arts.map((a, k) => {
+                if (a.kind === 'story') {
+                    const st = a.st, s = st[currentLanguage] || st.pt;
+                    return `<details class="pm-art"${k === 0 ? ' open' : ''}>
+                        <summary><span class="pm-art-k">${x.story} · ${stEsc(s.kicker)} · ${st.minutes} ${ui.min}</span><span class="pm-art-t">${stEsc(s.title)}</span><span class="pm-art-d">${stEsc(s.teaser)}</span><span class="pm-art-i" aria-hidden="true"><i class="fas fa-plus"></i></span></summary>
+                        <div class="pm-art-body">
+                            ${st.photo ? `<div class="pm-art-photo">${stPhoto(st, 900, 'pm-art-img')}</div>` : ''}
+                            ${s.story.map(q => `<p>${stEsc(q)}</p>`).join('')}
+                            <h4>${ui.ch2}</h4>
+                            ${s.science.map(q => `<p>${stEsc(q)}</p>`).join('')}
+                            <div class="pm-art-src">${ui.sources}<ol>${(st.sources || []).map(q => `<li>${stEsc(q)}</li>`).join('')}</ol>${ui.note}</div>
+                        </div>
+                    </details>`;
+                }
+                const n = a.n, body = L(n.body) || [];
+                const mins = Math.max(2, Math.round(body.join(' ').split(/\s+/).length / 200));
+                return `<details class="pm-art"${k === 0 ? ' open' : ''}>
+                    <summary><span class="pm-art-k">${stEsc(L(cats[n.cat]))} · <time datetime="${n.date}">${formatNewsDate(n.date, n.monthOnly)}</time> · ${mins} ${ui.min}</span><span class="pm-art-t">${stEsc(L(n.title))}</span><span class="pm-art-d">${stEsc(L(n.dek))}</span><span class="pm-art-i" aria-hidden="true"><i class="fas fa-plus"></i></span></summary>
+                    <div class="pm-art-body">
+                        ${body.map(q => `<p>${stEsc(q)}</p>`).join('')}
+                        <div class="pm-art-src">${x.by} · ${x.src}: <a href="${stEsc(n.source.url)}" target="_blank" rel="noopener">${stEsc(n.source.name)}</a><br>${x.newsNote}</div>
+                    </div>
+                </details>`;
+            }).join('');
+            box.innerHTML = `
+                <section class="pm-sec pm-sec-report">
+                    <h3 class="pm-sec-h"><i class="fas fa-file-shield" aria-hidden="true"></i>${x.report}</h3>
+                    <dl class="pm-facts">${facts.map(([k, v]) => `<div class="pm-fact"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+                    <p class="pm-note">${t.note}</p>
+                </section>
+                <section class="pm-sec pm-sec-article">
+                    <h3 class="pm-sec-h"><i class="far fa-newspaper" aria-hidden="true"></i>${arts.length > 1 ? x.articles : x.article}</h3>
+                    ${artHtml || `<p class="pm-note" style="margin:0">${x.none}</p>`}
+                </section>`;
+        }
+
         function renderReportsFeed() {
             const grid = document.getElementById('fd-grid');
             const tabsEl = document.getElementById('fd-cats');
             const intro = document.getElementById('fd-intro');
             if (!grid || !tabsEl) return;
             const t = trText();
-            const news = (typeof healthNews !== 'undefined' ? healthNews : []).map(n => ({ n, cats: fdArticleCats(n) }));
-            const inCat = (c) => ({
-                reports: productsQA.map((p, i) => i).filter(i => c === 'all' || productsQA[i].category === c),
-                articles: news.filter(a => c === 'all' || a.cats.includes(c)).map(a => a.n)
-            });
+            // só os cards de laudo (com a foto do produto); os artigos de cada produto abrem dentro do laudo expandido
+            const inCat = (c) => {
+                const reports = productsQA.map((p, i) => i).filter(i => c === 'all' || productsQA[i].category === c);
+                const ids = new Set(); reports.forEach(i => pmArticlesFor(productsQA[i]).forEach(a => ids.add(a.kind === 'story' ? 's:' + a.st.id : a.n.id)));
+                return { reports, articles: ids.size };
+            };
             const cats = PRODUCT_CATEGORIES.filter(c => productsQA.some(p => p.category === c));
             const allLabel = (i18n[currentLanguage] || i18n.pt).cat_all || 'Todos';
             tabsEl.innerHTML = [['all', allLabel, 'fa-border-all']].concat(cats.map(c => [c, t.cats[c] || c, PRODUCT_CAT_ICONS[c] || 'fa-flask']))
                 .map(([key, label, icon]) => {
                     const d = inCat(key);
-                    return `<button type="button" class="pc-cat${key === fdFilter ? ' is-active' : ''}" role="tab" aria-selected="${key === fdFilter}" data-cat="${key}"><i class="fas ${icon}" aria-hidden="true"></i>${label}<span class="pc-cat-n">${d.reports.length + d.articles.length}</span></button>`;
+                    return `<button type="button" class="pc-cat${key === fdFilter ? ' is-active' : ''}" role="tab" aria-selected="${key === fdFilter}" data-cat="${key}"><i class="fas ${icon}" aria-hidden="true"></i>${label}<span class="pc-cat-n">${d.reports.length}</span></button>`;
                 }).join('');
             tabsEl.querySelectorAll('.pc-cat').forEach(btn => btn.addEventListener('click', () => {
                 if (btn.dataset.cat === fdFilter) return;
@@ -3699,22 +3806,12 @@ const productsQA = [
             if (act && tabsEl.scrollWidth > tabsEl.clientWidth) tabsEl.scrollLeft = act.offsetLeft - (tabsEl.clientWidth - act.offsetWidth) / 2;
 
             const { reports, articles } = inCat(fdFilter);
-            const shownArticles = fdFilter === 'all' ? articles.slice(0, 6) : articles;
             if (intro) {
                 const parts = [t.feed.reports(reports.length)];
-                if (shownArticles.length) parts.push(t.feed.articles(shownArticles.length));
+                if (articles) parts.push(t.feed.articles(articles));
                 intro.innerHTML = `${t.feed.intro[fdFilter] || ''}<b>${parts.join(' · ')}</b>`;
             }
-            // intercala: laudo, artigo, laudo, laudo, artigo...
-            const items = [];
-            let r = 0, a = 0;
-            const pattern = ['r', 'a', 'r', 'r', 'r', 'a', 'r'];
-            for (let k = 0; r < reports.length || a < shownArticles.length; k++) {
-                const want = pattern[k % pattern.length];
-                if ((want === 'r' && r < reports.length) || a >= shownArticles.length) items.push(fdReportCard(reports[r++], t));
-                else items.push(fdArticleCard(shownArticles[a++], t));
-            }
-            grid.innerHTML = items.join('');
+            grid.innerHTML = reports.map(i => fdReportCard(i, t)).join('');
             grid.querySelectorAll('.fd-card').forEach((el, k) => { el.style.animationDelay = Math.min(k, 8) * 40 + 'ms'; });
             grid.querySelectorAll('.fd-report').forEach(btn => btn.addEventListener('click', (e) => handlePhotoClick(+btn.dataset.index, e)));
         }
@@ -5600,8 +5697,11 @@ const productsQA = [
             const coaBtn = document.getElementById('modal-coa-btn');
             if (coaBtn) coaBtn.onclick = () => validateModalBatchAndDownload('laudo');
 
+            renderProductMore(index);
             const productModal = document.getElementById('product-modal');
             if (productModal) {
+                const pmBox = productModal.querySelector('.modal-content.pm');
+                if (pmBox) pmBox.scrollTop = 0;
                 productModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
